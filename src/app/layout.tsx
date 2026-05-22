@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -23,6 +23,11 @@ export const metadata: Metadata = {
   keywords: ["Data Science", "Data Analyst", "Machine Learning", "Python", "SQL", "Tableau", "PowerBI", "Portfolio"],
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -42,8 +47,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {/* Background Ambient Glows */}
-          <div className="absolute top-[10%] left-[5%] ambient-glow bg-cyan-500/20 dark:bg-cyan-500/10 pointer-events-none" />
-          <div className="absolute bottom-[15%] right-[5%] ambient-glow bg-violet-500/20 dark:bg-violet-500/10 pointer-events-none" />
+          <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+            <div className="absolute top-[10%] left-[5%] ambient-glow bg-cyan-500/20 dark:bg-cyan-500/10" />
+            <div className="absolute bottom-[15%] right-[5%] ambient-glow bg-violet-500/20 dark:bg-violet-500/10" />
+          </div>
           
           {/* Persistent Sidebar */}
           <Sidebar />

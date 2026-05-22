@@ -142,7 +142,7 @@ export function Sidebar() {
 
           {/* Footer Metadata */}
           <div className="border-t border-slate-200/20 dark:border-slate-800/20 pt-4 text-center text-xs text-muted-foreground">
-            <span>© 2026 Al Fitra</span>
+            <span>© 2026 Al Fitra Nur Ramadhani</span>
           </div>
         </div>
       </aside>
