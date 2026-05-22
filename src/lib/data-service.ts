@@ -274,40 +274,62 @@ export async function getProfile(): Promise<Profile> {
   }
 }
 
+function sortProjects(list: Project[]): Project[] {
+  return [...list].sort((a, b) => {
+    const aPin = a.pinned_order !== null && a.pinned_order !== undefined && a.pinned_order > 0 ? a.pinned_order : Infinity
+    const bPin = b.pinned_order !== null && b.pinned_order !== undefined && b.pinned_order > 0 ? b.pinned_order : Infinity
+
+    if (aPin !== bPin) {
+      return aPin - bPin
+    }
+
+    const aTime = a.created_at ? new Date(a.created_at).getTime() : 0
+    const bTime = b.created_at ? new Date(b.created_at).getTime() : 0
+    return bTime - aTime
+  })
+}
+
 // PROJECTS SERVICE
 export async function getProjects(): Promise<Project[]> {
+  let projects: Project[] = []
+  
   if (!hasSupabaseConfig()) {
     try {
       const cookieStore = await cookies()
       const mockProjectsStr = cookieStore.get('mock_projects')?.value
       if (mockProjectsStr) {
-        return JSON.parse(mockProjectsStr)
+        projects = JSON.parse(mockProjectsStr)
+      } else {
+        projects = MOCK_PROJECTS
       }
     } catch (e: any) {
       if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
         throw e
       }
       console.warn('Failed to parse mock projects from cookies', e)
+      projects = MOCK_PROJECTS
     }
-    return MOCK_PROJECTS
-  }
-  try {
-    const supabase = await createClient()
-    const { data, error } = await supabase
-      .from('projects')
-      .select('*')
-      .order('pinned_order', { ascending: true })
-      .order('created_at', { ascending: false })
+  } else {
+    try {
+      const supabase = await createClient()
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('created_at', { ascending: false })
 
-    if (error || !data || data.length === 0) {
-      console.warn('Projects fetch failed, using fallback mock data:', error?.message)
-      return MOCK_PROJECTS
+      if (error || !data || data.length === 0) {
+        console.warn('Projects fetch failed, using fallback mock data:', error?.message)
+        projects = MOCK_PROJECTS
+      } else {
+        projects = data
+      }
+    } catch (err) {
+      console.warn('Projects connection error, using fallback:', err)
+      projects = MOCK_PROJECTS
     }
-    return data
-  } catch (err) {
-    console.warn('Projects connection error, using fallback:', err)
-    return MOCK_PROJECTS
   }
+
+  return sortProjects(projects)
 }
 
 export async function getProjectById(id: string): Promise<Project | null> {
