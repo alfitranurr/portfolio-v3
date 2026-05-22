@@ -6,6 +6,8 @@ export const metadata = {
   description: 'Academic background, credentials, and achievements.',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function EducationPage() {
   const education = await getEducation()
 
