@@ -17,35 +17,37 @@ function hasSupabaseConfig(): boolean {
 // 1. MESSAGES ACTIONS
 // ----------------------------------------------------
 
+function getMockMessages(cookieStore: any) {
+  const mockMessages = cookieStore.get('mock_messages')?.value
+  if (!mockMessages) {
+    return [
+      {
+        id: "mock-msg-1",
+        name: "John Doe",
+        email: "johndoe@example.com",
+        subject: "Inquiry about Machine Learning Consulting",
+        message: "Hi Al Fitra, I saw your predictive customer churn project and I am interested in collaborating on a similar pipeline for our e-commerce business. Do you have availability next month?",
+        is_read: false,
+        created_at: new Date(Date.now() - 3600000 * 2).toISOString()
+      },
+      {
+        id: "mock-msg-2",
+        name: "Jane Smith",
+        email: "janesmith@techcorp.com",
+        subject: "Job Opportunity: Senior Data Scientist",
+        message: "Hello! We are looking for a remote data science consultant to join our telemetry modeling team. Your portfolio is outstanding. Let's schedule a call.",
+        is_read: true,
+        created_at: new Date(Date.now() - 3600000 * 24).toISOString()
+      }
+    ]
+  }
+  return JSON.parse(mockMessages)
+}
+
 export async function getMessagesAction() {
-  const cookieStore = await cookies()
   if (!hasSupabaseConfig()) {
-    const mockMessages = cookieStore.get('mock_messages')?.value
-    if (!mockMessages) {
-      const defaultMock = [
-        {
-          id: "mock-msg-1",
-          name: "John Doe",
-          email: "johndoe@example.com",
-          subject: "Inquiry about Machine Learning Consulting",
-          message: "Hi Al Fitra, I saw your predictive customer churn project and I am interested in collaborating on a similar pipeline for our e-commerce business. Do you have availability next month?",
-          is_read: false,
-          created_at: new Date(Date.now() - 3600000 * 2).toISOString()
-        },
-        {
-          id: "mock-msg-2",
-          name: "Jane Smith",
-          email: "janesmith@techcorp.com",
-          subject: "Job Opportunity: Senior Data Scientist",
-          message: "Hello! We are looking for a remote data science consultant to join our telemetry modeling team. Your portfolio is outstanding. Let's schedule a call.",
-          is_read: true,
-          created_at: new Date(Date.now() - 3600000 * 24).toISOString()
-        }
-      ]
-      cookieStore.set('mock_messages', JSON.stringify(defaultMock), { path: '/' })
-      return defaultMock
-    }
-    return JSON.parse(mockMessages)
+    const cookieStore = await cookies()
+    return getMockMessages(cookieStore)
   }
 
   try {
@@ -65,12 +67,9 @@ export async function getMessagesAction() {
 export async function toggleMessageReadAction(id: string, isRead: boolean) {
   const cookieStore = await cookies()
   if (!hasSupabaseConfig()) {
-    const mockMessages = cookieStore.get('mock_messages')?.value
-    if (mockMessages) {
-      const list = JSON.parse(mockMessages)
-      const updated = list.map((m: any) => m.id === id ? { ...m, is_read: isRead } : m)
-      cookieStore.set('mock_messages', JSON.stringify(updated), { path: '/' })
-    }
+    const list = getMockMessages(cookieStore)
+    const updated = list.map((m: any) => m.id === id ? { ...m, is_read: isRead } : m)
+    cookieStore.set('mock_messages', JSON.stringify(updated), { path: '/' })
     revalidatePath('/admin')
     return { success: true }
   }
@@ -93,12 +92,9 @@ export async function toggleMessageReadAction(id: string, isRead: boolean) {
 export async function deleteMessageAction(id: string) {
   const cookieStore = await cookies()
   if (!hasSupabaseConfig()) {
-    const mockMessages = cookieStore.get('mock_messages')?.value
-    if (mockMessages) {
-      const list = JSON.parse(mockMessages)
-      const updated = list.filter((m: any) => m.id !== id)
-      cookieStore.set('mock_messages', JSON.stringify(updated), { path: '/' })
-    }
+    const list = getMockMessages(cookieStore)
+    const updated = list.filter((m: any) => m.id !== id)
+    cookieStore.set('mock_messages', JSON.stringify(updated), { path: '/' })
     revalidatePath('/admin')
     return { success: true }
   }

@@ -141,15 +141,8 @@ export function Sidebar() {
           </div>
 
           {/* Footer Metadata */}
-          <div className="border-t border-slate-200/20 dark:border-slate-800/20 pt-4 flex items-center justify-between text-xs text-muted-foreground">
+          <div className="border-t border-slate-200/20 dark:border-slate-800/20 pt-4 text-center text-xs text-muted-foreground">
             <span>© 2026 Al Fitra</span>
-            <Link 
-              href="/login" 
-              className="flex items-center gap-1 hover:text-primary transition-colors font-medium"
-            >
-              <Settings className="w-3.5 h-3.5" />
-              <span>Admin</span>
-            </Link>
           </div>
         </div>
       </aside>
