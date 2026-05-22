@@ -131,13 +131,15 @@ export function AdminSidebar() {
         {/* Sidebar Footer */}
         <div className="space-y-4">
           {/* View Website Link */}
-          <Link
+          <a
             href="/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex items-center justify-between px-4 py-3 rounded-xl border border-dashed border-slate-200/20 dark:border-slate-800/20 text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-primary/45 transition-all"
           >
             <span>View Live Portfolio</span>
             <ExternalLink className="w-3.5 h-3.5 text-primary" />
-          </Link>
+          </a>
 
           {/* Sign Out Trigger */}
           <button

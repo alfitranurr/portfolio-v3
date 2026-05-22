@@ -15,7 +15,9 @@ import {
   Calendar,
   MapPin,
   ArrowLeft,
-  ListTodo
+  ListTodo,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react'
 import { saveExperienceAction, deleteExperienceAction } from '@/app/admin/actions'
 import { cn } from '@/lib/utils'
@@ -51,7 +53,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
   const [experienceList, setExperienceList] = React.useState<Experience[]>(initialExperience)
   const [search, setSearch] = React.useState('')
   const [editingItem, setEditingItem] = React.useState<Partial<Experience> | null>(null)
-  const [descriptionText, setDescriptionText] = React.useState('')
+  const [descriptionBullets, setDescriptionBullets] = React.useState<string[]>([])
   const [isPending, setIsPending] = React.useState(false)
   const [notification, setNotification] = React.useState<{ success: boolean; message: string } | null>(null)
 
@@ -69,14 +71,43 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
     const start_date = item.start_date ? item.start_date.split('T')[0] : ''
     const end_date = item.end_date ? item.end_date.split('T')[0] : ''
     setEditingItem({ ...item, start_date, end_date })
-    setDescriptionText((item.description || []).join('\n'))
+    setDescriptionBullets(item.description || [])
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const handleCreateNew = () => {
     setEditingItem({ ...DEFAULT_EXPERIENCE })
-    setDescriptionText('')
+    setDescriptionBullets([])
     window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleAddBullet = () => {
+    setDescriptionBullets(prev => [...prev, ''])
+  }
+
+  const handleUpdateBullet = (index: number, val: string) => {
+    setDescriptionBullets(prev => {
+      const next = [...prev]
+      next[index] = val
+      return next
+    })
+  }
+
+  const handleRemoveBullet = (index: number) => {
+    setDescriptionBullets(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const handleMoveBullet = (index: number, direction: 'up' | 'down') => {
+    if (direction === 'up' && index === 0) return
+    if (direction === 'down' && index === descriptionBullets.length - 1) return
+    const targetIndex = direction === 'up' ? index - 1 : index + 1
+    setDescriptionBullets(prev => {
+      const next = [...prev]
+      const temp = next[index]
+      next[index] = next[targetIndex]
+      next[targetIndex] = temp
+      return next
+    })
   }
 
   const handleDelete = async (id: string) => {
@@ -108,9 +139,8 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
     setIsPending(true)
     setNotification(null)
 
-    // Parse descriptions by splitting by newline
-    const parsedDesc = descriptionText
-      .split('\n')
+    // Filter and clean bullet points
+    const parsedDesc = descriptionBullets
       .map(line => line.trim())
       .filter(line => line.length > 0)
 
@@ -294,19 +324,76 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
 
               {/* Right Column: Descriptions */}
               <div className="space-y-4 flex flex-col h-full">
-                <div className="space-y-1.5 flex-1 flex flex-col">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-                    <ListTodo className="w-4 h-4 text-primary" />
-                    <span>Bullet Points Responsibilities</span>
-                    <span className="text-[10px] text-muted-foreground font-normal">(One point per line)</span>
-                  </label>
-                  <textarea
-                    rows={8}
-                    value={descriptionText}
-                    onChange={e => setDescriptionText(e.target.value)}
-                    placeholder="Optimized operational ETL pipelines...&#10;Built 12+ dashboard pages in Tableau...&#10;Collaborated with data engineers to..."
-                    className="w-full flex-grow px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50"
-                  />
+                <div className="space-y-2 flex-1 flex flex-col">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                      <ListTodo className="w-4 h-4 text-primary" />
+                      <span>Responsibilities</span>
+                    </label>
+                    <span className="text-[10px] text-muted-foreground font-semibold">
+                      {descriptionBullets.length} points
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5 max-h-[300px] overflow-y-auto pr-1 flex-1">
+                    {descriptionBullets.length === 0 ? (
+                      <div className="text-center py-8 rounded-xl border border-dashed border-slate-200/5 dark:border-slate-800/5 bg-white/5">
+                        <p className="text-xs text-muted-foreground">No responsibilities added yet.</p>
+                      </div>
+                    ) : (
+                      descriptionBullets.map((bullet, idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          <span className="text-xs font-mono text-muted-foreground/50 w-5 text-right shrink-0">
+                            {idx + 1}.
+                          </span>
+                          <input
+                            type="text"
+                            value={bullet}
+                            onChange={e => handleUpdateBullet(idx, e.target.value)}
+                            placeholder="e.g. Optimized operational ETL pipelines..."
+                            className="flex-grow px-3 py-2 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                          />
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              type="button"
+                              disabled={idx === 0}
+                              onClick={() => handleMoveBullet(idx, 'up')}
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all disabled:opacity-20 disabled:pointer-events-none"
+                              title="Move Up"
+                            >
+                              <ChevronUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={idx === descriptionBullets.length - 1}
+                              onClick={() => handleMoveBullet(idx, 'down')}
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all disabled:opacity-20 disabled:pointer-events-none"
+                              title="Move Down"
+                            >
+                              <ChevronDown className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveBullet(idx)}
+                              className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 hover:text-red-400 transition-all"
+                              title="Delete Point"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleAddBullet}
+                    className="w-full py-2 border border-dashed border-slate-200/15 dark:border-slate-800/15 hover:border-primary/40 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-primary transition-all bg-white/5"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Responsibility Point</span>
+                  </button>
                 </div>
               </div>
             </div>

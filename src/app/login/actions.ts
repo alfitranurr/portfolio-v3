@@ -18,14 +18,14 @@ export async function loginAction(prevState: any, formData: FormData) {
   )
 
   if (!hasConfig) {
-    if (email === 'admin@example.com' && password === 'admin123') {
+    if (email === 'alfitranurr@gmail.com' && password === 'bookfacepepabri11') {
       const cookieStore = await cookies()
       cookieStore.set('mock_logged_in', 'true', { path: '/' })
       return { success: true, redirect: '/admin' }
     }
     return { 
       success: false, 
-      error: 'Supabase credentials are not set. Use developer login: email "admin@example.com" and password "admin123".' 
+      error: 'Invalid email or password.' 
     }
   }
 

@@ -2,21 +2,17 @@
 
 import * as React from 'react'
 import { useActionState } from 'react'
-import { loginAction, signupAction } from './actions'
+import { loginAction } from './actions'
 import { useRouter } from 'next/navigation'
-import { Terminal, Shield, Lock, Mail, User, Info, ArrowLeft, Loader2 } from 'lucide-react'
-import Link from 'next/link'
-import { cn } from '@/lib/utils'
+import { Shield, Lock, Mail, Loader2 } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [isLogin, setIsLogin] = React.useState(true)
 
   const [loginState, loginFormAction, isLoginPending] = useActionState(loginAction, null)
-  const [signupState, signupFormAction, isSignupPending] = useActionState(signupAction, null)
 
-  const state = isLogin ? loginState : signupState
-  const isPending = isLogin ? isLoginPending : isSignupPending
+  const state = loginState
+  const isPending = isLoginPending
 
   const message = state && 'message' in state ? (state.message as string) : undefined
   const error = state && 'error' in state ? (state.error as string) : undefined
@@ -31,15 +27,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-[70vh] flex flex-col justify-center items-center py-10 px-4">
-      {/* Back button */}
-      <Link
-        href="/"
-        className="mb-6 inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors group cursor-pointer"
-      >
-        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        <span>Return to Portfolio</span>
-      </Link>
-
       {/* Main glass box */}
       <div className="w-full max-w-md p-6 md:p-8 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-6 relative overflow-hidden">
         {/* Glow */}
@@ -52,35 +39,8 @@ export default function LoginPage() {
           </div>
           <h1 className="text-xl md:text-2xl font-black tracking-tight">Admin Gatekeeper</h1>
           <p className="text-xs text-muted-foreground">
-            {isLogin 
-              ? "Access the portfolio command center" 
-              : "Set up the initial administrator profile"
-            }
+            Access the portfolio command center
           </p>
-        </div>
-
-        {/* Sign In vs Setup tabs */}
-        <div className="flex p-1 rounded-xl bg-slate-200/15 dark:bg-slate-800/20 border border-slate-200/5">
-          <button
-            type="button"
-            onClick={() => setIsLogin(true)}
-            className={cn(
-              "flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer",
-              isLogin ? "bg-primary text-primary-foreground shadow-md" : "text-foreground/75 hover:text-foreground"
-            )}
-          >
-            Sign In
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsLogin(false)}
-            className={cn(
-              "flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer",
-              !isLogin ? "bg-primary text-primary-foreground shadow-md" : "text-foreground/75 hover:text-foreground"
-            )}
-          >
-            Setup Admin
-          </button>
         </div>
 
         {/* Status Messages */}
@@ -96,44 +56,7 @@ export default function LoginPage() {
         )}
 
         {/* Input Form */}
-        <form action={isLogin ? loginFormAction : signupFormAction} className="space-y-4">
-          {!isLogin && (
-            <>
-              {/* Full Name */}
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                  Full Name
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    placeholder="Al Fitra Nur Ramadhani"
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50"
-                  />
-                </div>
-              </div>
-
-              {/* Headline */}
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                  Headline
-                </label>
-                <div className="relative">
-                  <Terminal className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
-                  <input
-                    type="text"
-                    name="headline"
-                    placeholder="Data Scientist & Developer"
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50"
-                  />
-                </div>
-              </div>
-            </>
-          )}
-
+        <form action={loginFormAction} className="space-y-4">
           {/* Email */}
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
@@ -180,19 +103,10 @@ export default function LoginPage() {
                 <span>Processing Request...</span>
               </>
             ) : (
-              <span>{isLogin ? "Sign In to Dashboard" : "Register Admin"}</span>
+              <span>Sign In to Dashboard</span>
             )}
           </button>
         </form>
-
-        {/* Local Dev box */}
-        <div className="p-4 rounded-2xl bg-white/5 dark:bg-white/5 border border-slate-200/10 dark:border-slate-800/10 flex items-start gap-2.5">
-          <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-          <div className="text-[10px] text-muted-foreground leading-relaxed">
-            <span className="font-bold text-foreground block mb-0.5">Local Development Tip:</span>
-            If you haven&apos;t set up Supabase variables in your `.env.local` yet, use username <span className="font-bold text-foreground">admin@example.com</span> and password <span className="font-bold text-foreground">admin123</span> to bypass and enter the admin dashboard.
-          </div>
-        </div>
       </div>
     </div>
   )
