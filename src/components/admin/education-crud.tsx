@@ -14,9 +14,11 @@ import {
   X,
   Calendar,
   MapPin,
-  ArrowLeft
+  ArrowLeft,
+  UploadCloud,
+  Image as ImageIcon
 } from 'lucide-react'
-import { saveEducationAction, deleteEducationAction } from '@/app/admin/actions'
+import { saveEducationAction, deleteEducationAction, uploadAssetAction } from '@/app/admin/actions'
 import { cn } from '@/lib/utils'
 
 interface Education {
@@ -29,6 +31,7 @@ interface Education {
   end_date: string | null
   gpa: string | null
   description: string | null
+  logo_url?: string | null
   created_at?: string
   updated_at?: string
 }
@@ -45,7 +48,8 @@ const DEFAULT_EDUCATION: Omit<Education, 'id'> = {
   start_date: '',
   end_date: '',
   gpa: null,
-  description: ''
+  description: '',
+  logo_url: ''
 }
 
 export function EducationCrud({ initialEducation }: EducationCrudProps) {
@@ -53,7 +57,37 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
   const [search, setSearch] = React.useState('')
   const [editingItem, setEditingItem] = React.useState<Partial<Education> | null>(null)
   const [isPending, setIsPending] = React.useState(false)
+  const [isUploading, setIsUploading] = React.useState(false)
   const [notification, setNotification] = React.useState<{ success: boolean; message: string } | null>(null)
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    setNotification(null)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await uploadAssetAction(formData)
+      if (res.success && res.url) {
+        setEditingItem(prev => ({ ...prev, logo_url: res.url }))
+        setNotification({ success: true, message: 'Logo uploaded successfully.' })
+      } else {
+        setNotification({ success: false, message: res.error || 'Failed to upload logo.' })
+      }
+    } catch (err: any) {
+      console.error(err)
+      setNotification({ success: false, message: 'Error uploading logo.' })
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  const handleRemoveLogo = () => {
+    setEditingItem(prev => ({ ...prev, logo_url: null }))
+  }
 
   React.useEffect(() => {
     setEducationList(initialEducation)
@@ -242,6 +276,66 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                     className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                   />
                 </div>
+
+                {/* Logo Image Upload */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Institution Logo
+                  </label>
+                  
+                  <div className="flex items-center gap-4">
+                    {/* Preview box */}
+                    <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-200/20 dark:border-slate-800/10 bg-slate-200/5 flex items-center justify-center shrink-0">
+                      {editingItem.logo_url ? (
+                        <>
+                          <img
+                            src={editingItem.logo_url}
+                            alt="Logo preview"
+                            className="w-full h-full object-contain p-1 bg-white"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleRemoveLogo}
+                            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold cursor-pointer"
+                          >
+                            Remove
+                          </button>
+                        </>
+                      ) : (
+                        <ImageIcon className="w-6 h-6 text-muted-foreground/40" />
+                      )}
+                    </div>
+
+                    <div className="flex-1">
+                      <label className={cn(
+                        "w-full py-2.5 px-4 rounded-xl bg-white/5 border border-dashed border-slate-200/20 dark:border-slate-800/20 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
+                        isUploading && "opacity-50 pointer-events-none"
+                      )}>
+                        {isUploading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                            <span>Uploading...</span>
+                          </>
+                        ) : (
+                          <>
+                            <UploadCloud className="w-4 h-4 text-muted-foreground" />
+                            <span>{editingItem.logo_url ? 'Change Logo Image' : 'Upload Logo Image'}</span>
+                          </>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleLogoUpload}
+                          className="hidden"
+                          disabled={isUploading}
+                        />
+                      </label>
+                      <p className="text-[10px] text-muted-foreground mt-1.5">
+                        PNG, JPG, or WebP. Recommend square resolution.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Right Column: Time frame & GPA */}
@@ -371,20 +465,36 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                   className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 hover:border-primary/30 transition-all flex flex-col justify-between"
                 >
                   <div className="space-y-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <h3 className="font-black text-sm md:text-base leading-tight text-foreground">
-                          {item.institution}
-                        </h3>
-                        <p className="text-xs text-primary font-bold mt-1">
-                          {item.degree} {item.field_of_study ? `in ${item.field_of_study}` : ''}
-                        </p>
-                      </div>
-                      {item.gpa && (
-                        <span className="px-2.5 py-1 rounded-xl bg-primary/10 text-primary text-[10px] font-black tracking-wide shrink-0">
-                          GPA: {item.gpa}
-                        </span>
+                    <div className="flex items-start gap-3.5">
+                      {item.logo_url && (
+                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-white flex items-center justify-center shrink-0 border border-slate-200/10 p-1">
+                          <img 
+                            src={item.logo_url} 
+                            alt={item.institution} 
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                              (e.target as HTMLElement).style.display = 'none';
+                            }}
+                          />
+                        </div>
                       )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <h3 className="font-black text-sm md:text-base leading-tight text-foreground truncate">
+                              {item.institution}
+                            </h3>
+                            <p className="text-xs text-primary font-bold mt-1">
+                              {item.degree} {item.field_of_study ? `in ${item.field_of_study}` : ''}
+                            </p>
+                          </div>
+                          {item.gpa && (
+                            <span className="px-2.5 py-1 rounded-xl bg-primary/10 text-primary text-[10px] font-black tracking-wide shrink-0">
+                              GPA: {item.gpa}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[10px] text-muted-foreground font-semibold pt-0.5">

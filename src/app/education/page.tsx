@@ -1,5 +1,6 @@
 import { getEducation } from '@/lib/data-service'
 import { GraduationCap, Calendar, MapPin, Award } from 'lucide-react'
+import { SafeSchoolLogo } from '@/components/safe-school-logo'
 
 export const metadata = {
   title: 'Education',
@@ -29,17 +30,22 @@ export default async function EducationPage() {
             {/* Glassmorphic Event Card */}
             <div className="p-6 md:p-8 rounded-3xl glass-panel hover:border-primary/20 transition-all duration-300 space-y-4">
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-primary font-bold text-lg md:text-xl">
-                    <GraduationCap className="w-5 h-5 shrink-0" />
-                    <h2>{edu.degree}</h2>
-                  </div>
-                  <h3 className="font-semibold text-foreground/90">{edu.institution}</h3>
-                  {edu.field_of_study && (
-                    <p className="text-xs text-muted-foreground font-semibold">
-                      Field: {edu.field_of_study}
-                    </p>
+                <div className="flex gap-4 items-start">
+                  {edu.logo_url && (
+                    <SafeSchoolLogo src={edu.logo_url} alt={edu.institution} />
                   )}
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-primary font-bold text-lg md:text-xl">
+                      <GraduationCap className="w-5 h-5 shrink-0" />
+                      <h2>{edu.degree}</h2>
+                    </div>
+                    <h3 className="font-semibold text-foreground/90">{edu.institution}</h3>
+                    {edu.field_of_study && (
+                      <p className="text-xs text-muted-foreground font-semibold">
+                        Field: {edu.field_of_study}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 {/* Metadata badges */}
