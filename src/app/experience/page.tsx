@@ -6,6 +6,8 @@ export const metadata = {
   description: 'Professional career timeline, internships, and roles.',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function ExperiencePage() {
   const experiences = await getExperience()
 

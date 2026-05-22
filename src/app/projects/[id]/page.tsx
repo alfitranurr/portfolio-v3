@@ -5,6 +5,8 @@ import { ArrowLeft, ExternalLink, Calendar, BookOpen, Sparkles } from 'lucide-re
 import { Github } from '@/components/icons'
 import { getProjectById } from '@/lib/data-service'
 
+export const dynamic = 'force-dynamic'
+
 interface PageProps {
   params: Promise<{ id: string }>
 }

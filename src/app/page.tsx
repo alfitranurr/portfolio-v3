@@ -4,6 +4,8 @@ import { Github, Linkedin } from '@/components/icons'
 import { getProfile, getProjects } from '@/lib/data-service'
 import { SkillsGrid } from '@/components/skills-grid'
 
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   const profile = await getProfile()
   const projects = await getProjects()
@@ -42,7 +44,7 @@ export default async function HomePage() {
               {profile.headline}
             </p>
             <div className="pt-1">
-              <span className="inline-block text-primary text-xs uppercase font-extrabold tracking-widest bg-primary/10 px-3 py-1 rounded-full">
+              <span className="inline-block text-primary text-xs uppercase font-extrabold tracking-widest bg-primary/10 border border-primary/20 px-3 py-1 rounded-full animate-pulse">
                 Available for Opportunities
               </span>
             </div>
