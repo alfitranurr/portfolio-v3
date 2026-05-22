@@ -400,6 +400,7 @@ export async function saveEducationAction(eduData: any) {
       end_date: eduData.end_date || null,
       gpa: eduData.gpa ? String(eduData.gpa) : null,
       description: eduData.description,
+      logo_url: eduData.logo_url || null,
       updated_at: new Date().toISOString()
     }
 
@@ -675,3 +676,48 @@ export async function deleteCertificateAction(id: string) {
     return { success: false, error: err.message }
   }
 }
+
+export async function uploadAssetAction(formData: FormData) {
+  const file = formData.get('file') as File | null
+  if (!file || file.size === 0) {
+    return { success: false, error: 'No file provided' }
+  }
+
+  const cookieStore = await cookies()
+  if (!hasSupabaseConfig()) {
+    try {
+      const buffer = await file.arrayBuffer()
+      const base64 = Buffer.from(buffer).toString('base64')
+      const dataUrl = `data:${file.type};base64,${base64}`
+      return { success: true, url: dataUrl }
+    } catch (e: any) {
+      console.error('Mock upload fail', e)
+      return { success: false, error: 'Failed to read file in mock mode' }
+    }
+  }
+
+  try {
+    const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized admin user' }
+    }
+
+    const ext = file.name.split('.').pop()
+    const fileName = `edu-logo-${Date.now()}.${ext}`
+    const { error: uploadError } = await supabase.storage
+      .from('portfolio-assets')
+      .upload(fileName, file, { upsert: true, contentType: file.type })
+    
+    if (uploadError) throw uploadError
+    const { data: { publicUrl } } = supabase.storage
+      .from('portfolio-assets')
+      .getPublicUrl(fileName)
+    
+    return { success: true, url: publicUrl }
+  } catch (err: any) {
+    console.error('uploadAssetAction error:', err)
+    return { success: false, error: err.message }
+  }
+}
+

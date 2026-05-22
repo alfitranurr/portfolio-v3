@@ -37,6 +37,7 @@ export interface Education {
   end_date: string | null
   gpa: number | string | null
   description: string | null
+  logo_url?: string | null
 }
 
 export interface Experience {

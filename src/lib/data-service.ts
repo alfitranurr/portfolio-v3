@@ -142,7 +142,8 @@ export const MOCK_EDUCATION: Education[] = [
     start_date: "2022-09-01",
     end_date: "2026-06-30",
     gpa: 3.92,
-    description: "Focused on business intelligence, statistics, and machine learning. Recipient of National Academic Scholarship. Completed thesis on Deep Learning for crop yield forecasting."
+    description: "Focused on business intelligence, statistics, and machine learning. Recipient of National Academic Scholarship. Completed thesis on Deep Learning for crop yield forecasting.",
+    logo_url: null
   },
   {
     id: "mock-edu-2",
@@ -153,7 +154,8 @@ export const MOCK_EDUCATION: Education[] = [
     start_date: "2019-07-01",
     end_date: "2022-06-30",
     gpa: 3.88,
-    description: "Competed in National Mathematics Olympiad. Leader of Informatics Student Association."
+    description: "Competed in National Mathematics Olympiad. Leader of Informatics Student Association.",
+    logo_url: null
   }
 ]
 

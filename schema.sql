@@ -69,6 +69,7 @@ CREATE TABLE public.education (
   end_date DATE, -- NULL represents "Present" or ongoing
   gpa VARCHAR(50),
   description TEXT,
+  logo_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
@@ -181,3 +182,9 @@ CREATE POLICY "Allow authenticated delete from portfolio-assets"
 ON storage.objects FOR DELETE
 TO authenticated
 USING (bucket_id = 'portfolio-assets');
+
+-- ====================================================
+-- MIGRATION: RUN THIS IF TABLE ALREADY EXISTS
+-- ====================================================
+-- ALTER TABLE public.education ADD COLUMN logo_url TEXT;
+
