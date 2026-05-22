@@ -7,10 +7,10 @@ export const dynamic = 'force-dynamic'
 export default async function AdminEducationPage() {
   const education = await getEducation()
 
-  // Ensure gpa is mapped as number | null
+  // Ensure gpa is mapped as string | null
   const formattedEducation = education.map((e: any) => ({
     ...e,
-    gpa: e.gpa ? parseFloat(e.gpa) : null
+    gpa: e.gpa ? String(e.gpa) : null
   }))
 
   return (

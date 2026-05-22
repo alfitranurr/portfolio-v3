@@ -276,7 +276,7 @@ export async function saveProjectAction(projectData: any) {
 
   try {
     const supabase = await createClient()
-    const isEdit = !!projectData.id
+    const isEdit = !!projectData.id && !projectData.id.startsWith('mock-')
     
     const dbPayload = {
       title: projectData.title,
@@ -334,6 +334,10 @@ export async function deleteProjectAction(id: string) {
     return { success: true }
   }
 
+  if (id.startsWith('mock-')) {
+    return { success: true }
+  }
+
   try {
     const supabase = await createClient()
     const { error } = await supabase
@@ -385,7 +389,7 @@ export async function saveEducationAction(eduData: any) {
 
   try {
     const supabase = await createClient()
-    const isEdit = !!eduData.id
+    const isEdit = !!eduData.id && !eduData.id.startsWith('mock-')
 
     const dbPayload = {
       institution: eduData.institution,
@@ -394,7 +398,7 @@ export async function saveEducationAction(eduData: any) {
       location: eduData.location,
       start_date: eduData.start_date,
       end_date: eduData.end_date || null,
-      gpa: eduData.gpa ? parseFloat(eduData.gpa) : null,
+      gpa: eduData.gpa ? String(eduData.gpa) : null,
       description: eduData.description,
       updated_at: new Date().toISOString()
     }
@@ -435,6 +439,10 @@ export async function deleteEducationAction(id: string) {
     }
     revalidatePath('/education')
     revalidatePath('/admin/education')
+    return { success: true }
+  }
+
+  if (id.startsWith('mock-')) {
     return { success: true }
   }
 
@@ -489,7 +497,7 @@ export async function saveExperienceAction(expData: any) {
 
   try {
     const supabase = await createClient()
-    const isEdit = !!expData.id
+    const isEdit = !!expData.id && !expData.id.startsWith('mock-')
 
     const dbPayload = {
       role: expData.role,
@@ -538,6 +546,10 @@ export async function deleteExperienceAction(id: string) {
     }
     revalidatePath('/experience')
     revalidatePath('/admin/experience')
+    return { success: true }
+  }
+
+  if (id.startsWith('mock-')) {
     return { success: true }
   }
 
@@ -592,7 +604,7 @@ export async function saveCertificateAction(certData: any) {
 
   try {
     const supabase = await createClient()
-    const isEdit = !!certData.id
+    const isEdit = !!certData.id && !certData.id.startsWith('mock-')
 
     const dbPayload = {
       title: certData.title,
@@ -641,6 +653,10 @@ export async function deleteCertificateAction(id: string) {
     }
     revalidatePath('/certificates')
     revalidatePath('/admin/certificates')
+    return { success: true }
+  }
+
+  if (id.startsWith('mock-')) {
     return { success: true }
   }
 

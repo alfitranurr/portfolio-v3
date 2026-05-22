@@ -27,7 +27,7 @@ interface Education {
   location: string | null
   start_date: string
   end_date: string | null
-  gpa: number | null
+  gpa: string | null
   description: string | null
   created_at?: string
   updated_at?: string
@@ -281,13 +281,10 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                     Grade / GPA (e.g. 3.92)
                   </label>
                   <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max="10"
+                    type="text"
                     value={editingItem.gpa ?? ''}
-                    onChange={e => setEditingItem(prev => ({ ...prev, gpa: e.target.value ? parseFloat(e.target.value) : null }))}
-                    placeholder="e.g. 3.92"
+                    onChange={e => setEditingItem(prev => ({ ...prev, gpa: e.target.value || null }))}
+                    placeholder="e.g. 3.92, 4.00/4.00, or 85.09/100"
                     className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50"
                   />
                 </div>
@@ -385,7 +382,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                       </div>
                       {item.gpa && (
                         <span className="px-2.5 py-1 rounded-xl bg-primary/10 text-primary text-[10px] font-black tracking-wide shrink-0">
-                          GPA: {Number(item.gpa).toFixed(2)}
+                          GPA: {item.gpa}
                         </span>
                       )}
                     </div>

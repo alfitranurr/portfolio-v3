@@ -65,7 +65,7 @@ export default async function EducationPage() {
               {edu.gpa && (
                 <div className="inline-flex items-center gap-1 text-xs font-extrabold text-primary bg-primary/10 px-2.5 py-1 rounded-lg border border-primary/20">
                   <Award className="w-3.5 h-3.5" />
-                  <span>GPA: {Number(edu.gpa).toFixed(2)}</span>
+                  <span>GPA: {edu.gpa}</span>
                 </div>
               )}
 

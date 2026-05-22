@@ -67,7 +67,7 @@ CREATE TABLE public.education (
   location VARCHAR(255),
   start_date DATE NOT NULL,
   end_date DATE, -- NULL represents "Present" or ongoing
-  gpa NUMERIC(3, 2),
+  gpa VARCHAR(50),
   description TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
@@ -148,3 +148,36 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE OR REPLACE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- ====================================================
+-- 7. STORAGE SETUP & RLS POLICIES FOR PORTFOLIO-ASSETS
+-- ====================================================
+
+-- Create the bucket if it doesn't exist
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('portfolio-assets', 'portfolio-assets', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+-- Policy 1: Allow public read access to the portfolio-assets bucket
+CREATE POLICY "Allow public read access to portfolio-assets"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'portfolio-assets');
+
+-- Policy 2: Allow authenticated users (admin) to upload files
+CREATE POLICY "Allow authenticated upload to portfolio-assets"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK (bucket_id = 'portfolio-assets');
+
+-- Policy 3: Allow authenticated users (admin) to update files
+CREATE POLICY "Allow authenticated update to portfolio-assets"
+ON storage.objects FOR UPDATE
+TO authenticated
+USING (bucket_id = 'portfolio-assets')
+WITH CHECK (bucket_id = 'portfolio-assets');
+
+-- Policy 4: Allow authenticated users (admin) to delete files
+CREATE POLICY "Allow authenticated delete from portfolio-assets"
+ON storage.objects FOR DELETE
+TO authenticated
+USING (bucket_id = 'portfolio-assets');
