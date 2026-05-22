@@ -7,7 +7,7 @@ import { SkillsGrid } from '@/components/skills-grid'
 export default async function HomePage() {
   const profile = await getProfile()
   const projects = await getProjects()
-  const featuredProjects = projects.filter(p => p.is_featured).slice(0, 3)
+  const featuredProjects = projects.filter(p => p.is_featured).slice(0, 6)
 
   return (
     <div className="space-y-16">
