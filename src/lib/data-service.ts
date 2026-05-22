@@ -1,0 +1,454 @@
+import { createClient } from '@/lib/supabase/server'
+import { cookies } from 'next/headers'
+import { Profile, Project, Education, Experience, Certificate } from '@/lib/types'
+
+// 1. MOCK PROFILE
+export const MOCK_PROFILE: Profile = {
+  id: "mock-admin-id",
+  name: "Al Fitra Nur Ramadhani",
+  headline: "Data Enthusiast & Scientist",
+  about_me: "I am a Data Science professional passionate about uncovering hidden insights from complex datasets and building interactive web solutions. Specializing in Machine Learning, Statistical Analysis, and Full-Stack development, I bridge the gap between rigorous analytics and production-ready applications.",
+  avatar_url: null,
+  resume_url: null,
+  instagram_url: "https://www.instagram.com/rmdhani_ii",
+  linkedin_url: "https://www.linkedin.com/in/al-fitra-nur-ramadhani/",
+  github_url: "https://github.com/alfitranurr"
+}
+
+
+// 3. MOCK PROJECTS
+export const MOCK_PROJECTS: Project[] = [
+  {
+    id: "mock-proj-1",
+    title: "Predictive Customer Churn Pipeline",
+    description: "Built a production-ready machine learning pipeline using XGBoost to predict customer attrition with 92% accuracy, highlighting key risk drivers in a Tableau dashboard.",
+    category: "data",
+    sub_category: "Data Analytics Projects",
+    cover_image: null,
+    github_url: "https://github.com/alfitranurr",
+    demo_url: null,
+    notebook_url: "https://colab.research.google.com",
+    embed_code: null,
+    is_featured: true,
+    pinned_order: 1,
+    created_at: "2026-01-15T00:00:00Z",
+    content: `## Executive Summary
+This project analyzes customer attrition using machine learning techniques to help a telecommunication company identify high-risk accounts and formulate retention strategies.
+
+### Dataset
+The analysis is based on the Telco Churn dataset containing **7,043 customer accounts** with 21 demographic, billing, and usage metrics.
+
+### Methodology
+1. **Exploratory Data Analysis (EDA)**: Identified correlations between contract types, tenure, and churn rates.
+2. **Feature Engineering**: Normalized numerical metrics, handled missing value imputations, and encoded categorical fields.
+3. **Modeling**: Benchmarked Logistic Regression, Random Forest, and XGBoost models.
+4. **Evaluation**: XGBoost yielded the best results, achieving a ROC-AUC score of **0.94** and overall accuracy of **92%** on test partitions.
+
+\`\`\`python
+# Training sample code
+import xgboost as xgb
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = xgb.XGBClassifier(max_depth=5, learning_rate=0.1, n_estimators=100)
+model.fit(X_train, y_train)
+\`\`\`
+`
+  },
+  {
+    id: "mock-proj-2",
+    title: "Computer Vision Traffic Classifier",
+    description: "Designed a convolutional neural network (CNN) in PyTorch to classify and count vehicles in real-time urban traffic streams, decreasing telemetry latency by 35%.",
+    category: "data",
+    sub_category: "Artificial Intelligence Projects",
+    cover_image: null,
+    github_url: "https://github.com/alfitranurr",
+    demo_url: null,
+    notebook_url: null,
+    embed_code: null,
+    is_featured: true,
+    pinned_order: 2,
+    created_at: "2026-02-10T00:00:00Z",
+    content: `## Deep Learning for Urban Mobility
+An automated video analytics pipeline using PyTorch and OpenCV to identify, count, and classify urban vehicles (sedans, trucks, motorbikes) at complex intersections.
+
+### Architecture
+- **Model**: Custom ResNet-18 backbone with transfer learning.
+- **Data Augmentation**: Albumentations for light, perspective, and noise simulation.
+- **Deployment**: ONNX Runtime wrapper integrated with a fast API.
+
+### Key Results
+- Multi-class vehicle classification accuracy: **96.8%**.
+- Frame rate throughput: **42 FPS** on a single GTX 1080Ti.
+`
+  },
+  {
+    id: "mock-proj-3",
+    title: "Interactive Global Supply Chain Dashboard",
+    description: "Designed and implemented an interactive logistics dashboard in Tableau tracking shipment delays, saving logistic dispatch managers over 10 hours a week.",
+    category: "data",
+    sub_category: "Data Visualization Projects",
+    cover_image: null,
+    github_url: "https://github.com/alfitranurr",
+    demo_url: null,
+    notebook_url: null,
+    embed_code: null,
+    is_featured: true,
+    pinned_order: 3,
+    created_at: "2026-03-05T00:00:00Z",
+    content: `## Tableau Global Supply Chain Analysis
+An interactive visualization tracking international transport routes, warehouse inventory levels, and logistics delays.
+
+### Core Features
+- Map overlays showing flight & cargo routes
+- Gantt charts for shipment delivery delays
+- Dropdowns for supplier-specific filtering
+- Integrated forecasting model indicating bottleneck zones
+`
+  },
+  {
+    id: "mock-proj-4",
+    title: "Gen-Z E-Commerce UI System",
+    description: "A fast, responsive web application showcasing an intuitive checkout experience designed with Tailwind CSS, Next.js, and glassmorphic designs.",
+    category: "non-data",
+    sub_category: "Web Development Projects",
+    cover_image: null,
+    github_url: "https://github.com/alfitranurr",
+    demo_url: null,
+    notebook_url: null,
+    embed_code: null,
+    is_featured: false,
+    pinned_order: 0,
+    created_at: "2026-04-18T00:00:00Z",
+    content: `## E-Commerce Visual Aesthetics
+A design-first client interface focusing on animations, dark theme setups, and frictionless item checkout.
+
+### Highlights
+- Framer Motion slide-in animations.
+- LocalState-cached cart items.
+- Fully typed forms with Zod and React Hook Form.
+`
+  }
+]
+
+// 4. MOCK EDUCATION
+export const MOCK_EDUCATION: Education[] = [
+  {
+    id: "mock-edu-1",
+    institution: "State University of Indonesia",
+    degree: "Bachelor of Science",
+    field_of_study: "Information Systems & Data Analytics",
+    location: "Jakarta, Indonesia",
+    start_date: "2022-09-01",
+    end_date: "2026-06-30",
+    gpa: 3.92,
+    description: "Focused on business intelligence, statistics, and machine learning. Recipient of National Academic Scholarship. Completed thesis on Deep Learning for crop yield forecasting."
+  },
+  {
+    id: "mock-edu-2",
+    institution: "Semarang Science High School",
+    degree: "High School Diploma",
+    field_of_study: "Natural Sciences & Mathematics",
+    location: "Semarang, Indonesia",
+    start_date: "2019-07-01",
+    end_date: "2022-06-30",
+    gpa: 3.88,
+    description: "Competed in National Mathematics Olympiad. Leader of Informatics Student Association."
+  }
+]
+
+// 5. MOCK EXPERIENCE
+export const MOCK_EXPERIENCE: Experience[] = [
+  {
+    id: "mock-exp-1",
+    role: "Data Analyst Intern",
+    company: "Astra International",
+    location: "Jakarta, Indonesia (Hybrid)",
+    start_date: "2025-01-10",
+    end_date: null,
+    is_current: true,
+    description: [
+      "Optimized operational ETL pipelines using Python and SQL, reducing automated report latency by 25%.",
+      "Built 12+ dashboard pages in Tableau to analyze automobile supply chains and shipment durations.",
+      "Collaborated with data engineers to cleanse raw web event streams and identify product click-through patterns."
+    ]
+  },
+  {
+    id: "mock-exp-2",
+    role: "Data Science Project Lead",
+    company: "University Research Laboratory",
+    location: "Depok, Indonesia",
+    start_date: "2024-02-15",
+    end_date: "2024-12-20",
+    is_current: false,
+    description: [
+      "Led a team of 4 students to build predictive modeling scripts on local agricultural crop yields.",
+      "Applied hyperparameter optimization on Random Forest and LightGBM models, boosting F1-score to 0.89.",
+      "Presented project metrics at national student symposium and compiled project documentation."
+    ]
+  }
+]
+
+// 6. MOCK CERTIFICATES
+export const MOCK_CERTIFICATES: Certificate[] = [
+  {
+    id: "mock-cert-1",
+    title: "1st Place Winner - Data Hackathon",
+    issuer: "Informatics Association Indonesia",
+    issue_date: "2025-10-12",
+    credential_url: null,
+    credential_id: "HACK-2025-10",
+    category: "competition"
+  },
+  {
+    id: "mock-cert-2",
+    title: "Professional Data Scientist Certification",
+    issuer: "BNSP (National Certification Board)",
+    issue_date: "2025-05-18",
+    credential_url: "https://bnsp.go.id",
+    credential_id: "BNSP-DS-7718A",
+    category: "license_certification"
+  },
+  {
+    id: "mock-cert-3",
+    title: "Big Data & PySpark Foundations Workshop",
+    issuer: "Google Developer Student Clubs",
+    issue_date: "2024-11-04",
+    credential_url: null,
+    credential_id: null,
+    category: "seminar_workshop"
+  },
+  {
+    id: "mock-cert-4",
+    title: "Head of Publicity Committee",
+    issuer: "National Student Tech Festival",
+    issue_date: "2024-09-10",
+    credential_url: null,
+    credential_id: null,
+    category: "committee_organization"
+  }
+]
+
+// Helper checks if env variables exist
+function hasSupabaseConfig(): boolean {
+  return !!(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && 
+    process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http') &&
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  )
+}
+
+// PROFILE SERVICE
+export async function getProfile(): Promise<Profile> {
+  if (!hasSupabaseConfig()) {
+    try {
+      const cookieStore = await cookies()
+      const mockProfileStr = cookieStore.get('mock_profile')?.value
+      if (mockProfileStr) {
+        return JSON.parse(mockProfileStr)
+      }
+    } catch (e: any) {
+      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+        throw e
+      }
+      console.warn('Failed to parse mock profile from cookies', e)
+    }
+    return MOCK_PROFILE
+  }
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .limit(1)
+      .maybeSingle()
+
+    if (error || !data) {
+      console.warn('Profile fetch failed, using fallback mock data:', error?.message)
+      return MOCK_PROFILE
+    }
+    return data
+  } catch (err) {
+    console.warn('Profile connection error, using fallback:', err)
+    return MOCK_PROFILE
+  }
+}
+
+// PROJECTS SERVICE
+export async function getProjects(): Promise<Project[]> {
+  if (!hasSupabaseConfig()) {
+    try {
+      const cookieStore = await cookies()
+      const mockProjectsStr = cookieStore.get('mock_projects')?.value
+      if (mockProjectsStr) {
+        return JSON.parse(mockProjectsStr)
+      }
+    } catch (e: any) {
+      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+        throw e
+      }
+      console.warn('Failed to parse mock projects from cookies', e)
+    }
+    return MOCK_PROJECTS
+  }
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .order('pinned_order', { ascending: true })
+      .order('created_at', { ascending: false })
+
+    if (error || !data || data.length === 0) {
+      console.warn('Projects fetch failed, using fallback mock data:', error?.message)
+      return MOCK_PROJECTS
+    }
+    return data
+  } catch (err) {
+    console.warn('Projects connection error, using fallback:', err)
+    return MOCK_PROJECTS
+  }
+}
+
+export async function getProjectById(id: string): Promise<Project | null> {
+  if (!hasSupabaseConfig() || id.startsWith('mock-')) {
+    try {
+      const cookieStore = await cookies()
+      const mockProjectsStr = cookieStore.get('mock_projects')?.value
+      let list = MOCK_PROJECTS
+      if (mockProjectsStr) {
+        list = JSON.parse(mockProjectsStr)
+      }
+      return list.find(p => p.id === id) || null
+    } catch (e: any) {
+      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+        throw e
+      }
+      console.warn('Failed to parse mock project details from cookies', e)
+    }
+    return MOCK_PROJECTS.find(p => p.id === id) || null
+  }
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle()
+
+    if (error || !data) {
+      console.warn(`Project ID ${id} fetch failed, checking fallback:`, error?.message)
+      return MOCK_PROJECTS.find(p => p.id === id) || null
+    }
+    return data
+  } catch (err) {
+    console.warn('Project by id connection error, using fallback:', err)
+    return MOCK_PROJECTS.find(p => p.id === id) || null
+  }
+}
+
+// EDUCATION SERVICE
+export async function getEducation(): Promise<Education[]> {
+  if (!hasSupabaseConfig()) {
+    try {
+      const cookieStore = await cookies()
+      const mockEduStr = cookieStore.get('mock_education')?.value
+      if (mockEduStr) {
+        return JSON.parse(mockEduStr)
+      }
+    } catch (e: any) {
+      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+        throw e
+      }
+      console.warn('Failed to parse mock education from cookies', e)
+    }
+    return MOCK_EDUCATION
+  }
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('education')
+      .select('*')
+      .order('start_date', { ascending: false })
+
+    if (error || !data || data.length === 0) {
+      console.warn('Education fetch failed, using fallback mock data:', error?.message)
+      return MOCK_EDUCATION
+    }
+    return data
+  } catch (err) {
+    console.warn('Education connection error, using fallback:', err)
+    return MOCK_EDUCATION
+  }
+}
+
+// EXPERIENCE SERVICE
+export async function getExperience(): Promise<Experience[]> {
+  if (!hasSupabaseConfig()) {
+    try {
+      const cookieStore = await cookies()
+      const mockExpStr = cookieStore.get('mock_experience')?.value
+      if (mockExpStr) {
+        return JSON.parse(mockExpStr)
+      }
+    } catch (e: any) {
+      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+        throw e
+      }
+      console.warn('Failed to parse mock experience from cookies', e)
+    }
+    return MOCK_EXPERIENCE
+  }
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('experiences')
+      .select('*')
+      .order('start_date', { ascending: false })
+
+    if (error || !data || data.length === 0) {
+      console.warn('Experiences fetch failed, using fallback mock data:', error?.message)
+      return MOCK_EXPERIENCE
+    }
+    return data
+  } catch (err) {
+    console.warn('Experiences connection error, using fallback:', err)
+    return MOCK_EXPERIENCE
+  }
+}
+
+// CERTIFICATES SERVICE
+export async function getCertificates(): Promise<Certificate[]> {
+  if (!hasSupabaseConfig()) {
+    try {
+      const cookieStore = await cookies()
+      const mockCertStr = cookieStore.get('mock_certificates')?.value
+      if (mockCertStr) {
+        return JSON.parse(mockCertStr)
+      }
+    } catch (e: any) {
+      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+        throw e
+      }
+      console.warn('Failed to parse mock certificates from cookies', e)
+    }
+    return MOCK_CERTIFICATES
+  }
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('certificates')
+      .select('*')
+      .order('issue_date', { ascending: false })
+
+    if (error || !data || data.length === 0) {
+      console.warn('Certificates fetch failed, using fallback mock data:', error?.message)
+      return MOCK_CERTIFICATES
+    }
+    return data
+  } catch (err) {
+    console.warn('Certificates connection error, using fallback:', err)
+    return MOCK_CERTIFICATES
+  }
+}
+
