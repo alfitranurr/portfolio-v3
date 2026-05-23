@@ -15,7 +15,7 @@ const CATEGORY_MAP = {
   competition: 'Competitions',
   seminar_workshop: 'Seminars & Workshops',
   license_certification: 'Licenses & Certifications',
-  committee_organization: 'Committees & Organizations',
+  committee_organization: 'Work & Organizations',
 }
 
 const ICON_MAP = {
@@ -24,6 +24,14 @@ const ICON_MAP = {
   license_certification: ShieldCheck,
   committee_organization: Users,
 }
+
+const BADGE_MAP = {
+  competition: 'Competition',
+  seminar_workshop: 'Seminar & Workshop',
+  license_certification: 'License & Certification',
+  committee_organization: 'Work & Organization',
+}
+
 
 export function CertificatesFilterList({ initialCertificates }: CertificatesFilterListProps) {
   const [activeCategory, setActiveCategory] = React.useState<string>('All')
@@ -79,7 +87,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                       <Icon className="w-5 h-5" />
                     </div>
                     <span className="text-[9px] font-bold text-muted-foreground uppercase bg-white/5 border border-slate-200/10 dark:border-slate-800/10 px-2 py-0.5 rounded">
-                      {cert.category.replace('_', ' ')}
+                      {BADGE_MAP[cert.category as keyof typeof BADGE_MAP] || cert.category.replace('_', ' ')}
                     </span>
                   </div>
 
