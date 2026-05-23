@@ -2,8 +2,8 @@
 
 import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Award, Calendar, ExternalLink, ShieldCheck, Trophy, Landmark, Users } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Award, Calendar, ExternalLink, ShieldCheck, Trophy, Landmark, Users, Search } from 'lucide-react'
+import { cn, getDirectImageUrl } from '@/lib/utils'
 import { Certificate } from '@/lib/types'
 
 interface CertificatesFilterListProps {
@@ -36,22 +36,45 @@ const BADGE_MAP = {
 export function CertificatesFilterList({ initialCertificates }: CertificatesFilterListProps) {
   const [activeCategory, setActiveCategory] = React.useState<string>('All')
 
+  const [search, setSearch] = React.useState('')
+
   const categories = ['All', 'competition', 'seminar_workshop', 'license_certification', 'committee_organization']
 
-  const filteredCertificates = activeCategory === 'All'
-    ? initialCertificates
-    : initialCertificates.filter(c => c.category === activeCategory)
+  const filteredCertificates = initialCertificates.filter(c => {
+    const matchesCategory = activeCategory === 'All' || c.category === activeCategory
+    const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
+      c.issuer.toLowerCase().includes(search.toLowerCase()) ||
+      (c.credential_id && c.credential_id.toLowerCase().includes(search.toLowerCase()))
+    return matchesCategory && matchesSearch
+  })
 
   return (
     <div className="space-y-8">
+      {/* Search and Stats */}
+      <div className="flex justify-between items-center gap-4">
+        <div className="relative w-full max-w-xs">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
+          <input
+            type="text"
+            placeholder="Search certificates..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
+          />
+        </div>
+        <span className="text-xs text-muted-foreground font-semibold shrink-0">
+          Showing {filteredCertificates.length} {filteredCertificates.length === 1 ? 'entry' : 'entries'}
+        </span>
+      </div>
+
       {/* Category Filters */}
-      <div className="flex flex-wrap gap-2 justify-center">
+      <div className="flex flex-wrap gap-1.5 pt-1">
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
             className={cn(
-              "px-4 py-2 rounded-full text-xs font-semibold border transition-all duration-200 cursor-pointer",
+              "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all duration-200 cursor-pointer",
               activeCategory === cat
                 ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/10"
                 : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-foreground/80 hover:text-foreground"
@@ -78,8 +101,11 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3 }}
-                className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-all duration-300"
+                className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-all duration-300 relative overflow-hidden"
               >
+                {/* Subtle top indicator bar */}
+                <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+
                 <div className="space-y-4">
                   {/* Category icon header */}
                   <div className="flex items-center justify-between">
@@ -90,6 +116,19 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                       {BADGE_MAP[cert.category as keyof typeof BADGE_MAP] || cert.category.replace('_', ' ')}
                     </span>
                   </div>
+
+                  {/* Image container */}
+                  {cert.image_url && (
+                    <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-slate-200/10 to-slate-200/5 dark:from-slate-800/10 dark:to-slate-800/5 border border-slate-200/10 dark:border-slate-800/10 flex items-center justify-center">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img 
+                        src={getDirectImageUrl(cert.image_url)} 
+                        alt={cert.title} 
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                  )}
 
                   {/* Title & Info */}
                   <div className="space-y-1">
@@ -112,14 +151,14 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                     </span>
                   </span>
                   
-                  {cert.credential_url && (
+                  {cert.image_url && (
                     <a
-                      href={cert.credential_url}
+                      href={getDirectImageUrl(cert.image_url)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="ml-auto inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline cursor-pointer"
                     >
-                      <span>Verify Certificate</span>
+                      <span>View Certificate</span>
                       <ExternalLink className="w-3.5 h-3.5" />
                     </a>
                   )}

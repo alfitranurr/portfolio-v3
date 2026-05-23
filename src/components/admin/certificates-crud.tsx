@@ -18,7 +18,7 @@ import {
   FileCheck
 } from 'lucide-react'
 import { saveCertificateAction, deleteCertificateAction } from '@/app/admin/actions'
-import { cn } from '@/lib/utils'
+import { cn, getDirectImageUrl } from '@/lib/utils'
 
 interface Certificate {
   id: string
@@ -37,6 +37,16 @@ interface CertificatesCrudProps {
   initialCertificates: Certificate[]
 }
 
+const CATEGORY_MAP = {
+  All: 'All Credentials',
+  competition: 'Competitions',
+  seminar_workshop: 'Seminars & Workshops',
+  license_certification: 'Licenses & Certifications',
+  committee_organization: 'Work & Organizations',
+}
+
+const CATEGORIES = ['All', 'competition', 'seminar_workshop', 'license_certification', 'committee_organization']
+
 const DEFAULT_CERTIFICATE: Omit<Certificate, 'id'> = {
   title: '',
   issuer: '',
@@ -50,6 +60,7 @@ const DEFAULT_CERTIFICATE: Omit<Certificate, 'id'> = {
 export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps) {
   const [certificates, setCertificates] = React.useState<Certificate[]>(initialCertificates)
   const [search, setSearch] = React.useState('')
+  const [activeCategory, setActiveCategory] = React.useState<string>('All')
   const [editingItem, setEditingItem] = React.useState<Partial<Certificate> | null>(null)
   const [isPending, setIsPending] = React.useState(false)
   const [notification, setNotification] = React.useState<{ success: boolean; message: string } | null>(null)
@@ -58,11 +69,13 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
     setCertificates(initialCertificates)
   }, [initialCertificates])
 
-  const filtered = certificates.filter(c => 
-    c.title.toLowerCase().includes(search.toLowerCase()) ||
-    c.issuer.toLowerCase().includes(search.toLowerCase()) ||
-    c.category.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = certificates.filter(c => {
+    const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
+      c.issuer.toLowerCase().includes(search.toLowerCase()) ||
+      c.category.toLowerCase().includes(search.toLowerCase())
+    const matchesCategory = activeCategory === 'All' || c.category === activeCategory
+    return matchesSearch && matchesCategory
+  })
 
   const handleEdit = (item: Certificate) => {
     const issue_date = item.issue_date ? item.issue_date.split('T')[0] : ''
@@ -256,33 +269,18 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                   />
                 </div>
 
-                {/* Verification details */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                      Credential ID
-                    </label>
-                    <input
-                      type="text"
-                      value={editingItem.credential_id || ''}
-                      onChange={e => setEditingItem(prev => ({ ...prev, credential_id: e.target.value }))}
-                      placeholder="BNSP-DS-7718A"
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                      Verification URL
-                    </label>
-                    <input
-                      type="url"
-                      value={editingItem.credential_url || ''}
-                      onChange={e => setEditingItem(prev => ({ ...prev, credential_url: e.target.value }))}
-                      placeholder="https://verify.com"
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
-                    />
-                  </div>
+                {/* Credential ID */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Credential ID
+                  </label>
+                  <input
+                    type="text"
+                    value={editingItem.credential_id || ''}
+                    onChange={e => setEditingItem(prev => ({ ...prev, credential_id: e.target.value }))}
+                    placeholder="BNSP-DS-7718A"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                  />
                 </div>
 
                 {/* Image URL preview */}
@@ -351,6 +349,25 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
             </span>
           </div>
 
+          {/* Category Filters */}
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setActiveCategory(cat)}
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all duration-200 cursor-pointer",
+                  activeCategory === cat
+                    ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/10"
+                    : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-foreground/80 hover:text-foreground"
+                )}
+              >
+                {CATEGORY_MAP[cat as keyof typeof CATEGORY_MAP]}
+              </button>
+            ))}
+          </div>
+
           {filtered.length === 0 ? (
             <div className="p-12 text-center rounded-3xl border border-dashed border-slate-200/10 dark:border-slate-800/10 bg-white/5 space-y-3">
               <Award className="w-10 h-10 text-muted-foreground/40 mx-auto" />
@@ -381,7 +398,19 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[10px] text-muted-foreground font-semibold pt-0.5">
+                    {cert.image_url && (
+                      <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-950/40 border border-slate-200/10 dark:border-slate-800/10 flex items-center justify-center max-w-[160px] mt-2">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img 
+                          src={getDirectImageUrl(cert.image_url)} 
+                          alt={cert.title} 
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[10px] text-muted-foreground font-semibold pt-0.5 mt-2">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3.5 h-3.5" />
                         <span>Issued: {new Date(cert.issue_date).toLocaleDateString()}</span>
@@ -397,14 +426,14 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
 
                   <div className="flex items-center justify-between pt-4 border-t border-slate-200/5 dark:border-slate-800/5 mt-4">
                     <div>
-                      {cert.credential_url && (
+                      {cert.image_url && (
                         <a
-                          href={cert.credential_url}
+                          href={getDirectImageUrl(cert.image_url)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-[10px] text-primary hover:underline font-bold flex items-center gap-1"
                         >
-                          <span>Verify</span>
+                          <span>View</span>
                           <ExternalLink className="w-3 h-3" />
                         </a>
                       )}
