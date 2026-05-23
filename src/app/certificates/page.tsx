@@ -16,7 +16,7 @@ export default async function CertificatesPage() {
       {/* Page Header */}
       <div className="space-y-1">
         <h1 className="text-2xl md:text-4xl font-black tracking-tight">Credentials & Certifications</h1>
-        <p className="text-sm text-muted-foreground">Catalog of verified licenses, competition wins, and organization committees</p>
+        <p className="text-sm text-muted-foreground">Catalog of verified licenses, competition wins, and work organizations</p>
       </div>
 
       {/* Filter list */}

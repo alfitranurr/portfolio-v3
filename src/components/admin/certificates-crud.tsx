@@ -131,7 +131,7 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
       case 'competition': return 'Competition Award'
       case 'seminar_workshop': return 'Seminar & Workshop'
       case 'license_certification': return 'License & Certification'
-      case 'committee_organization': return 'Committee & Organization'
+      case 'committee_organization': return 'Work & Organization'
       default: return category
     }
   }
@@ -235,7 +235,7 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                     <option value="competition">Competition Award</option>
                     <option value="seminar_workshop">Seminar & Workshop</option>
                     <option value="license_certification">License & Certification</option>
-                    <option value="committee_organization">Committee & Organization</option>
+                    <option value="committee_organization">Work & Organization</option>
                   </select>
                 </div>
               </div>
