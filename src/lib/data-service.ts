@@ -173,7 +173,9 @@ export const MOCK_EXPERIENCE: Experience[] = [
       "Optimized operational ETL pipelines using Python and SQL, reducing automated report latency by 25%.",
       "Built 12+ dashboard pages in Tableau to analyze automobile supply chains and shipment durations.",
       "Collaborated with data engineers to cleanse raw web event streams and identify product click-through patterns."
-    ]
+    ],
+    category: 'professional',
+    logo_url: null
   },
   {
     id: "mock-exp-2",
@@ -187,7 +189,9 @@ export const MOCK_EXPERIENCE: Experience[] = [
       "Led a team of 4 students to build predictive modeling scripts on local agricultural crop yields.",
       "Applied hyperparameter optimization on Random Forest and LightGBM models, boosting F1-score to 0.89.",
       "Presented project metrics at national student symposium and compiled project documentation."
-    ]
+    ],
+    category: 'committee_organization',
+    logo_url: null
   }
 ]
 

@@ -17,10 +17,12 @@ import {
   ArrowLeft,
   ListTodo,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  UploadCloud,
+  Image as ImageIcon
 } from 'lucide-react'
-import { saveExperienceAction, deleteExperienceAction } from '@/app/admin/actions'
-import { cn } from '@/lib/utils'
+import { saveExperienceAction, deleteExperienceAction, uploadAssetAction } from '@/app/admin/actions'
+import { cn, getDirectImageUrl } from '@/lib/utils'
 
 interface Experience {
   id: string
@@ -31,12 +33,21 @@ interface Experience {
   end_date: string | null
   description: string[]
   is_current: boolean | null
+  category?: 'professional' | 'committee_organization'
+  logo_url?: string | null
   created_at?: string
   updated_at?: string
 }
 
 interface ExperienceCrudProps {
   initialExperience: Experience[]
+}
+
+const CATEGORIES = ['All', 'professional', 'committee_organization']
+const CATEGORY_MAP = {
+  All: 'All Experiences',
+  professional: 'Professional Experience',
+  committee_organization: 'Committee & Organization'
 }
 
 const DEFAULT_EXPERIENCE: Omit<Experience, 'id'> = {
@@ -46,31 +57,78 @@ const DEFAULT_EXPERIENCE: Omit<Experience, 'id'> = {
   start_date: '',
   end_date: '',
   description: [],
-  is_current: false
+  is_current: false,
+  category: 'professional',
+  logo_url: ''
 }
 
 export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
   const [experienceList, setExperienceList] = React.useState<Experience[]>(initialExperience)
   const [search, setSearch] = React.useState('')
+  const [activeCategory, setActiveCategory] = React.useState<string>('All')
   const [editingItem, setEditingItem] = React.useState<Partial<Experience> | null>(null)
   const [descriptionBullets, setDescriptionBullets] = React.useState<string[]>([])
   const [isPending, setIsPending] = React.useState(false)
+  const [isUploading, setIsUploading] = React.useState(false)
   const [notification, setNotification] = React.useState<{ success: boolean; message: string } | null>(null)
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    setNotification(null)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await uploadAssetAction(formData)
+      if (res.success && res.url) {
+        setEditingItem(prev => ({ ...prev, logo_url: res.url }))
+        setNotification({ success: true, message: 'Logo uploaded successfully.' })
+      } else {
+        setNotification({ success: false, message: res.error || 'Failed to upload logo.' })
+      }
+    } catch (err: any) {
+      console.error(err)
+      setNotification({ success: false, message: 'Error uploading logo.' })
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  const handleRemoveLogo = () => {
+    setEditingItem(prev => ({ ...prev, logo_url: null }))
+  }
 
   React.useEffect(() => {
     setExperienceList(initialExperience)
   }, [initialExperience])
 
-  const filtered = experienceList.filter(e => 
-    e.role.toLowerCase().includes(search.toLowerCase()) ||
-    e.company.toLowerCase().includes(search.toLowerCase()) ||
-    (e.location || '').toLowerCase().includes(search.toLowerCase())
-  )
+  React.useEffect(() => {
+    const stored = sessionStorage.getItem('experience_admin_notification')
+    if (stored) {
+      try {
+        setNotification(JSON.parse(stored))
+      } catch (e) {
+        console.error(e)
+      }
+      sessionStorage.removeItem('experience_admin_notification')
+    }
+  }, [])
+
+  const filtered = experienceList.filter(e => {
+    const matchesSearch = e.role.toLowerCase().includes(search.toLowerCase()) ||
+      e.company.toLowerCase().includes(search.toLowerCase()) ||
+      (e.location || '').toLowerCase().includes(search.toLowerCase())
+    const matchesCategory = activeCategory === 'All' || (e.category || 'professional') === activeCategory
+    return matchesSearch && matchesCategory
+  })
 
   const handleEdit = (item: Experience) => {
     const start_date = item.start_date ? item.start_date.split('T')[0] : ''
     const end_date = item.end_date ? item.end_date.split('T')[0] : ''
-    setEditingItem({ ...item, start_date, end_date })
+    setEditingItem({ ...item, start_date, end_date, category: item.category || 'professional', logo_url: item.logo_url || '' })
     setDescriptionBullets(item.description || [])
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -155,6 +213,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
         if (editingItem.id) {
           setExperienceList(prev => prev.map(item => item.id === editingItem.id ? ((res.message || '').includes('Mock') ? { ...item, ...payload } as Experience : payload as Experience) : item))
         } else {
+          sessionStorage.setItem('experience_admin_notification', JSON.stringify({ success: true, message: res.message || 'Saved successfully.' }))
           window.location.reload()
           return
         }
@@ -269,6 +328,86 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                     placeholder="e.g. Jakarta, Indonesia"
                     className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                   />
+                </div>
+
+                {/* Logo Image */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Logo Image (Upload or URL)
+                  </label>
+                  
+                  <div className="flex items-center gap-4">
+                    {/* Preview box */}
+                    <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-200/20 dark:border-slate-800/10 bg-slate-200/5 flex items-center justify-center shrink-0">
+                      {editingItem.logo_url ? (
+                        <>
+                          <img
+                            src={getDirectImageUrl(editingItem.logo_url, 200)}
+                            alt="Logo preview"
+                            className="w-full h-full object-contain p-1 bg-white"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleRemoveLogo}
+                            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold cursor-pointer"
+                          >
+                            Remove
+                          </button>
+                        </>
+                      ) : (
+                        <ImageIcon className="w-6 h-6 text-muted-foreground/40" />
+                      )}
+                    </div>
+
+                    <div className="flex-1 space-y-2">
+                      <label className={cn(
+                        "w-full py-2.5 px-4 rounded-xl bg-white/5 border border-dashed border-slate-200/20 dark:border-slate-800/20 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
+                        isUploading && "opacity-50 pointer-events-none"
+                      )}>
+                        {isUploading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                            <span>Uploading...</span>
+                          </>
+                        ) : (
+                          <>
+                            <UploadCloud className="w-4 h-4 text-muted-foreground" />
+                            <span>{editingItem.logo_url ? 'Change Logo File' : 'Upload Logo File'}</span>
+                          </>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleLogoUpload}
+                          className="hidden"
+                          disabled={isUploading}
+                        />
+                      </label>
+                      
+                      <input
+                        type="text"
+                        value={editingItem.logo_url || ''}
+                        onChange={e => setEditingItem(prev => ({ ...prev, logo_url: e.target.value }))}
+                        placeholder="Or paste Logo Image URL (e.g. Google Drive link)"
+                        className="w-full px-3 py-1.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Category */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Category <span className="text-primary">*</span>
+                  </label>
+                  <select
+                    value={editingItem.category || 'professional'}
+                    onChange={e => setEditingItem(prev => ({ ...prev, category: e.target.value as any }))}
+                    className="w-full px-3 py-2.5 rounded-xl bg-slate-950 dark:bg-slate-900 border border-slate-200/10 dark:border-slate-800/10 text-foreground text-sm focus:outline-none focus:border-primary/50"
+                  >
+                    <option value="professional">Professional Experience</option>
+                    <option value="committee_organization">Committee & Organization</option>
+                  </select>
                 </div>
 
                 {/* Dates */}
@@ -448,6 +587,25 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
             </span>
           </div>
 
+          {/* Category Filters */}
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setActiveCategory(cat)}
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all duration-200 cursor-pointer",
+                  activeCategory === cat
+                    ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/10"
+                    : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-foreground/80 hover:text-foreground"
+                )}
+              >
+                {CATEGORY_MAP[cat as keyof typeof CATEGORY_MAP]}
+              </button>
+            ))}
+          </div>
+
           {filtered.length === 0 ? (
             <div className="p-12 text-center rounded-3xl border border-dashed border-slate-200/10 dark:border-slate-800/10 bg-white/5 space-y-3">
               <Briefcase className="w-10 h-10 text-muted-foreground/40 mx-auto" />
@@ -465,19 +623,35 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <h3 className="font-black text-sm md:text-base leading-tight text-foreground">
-                          {item.role}
-                        </h3>
-                        <p className="text-xs text-primary font-bold mt-1">
-                          {item.company}
-                        </p>
+                      <div className="flex items-start gap-3">
+                        {item.logo_url && (
+                          <div className="w-10 h-10 rounded-xl overflow-hidden bg-white p-1 flex items-center justify-center shrink-0 border border-slate-200/10">
+                            <img 
+                              src={getDirectImageUrl(item.logo_url, 100)} 
+                              alt={item.company} 
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                        )}
+                        <div>
+                          <h3 className="font-black text-sm md:text-base leading-tight text-foreground">
+                            {item.role}
+                          </h3>
+                          <p className="text-xs text-primary font-bold mt-1">
+                            {item.company}
+                          </p>
+                        </div>
                       </div>
-                      {item.is_current && (
-                        <span className="px-2.5 py-1 rounded-xl bg-primary/10 text-primary text-[10px] font-black tracking-wide shrink-0">
-                          Active
+                      <div className="flex flex-col items-end gap-1 shrink-0">
+                        {item.is_current && (
+                          <span className="px-2.5 py-1 rounded-xl bg-primary/10 text-primary text-[10px] font-black tracking-wide">
+                            Active
+                          </span>
+                        )}
+                        <span className="px-2 py-0.5 rounded-full bg-white/5 text-muted-foreground text-[9px] font-black uppercase tracking-wider">
+                          {item.category === 'committee_organization' ? 'Committee & Org' : 'Professional'}
                         </span>
-                      )}
+                      </div>
                     </div>
 
                     <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[10px] text-muted-foreground font-semibold pt-0.5">

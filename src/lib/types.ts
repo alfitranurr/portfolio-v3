@@ -49,6 +49,8 @@ export interface Experience {
   end_date: string | null
   description: string[]
   is_current: boolean
+  category?: 'professional' | 'committee_organization'
+  logo_url?: string | null
 }
 
 export interface Certificate {

@@ -19,7 +19,7 @@ import {
   Image as ImageIcon
 } from 'lucide-react'
 import { saveEducationAction, deleteEducationAction, uploadAssetAction } from '@/app/admin/actions'
-import { cn } from '@/lib/utils'
+import { cn, getDirectImageUrl } from '@/lib/utils'
 
 interface Education {
   id: string
@@ -277,10 +277,10 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                   />
                 </div>
 
-                {/* Logo Image Upload */}
+                {/* Logo Image */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    Institution Logo
+                    Institution Logo (Upload or URL)
                   </label>
                   
                   <div className="flex items-center gap-4">
@@ -289,7 +289,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                       {editingItem.logo_url ? (
                         <>
                           <img
-                            src={editingItem.logo_url}
+                            src={getDirectImageUrl(editingItem.logo_url, 200)}
                             alt="Logo preview"
                             className="w-full h-full object-contain p-1 bg-white"
                           />
@@ -306,7 +306,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                       )}
                     </div>
 
-                    <div className="flex-1">
+                    <div className="flex-1 space-y-2">
                       <label className={cn(
                         "w-full py-2.5 px-4 rounded-xl bg-white/5 border border-dashed border-slate-200/20 dark:border-slate-800/20 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
                         isUploading && "opacity-50 pointer-events-none"
@@ -319,7 +319,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                         ) : (
                           <>
                             <UploadCloud className="w-4 h-4 text-muted-foreground" />
-                            <span>{editingItem.logo_url ? 'Change Logo Image' : 'Upload Logo Image'}</span>
+                            <span>{editingItem.logo_url ? 'Change Logo File' : 'Upload Logo File'}</span>
                           </>
                         )}
                         <input
@@ -330,9 +330,14 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                           disabled={isUploading}
                         />
                       </label>
-                      <p className="text-[10px] text-muted-foreground mt-1.5">
-                        PNG, JPG, or WebP. Recommend square resolution.
-                      </p>
+                      
+                      <input
+                        type="text"
+                        value={editingItem.logo_url || ''}
+                        onChange={e => setEditingItem(prev => ({ ...prev, logo_url: e.target.value }))}
+                        placeholder="Or paste Logo Image URL (e.g. Google Drive link)"
+                        className="w-full px-3 py-1.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
+                      />
                     </div>
                   </div>
                 </div>
@@ -469,7 +474,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                       {item.logo_url && (
                         <div className="w-12 h-12 rounded-xl overflow-hidden bg-white flex items-center justify-center shrink-0 border border-slate-200/10 p-1">
                           <img 
-                            src={item.logo_url} 
+                            src={getDirectImageUrl(item.logo_url, 100)} 
                             alt={item.institution} 
                             className="w-full h-full object-contain"
                             onError={(e) => {
