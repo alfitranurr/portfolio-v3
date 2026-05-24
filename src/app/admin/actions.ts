@@ -508,6 +508,8 @@ export async function saveExperienceAction(expData: any) {
       end_date: expData.end_date || null,
       description: Array.isArray(expData.description) ? expData.description : expData.description.split('\n').filter(Boolean),
       is_current: expData.is_current,
+      category: expData.category || 'professional',
+      logo_url: expData.logo_url || null,
       updated_at: new Date().toISOString()
     }
 

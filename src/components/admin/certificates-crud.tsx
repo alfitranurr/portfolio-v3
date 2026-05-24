@@ -69,6 +69,18 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
     setCertificates(initialCertificates)
   }, [initialCertificates])
 
+  React.useEffect(() => {
+    const stored = sessionStorage.getItem('certificate_admin_notification')
+    if (stored) {
+      try {
+        setNotification(JSON.parse(stored))
+      } catch (e) {
+        console.error(e)
+      }
+      sessionStorage.removeItem('certificate_admin_notification')
+    }
+  }, [])
+
   const filtered = certificates.filter(c => {
     const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
       c.issuer.toLowerCase().includes(search.toLowerCase()) ||
@@ -123,6 +135,7 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
         if (editingItem.id) {
           setCertificates(prev => prev.map(item => item.id === editingItem.id ? ((res.message || '').includes('Mock') ? { ...item, ...editingItem } as Certificate : editingItem as Certificate) : item))
         } else {
+          sessionStorage.setItem('certificate_admin_notification', JSON.stringify({ success: true, message: res.message || 'Saved successfully.' }))
           window.location.reload()
           return
         }

@@ -3,16 +3,17 @@
 import * as React from 'react'
 import { getDirectImageUrl } from '@/lib/utils'
 
-interface SafeSchoolLogoProps {
+interface SafeLogoProps {
   src: string
   alt: string
 }
 
-export function SafeSchoolLogo({ src, alt }: SafeSchoolLogoProps) {
+export function SafeLogo({ src, alt }: SafeLogoProps) {
   const [error, setError] = React.useState(false)
 
   if (error || !src) return null
 
+  // Optimize Drive URLs for fast loading at 200px resolution for small logos
   const processedSrc = getDirectImageUrl(src, 200)
 
   return (
