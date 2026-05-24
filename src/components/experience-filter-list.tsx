@@ -175,8 +175,8 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                 {isSingle ? (
                   /* Glassmorphic Event Card for Single Role */
                   <div className="p-6 md:p-8 rounded-3xl glass-panel hover:border-primary/20 transition-all duration-300 space-y-4 relative overflow-hidden">
-                    {/* Subtle top indicator bar */}
-                    <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+                    {/* Subtle left indicator bar */}
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-primary/40 to-transparent scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-center" />
                     <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                       <div className="flex gap-4 items-start">
                         {singleExp.logo_url && (
@@ -232,8 +232,8 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                 ) : (
                   /* Glassmorphic Event Card for Multiple Roles */
                   <div className="p-6 md:p-8 rounded-3xl glass-panel hover:border-primary/20 transition-all duration-300 space-y-6 relative overflow-hidden">
-                    {/* Subtle top indicator bar */}
-                    <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+                    {/* Subtle left indicator bar */}
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-primary/40 to-transparent scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-center" />
                     {/* Company Header */}
                     <div className="flex gap-4 items-start pb-4 border-b border-slate-200/10 dark:border-slate-800/10">
                       {group.logo_url && (
