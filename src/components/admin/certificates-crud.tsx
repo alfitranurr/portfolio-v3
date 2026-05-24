@@ -81,6 +81,15 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
     }
   }, [])
 
+  React.useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(null)
+      }, 4000)
+      return () => clearTimeout(timer)
+    }
+  }, [notification])
+
   const filtered = certificates.filter(c => {
     const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
       c.issuer.toLowerCase().includes(search.toLowerCase()) ||

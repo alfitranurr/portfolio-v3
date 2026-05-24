@@ -68,6 +68,27 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
     setProjects(initialProjects)
   }, [initialProjects])
 
+  React.useEffect(() => {
+    const stored = sessionStorage.getItem('project_admin_notification')
+    if (stored) {
+      try {
+        setNotification(JSON.parse(stored))
+      } catch (e) {
+        console.error(e)
+      }
+      sessionStorage.removeItem('project_admin_notification')
+    }
+  }, [])
+
+  React.useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(null)
+      }, 4000)
+      return () => clearTimeout(timer)
+    }
+  }, [notification])
+
   // Filter
   const filtered = projects.filter(p => 
     p.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -123,6 +144,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
         } else {
           // If insert, re-query page or push
           // Since it's mockup or db, we update list locally. In db mode, page reload validates
+          sessionStorage.setItem('project_admin_notification', JSON.stringify({ success: true, message: res.message || 'Saved successfully.' }))
           window.location.reload()
           return
         }

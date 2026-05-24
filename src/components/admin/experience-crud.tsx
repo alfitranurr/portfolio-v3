@@ -117,6 +117,15 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
     }
   }, [])
 
+  React.useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(null)
+      }, 4000)
+      return () => clearTimeout(timer)
+    }
+  }, [notification])
+
   const filtered = experienceList.filter(e => {
     const matchesSearch = e.role.toLowerCase().includes(search.toLowerCase()) ||
       e.company.toLowerCase().includes(search.toLowerCase()) ||
