@@ -13,7 +13,8 @@ import {
   Menu, 
   X,
   Terminal,
-  Settings
+  Settings,
+  MessageSquareText
 } from 'lucide-react'
 import { Github, Linkedin, Instagram } from '@/components/icons'
 import { ThemeToggle } from './theme-toggle'
@@ -34,6 +35,7 @@ export function Sidebar() {
     { name: 'Experience', href: '/experience', icon: Briefcase },
     { name: 'Projects', href: '/projects', icon: FolderCode },
     { name: 'Certificates', href: '/certificates', icon: Award },
+    { name: 'Ask AI', href: '/ask-ai', icon: MessageSquareText },
     { name: 'Get In Touch', href: '/contact', icon: Mail },
   ]
 
