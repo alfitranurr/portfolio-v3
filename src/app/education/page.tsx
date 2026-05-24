@@ -28,7 +28,9 @@ export default async function EducationPage() {
             <div className="absolute -left-[31px] md:-left-[39px] top-1.5 w-4 h-4 rounded-full bg-background border-2 border-primary group-hover:bg-primary group-hover:scale-125 transition-all duration-300 z-10" />
 
             {/* Glassmorphic Event Card */}
-            <div className="p-6 md:p-8 rounded-3xl glass-panel hover:border-primary/20 transition-all duration-300 space-y-4">
+            <div className="p-6 md:p-8 rounded-3xl glass-panel hover:border-primary/20 transition-all duration-300 space-y-4 relative overflow-hidden">
+              {/* Subtle top indicator bar */}
+              <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div className="flex gap-4 items-start">
                   {edu.logo_url && (
