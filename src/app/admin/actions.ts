@@ -723,3 +723,35 @@ export async function uploadAssetAction(formData: FormData) {
   }
 }
 
+// ----------------------------------------------------
+// 7. AI SETTINGS & LOGS ACTIONS
+// ----------------------------------------------------
+import { 
+  getAISettings, 
+  saveAISettings, 
+  getAIChatLogs, 
+  clearAIChatLogs,
+  AISettings 
+} from '@/lib/ai-service'
+
+export async function getAISettingsAction() {
+  return await getAISettings()
+}
+
+export async function saveAISettingsAction(settings: AISettings) {
+  const res = await saveAISettings(settings)
+  revalidatePath('/admin/ai-settings')
+  return res
+}
+
+export async function getAIChatLogsAction() {
+  return await getAIChatLogs()
+}
+
+export async function clearAIChatLogsAction() {
+  const res = await clearAIChatLogs()
+  revalidatePath('/admin/ai-settings')
+  return res
+}
+
+
