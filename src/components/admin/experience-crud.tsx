@@ -82,6 +82,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('prefix', 'exp-logo')
       const res = await uploadAssetAction(formData)
       if (res.success && res.url) {
         setEditingItem(prev => ({ ...prev, logo_url: res.url }))
@@ -353,7 +354,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                           <img
                             src={getDirectImageUrl(editingItem.logo_url, 200)}
                             alt="Logo preview"
-                            className="w-full h-full object-contain p-1 bg-white"
+                            className={`w-full h-full object-contain p-1 ${(editingItem.company?.toLowerCase().includes('indef') || editingItem.logo_url?.includes('edu-logo-1779640956114')) ? 'bg-zinc-950' : 'bg-white'}`}
                           />
                           <button
                             type="button"
@@ -634,7 +635,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-start gap-3">
                         {item.logo_url && (
-                          <div className="w-10 h-10 rounded-xl overflow-hidden bg-white p-1 flex items-center justify-center shrink-0 border border-slate-200/10">
+                          <div className={`w-10 h-10 rounded-xl overflow-hidden p-1 flex items-center justify-center shrink-0 border border-slate-200/10 ${(item.company.toLowerCase().includes('indef') || item.logo_url.includes('edu-logo-1779640956114')) ? 'bg-zinc-950' : 'bg-white'}`}>
                             <img 
                               src={getDirectImageUrl(item.logo_url, 100)} 
                               alt={item.company} 

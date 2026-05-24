@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Briefcase, Calendar, MapPin, Users } from 'lucide-react'
+import { Briefcase, Calendar, MapPin, Users, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Experience } from '@/lib/types'
 import { SafeLogo } from '@/components/safe-logo'
@@ -13,6 +13,11 @@ interface ExperienceFilterListProps {
 
 export function ExperienceFilterList({ initialExperience }: ExperienceFilterListProps) {
   const [activeCategory, setActiveCategory] = React.useState<'professional' | 'committee_organization'>('professional')
+  const [expandedRoles, setExpandedRoles] = React.useState<Record<string, boolean>>({})
+
+  const toggleRole = (id: string) => {
+    setExpandedRoles(prev => ({ ...prev, [id]: !prev[id] }))
+  }
 
   const filteredExperience = initialExperience.filter((exp) => {
     if (activeCategory === 'professional') {
@@ -218,15 +223,43 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                       </div>
                     </div>
 
+                    {/* Toggle Button */}
+                    {singleExp.description && singleExp.description.length > 0 && (
+                      <div className="pt-2">
+                        <button
+                          onClick={() => toggleRole(singleExp.id)}
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-colors cursor-pointer outline-none group"
+                        >
+                          <span>{!!expandedRoles[singleExp.id] ? 'Hide Responsibilities' : 'Show Responsibilities'}</span>
+                          <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-300", !!expandedRoles[singleExp.id] && "rotate-180")} />
+                        </button>
+                      </div>
+                    )}
+
                     {/* Responsibilities list */}
                     {singleExp.description && singleExp.description.length > 0 && (
-                      <ul className="space-y-2 pt-3 border-t border-slate-200/10 dark:border-slate-800/10 text-sm text-foreground/85 list-disc list-inside">
-                        {singleExp.description.map((bullet, index) => (
-                          <li key={index} className="leading-relaxed pl-1">
-                            <span className="ml-1.5">{bullet}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      <AnimatePresence initial={false}>
+                        {!!expandedRoles[singleExp.id] && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ 
+                              duration: 0.3,
+                              ease: [0.25, 1, 0.5, 1]
+                            }}
+                            className="overflow-hidden"
+                          >
+                            <ul className="space-y-2 pt-3 border-t border-slate-200/10 dark:border-slate-800/10 text-sm text-foreground/85 list-disc list-inside">
+                              {singleExp.description.map((bullet, index) => (
+                                <li key={index} className="leading-relaxed pl-1">
+                                  <span className="ml-1.5">{bullet}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     )}
                   </div>
                 ) : (
@@ -299,15 +332,43 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                               )}
                             </div>
 
+                            {/* Toggle Button */}
+                            {role.description && role.description.length > 0 && (
+                              <div className="pt-1">
+                                <button
+                                  onClick={() => toggleRole(role.id)}
+                                  className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-colors cursor-pointer outline-none group"
+                                >
+                                  <span>{!!expandedRoles[role.id] ? 'Hide Responsibilities' : 'Show Responsibilities'}</span>
+                                  <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-300", !!expandedRoles[role.id] && "rotate-180")} />
+                                </button>
+                              </div>
+                            )}
+
                             {/* Role Bullet Points */}
                             {role.description && role.description.length > 0 && (
-                              <ul className="space-y-1.5 text-xs md:text-sm text-foreground/80 list-disc list-inside pl-1 pt-1">
-                                {role.description.map((bullet, index) => (
-                                  <li key={index} className="leading-relaxed">
-                                    <span className="ml-1">{bullet}</span>
-                                  </li>
-                                ))}
-                              </ul>
+                              <AnimatePresence initial={false}>
+                                {!!expandedRoles[role.id] && (
+                                  <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ 
+                                      duration: 0.3,
+                                      ease: [0.25, 1, 0.5, 1]
+                                    }}
+                                    className="overflow-hidden"
+                                  >
+                                    <ul className="space-y-1.5 text-xs md:text-sm text-foreground/80 list-disc list-inside pl-1 pt-2">
+                                      {role.description.map((bullet, index) => (
+                                        <li key={index} className="leading-relaxed">
+                                          <span className="ml-1">{bullet}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
                             )}
                           </div>
 
