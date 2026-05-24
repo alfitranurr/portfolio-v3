@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Sidebar } from "@/components/sidebar";
+import NextTopLoader from 'nextjs-toploader';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,6 +47,17 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <NextTopLoader
+            color="#38bdf8"
+            initialPosition={0.08}
+            crawlSpeed={200}
+            height={3}
+            crawl={true}
+            showSpinner={false}
+            easing="ease"
+            speed={200}
+            shadow="0 0 10px #38bdf8,0 0 5px #38bdf8"
+          />
           {/* Background Ambient Glows */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
             <div className="absolute top-[10%] left-[5%] ambient-glow bg-cyan-500/20 dark:bg-cyan-500/10" />
