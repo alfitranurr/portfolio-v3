@@ -93,6 +93,27 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
     setEducationList(initialEducation)
   }, [initialEducation])
 
+  React.useEffect(() => {
+    const stored = sessionStorage.getItem('education_admin_notification')
+    if (stored) {
+      try {
+        setNotification(JSON.parse(stored))
+      } catch (e) {
+        console.error(e)
+      }
+      sessionStorage.removeItem('education_admin_notification')
+    }
+  }, [])
+
+  React.useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(null)
+      }, 4000)
+      return () => clearTimeout(timer)
+    }
+  }, [notification])
+
   const filtered = educationList.filter(e => 
     e.institution.toLowerCase().includes(search.toLowerCase()) ||
     e.degree.toLowerCase().includes(search.toLowerCase()) ||
@@ -147,6 +168,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
         if (editingItem.id) {
           setEducationList(prev => prev.map(item => item.id === editingItem.id ? ((res.message || '').includes('Mock') ? { ...item, ...editingItem } as Education : editingItem as Education) : item))
         } else {
+          sessionStorage.setItem('education_admin_notification', JSON.stringify({ success: true, message: res.message || 'Saved successfully.' }))
           window.location.reload()
           return
         }
