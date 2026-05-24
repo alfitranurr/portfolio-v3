@@ -18,7 +18,10 @@ export async function loginAction(prevState: any, formData: FormData) {
   )
 
   if (!hasConfig) {
-    if (email === 'alfitranurr@gmail.com' && password === 'bookfacepepabri11') {
+    const mockEmail = process.env.ADMIN_MOCK_EMAIL || 'admin@portfolio.local'
+    const mockPassword = process.env.ADMIN_MOCK_PASSWORD || 'admin123'
+
+    if (email === mockEmail && password === mockPassword) {
       const cookieStore = await cookies()
       cookieStore.set('mock_logged_in', 'true', { path: '/' })
       return { success: true, redirect: '/admin' }
