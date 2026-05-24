@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Sidebar } from "@/components/sidebar";
 import NextTopLoader from 'nextjs-toploader';
+import { InitialLoader } from "@/components/initial-loader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,6 +48,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <InitialLoader />
           <NextTopLoader
             color="#38bdf8"
             initialPosition={0.08}
