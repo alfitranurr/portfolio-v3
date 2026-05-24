@@ -70,6 +70,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('prefix', 'edu-logo')
       const res = await uploadAssetAction(formData)
       if (res.success && res.url) {
         setEditingItem(prev => ({ ...prev, logo_url: res.url }))

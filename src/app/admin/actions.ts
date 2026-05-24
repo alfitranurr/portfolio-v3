@@ -705,8 +705,9 @@ export async function uploadAssetAction(formData: FormData) {
       return { success: false, error: 'Unauthorized admin user' }
     }
 
+    const prefix = formData.get('prefix') as string || 'edu-logo'
     const ext = file.name.split('.').pop()
-    const fileName = `edu-logo-${Date.now()}.${ext}`
+    const fileName = `${prefix}-${Date.now()}.${ext}`
     const { error: uploadError } = await supabase.storage
       .from('portfolio-assets')
       .upload(fileName, file, { upsert: true, contentType: file.type })
