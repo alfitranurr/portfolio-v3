@@ -153,7 +153,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                   
                   {cert.image_url && (
                     <a
-                      href={getDirectImageUrl(cert.image_url)}
+                      href={cert.image_url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="ml-auto inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline cursor-pointer"
