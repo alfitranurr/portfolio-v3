@@ -428,7 +428,7 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                     <div>
                       {cert.image_url && (
                         <a
-                          href={getDirectImageUrl(cert.image_url)}
+                          href={cert.image_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-[10px] text-primary hover:underline font-bold flex items-center gap-1"
