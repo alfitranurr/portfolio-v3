@@ -47,7 +47,7 @@ export function ContactForm() {
             id="name"
             required
             placeholder="John Doe"
-            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 text-sm transition-all"
+            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 text-sm transition-all"
           />
         </div>
 
@@ -61,7 +61,7 @@ export function ContactForm() {
             id="email"
             required
             placeholder="johndoe@example.com"
-            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 text-sm transition-all"
+            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 text-sm transition-all"
           />
         </div>
       </div>
@@ -76,7 +76,7 @@ export function ContactForm() {
           name="subject"
           id="subject"
           placeholder="Collaboration Inquiry"
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 text-sm transition-all"
+          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 text-sm transition-all"
         />
       </div>
 
@@ -91,7 +91,7 @@ export function ContactForm() {
           required
           rows={5}
           placeholder="Hi Al Fitra, I would love to discuss a project..."
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 text-sm transition-all resize-none"
+          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 text-sm transition-all resize-none"
         />
       </div>
 
