@@ -13,6 +13,16 @@
     <strong>Repositori resmi untuk website portfolio pribadi milik Al Fitra Nur Ramadhani. Mengintegrasikan teknologi Web modern, arsitektur database terpusat, dan kecerdasan buatan Gemini API yang diperkuat oleh Google Search Grounding.</strong>
   </p>
 
+  <p align="center">
+    <a href="https://alfitranurr.vercel.app/" target="_blank" rel="noopener noreferrer">
+      <img src="https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel Deployed" />
+    </a>
+  </p>
+
+  <p align="center">
+    <a href="https://alfitranurr.vercel.app/"><strong>🌐 Live Website: alfitranurr.vercel.app</strong></a>
+  </p>
+
 </div>
 
 ---
@@ -97,7 +107,7 @@ src/
 <div align="left">
   
 **Al Fitra Nur Ramadhani**  
-*Data Science Professional & Web Engineer*  
+*Data Science Professional*  
 
 * **Pendidikan:** Universitas Muhammadiyah Malang (UMM)
 * **Keahlian:** Machine Learning, Deep Learning, Natural Language Processing, Data Analytics, Python, SQL, Tableau, PowerBI.
