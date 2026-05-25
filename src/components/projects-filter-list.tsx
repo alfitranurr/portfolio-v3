@@ -118,12 +118,20 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                 {/* Thumbnail container */}
                 <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-slate-200/10 to-slate-200/5 dark:from-slate-800/10 dark:to-slate-800/5 border border-slate-200/10 dark:border-slate-800/10 flex items-center justify-center">
                   {project.cover_image ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img 
-                      src={project.cover_image} 
-                      alt={project.title} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
+                    <>
+                      {/* Ambient blur background */}
+                      <img 
+                        src={project.cover_image} 
+                        alt="" 
+                        className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-30 group-hover:scale-115 transition-transform duration-500 select-none pointer-events-none"
+                      />
+                      {/* Contained foreground image */}
+                      <img 
+                        src={project.cover_image} 
+                        alt={project.title} 
+                        className="w-full h-full object-contain relative z-10 group-hover:scale-103 transition-transform duration-500"
+                      />
+                    </>
                   ) : (
                     <div className="w-full h-full bg-gradient-to-tr from-cyan-500/10 to-violet-500/10 flex flex-col items-center justify-center p-4">
                       <span className="text-primary/25 group-hover:text-primary/50 group-hover:scale-110 transition-all font-black uppercase tracking-widest text-[9px] text-center leading-normal">
