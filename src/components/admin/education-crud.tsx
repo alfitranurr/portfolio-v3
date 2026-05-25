@@ -253,7 +253,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                     value={editingItem.institution || ''}
                     onChange={e => setEditingItem(prev => ({ ...prev, institution: e.target.value }))}
                     placeholder="e.g. University of Indonesia"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                   />
                 </div>
 
@@ -268,7 +268,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                     value={editingItem.degree || ''}
                     onChange={e => setEditingItem(prev => ({ ...prev, degree: e.target.value }))}
                     placeholder="e.g. Bachelor of Science"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                   />
                 </div>
 
@@ -282,7 +282,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                     value={editingItem.field_of_study || ''}
                     onChange={e => setEditingItem(prev => ({ ...prev, field_of_study: e.target.value }))}
                     placeholder="e.g. Information Systems"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                   />
                 </div>
 
@@ -296,7 +296,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                     value={editingItem.location || ''}
                     onChange={e => setEditingItem(prev => ({ ...prev, location: e.target.value }))}
                     placeholder="e.g. Jakarta, Indonesia"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                   />
                 </div>
 
@@ -308,7 +308,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                   
                   <div className="flex items-center gap-4">
                     {/* Preview box */}
-                    <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-800/50 bg-slate-200/5 flex items-center justify-center shrink-0">
+                    <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center shrink-0">
                       {editingItem.logo_url ? (
                         <>
                           <img
@@ -331,7 +331,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
 
                     <div className="flex-1 space-y-2">
                       <label className={cn(
-                        "w-full py-2.5 px-4 rounded-xl bg-white dark:bg-white/5 border border-dashed border-slate-300 dark:border-slate-800/50 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
+                        "w-full py-2.5 px-4 rounded-xl bg-white dark:bg-white/5 border border-dashed border-slate-300 dark:border-slate-700/50 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
                         isUploading && "opacity-50 pointer-events-none"
                       )}>
                         {isUploading ? (
@@ -359,7 +359,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                         value={editingItem.logo_url || ''}
                         onChange={e => setEditingItem(prev => ({ ...prev, logo_url: e.target.value }))}
                         placeholder="Or paste Logo Image URL (e.g. Google Drive link)"
-                        className="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
+                        className="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
                       />
                     </div>
                   </div>
@@ -379,7 +379,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                       required
                       value={editingItem.start_date || ''}
                       onChange={e => setEditingItem(prev => ({ ...prev, start_date: e.target.value }))}
-                      className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800/20 text-foreground text-sm focus:outline-none focus:border-primary/50"
+                      className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/50 text-foreground text-sm focus:outline-none focus:border-primary/50"
                     />
                   </div>
 
@@ -392,7 +392,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                       value={editingItem.end_date || ''}
                       onChange={e => setEditingItem(prev => ({ ...prev, end_date: e.target.value }))}
                       placeholder="Present"
-                      className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800/20 text-foreground text-sm focus:outline-none focus:border-primary/50"
+                      className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/50 text-foreground text-sm focus:outline-none focus:border-primary/50"
                     />
                   </div>
                 </div>
@@ -407,7 +407,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                     value={editingItem.gpa ?? ''}
                     onChange={e => setEditingItem(prev => ({ ...prev, gpa: e.target.value || null }))}
                     placeholder="e.g. 3.92, 4.00/4.00, or 85.09/100"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50"
                   />
                 </div>
 
@@ -421,7 +421,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                     value={editingItem.description || ''}
                     onChange={e => setEditingItem(prev => ({ ...prev, description: e.target.value }))}
                     placeholder="Activities, achievements, or specialized courses..."
-                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 resize-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 resize-none"
                   />
                 </div>
               </div>
@@ -469,7 +469,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                 placeholder="Search schools..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
+                className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
               />
             </div>
             <span className="text-xs text-muted-foreground font-semibold shrink-0">

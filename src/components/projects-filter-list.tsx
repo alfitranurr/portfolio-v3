@@ -3,7 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUpRight, ExternalLink, Sparkles, Presentation } from 'lucide-react'
+import { ArrowUpRight, ExternalLink, Sparkles, Presentation, BookOpen } from 'lucide-react'
 import { Github } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { Project } from '@/lib/types'
@@ -200,6 +200,18 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                       title="Live Demo"
                     >
                       <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
+                  {project.notebook_url && (
+                    <a
+                      href={project.notebook_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 rounded-lg transition-all"
+                      aria-label="Open Notebook"
+                      title="Open Notebook"
+                    >
+                      <BookOpen className="w-4 h-4" />
                     </a>
                   )}
                 </div>
