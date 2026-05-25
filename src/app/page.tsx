@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowUpRight, Download, Mail, ExternalLink, Terminal } from 'lucide-react'
+import { ArrowUpRight, Download, Mail, ExternalLink, Terminal, Presentation, BookOpen } from 'lucide-react'
 import { Github, Linkedin } from '@/components/icons'
 import { getProfile, getProjects } from '@/lib/data-service'
 import { SkillsGrid } from '@/components/skills-grid'
@@ -99,48 +99,116 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredProjects.map((project) => (
             <div 
               key={project.id}
-              className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-all duration-300 relative"
+              className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-all duration-300 relative overflow-hidden"
             >
-              {/* Decorative top dot */}
-              <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-primary/40 group-hover:bg-primary group-hover:scale-125 transition-all" />
+              {/* Subtle top indicator bar */}
+              <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
 
               <div className="space-y-4">
+                {/* Thumbnail container */}
+                <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-slate-200/10 to-slate-200/5 dark:from-slate-800/10 dark:to-slate-800/5 border border-slate-200/10 dark:border-slate-800/10 flex items-center justify-center">
+                  {project.cover_image ? (
+                    <>
+                      {/* Ambient blur background */}
+                      <img 
+                        src={project.cover_image} 
+                        alt="" 
+                        className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-30 group-hover:scale-115 transition-transform duration-500 select-none pointer-events-none"
+                      />
+                      {/* Contained foreground image */}
+                      <img 
+                        src={project.cover_image} 
+                        alt={project.title} 
+                        className="w-full h-full object-contain relative z-10 group-hover:scale-103 transition-transform duration-500"
+                      />
+                    </>
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-tr from-cyan-500/10 to-violet-500/10 flex flex-col items-center justify-center p-4">
+                      <span className="text-primary/25 group-hover:text-primary/50 group-hover:scale-110 transition-all font-black uppercase tracking-widest text-[9px] text-center leading-normal">
+                        {project.sub_category}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Details */}
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-primary uppercase tracking-wider">
+                  <span className="text-[9px] font-extrabold text-primary uppercase tracking-wider">
                     {project.sub_category}
                   </span>
-                  <h3 className="font-bold text-lg leading-snug group-hover:text-primary transition-colors">
+                  <h3 className="font-bold text-base leading-snug group-hover:text-primary transition-colors line-clamp-1">
                     {project.title}
                   </h3>
+                  <p className="text-xs text-muted-foreground line-clamp-3">
+                    {project.description}
+                  </p>
                 </div>
-                <p className="text-xs text-muted-foreground line-clamp-3">
-                  {project.description}
-                </p>
               </div>
 
-              <div className="flex items-center gap-3 pt-6">
+              {/* Actions footer */}
+              <div className="flex items-center gap-3 pt-4 border-t border-slate-200/10 dark:border-slate-800/10 mt-4">
                 <Link
                   href={`/projects/${project.id}`}
-                  className="flex items-center gap-1 text-xs font-semibold text-foreground group-hover:text-primary transition-colors"
+                  className="flex items-center gap-1 text-xs font-bold text-foreground group-hover:text-primary transition-colors cursor-pointer"
                 >
                   <span>Explore Writeup</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </Link>
-                {project.github_url && (
-                  <a
-                    href={project.github_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-auto p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 rounded-lg transition-all"
-                    aria-label="GitHub Repository"
-                  >
-                    <Github className="w-4 h-4" />
-                  </a>
-                )}
+                
+                <div className="ml-auto flex items-center gap-1.5">
+                  {project.github_url && (
+                    <a
+                      href={project.github_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 rounded-lg transition-all"
+                      aria-label="GitHub Repository"
+                      title="GitHub Repository"
+                    >
+                      <Github className="w-4 h-4" />
+                    </a>
+                  )}
+                  {project.slide_url && (
+                    <a
+                      href={project.slide_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 rounded-lg transition-all"
+                      aria-label="Reporting Presentation"
+                      title="Reporting Presentation"
+                    >
+                      <Presentation className="w-4 h-4" />
+                    </a>
+                  )}
+                  {project.demo_url && (
+                    <a
+                      href={project.demo_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 rounded-lg transition-all"
+                      aria-label="Live Demo"
+                      title="Live Demo"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
+                  {project.notebook_url && (
+                    <a
+                      href={project.notebook_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 rounded-lg transition-all"
+                      aria-label="Open Notebook"
+                      title="Open Notebook"
+                    >
+                      <BookOpen className="w-4 h-4" />
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           ))}

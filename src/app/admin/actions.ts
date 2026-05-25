@@ -261,7 +261,7 @@ export async function saveProjectAction(projectData: any) {
       const newProj = {
         ...projectData,
         id: `mock-proj-${Date.now()}`,
-        created_at: new Date().toISOString(),
+        created_at: projectData.created_at ? new Date(projectData.created_at).toISOString() : new Date().toISOString(),
         updated_at: new Date().toISOString()
       }
       list.push(newProj)
@@ -278,7 +278,7 @@ export async function saveProjectAction(projectData: any) {
     const supabase = await createClient()
     const isEdit = !!projectData.id && !projectData.id.startsWith('mock-')
     
-    const dbPayload = {
+    const dbPayload: any = {
       title: projectData.title,
       description: projectData.description,
       content: projectData.content,
@@ -295,6 +295,10 @@ export async function saveProjectAction(projectData: any) {
       updated_at: new Date().toISOString()
     }
 
+    if (projectData.created_at) {
+      dbPayload.created_at = new Date(projectData.created_at).toISOString()
+    }
+
     let error
     if (isEdit) {
       const { error: err } = await supabase
@@ -303,9 +307,13 @@ export async function saveProjectAction(projectData: any) {
         .eq('id', projectData.id)
       error = err
     } else {
+      const insertPayload = { ...dbPayload }
+      if (!insertPayload.created_at) {
+        insertPayload.created_at = new Date().toISOString()
+      }
       const { error: err } = await supabase
         .from('projects')
-        .insert([{ ...dbPayload, created_at: new Date().toISOString() }])
+        .insert([insertPayload])
       error = err
     }
 
