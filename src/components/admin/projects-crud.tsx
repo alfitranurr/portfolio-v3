@@ -42,12 +42,40 @@ interface ProjectsCrudProps {
   initialProjects: Project[]
 }
 
+const DATA_SUBCATEGORIES = [
+  'Data Analytics Projects',
+  'Data Visualization Projects',
+  'Artificial Intelligence Projects',
+  'Data Automation Projects',
+  'Data Modeling and Simulation Projects',
+]
+
+const NON_DATA_SUBCATEGORIES = [
+  'Web Development Projects',
+  'Mobile Development Projects',
+  'Digital Marketing Projects',
+  'Graphic Design Projects',
+]
+
+const SUBCATEGORY_MAP: Record<string, string> = {
+  'All': 'All Subcategories',
+  'Data Analytics Projects': 'Data Analytics',
+  'Data Visualization Projects': 'Data Visualization',
+  'Artificial Intelligence Projects': 'Artificial Intelligence',
+  'Data Automation Projects': 'Data Automation',
+  'Data Modeling and Simulation Projects': 'Data Modeling & Simulation',
+  'Web Development Projects': 'Web Development',
+  'Mobile Development Projects': 'Mobile Development',
+  'Digital Marketing Projects': 'Digital Marketing',
+  'Graphic Design Projects': 'Graphic Design',
+}
+
 const DEFAULT_PROJECT: Omit<Project, 'id'> = {
   title: '',
   description: '',
   content: '',
   category: 'data',
-  sub_category: 'Data Analytics',
+  sub_category: 'Data Analytics Projects',
   cover_image: '',
   github_url: '',
   demo_url: '',
@@ -60,9 +88,36 @@ const DEFAULT_PROJECT: Omit<Project, 'id'> = {
 export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
   const [projects, setProjects] = React.useState<Project[]>(initialProjects)
   const [search, setSearch] = React.useState('')
+  const [activeSubCategory, setActiveSubCategory] = React.useState<string>('All')
   const [editingProject, setEditingProject] = React.useState<Partial<Project> | null>(null)
   const [isPending, setIsPending] = React.useState(false)
   const [notification, setNotification] = React.useState<{ success: boolean; message: string } | null>(null)
+
+  // Compute subcategory options dynamically for filtering listing
+  const availableFilters = React.useMemo(() => {
+    const uniqueInDb = Array.from(new Set(projects.map(p => p.sub_category))).filter(Boolean)
+    const base = ['All', ...DATA_SUBCATEGORIES, ...NON_DATA_SUBCATEGORIES]
+    const combined = [...base]
+    uniqueInDb.forEach(sub => {
+      if (!combined.includes(sub)) {
+        combined.push(sub)
+      }
+    })
+    return combined
+  }, [projects])
+
+  // Subcategory options for dropdown in edit form
+  const currentCategory = editingProject?.category || 'data'
+  const subCategoryOptions = React.useMemo(() => {
+    return currentCategory === 'data' ? DATA_SUBCATEGORIES : NON_DATA_SUBCATEGORIES
+  }, [currentCategory])
+
+  const finalOptions = React.useMemo(() => {
+    if (editingProject?.sub_category && !subCategoryOptions.includes(editingProject.sub_category)) {
+      return [editingProject.sub_category, ...subCategoryOptions]
+    }
+    return subCategoryOptions
+  }, [editingProject?.sub_category, subCategoryOptions])
 
   React.useEffect(() => {
     setProjects(initialProjects)
@@ -90,11 +145,15 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
   }, [notification])
 
   // Filter
-  const filtered = projects.filter(p => 
-    p.title.toLowerCase().includes(search.toLowerCase()) ||
-    p.sub_category.toLowerCase().includes(search.toLowerCase()) ||
-    p.description.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = projects.filter(p => {
+    const matchesSearch = 
+      p.title.toLowerCase().includes(search.toLowerCase()) ||
+      p.sub_category.toLowerCase().includes(search.toLowerCase()) ||
+      p.description.toLowerCase().includes(search.toLowerCase())
+    
+    const matchesSubCategory = activeSubCategory === 'All' || p.sub_category === activeSubCategory
+    return matchesSearch && matchesSubCategory
+  })
 
   const handleEdit = (project: Project) => {
     setEditingProject(project)
@@ -255,7 +314,15 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                     </label>
                     <select
                       value={editingProject.category || 'data'}
-                      onChange={e => setEditingProject(prev => ({ ...prev, category: e.target.value as 'data' | 'non-data' }))}
+                      onChange={e => {
+                        const newCat = e.target.value as 'data' | 'non-data'
+                        const defaultSub = newCat === 'data' ? 'Data Analytics Projects' : 'Web Development Projects'
+                        setEditingProject(prev => ({
+                          ...prev,
+                          category: newCat,
+                          sub_category: defaultSub
+                        }))
+                      }}
                       className="w-full px-3 py-2.5 rounded-xl bg-slate-950 dark:bg-slate-900 border border-slate-200/10 dark:border-slate-800/10 text-foreground text-sm focus:outline-none focus:border-primary/50"
                     >
                       <option value="data">Data Science</option>
@@ -267,14 +334,17 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                     <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                       Sub Category Tag
                     </label>
-                    <input
-                      type="text"
-                      required
+                    <select
                       value={editingProject.sub_category || ''}
                       onChange={e => setEditingProject(prev => ({ ...prev, sub_category: e.target.value }))}
-                      placeholder="e.g. Machine Learning, NLP"
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
-                    />
+                      className="w-full px-3 py-2.5 rounded-xl bg-slate-950 dark:bg-slate-900 border border-slate-200/10 dark:border-slate-800/10 text-foreground text-sm focus:outline-none focus:border-primary/50"
+                    >
+                      {finalOptions.map((opt) => (
+                        <option key={opt} value={opt}>
+                          {SUBCATEGORY_MAP[opt] || opt.replace(' Projects', '')}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
@@ -448,6 +518,25 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
             </span>
           </div>
 
+          {/* Subcategory Filters */}
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {availableFilters.map((subcat) => (
+              <button
+                key={subcat}
+                type="button"
+                onClick={() => setActiveSubCategory(subcat)}
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all duration-200 cursor-pointer",
+                  activeSubCategory === subcat
+                    ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/10"
+                    : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-foreground/80 hover:text-foreground"
+                )}
+              >
+                {SUBCATEGORY_MAP[subcat] || subcat.replace(' Projects', '')}
+              </button>
+            ))}
+          </div>
+
           {/* Cards */}
           {filtered.length === 0 ? (
             <div className="p-12 text-center rounded-3xl border border-dashed border-slate-200/10 dark:border-slate-800/10 bg-white/5 space-y-3">
@@ -482,7 +571,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                         {proj.category === 'data' ? 'Data Science' : 'Web Dev / Other'}
                       </span>
                       <span className="px-2 py-0.5 rounded-md bg-white/5 text-muted-foreground text-[10px] font-bold">
-                        {proj.sub_category}
+                        {SUBCATEGORY_MAP[proj.sub_category] || proj.sub_category.replace(' Projects', '')}
                       </span>
                       {proj.pinned_order !== null && proj.pinned_order !== undefined && proj.pinned_order > 0 && (
                         <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-bold flex items-center gap-1">
