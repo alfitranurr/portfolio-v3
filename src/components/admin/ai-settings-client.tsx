@@ -281,9 +281,9 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                   onChange={(e) => setModelName(e.target.value)}
                   className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground text-xs focus:outline-none focus:border-primary/50 transition-all cursor-pointer font-medium"
                 >
-                  <option value="gemini-2.5-flash" className="bg-slate-900 text-foreground">Gemini 2.5 Flash (Default)</option>
-                  <option value="gemini-2.5-pro" className="bg-slate-900 text-foreground">Gemini 2.5 Pro (Advanced)</option>
-                  <option value="gemini-1.5-flash" className="bg-slate-900 text-foreground">Gemini 1.5 Flash (Legacy)</option>
+                  <option value="gemini-2.5-flash" className="bg-white dark:bg-slate-950 text-foreground">Gemini 2.5 Flash (Default)</option>
+                  <option value="gemini-2.5-pro" className="bg-white dark:bg-slate-950 text-foreground">Gemini 2.5 Pro (Advanced)</option>
+                  <option value="gemini-1.5-flash" className="bg-white dark:bg-slate-950 text-foreground">Gemini 1.5 Flash (Legacy)</option>
                 </select>
                 <p className="text-[10px] text-muted-foreground leading-normal">
                   Flash is faster and cheaper, Pro is recommended for deep reasoning over complex projects.

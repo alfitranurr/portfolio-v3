@@ -307,7 +307,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                     value={editingItem.role || ''}
                     onChange={e => setEditingItem(prev => ({ ...prev, role: e.target.value }))}
                     placeholder="e.g. Data Scientist Lead"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                   />
                 </div>
 
@@ -322,7 +322,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                     value={editingItem.company || ''}
                     onChange={e => setEditingItem(prev => ({ ...prev, company: e.target.value }))}
                     placeholder="e.g. Astra International"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                   />
                 </div>
 
@@ -336,7 +336,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                     value={editingItem.location || ''}
                     onChange={e => setEditingItem(prev => ({ ...prev, location: e.target.value }))}
                     placeholder="e.g. Jakarta, Indonesia"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                   />
                 </div>
 
@@ -348,7 +348,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                   
                   <div className="flex items-center gap-4">
                     {/* Preview box */}
-                    <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-200/20 dark:border-slate-800/10 bg-slate-200/5 flex items-center justify-center shrink-0">
+                    <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-800/50 bg-slate-200/5 flex items-center justify-center shrink-0">
                       {editingItem.logo_url ? (
                         <>
                           <img
@@ -371,7 +371,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
 
                     <div className="flex-1 space-y-2">
                       <label className={cn(
-                        "w-full py-2.5 px-4 rounded-xl bg-white/5 border border-dashed border-slate-200/20 dark:border-slate-800/20 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
+                        "w-full py-2.5 px-4 rounded-xl bg-white dark:bg-white/5 border border-dashed border-slate-300 dark:border-slate-800/50 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
                         isUploading && "opacity-50 pointer-events-none"
                       )}>
                         {isUploading ? (
@@ -399,7 +399,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                         value={editingItem.logo_url || ''}
                         onChange={e => setEditingItem(prev => ({ ...prev, logo_url: e.target.value }))}
                         placeholder="Or paste Logo Image URL (e.g. Google Drive link)"
-                        className="w-full px-3 py-1.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
+                        className="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
                       />
                     </div>
                   </div>
@@ -413,10 +413,10 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                   <select
                     value={editingItem.category || 'professional'}
                     onChange={e => setEditingItem(prev => ({ ...prev, category: e.target.value as any }))}
-                    className="w-full px-3 py-2.5 rounded-xl bg-slate-950 dark:bg-slate-900 border border-slate-200/10 dark:border-slate-800/10 text-foreground text-sm focus:outline-none focus:border-primary/50"
+                    className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800/20 text-foreground text-sm focus:outline-none focus:border-primary/50"
                   >
-                    <option value="professional">Professional Experience</option>
-                    <option value="committee_organization">Committee & Organization</option>
+                    <option value="professional" className="bg-white dark:bg-slate-950 text-foreground">Professional Experience</option>
+                    <option value="committee_organization" className="bg-white dark:bg-slate-950 text-foreground">Committee & Organization</option>
                   </select>
                 </div>
 
@@ -431,7 +431,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                       required
                       value={editingItem.start_date || ''}
                       onChange={e => setEditingItem(prev => ({ ...prev, start_date: e.target.value }))}
-                      className="w-full px-3 py-2.5 rounded-xl bg-slate-950 dark:bg-slate-900 border border-slate-200/10 dark:border-slate-800/10 text-foreground text-sm focus:outline-none focus:border-primary/50"
+                      className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800/20 text-foreground text-sm focus:outline-none focus:border-primary/50"
                     />
                   </div>
 
@@ -444,7 +444,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                       disabled={!!editingItem.is_current}
                       value={editingItem.is_current ? '' : (editingItem.end_date || '')}
                       onChange={e => setEditingItem(prev => ({ ...prev, end_date: e.target.value }))}
-                      className="w-full px-3 py-2.5 rounded-xl bg-slate-950 dark:bg-slate-900 border border-slate-200/10 dark:border-slate-800/10 text-foreground text-sm focus:outline-none focus:border-primary/50 disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800/20 text-foreground text-sm focus:outline-none focus:border-primary/50 disabled:opacity-30 disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -500,7 +500,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                             value={bullet}
                             onChange={e => handleUpdateBullet(idx, e.target.value)}
                             placeholder="e.g. Optimized operational ETL pipelines..."
-                            className="flex-grow px-3 py-2 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                            className="flex-grow px-3 py-2 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                           />
                           <div className="flex items-center gap-1 shrink-0">
                             <button

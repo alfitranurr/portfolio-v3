@@ -238,7 +238,7 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                     value={editingItem.title || ''}
                     onChange={e => setEditingItem(prev => ({ ...prev, title: e.target.value }))}
                     placeholder="e.g. Professional Data Scientist Certification"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                   />
                 </div>
 
@@ -253,7 +253,7 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                     value={editingItem.issuer || ''}
                     onChange={e => setEditingItem(prev => ({ ...prev, issuer: e.target.value }))}
                     placeholder="e.g. BNSP (National Certification Board)"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                   />
                 </div>
 
@@ -265,12 +265,12 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                   <select
                     value={editingItem.category || 'license_certification'}
                     onChange={e => setEditingItem(prev => ({ ...prev, category: e.target.value as any }))}
-                    className="w-full px-3 py-2.5 rounded-xl bg-slate-950 dark:bg-slate-900 border border-slate-200/10 dark:border-slate-800/10 text-foreground text-sm focus:outline-none focus:border-primary/50"
+                    className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800/20 text-foreground text-sm focus:outline-none focus:border-primary/50"
                   >
-                    <option value="competition">Competition Award</option>
-                    <option value="seminar_workshop">Seminar & Workshop</option>
-                    <option value="license_certification">License & Certification</option>
-                    <option value="committee_organization">Work & Organization</option>
+                    <option value="competition" className="bg-white dark:bg-slate-950 text-foreground">Competition Award</option>
+                    <option value="seminar_workshop" className="bg-white dark:bg-slate-950 text-foreground">Seminar & Workshop</option>
+                    <option value="license_certification" className="bg-white dark:bg-slate-950 text-foreground">License & Certification</option>
+                    <option value="committee_organization" className="bg-white dark:bg-slate-950 text-foreground">Work & Organization</option>
                   </select>
                 </div>
               </div>
@@ -287,7 +287,7 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                     required
                     value={editingItem.issue_date || ''}
                     onChange={e => setEditingItem(prev => ({ ...prev, issue_date: e.target.value }))}
-                    className="w-full px-3 py-2.5 rounded-xl bg-slate-950 dark:bg-slate-900 border border-slate-200/10 dark:border-slate-800/10 text-foreground text-sm focus:outline-none focus:border-primary/50"
+                    className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800/20 text-foreground text-sm focus:outline-none focus:border-primary/50"
                   />
                 </div>
 
@@ -301,7 +301,7 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                     value={editingItem.credential_id || ''}
                     onChange={e => setEditingItem(prev => ({ ...prev, credential_id: e.target.value }))}
                     placeholder="BNSP-DS-7718A"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                   />
                 </div>
 
@@ -315,7 +315,7 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                     value={editingItem.image_url || ''}
                     onChange={e => setEditingItem(prev => ({ ...prev, image_url: e.target.value }))}
                     placeholder="/images/bnsp-certificate.jpg"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50"
                   />
                 </div>
               </div>
