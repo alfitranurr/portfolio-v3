@@ -15,10 +15,12 @@ import {
   X,
   FileCode,
   Layers,
-  ArrowLeft
+  ArrowLeft,
+  UploadCloud,
+  Image as ImageIcon
 } from 'lucide-react'
-import { saveProjectAction, deleteProjectAction } from '@/app/admin/actions'
-import { cn } from '@/lib/utils'
+import { saveProjectAction, deleteProjectAction, uploadAssetAction } from '@/app/admin/actions'
+import { cn, getDirectImageUrl } from '@/lib/utils'
 
 interface Project {
   id: string
@@ -91,7 +93,38 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
   const [activeSubCategory, setActiveSubCategory] = React.useState<string>('All')
   const [editingProject, setEditingProject] = React.useState<Partial<Project> | null>(null)
   const [isPending, setIsPending] = React.useState(false)
+  const [isUploading, setIsUploading] = React.useState(false)
   const [notification, setNotification] = React.useState<{ success: boolean; message: string } | null>(null)
+
+  const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    setNotification(null)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('prefix', 'project-cover')
+      const res = await uploadAssetAction(formData)
+      if (res.success && res.url) {
+        setEditingProject(prev => prev ? ({ ...prev, cover_image: res.url }) : null)
+        setNotification({ success: true, message: 'Cover image uploaded successfully.' })
+      } else {
+        setNotification({ success: false, message: res.error || 'Failed to upload cover image.' })
+      }
+    } catch (err: any) {
+      console.error(err)
+      setNotification({ success: false, message: 'Error uploading cover image.' })
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  const handleRemoveCoverImage = () => {
+    setEditingProject(prev => prev ? ({ ...prev, cover_image: null }) : null)
+  }
 
   // Compute subcategory options dynamically for filtering listing
   const availableFilters = React.useMemo(() => {
@@ -393,15 +426,66 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
 
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                      Cover Image URL
+                      Cover Image
                     </label>
-                    <input
-                      type="text"
-                      value={editingProject.cover_image || ''}
-                      onChange={e => setEditingProject(prev => ({ ...prev, cover_image: e.target.value }))}
-                      placeholder="/images/churn-proj.png"
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
-                    />
+                    
+                    <div className="flex items-center gap-4">
+                      {/* Preview box */}
+                      <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-200/20 dark:border-slate-800/10 bg-slate-200/5 flex items-center justify-center shrink-0">
+                        {editingProject.cover_image ? (
+                          <>
+                            <img
+                              src={getDirectImageUrl(editingProject.cover_image, 200)}
+                              alt="Cover preview"
+                              className="w-full h-full object-cover"
+                            />
+                            <button
+                              type="button"
+                              onClick={handleRemoveCoverImage}
+                              className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold cursor-pointer"
+                            >
+                              Remove
+                            </button>
+                          </>
+                        ) : (
+                          <ImageIcon className="w-6 h-6 text-muted-foreground/40" />
+                        )}
+                      </div>
+
+                      <div className="flex-1 space-y-2">
+                        <label className={cn(
+                          "w-full py-2.5 px-4 rounded-xl bg-white/5 border border-dashed border-slate-200/20 dark:border-slate-800/20 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
+                          isUploading && "opacity-50 pointer-events-none"
+                        )}>
+                          {isUploading ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                              <span>Uploading...</span>
+                            </>
+                          ) : (
+                            <>
+                              <UploadCloud className="w-4 h-4 text-muted-foreground" />
+                              <span>{editingProject.cover_image ? 'Change Cover' : 'Upload Cover'}</span>
+                            </>
+                          )}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleCoverImageUpload}
+                            className="hidden"
+                            disabled={isUploading}
+                          />
+                        </label>
+                        
+                        <input
+                          type="text"
+                          value={editingProject.cover_image || ''}
+                          onChange={e => setEditingProject(prev => ({ ...prev, cover_image: e.target.value }))}
+                          placeholder="Or paste Cover Image URL"
+                          className="w-full px-3 py-1.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
