@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import ReactMarkdown from 'react-markdown'
-import { ArrowLeft, ExternalLink, Calendar, BookOpen, Sparkles } from 'lucide-react'
+import { ArrowLeft, ExternalLink, Calendar, BookOpen, Sparkles, Presentation } from 'lucide-react'
 import { Github } from '@/components/icons'
 import { getProjectById } from '@/lib/data-service'
 
@@ -96,6 +96,17 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             >
               <BookOpen className="w-4 h-4" />
               <span>Open Notebook</span>
+            </a>
+          )}
+          {project.slide_url && (
+            <a
+              href={project.slide_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500/15 border border-amber-500/20 text-amber-600 dark:text-amber-400 font-semibold hover:bg-amber-500/25 transition-all text-xs cursor-pointer"
+            >
+              <Presentation className="w-4 h-4" />
+              <span>View Reporting Presentation</span>
             </a>
           )}
         </div>

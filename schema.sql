@@ -187,4 +187,5 @@ USING (bucket_id = 'portfolio-assets');
 -- MIGRATION: RUN THIS IF TABLE ALREADY EXISTS
 -- ====================================================
 -- ALTER TABLE public.education ADD COLUMN logo_url TEXT;
+-- ALTER TABLE public.projects ADD COLUMN slide_url TEXT;
 

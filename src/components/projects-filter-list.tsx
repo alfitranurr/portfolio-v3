@@ -3,7 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUpRight, ExternalLink, Sparkles } from 'lucide-react'
+import { ArrowUpRight, ExternalLink, Sparkles, Presentation } from 'lucide-react'
 import { Github } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { Project } from '@/lib/types'
@@ -165,8 +165,21 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                       rel="noopener noreferrer"
                       className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 rounded-lg transition-all"
                       aria-label="GitHub Repository"
+                      title="GitHub Repository"
                     >
                       <Github className="w-4 h-4" />
+                    </a>
+                  )}
+                  {project.slide_url && (
+                    <a
+                      href={project.slide_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 rounded-lg transition-all"
+                      aria-label="Reporting Presentation"
+                      title="Reporting Presentation"
+                    >
+                      <Presentation className="w-4 h-4" />
                     </a>
                   )}
                   {project.demo_url && (
@@ -176,6 +189,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                       rel="noopener noreferrer"
                       className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 rounded-lg transition-all"
                       aria-label="Live Demo"
+                      title="Live Demo"
                     >
                       <ExternalLink className="w-4 h-4" />
                     </a>
