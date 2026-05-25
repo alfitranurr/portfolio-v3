@@ -323,7 +323,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                     value={editingProject.title || ''}
                     onChange={e => setEditingProject(prev => ({ ...prev, title: e.target.value }))}
                     placeholder="e.g. XGBoost Predictive customer model"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                   />
                 </div>
 
@@ -338,7 +338,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                     value={editingProject.description || ''}
                     onChange={e => setEditingProject(prev => ({ ...prev, description: e.target.value }))}
                     placeholder="Summarize the core impact or solution of the project in 2-3 sentences."
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all resize-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all resize-none"
                   />
                 </div>
 
@@ -359,10 +359,10 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                           sub_category: defaultSub
                         }))
                       }}
-                      className="w-full px-3 py-2.5 rounded-xl bg-slate-950 dark:bg-slate-900 border border-slate-200/10 dark:border-slate-800/10 text-foreground text-sm focus:outline-none focus:border-primary/50"
+                      className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800/20 text-foreground text-sm focus:outline-none focus:border-primary/50"
                     >
-                      <option value="data">Data Science</option>
-                      <option value="non-data">Web Dev / Other</option>
+                      <option value="data" className="bg-white dark:bg-slate-950 text-foreground">Data Science</option>
+                      <option value="non-data" className="bg-white dark:bg-slate-950 text-foreground">Web Dev / Other</option>
                     </select>
                   </div>
 
@@ -373,10 +373,10 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                     <select
                       value={editingProject.sub_category || ''}
                       onChange={e => setEditingProject(prev => ({ ...prev, sub_category: e.target.value }))}
-                      className="w-full px-3 py-2.5 rounded-xl bg-slate-950 dark:bg-slate-900 border border-slate-200/10 dark:border-slate-800/10 text-foreground text-sm focus:outline-none focus:border-primary/50"
+                      className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800/20 text-foreground text-sm focus:outline-none focus:border-primary/50"
                     >
                       {finalOptions.map((opt) => (
-                        <option key={opt} value={opt}>
+                        <option key={opt} value={opt} className="bg-white dark:bg-slate-950 text-foreground">
                           {SUBCATEGORY_MAP[opt] || opt.replace(' Projects', '')}
                         </option>
                       ))}
@@ -395,7 +395,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                       value={editingProject.github_url || ''}
                       onChange={e => setEditingProject(prev => ({ ...prev, github_url: e.target.value }))}
                       placeholder="https://github.com/..."
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                      className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                     />
                   </div>
 
@@ -408,7 +408,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                       value={editingProject.demo_url || ''}
                       onChange={e => setEditingProject(prev => ({ ...prev, demo_url: e.target.value }))}
                       placeholder="https://my-demo.com"
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                      className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                     />
                   </div>
                 </div>
@@ -423,7 +423,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                       value={editingProject.notebook_url || ''}
                       onChange={e => setEditingProject(prev => ({ ...prev, notebook_url: e.target.value }))}
                       placeholder="https://colab.research.google.com/..."
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                      className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                     />
                   </div>
 
@@ -436,7 +436,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                       value={editingProject.slide_url || ''}
                       onChange={e => setEditingProject(prev => ({ ...prev, slide_url: e.target.value }))}
                       placeholder="https://canva.com/design/... or Google Slides link"
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                      className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                     />
                   </div>
                 </div>
@@ -449,7 +449,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                   
                   <div className="flex items-center gap-4">
                     {/* Preview box */}
-                    <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-200/20 dark:border-slate-800/10 bg-slate-200/5 flex items-center justify-center shrink-0">
+                    <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-800/50 bg-slate-200/5 flex items-center justify-center shrink-0">
                       {editingProject.cover_image ? (
                         <>
                           <img
@@ -472,7 +472,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
 
                     <div className="flex-1 space-y-2">
                       <label className={cn(
-                        "w-full py-2.5 px-4 rounded-xl bg-white/5 border border-dashed border-slate-200/20 dark:border-slate-800/20 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
+                        "w-full py-2.5 px-4 rounded-xl bg-white dark:bg-white/5 border border-dashed border-slate-300 dark:border-slate-800/50 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
                         isUploading && "opacity-50 pointer-events-none"
                       )}>
                         {isUploading ? (
@@ -500,7 +500,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                         value={editingProject.cover_image || ''}
                         onChange={e => setEditingProject(prev => ({ ...prev, cover_image: e.target.value }))}
                         placeholder="Or paste Cover Image URL"
-                        className="w-full px-3 py-1.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
+                        className="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
                       />
                     </div>
                   </div>
@@ -520,7 +520,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                     value={editingProject.embed_code || ''}
                     onChange={e => setEditingProject(prev => ({ ...prev, embed_code: e.target.value }))}
                     placeholder="<iframe src='https://public.tableau.com/...' width='100%' height='600'></iframe>"
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground font-mono placeholder:text-muted-foreground/30 text-xs focus:outline-none focus:border-primary/50 transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground font-mono placeholder:text-muted-foreground/30 text-xs focus:outline-none focus:border-primary/50 transition-all"
                   />
                 </div>
 
@@ -534,7 +534,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                     value={editingProject.content || ''}
                     onChange={e => setEditingProject(prev => ({ ...prev, content: e.target.value }))}
                     placeholder="## Executive Summary&#10;Write detailed methodologies, Python code samples, and model evaluation results here..."
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all resize-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all resize-none"
                   />
                 </div>
 
@@ -561,7 +561,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                       type="number"
                       value={editingProject.pinned_order ?? 0}
                       onChange={e => setEditingProject(prev => ({ ...prev, pinned_order: parseInt(e.target.value) || 0 }))}
-                      className="w-full px-4 py-2 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground text-sm focus:outline-none focus:border-primary/50"
+                      className="w-full px-4 py-2 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/50 text-foreground text-sm focus:outline-none focus:border-primary/50"
                     />
                   </div>
                 </div>
