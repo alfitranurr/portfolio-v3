@@ -21,6 +21,7 @@ export interface Project {
   github_url: string | null
   demo_url: string | null
   notebook_url: string | null
+  slide_url?: string | null
   embed_code: string | null
   is_featured: boolean
   pinned_order: number

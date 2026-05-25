@@ -288,6 +288,7 @@ export async function saveProjectAction(projectData: any) {
       github_url: projectData.github_url,
       demo_url: projectData.demo_url,
       notebook_url: projectData.notebook_url,
+      slide_url: projectData.slide_url,
       embed_code: projectData.embed_code,
       is_featured: projectData.is_featured,
       pinned_order: parseInt(projectData.pinned_order) || 0,

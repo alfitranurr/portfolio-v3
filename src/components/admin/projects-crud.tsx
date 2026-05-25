@@ -17,7 +17,8 @@ import {
   Layers,
   ArrowLeft,
   UploadCloud,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Presentation
 } from 'lucide-react'
 import { saveProjectAction, deleteProjectAction, uploadAssetAction } from '@/app/admin/actions'
 import { cn, getDirectImageUrl } from '@/lib/utils'
@@ -33,6 +34,7 @@ interface Project {
   github_url: string | null
   demo_url: string | null
   notebook_url: string | null
+  slide_url?: string | null
   embed_code: string | null
   is_featured: boolean | null
   pinned_order: number | null
@@ -82,6 +84,7 @@ const DEFAULT_PROJECT: Omit<Project, 'id'> = {
   github_url: '',
   demo_url: '',
   notebook_url: '',
+  slide_url: '',
   embed_code: '',
   is_featured: false,
   pinned_order: 0
@@ -426,65 +429,79 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
 
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                      Cover Image
+                      Reporting Presentation
                     </label>
-                    
-                    <div className="flex items-center gap-4">
-                      {/* Preview box */}
-                      <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-200/20 dark:border-slate-800/10 bg-slate-200/5 flex items-center justify-center shrink-0">
-                        {editingProject.cover_image ? (
+                    <input
+                      type="url"
+                      value={editingProject.slide_url || ''}
+                      onChange={e => setEditingProject(prev => ({ ...prev, slide_url: e.target.value }))}
+                      placeholder="https://canva.com/design/... or Google Slides link"
+                      className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                    />
+                  </div>
+                </div>
+
+                {/* Cover Image Upload Container (Full Width) */}
+                <div className="space-y-1.5 pt-2">
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Cover Image
+                  </label>
+                  
+                  <div className="flex items-center gap-4">
+                    {/* Preview box */}
+                    <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-200/20 dark:border-slate-800/10 bg-slate-200/5 flex items-center justify-center shrink-0">
+                      {editingProject.cover_image ? (
+                        <>
+                          <img
+                            src={getDirectImageUrl(editingProject.cover_image, 200)}
+                            alt="Cover preview"
+                            className="w-full h-full object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleRemoveCoverImage}
+                            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold cursor-pointer"
+                          >
+                            Remove
+                          </button>
+                        </>
+                      ) : (
+                        <ImageIcon className="w-6 h-6 text-muted-foreground/40" />
+                      )}
+                    </div>
+
+                    <div className="flex-1 space-y-2">
+                      <label className={cn(
+                        "w-full py-2.5 px-4 rounded-xl bg-white/5 border border-dashed border-slate-200/20 dark:border-slate-800/20 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
+                        isUploading && "opacity-50 pointer-events-none"
+                      )}>
+                        {isUploading ? (
                           <>
-                            <img
-                              src={getDirectImageUrl(editingProject.cover_image, 200)}
-                              alt="Cover preview"
-                              className="w-full h-full object-cover"
-                            />
-                            <button
-                              type="button"
-                              onClick={handleRemoveCoverImage}
-                              className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold cursor-pointer"
-                            >
-                              Remove
-                            </button>
+                            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                            <span>Uploading...</span>
                           </>
                         ) : (
-                          <ImageIcon className="w-6 h-6 text-muted-foreground/40" />
+                          <>
+                            <UploadCloud className="w-4 h-4 text-muted-foreground" />
+                            <span>{editingProject.cover_image ? 'Change Cover' : 'Upload Cover'}</span>
+                          </>
                         )}
-                      </div>
-
-                      <div className="flex-1 space-y-2">
-                        <label className={cn(
-                          "w-full py-2.5 px-4 rounded-xl bg-white/5 border border-dashed border-slate-200/20 dark:border-slate-800/20 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
-                          isUploading && "opacity-50 pointer-events-none"
-                        )}>
-                          {isUploading ? (
-                            <>
-                              <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-                              <span>Uploading...</span>
-                            </>
-                          ) : (
-                            <>
-                              <UploadCloud className="w-4 h-4 text-muted-foreground" />
-                              <span>{editingProject.cover_image ? 'Change Cover' : 'Upload Cover'}</span>
-                            </>
-                          )}
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleCoverImageUpload}
-                            className="hidden"
-                            disabled={isUploading}
-                          />
-                        </label>
-                        
                         <input
-                          type="text"
-                          value={editingProject.cover_image || ''}
-                          onChange={e => setEditingProject(prev => ({ ...prev, cover_image: e.target.value }))}
-                          placeholder="Or paste Cover Image URL"
-                          className="w-full px-3 py-1.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleCoverImageUpload}
+                          className="hidden"
+                          disabled={isUploading}
                         />
-                      </div>
+                      </label>
+                      
+                      <input
+                        type="text"
+                        value={editingProject.cover_image || ''}
+                        onChange={e => setEditingProject(prev => ({ ...prev, cover_image: e.target.value }))}
+                        placeholder="Or paste Cover Image URL"
+                        className="w-full px-3 py-1.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
+                      />
                     </div>
                   </div>
                 </div>
@@ -690,6 +707,17 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                           className="p-2 rounded-lg bg-white/5 text-muted-foreground hover:text-foreground transition-all"
                         >
                           <ExternalLink className="w-4 h-4" />
+                        </a>
+                      )}
+                      {proj.slide_url && (
+                        <a
+                          href={proj.slide_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 rounded-lg bg-white/5 text-muted-foreground hover:text-foreground transition-all"
+                          title="Presentation Deck"
+                        >
+                          <Presentation className="w-4 h-4" />
                         </a>
                       )}
                       {proj.embed_code && (
