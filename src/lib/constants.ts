@@ -1,7 +1,7 @@
 export const TECH_STACK = [
   { name: 'Python', category: 'Language', level: 92, desc: 'ML, data processing, automation' },
   { name: 'SQL', category: 'Database', level: 88, desc: 'Complex querying & database optimization' },
-  { name: 'R', category: 'Language', level: 75, desc: 'Statistical analytics & models' },
+  { name: 'Looker Studio', category: 'BI / Viz', level: 80, desc: 'Google business intelligence and dashboard reporting' },
   { name: 'Excel', category: 'Tool', level: 80, desc: 'Advanced functions & pivots' },
   { name: 'Tableau', category: 'BI / Viz', level: 85, desc: 'Interactive visual dashboards' },
   { name: 'PowerBI', category: 'BI / Viz', level: 82, desc: 'Corporate reporting & modeling' },
