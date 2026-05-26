@@ -14,7 +14,8 @@ import {
   Menu, 
   X,
   ExternalLink,
-  ShieldAlert
+  ShieldAlert,
+  Terminal
 } from 'lucide-react'
 import { ThemeToggle } from './theme-toggle'
 import { cn } from '@/lib/utils'
@@ -30,6 +31,7 @@ export function AdminSidebar() {
     { name: 'Messages & Inbox', href: '/admin', icon: MessageSquare, exact: true },
     { name: 'Profile Editor', href: '/admin/profile', icon: UserCog, exact: false },
     { name: 'Manage Projects', href: '/admin/projects', icon: FolderCode, exact: false },
+    { name: 'Manage Tech Stack', href: '/admin/skills', icon: Terminal, exact: false },
     { name: 'Manage Education', href: '/admin/education', icon: GraduationCap, exact: false },
     { name: 'Manage Experience', href: '/admin/experience', icon: Briefcase, exact: false },
     { name: 'Manage Certificates', href: '/admin/certificates', icon: Award, exact: false },

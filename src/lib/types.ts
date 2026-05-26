@@ -74,3 +74,15 @@ export interface Message {
   is_read: boolean
   created_at: string
 }
+
+export interface Skill {
+  id: string
+  name: string
+  category: string
+  level: number
+  desc: string
+  svg_path: string | null
+  created_at?: string
+  updated_at?: string
+}
+

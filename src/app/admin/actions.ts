@@ -764,4 +764,188 @@ export async function clearAIChatLogsAction() {
   return res
 }
 
+// ----------------------------------------------------
+// 8. TECH STACK (SKILLS) ACTIONS
+// ----------------------------------------------------
+
+function slugifyForSimpleIcons(name: string): string {
+  let slug = name.toLowerCase().trim()
+  if (slug === 'next.js' || slug === 'nextjs') return 'nextdotjs'
+  if (slug === 'node.js' || slug === 'nodejs') return 'nodedotjs'
+  if (slug === 'power bi' || slug === 'powerbi') return 'powerbi'
+  if (slug === 'excel' || slug === 'microsoft excel') return 'microsoftexcel'
+  if (slug === 'sql' || slug === 'postgresql' || slug === 'postgres') return 'postgresql'
+  if (slug === 'mysql') return 'mysql'
+  if (slug === 'mongodb' || slug === 'mongo') return 'mongodb'
+  if (slug === 'sqlite') return 'sqlite'
+  if (slug === 'docker') return 'docker'
+  if (slug === 'kubernetes' || slug === 'k8s') return 'kubernetes'
+  if (slug === 'aws' || slug === 'amazon web services') return 'amazonaws'
+  if (slug === 'gcp' || slug === 'google cloud') return 'googlecloud'
+  if (slug === 'azure') return 'microsoftazure'
+
+  slug = slug
+    .replace(/\.js$/, 'dotjs')
+    .replace(/\+/g, 'plus')
+    .replace(/#/g, 'sharp')
+    .replace(/[^a-z0-9]/g, '')
+  return slug
+}
+
+async function fetchSimpleIconPath(slug: string): Promise<string | null> {
+  const url = `https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${slug}.svg`
+  try {
+    const res = await fetch(url)
+    if (!res.ok) return null
+    const text = await res.text()
+    const match = text.match(/d="([^"]+)"/)
+    return match ? match[1] : null
+  } catch (e) {
+    console.error(`Error fetching simple icon for slug ${slug}:`, e)
+    return null
+  }
+}
+
+export async function saveSkillAction(skillData: any) {
+  const name = skillData.name ? skillData.name.trim() : ''
+  const category = skillData.category ? skillData.category.trim() : ''
+  const level = parseInt(skillData.level) || 50
+  const desc = skillData.desc ? skillData.desc.trim() : ''
+  let svg_path = skillData.svg_path ? skillData.svg_path.trim() : ''
+
+  if (!name || !category) {
+    return { success: false, error: 'Name and Category are required.' }
+  }
+
+  // Auto-fetch logo if svg_path is empty
+  if (!svg_path) {
+    const slug = slugifyForSimpleIcons(name)
+    try {
+      const fetched = await fetchSimpleIconPath(slug)
+      if (fetched) {
+        svg_path = fetched
+      }
+    } catch (e) {
+      console.warn('Failed auto-fetching logo path:', e)
+    }
+  }
+
+  const cookieStore = await cookies()
+  if (!hasSupabaseConfig()) {
+    const mockSkillsStr = cookieStore.get('mock_skills')?.value
+    let list = mockSkillsStr ? JSON.parse(mockSkillsStr) : null
+
+    if (!list) {
+      const { TECH_STACK } = await import('@/lib/constants')
+      list = TECH_STACK.map((item: any, idx: number) => ({
+        id: `mock-skill-${idx + 1}`,
+        name: item.name,
+        category: item.category,
+        level: item.level,
+        desc: item.desc,
+        svg_path: null
+      }))
+    }
+
+    const isEdit = !!skillData.id && (skillData.id.startsWith('mock-') || list.some((s: any) => s.id === skillData.id))
+
+    if (isEdit) {
+      list = list.map((s: any) => 
+        s.id === skillData.id 
+          ? { ...s, name, category, level, desc, svg_path, updated_at: new Date().toISOString() } 
+          : s
+      )
+    } else {
+      const newSkill = {
+        id: `mock-skill-${Date.now()}`,
+        name,
+        category,
+        level,
+        desc,
+        svg_path: svg_path || null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+      list.push(newSkill)
+    }
+
+    cookieStore.set('mock_skills', JSON.stringify(list), { path: '/' })
+    revalidatePath('/')
+    revalidatePath('/admin/skills')
+    return { success: true, message: 'Skill saved successfully (Mock Mode).' }
+  }
+
+  try {
+    const supabase = await createClient()
+    const isEdit = !!skillData.id && !skillData.id.startsWith('mock-')
+
+    const dbPayload = {
+      name,
+      category,
+      level,
+      desc,
+      svg_path: svg_path || null,
+      updated_at: new Date().toISOString()
+    }
+
+    let error
+    if (isEdit) {
+      const { error: err } = await supabase
+        .from('skills')
+        .update(dbPayload)
+        .eq('id', skillData.id)
+      error = err
+    } else {
+      const { error: err } = await supabase
+        .from('skills')
+        .insert([{ ...dbPayload, created_at: new Date().toISOString() }])
+      error = err
+    }
+
+    if (error) throw error
+
+    revalidatePath('/')
+    revalidatePath('/admin/skills')
+    return { success: true, message: 'Skill saved successfully.' }
+  } catch (err: any) {
+    console.error('saveSkillAction error:', err)
+    return { success: false, error: err.message }
+  }
+}
+
+export async function deleteSkillAction(id: string) {
+  const cookieStore = await cookies()
+  if (!hasSupabaseConfig()) {
+    const mockSkillsStr = cookieStore.get('mock_skills')?.value
+    if (mockSkillsStr) {
+      const list = JSON.parse(mockSkillsStr)
+      const updated = list.filter((s: any) => s.id !== id)
+      cookieStore.set('mock_skills', JSON.stringify(updated), { path: '/' })
+    }
+    revalidatePath('/')
+    revalidatePath('/admin/skills')
+    return { success: true }
+  }
+
+  if (id.startsWith('mock-')) {
+    return { success: true }
+  }
+
+  try {
+    const supabase = await createClient()
+    const { error } = await supabase
+      .from('skills')
+      .delete()
+      .eq('id', id)
+    if (error) throw error
+    revalidatePath('/')
+    revalidatePath('/admin/skills')
+    return { success: true }
+  } catch (err: any) {
+    console.error('deleteSkillAction error:', err)
+    return { success: false, error: err.message }
+  }
+}
+
+
 
