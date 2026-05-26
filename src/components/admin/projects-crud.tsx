@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import { saveProjectAction, deleteProjectAction, uploadAssetAction } from '@/app/admin/actions'
 import { cn, getDirectImageUrl } from '@/lib/utils'
+import { Github } from '@/components/icons'
 
 interface Project {
   id: string
@@ -703,6 +704,36 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                       )}
                     </div>
 
+                    {/* Cover image preview or placeholder */}
+                    <div className="relative aspect-video w-full max-h-[140px] rounded-xl overflow-hidden bg-slate-950/40 border border-slate-200/10 dark:border-slate-800/10 mt-2 flex items-center justify-center shrink-0">
+                      {proj.cover_image ? (
+                        <>
+                          {/* Ambient blur background */}
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img 
+                            src={getDirectImageUrl(proj.cover_image, 400)} 
+                            alt="" 
+                            className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-30 select-none pointer-events-none"
+                          />
+                          {/* Contained foreground image */}
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img 
+                            src={getDirectImageUrl(proj.cover_image, 400)} 
+                            alt={proj.title} 
+                            referrerPolicy="no-referrer"
+                            className="max-w-full max-h-full object-contain relative z-10"
+                          />
+                        </>
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-tr from-cyan-500/10 to-violet-500/10 flex flex-col items-center justify-center p-4">
+                          <ImageIcon className="w-6 h-6 text-primary/20 mb-1" />
+                          <span className="text-primary/25 font-black uppercase tracking-widest text-[8px] text-center leading-normal">
+                            No Cover Image
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
                     <p className="text-xs text-muted-foreground line-clamp-2 pt-1 leading-relaxed">
                       {proj.description}
                     </p>
@@ -717,8 +748,9 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-2 rounded-lg bg-white/5 text-muted-foreground hover:text-foreground transition-all"
+                          title="GitHub Repository"
                         >
-                          <FileCode className="w-4 h-4" />
+                          <Github className="w-4 h-4" />
                         </a>
                       )}
                       {proj.demo_url && (
