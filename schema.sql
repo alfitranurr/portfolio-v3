@@ -183,9 +183,25 @@ ON storage.objects FOR DELETE
 TO authenticated
 USING (bucket_id = 'portfolio-assets');
 
--- ====================================================
 -- MIGRATION: RUN THIS IF TABLE ALREADY EXISTS
--- ====================================================
 -- ALTER TABLE public.education ADD COLUMN logo_url TEXT;
 -- ALTER TABLE public.projects ADD COLUMN slide_url TEXT;
+
+-- ====================================================
+-- 8. Skills Table (For Interactive Tech Stack)
+-- ====================================================
+CREATE TABLE public.skills (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name VARCHAR(255) NOT NULL UNIQUE,
+  category VARCHAR(100) NOT NULL, -- e.g., 'Language', 'Database', 'BI / Viz', 'ML / AI', 'Framework', 'Backend', 'DevOps', 'Tool'
+  level INT NOT NULL DEFAULT 50, -- Proficiency level (0-100)
+  "desc" TEXT,
+  svg_path TEXT, -- Stored SVG path for the logo (automatic or custom)
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+ALTER TABLE public.skills ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public select on skills" ON public.skills FOR SELECT USING (true);
+CREATE POLICY "Allow admin write on skills" ON public.skills FOR ALL USING (auth.role() = 'authenticated');
 

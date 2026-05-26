@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
-import { Profile, Project, Education, Experience, Certificate } from '@/lib/types'
+import { Profile, Project, Education, Experience, Certificate, Skill } from '@/lib/types'
+import { TECH_STACK } from '@/lib/constants'
 
 // 1. MOCK PROFILE
 export const MOCK_PROFILE: Profile = {
@@ -483,4 +484,63 @@ export async function getCertificates(): Promise<Certificate[]> {
     return MOCK_CERTIFICATES
   }
 }
+
+// 8. SKILLS SERVICE
+export async function getSkills(): Promise<Skill[]> {
+  if (!hasSupabaseConfig()) {
+    try {
+      const cookieStore = await cookies()
+      const mockSkillsStr = cookieStore.get('mock_skills')?.value
+      if (mockSkillsStr) {
+        return JSON.parse(mockSkillsStr)
+      }
+    } catch (e: any) {
+      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+        throw e
+      }
+      console.warn('Failed to parse mock skills from cookies', e)
+    }
+    // Return initial seed mapped from TECH_STACK
+    return TECH_STACK.map((item, idx) => ({
+      id: `mock-skill-${idx + 1}`,
+      name: item.name,
+      category: item.category,
+      level: item.level,
+      desc: item.desc,
+      svg_path: null
+    }))
+  }
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('skills')
+      .select('*')
+      .order('category', { ascending: true })
+      .order('level', { ascending: false })
+
+    if (error || !data || data.length === 0) {
+      console.warn('Skills fetch failed, using fallback mock data:', error?.message)
+      return TECH_STACK.map((item, idx) => ({
+        id: `mock-skill-${idx + 1}`,
+        name: item.name,
+        category: item.category,
+        level: item.level,
+        desc: item.desc,
+        svg_path: null
+      }))
+    }
+    return data
+  } catch (err) {
+    console.warn('Skills connection error, using fallback:', err)
+    return TECH_STACK.map((item, idx) => ({
+      id: `mock-skill-${idx + 1}`,
+      name: item.name,
+      category: item.category,
+      level: item.level,
+      desc: item.desc,
+      svg_path: null
+    }))
+  }
+}
+
 

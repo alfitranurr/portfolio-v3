@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowUpRight, Download, Mail, ExternalLink, Terminal, Presentation, BookOpen } from 'lucide-react'
 import { Github, Linkedin } from '@/components/icons'
-import { getProfile, getProjects } from '@/lib/data-service'
+import { getProfile, getProjects, getSkills } from '@/lib/data-service'
 import { SkillsGrid } from '@/components/skills-grid'
 
 export const dynamic = 'force-dynamic'
@@ -9,6 +9,7 @@ export const dynamic = 'force-dynamic'
 export default async function HomePage() {
   const profile = await getProfile()
   const projects = await getProjects()
+  const skills = await getSkills()
   const featuredProjects = projects.filter(p => p.is_featured).slice(0, 6)
 
   return (
@@ -219,9 +220,9 @@ export default async function HomePage() {
       <section className="space-y-6">
         <div className="space-y-1">
           <h2 className="text-xl md:text-2xl font-black tracking-tight">Interactive Tech Stack</h2>
-          <p className="text-xs text-muted-foreground">My technical toolkit and proficiency levels</p>
+          <p className="text-xs text-muted-foreground">My technical toolkit and areas of expertise</p>
         </div>
-        <SkillsGrid />
+        <SkillsGrid initialSkills={skills} />
       </section>
     </div>
   )
