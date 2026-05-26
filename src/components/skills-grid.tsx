@@ -8,7 +8,7 @@ import { Terminal } from 'lucide-react'
 import {
   PythonIcon,
   SqlIcon,
-  RIcon,
+  LookerIcon,
   ExcelIcon,
   TableauIcon,
   PowerBiIcon,
@@ -33,8 +33,12 @@ function getSkillIcon(name: string, customPath: string | null, className?: strin
       return <PythonIcon className={className} />
     case 'sql':
       return <SqlIcon className={className} />
-    case 'r':
-      return <RIcon className={className} />
+    case 'looker studio':
+    case 'googledatastudio':
+    case 'google data studio':
+    case 'datastudio':
+    case 'data studio':
+      return <LookerIcon className={className} />
     case 'excel':
       return <ExcelIcon className={className} />
     case 'tableau':
