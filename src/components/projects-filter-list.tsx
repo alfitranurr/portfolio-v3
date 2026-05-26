@@ -102,7 +102,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
       </div>
 
       {/* Search and Showing entries count */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-muted-foreground/60 px-1 border-b border-slate-200/10 dark:border-slate-800/10 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-muted-foreground/60 px-1 border-b border-slate-200/10 dark:border-slate-800/10 pb-0">
         <div className="relative w-full sm:max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
           <input
@@ -110,10 +110,10 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
             placeholder="Search projects..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/45 text-xs focus:outline-none focus:border-primary/50 transition-all"
+            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/45 text-xs focus:outline-none focus:border-primary/50 transition-all"
           />
         </div>
-        <div className="shrink-0 font-medium self-end sm:self-auto">
+        <div className="shrink-0 font-medium self-end sm:self-auto pb-1">
           Showing <span className="text-foreground font-semibold">{filteredProjects.length}</span> {filteredProjects.length === 1 ? 'entry' : 'entries'}
         </div>
       </div>
@@ -121,7 +121,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
       {/* Interactive Project Cards Grid */}
       <motion.div 
         layout
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 !-mt-4"
       >
         <AnimatePresence mode="popLayout">
           {filteredProjects.map((project) => (
