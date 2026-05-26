@@ -12,7 +12,7 @@ import {
   ChevronUp,
   Inbox,
   AlertCircle,
-  FolderCode,
+  Coffee,
   GraduationCap,
   Briefcase,
   Award
@@ -137,7 +137,7 @@ export function MessagesList({ initialMessages, stats }: MessagesListProps) {
           <div className="flex justify-between items-start">
             <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Projects</span>
             <div className="p-2 rounded-xl bg-white/5 text-muted-foreground">
-              <FolderCode className="w-4 h-4" />
+              <Coffee className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-4">

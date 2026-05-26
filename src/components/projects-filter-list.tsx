@@ -3,7 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUpRight, ExternalLink, Sparkles, Presentation, BookOpen } from 'lucide-react'
+import { ArrowUpRight, ExternalLink, Sparkles, Presentation, BookOpen, Search } from 'lucide-react'
 import { Github } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { Project } from '@/lib/types'
@@ -35,15 +35,21 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
 
   const subCategories = activeCategory === 'data' ? dataSubcategories : nonDataSubcategories
 
-  // Reset subcategory selection when category switches
+  const [searchQuery, setSearchQuery] = React.useState('')
+
+  // Reset subcategory and search when category switches
   React.useEffect(() => {
     setActiveSubCategory('All')
+    setSearchQuery('')
   }, [activeCategory])
 
   const filteredProjects = initialProjects.filter((project) => {
     const categoryMatch = project.category === activeCategory
     const subCategoryMatch = activeSubCategory === 'All' || project.sub_category === activeSubCategory
-    return categoryMatch && subCategoryMatch
+    const searchMatch = searchQuery.trim() === '' || 
+      project.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      project.description.toLowerCase().includes(searchQuery.toLowerCase())
+    return categoryMatch && subCategoryMatch && searchMatch
   })
 
   return (
@@ -93,6 +99,23 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
             {sub.replace(' Projects', '')}
           </button>
         ))}
+      </div>
+
+      {/* Search and Showing entries count */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-muted-foreground/60 px-1 border-b border-slate-200/10 dark:border-slate-800/10 pb-4">
+        <div className="relative w-full sm:max-w-xs">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
+          <input
+            type="text"
+            placeholder="Search projects..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/45 text-xs focus:outline-none focus:border-primary/50 transition-all"
+          />
+        </div>
+        <div className="shrink-0 font-medium self-end sm:self-auto">
+          Showing <span className="text-foreground font-semibold">{filteredProjects.length}</span> {filteredProjects.length === 1 ? 'entry' : 'entries'}
+        </div>
       </div>
 
       {/* Interactive Project Cards Grid */}
