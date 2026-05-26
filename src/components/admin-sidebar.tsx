@@ -8,7 +8,7 @@ import {
   UserCog, 
   GraduationCap, 
   Briefcase, 
-  FolderCode, 
+  Coffee, 
   Award, 
   LogOut,
   Menu, 
@@ -30,7 +30,7 @@ export function AdminSidebar() {
   const navItems = [
     { name: 'Messages & Inbox', href: '/admin', icon: MessageSquare, exact: true },
     { name: 'Profile Editor', href: '/admin/profile', icon: UserCog, exact: false },
-    { name: 'Manage Projects', href: '/admin/projects', icon: FolderCode, exact: false },
+    { name: 'Manage Projects', href: '/admin/projects', icon: Coffee, exact: false },
     { name: 'Manage Tech Stack', href: '/admin/skills', icon: Terminal, exact: false },
     { name: 'Manage Education', href: '/admin/education', icon: GraduationCap, exact: false },
     { name: 'Manage Experience', href: '/admin/experience', icon: Briefcase, exact: false },

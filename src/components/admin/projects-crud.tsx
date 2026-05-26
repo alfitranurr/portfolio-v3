@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { 
-  FolderCode, 
+  Coffee, 
   Plus, 
   Edit3, 
   Trash2, 
@@ -659,7 +659,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
           {/* Cards */}
           {filtered.length === 0 ? (
             <div className="p-12 text-center rounded-3xl border border-dashed border-slate-200/10 dark:border-slate-800/10 bg-white/5 space-y-3">
-              <FolderCode className="w-10 h-10 text-muted-foreground/40 mx-auto" />
+              <Coffee className="w-10 h-10 text-muted-foreground/40 mx-auto" />
               <h3 className="font-extrabold text-foreground">No projects found</h3>
               <p className="text-xs text-muted-foreground max-w-xs mx-auto">
                 No items match your search. Create one by clicking the Add Project button above.
