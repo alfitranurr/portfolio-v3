@@ -316,3 +316,39 @@ body {
   border-left: 3px solid var(--primary);
   opacity: 0.85;
 }
+
+/* Infinite Scrolling Marquee */
+@keyframes marquee-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-marquee-left {
+  animation: marquee-left var(--marquee-duration, 40s) linear infinite;
+}
+
+.animate-marquee-right {
+  animation: marquee-right var(--marquee-duration, 40s) linear infinite;
+}
+
+.marquee-container {
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  gap: 1rem;
+  mask-image: linear-gradient(to right, transparent, rgb(0 0 0 / 0.1) 5%, #000 15%, #000 85%, rgb(0 0 0 / 0.1) 95%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, rgb(0 0 0 / 0.1) 5%, #000 15%, #000 85%, rgb(0 0 0 / 0.1) 95%, transparent);
+}
