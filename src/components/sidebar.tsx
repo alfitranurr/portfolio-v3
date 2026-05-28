@@ -101,7 +101,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
 
             {/* Avatar Photo */}
             <Link href="/" onClick={() => setIsOpen(false)} className="group relative block mb-3">
-              <div className="relative w-16 h-16 rounded-full overflow-hidden border border-slate-200/25 dark:border-slate-800/20 shadow-md bg-slate-100 dark:bg-slate-900 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+              <div className="relative w-28 h-28 rounded-full overflow-hidden border border-slate-200/25 dark:border-slate-800/20 shadow-md bg-slate-100 dark:bg-slate-900 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
                 {profile.avatar_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img 
@@ -110,7 +110,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-tr from-cyan-500/20 to-violet-500/20 flex items-center justify-center text-foreground font-black text-xl animate-pulse">
+                  <div className="w-full h-full bg-gradient-to-tr from-cyan-500/20 to-violet-500/20 flex items-center justify-center text-foreground font-black text-2xl animate-pulse">
                     <span>{profile.name.split(' ').map(n => n[0]).join('')}</span>
                   </div>
                 )}

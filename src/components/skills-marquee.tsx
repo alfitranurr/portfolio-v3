@@ -158,7 +158,7 @@ export function SkillsMarquee({ skills }: SkillsMarqueeProps) {
       return (
         <div
           key={uniqueKey}
-          className="flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-slate-200/10 dark:border-slate-800/60 bg-white/5 dark:bg-black/30 text-xs font-semibold text-foreground/90 shrink-0 hover:scale-105 hover:bg-white/10 dark:hover:bg-white/10 hover:border-primary/20 dark:hover:border-primary/30 transition-all duration-300 shadow-sm"
+          className="flex items-center gap-2.5 px-5 py-2.5 rounded-full glass-card text-xs font-semibold text-foreground/90 shrink-0 hover:scale-105 hover:bg-white/10 dark:hover:bg-white/10 hover:border-primary/20 dark:hover:border-primary/30 transition-all duration-300 shadow-sm"
         >
           <div className={cn("w-4.5 h-4.5 flex items-center justify-center shrink-0", iconColorClass)}>
             {getSkillIcon(skill.name, skill.svg_path, "w-4.5 h-4.5")}
@@ -170,7 +170,7 @@ export function SkillsMarquee({ skills }: SkillsMarqueeProps) {
   }
 
   return (
-    <div className="space-y-4 py-2 overflow-hidden relative w-full">
+    <div className="space-y-4 py-4 overflow-hidden relative w-full">
       {/* Row 1: Right to Left */}
       {row1.length > 0 && (
         <div className="marquee-container w-full">
