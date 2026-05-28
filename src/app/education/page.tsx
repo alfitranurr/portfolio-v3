@@ -1,6 +1,7 @@
 import { getEducation } from '@/lib/data-service'
 import { GraduationCap, Calendar, MapPin, Award } from 'lucide-react'
 import { SafeSchoolLogo } from '@/components/safe-school-logo'
+import { CollapsibleEducationDescription } from '@/components/collapsible-education-description'
 
 export const metadata = {
   title: 'Education',
@@ -81,9 +82,7 @@ export default async function EducationPage() {
 
               {/* Description */}
               {edu.description && (
-                <p className="text-sm text-foreground/80 leading-relaxed pt-3 border-t border-slate-200/10 dark:border-slate-800/10">
-                  {edu.description}
-                </p>
+                <CollapsibleEducationDescription description={edu.description} />
               )}
             </div>
           </div>
