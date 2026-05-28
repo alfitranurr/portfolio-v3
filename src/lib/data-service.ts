@@ -8,7 +8,7 @@ export const MOCK_PROFILE: Profile = {
   id: "mock-admin-id",
   name: "Al Fitra Nur Ramadhani",
   headline: "Data Enthusiast & Scientist",
-  about_me: "I am a Data Science professional passionate about uncovering hidden insights from complex datasets and building interactive web solutions. Specializing in Machine Learning, Statistical Analysis, and Full-Stack development, I bridge the gap between rigorous analytics and production-ready applications.",
+  about_me: "Informatics graduate from University of Muhammadiyah Malang, specializing in data analytics and machine learning. Proficient in Python, SQL, Excel, and Tableau, with experience in end-to-end data handling and a solid foundation in mathematics and programming, strong analytical, problem-solving skills and a passion for continuous learning. Seeking opportunities to apply expertise in dynamic environments while advancing in data-driven technologies.",
   avatar_url: null,
   resume_url: null,
   instagram_url: "https://www.instagram.com/rmdhani_ii",

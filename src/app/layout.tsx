@@ -6,6 +6,7 @@ import { Sidebar } from "@/components/sidebar";
 import NextTopLoader from 'nextjs-toploader';
 import { InitialLoader } from "@/components/initial-loader";
 import { ScrollToTop } from "@/components/scroll-to-top";
+import { getProfile } from "@/lib/data-service";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,11 +32,13 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const profile = await getProfile();
+
   return (
     <html
       lang="en"
@@ -69,13 +72,13 @@ export default function RootLayout({
           </div>
           
           {/* Persistent Sidebar */}
-          <Sidebar />
+          <Sidebar profile={profile} />
 
           {/* Content Wrapper */}
           <div className="flex-1 w-full flex flex-col min-h-screen">
-            {/* Desktop padding-left to leave space for the sidebar (w-72 = 18rem + spacing) */}
+            {/* Desktop padding-left to leave space for the sidebar (w-64 = 16rem + spacing) */}
             {/* Mobile padding-top for the fixed mobile header (h-16 = 4rem + spacing) */}
-            <main className="flex-grow w-full max-w-7xl mx-auto px-4 py-6 md:px-8 lg:pl-80 lg:pr-8 pt-20 lg:pt-8 relative z-10">
+            <main className="flex-grow w-full max-w-7xl mx-auto px-4 py-6 md:px-8 lg:pl-72 lg:pr-8 pt-20 lg:pt-8 relative z-10">
               {children}
             </main>
           </div>
