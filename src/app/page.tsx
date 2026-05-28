@@ -210,14 +210,14 @@ export default async function HomePage() {
         <div className="absolute -top-12 -left-12 w-48 h-48 bg-primary/10 rounded-full filter blur-2xl pointer-events-none" />
 
         <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <Rocket className="w-6 h-6 text-primary animate-pulse" />
-            <h2 className="text-xl md:text-2xl font-bold tracking-tight text-foreground">
+          <div className="flex items-center gap-2.5">
+            <Rocket className="w-5.5 h-5.5 text-primary animate-pulse" />
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground">
               Let&apos;s work together!
             </h2>
           </div>
 
-          <p className="text-sm md:text-base text-foreground/80 leading-relaxed max-w-2xl">
+          <p className="text-sm md:text-base text-foreground/80 leading-relaxed">
             I&apos;m open for freelance projects; feel free to email me to see how we can collaborate.
           </p>
 
