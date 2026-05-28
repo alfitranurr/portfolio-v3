@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowUpRight, Download, Mail, ExternalLink, Terminal, Presentation, BookOpen } from 'lucide-react'
+import { ArrowUpRight, Download, ExternalLink, Terminal, Presentation, BookOpen, Rocket } from 'lucide-react'
 import { Github, Linkedin } from '@/components/icons'
 import { getProfile, getProjects, getSkills } from '@/lib/data-service'
 import { SkillsMarquee } from '@/components/skills-marquee'
@@ -58,14 +58,6 @@ export default async function HomePage() {
                   <span>Resume (CV) Pending</span>
                 </span>
               )}
-              
-              <Link
-                href="/contact"
-                className="flex items-center gap-2 px-5 py-3 rounded-xl glass-card border border-slate-200/10 hover:border-primary/20 text-foreground font-semibold text-sm cursor-pointer"
-              >
-                <Mail className="w-4.5 h-4.5 text-muted-foreground" />
-                <span>Get In Touch</span>
-              </Link>
             </div>
           </div>
         </div>
@@ -210,6 +202,34 @@ export default async function HomePage() {
           <p className="text-xs text-muted-foreground">My technical toolkit and areas of expertise</p>
         </div>
         <SkillsMarquee skills={skills} />
+      </section>
+
+      {/* 4. WORK TOGETHER SECTION */}
+      <section className="p-6 md:p-10 rounded-3xl glass-panel relative overflow-hidden">
+        {/* Ambient glow behind card */}
+        <div className="absolute -top-12 -left-12 w-48 h-48 bg-primary/10 rounded-full filter blur-2xl pointer-events-none" />
+
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <Rocket className="w-6 h-6 text-primary animate-pulse" />
+            <h2 className="text-xl md:text-2xl font-bold tracking-tight text-foreground">
+              Let&apos;s work together!
+            </h2>
+          </div>
+
+          <p className="text-sm md:text-base text-foreground/80 leading-relaxed max-w-2xl">
+            I&apos;m open for freelance projects; feel free to email me to see how we can collaborate.
+          </p>
+
+          <div className="pt-2">
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-lg shadow-black/10 dark:shadow-white/5"
+            >
+              Contact me
+            </Link>
+          </div>
+        </div>
       </section>
     </div>
   )
