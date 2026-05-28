@@ -27,10 +27,7 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="relative p-6 md:p-10 rounded-3xl glass-panel overflow-hidden">
-          {/* Glow behind profile pic */}
-          <div className="absolute -top-12 -left-12 w-48 h-48 bg-primary/20 rounded-full filter blur-2xl pointer-events-none" />
-
+        <div className="relative p-6 md:p-10 rounded-3xl glass-panel overflow-hidden glow-card-top-left">
           {/* Hero Details */}
           <div className="space-y-4">
             <p className="text-base font-semibold text-muted-foreground">
@@ -205,10 +202,7 @@ export default async function HomePage() {
       </section>
 
       {/* 4. WORK TOGETHER SECTION */}
-      <section className="p-6 md:p-10 rounded-3xl glass-panel relative overflow-hidden">
-        {/* Ambient glow behind card */}
-        <div className="absolute -top-12 -left-12 w-48 h-48 bg-primary/10 rounded-full filter blur-2xl pointer-events-none" />
-
+      <section className="p-6 md:p-10 rounded-3xl glass-panel relative overflow-hidden glow-card-top-left">
         <div className="space-y-4">
           <div className="flex items-center gap-2.5">
             <Rocket className="w-5.5 h-5.5 text-primary animate-pulse" />
