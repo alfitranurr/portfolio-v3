@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Sidebar } from "@/components/sidebar";
+import { AdminSidebar } from "@/components/admin-sidebar";
 import NextTopLoader from 'nextjs-toploader';
 import { InitialLoader } from "@/components/initial-loader";
 import { ScrollToTop } from "@/components/scroll-to-top";
@@ -73,6 +74,9 @@ export default async function RootLayout({
           
           {/* Persistent Sidebar */}
           <Sidebar profile={profile} />
+          
+          {/* Admin Sidebar */}
+          <AdminSidebar />
 
           {/* Content Wrapper */}
           <div className="flex-1 w-full flex flex-col min-h-screen">

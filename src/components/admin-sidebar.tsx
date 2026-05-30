@@ -33,6 +33,11 @@ export function AdminSidebar() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
 
+  // Only show on admin pages
+  if (!pathname.startsWith('/admin')) {
+    return null
+  }
+
   React.useEffect(() => {
     setMounted(true)
   }, [])
