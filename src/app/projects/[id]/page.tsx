@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown'
 import { ArrowLeft, ExternalLink, Calendar, BookOpen, Sparkles, Presentation } from 'lucide-react'
 import { Github } from '@/components/icons'
 import { getProjectById } from '@/lib/data-service'
+import { BlurImage } from '@/components/ui/blur-image'
 
 export const dynamic = 'force-dynamic'
 
@@ -117,13 +118,17 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         {project.cover_image ? (
           <>
             {/* Blurred ambient background */}
-            <img 
+            <BlurImage 
               src={project.cover_image} 
               alt="" 
-              className="absolute inset-0 w-full h-full object-cover blur-2xl scale-105 opacity-30 select-none pointer-events-none"
+              initialBlur="blur-2xl opacity-0"
+              initialScale="scale-105"
+              loadedBlur="blur-2xl opacity-30"
+              loadedScale="scale-105"
+              className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
             />
             {/* Contained foreground image */}
-            <img 
+            <BlurImage 
               src={project.cover_image} 
               alt={project.title} 
               className="w-full h-full object-contain relative z-10"

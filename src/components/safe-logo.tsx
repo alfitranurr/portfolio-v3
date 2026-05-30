@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { getDirectImageUrl } from '@/lib/utils'
+import { BlurImage } from '@/components/ui/blur-image'
 
 interface SafeLogoProps {
   src: string
@@ -20,7 +21,7 @@ export function SafeLogo({ src, alt }: SafeLogoProps) {
 
   return (
     <div className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden p-1.5 flex items-center justify-center shrink-0 border border-slate-200/10 shadow-md ${isDarkLogo ? 'bg-zinc-950' : 'bg-white'}`}>
-      <img 
+      <BlurImage 
         src={processedSrc} 
         alt={alt} 
         className="w-full h-full object-contain"

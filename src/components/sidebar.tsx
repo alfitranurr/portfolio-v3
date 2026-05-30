@@ -23,6 +23,7 @@ import { Github, Linkedin, Instagram } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { Profile } from '@/lib/types'
 import { useTheme } from 'next-themes'
+import { BlurImage } from '@/components/ui/blur-image'
 
 export function Sidebar({ profile }: { profile: Profile }) {
   const pathname = usePathname()
@@ -103,8 +104,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
             <Link href="/" onClick={() => setIsOpen(false)} className="group relative block mb-3">
               <div className="relative w-28 h-28 rounded-full overflow-hidden border border-slate-200/25 dark:border-slate-800/20 shadow-md bg-slate-100 dark:bg-slate-900 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
                 {profile.avatar_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img 
+                  <BlurImage 
                     src={profile.avatar_url} 
                     alt={profile.name} 
                     className="w-full h-full object-cover"
