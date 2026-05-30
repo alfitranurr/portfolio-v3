@@ -127,10 +127,11 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
             <span>Fitur Analisis Pengunjung Belum Aktif</span>
           </div>
           <p className="text-amber-200/80 leading-relaxed">
-            Tabel database <code>page_views</code> tidak ditemukan. Untuk mengaktifkan pelacakan pengunjung dan pengunjung unik, silakan buka SQL Editor di dashboard Supabase Anda, lalu salin dan jalankan perintah berikut:
+            Tabel database <code>page_views</code> atau fungsi agregasi <code>get_visitor_analytics</code> belum diinisialisasi. Untuk mengaktifkan pelacakan, silakan buka SQL Editor di dashboard Supabase Anda, lalu salin dan jalankan perintah berikut:
           </p>
           <pre className="p-4 rounded-xl bg-black/40 border border-white/5 text-amber-300 font-mono overflow-x-auto text-[11px] whitespace-pre select-all">
-{`CREATE TABLE IF NOT EXISTS public.page_views (
+{`-- 1. Buat Tabel Page Views
+CREATE TABLE IF NOT EXISTS public.page_views (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   visitor_id UUID NOT NULL,
   page_path VARCHAR(255) NOT NULL,
@@ -140,7 +141,29 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
 ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Allow public insert on page_views" ON public.page_views FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow admin select on page_views" ON public.page_views FOR SELECT USING (auth.role() = 'authenticated');`}
+CREATE POLICY "Allow admin select on page_views" ON public.page_views FOR SELECT USING (auth.role() = 'authenticated');
+
+-- 2. Buat Fungsi Agregasi Database
+CREATE OR REPLACE FUNCTION public.get_visitor_analytics()
+RETURNS TABLE (
+  total_views BIGINT,
+  unique_visitors BIGINT,
+  today_views BIGINT,
+  today_unique BIGINT
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT 
+    COUNT(*)::BIGINT AS total_views,
+    COUNT(DISTINCT visitor_id)::BIGINT AS unique_visitors,
+    COUNT(CASE WHEN created_at >= TIMEZONE('utc', CURRENT_DATE) THEN 1 END)::BIGINT AS today_views,
+    COUNT(DISTINCT CASE WHEN created_at >= TIMEZONE('utc', CURRENT_DATE) THEN visitor_id END)::BIGINT AS today_unique
+  FROM public.page_views;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+REVOKE EXECUTE ON FUNCTION public.get_visitor_analytics() FROM public;
+GRANT EXECUTE ON FUNCTION public.get_visitor_analytics() TO authenticated;`}
           </pre>
           <p className="text-[11px] text-amber-200/60 italic font-medium">
             *Catatan: Setelah menjalankan skrip di atas, silakan muat ulang halaman ini.
