@@ -565,39 +565,29 @@ export async function getVisitorStats(): Promise<VisitorStats> {
   try {
     const supabase = await createClient()
 
-    // Test query and get exact total view count
-    const { data: allViews, error } = await supabase
-      .from('page_views')
-      .select('visitor_id, created_at')
+    // Call the optimized database RPC function
+    const { data, error } = await supabase.rpc('get_visitor_analytics')
 
     if (error) {
-      // Check if it is a missing relation/table error (Postgres error code 42P01)
-      if (error.code === '42P01') {
+      // Check if function does not exist (error code 42883) or relation doesn't exist (error code 42P01)
+      if (error.code === '42883' || error.code === '42P01' || error.message?.includes('does not exist')) {
         return { totalViews: 0, uniqueVisitors: 0, todayViews: 0, todayUnique: 0, isMissingTable: true }
       }
       throw error
     }
 
-    const totalViewsCount = allViews.length
-    const uniqueVisitorsSet = new Set(allViews.map(v => v.visitor_id))
-    const uniqueVisitorsCount = uniqueVisitorsSet.size
-
-    // Filter today's views (timezone safe comparison using date string prefix YYYY-MM-DD)
-    const todayStr = new Date().toISOString().split('T')[0]
-    const todayViews = allViews.filter(v => v.created_at.startsWith(todayStr))
-    const todayViewsCount = todayViews.length
-    const todayUniqueCount = new Set(todayViews.map(v => v.visitor_id)).size
+    const stats = data && data[0]
 
     return {
-      totalViews: totalViewsCount,
-      uniqueVisitors: uniqueVisitorsCount,
-      todayViews: todayViewsCount,
-      todayUnique: todayUniqueCount,
+      totalViews: Number(stats?.total_views ?? 0),
+      uniqueVisitors: Number(stats?.unique_visitors ?? 0),
+      todayViews: Number(stats?.today_views ?? 0),
+      todayUnique: Number(stats?.today_unique ?? 0),
       isMissingTable: false
     }
   } catch (err: any) {
-    console.warn('Visitor stats connection error or table missing:', err)
-    if (err?.code === '42P01' || err?.message?.includes('relation "public.page_views" does not exist')) {
+    console.warn('Visitor stats connection error or function missing:', err)
+    if (err?.code === '42883' || err?.code === '42P01' || err?.message?.includes('does not exist')) {
       return { totalViews: 0, uniqueVisitors: 0, todayViews: 0, todayUnique: 0, isMissingTable: true }
     }
     return {
