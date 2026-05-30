@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { AdminSidebar } from '@/components/admin-sidebar'
 
 export const metadata = {
   title: 'Admin Console',
@@ -12,11 +11,8 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <>
-      <AdminSidebar />
-      <div className="w-full">
-        {children}
-      </div>
-    </>
+    <div className="w-full">
+      {children}
+    </div>
   )
 }
