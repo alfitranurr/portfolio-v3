@@ -15,7 +15,9 @@ import {
   Coffee,
   GraduationCap,
   Briefcase,
-  Award
+  Award,
+  Eye,
+  Users
 } from 'lucide-react'
 import { toggleMessageReadAction, deleteMessageAction } from '@/app/admin/actions'
 import { cn } from '@/lib/utils'
@@ -38,9 +40,16 @@ interface MessagesListProps {
     experience: number
     certificates: number
   }
+  visitorStats?: {
+    totalViews: number
+    uniqueVisitors: number
+    todayViews: number
+    todayUnique: number
+    isMissingTable?: boolean
+  }
 }
 
-export function MessagesList({ initialMessages, stats }: MessagesListProps) {
+export function MessagesList({ initialMessages, stats, visitorStats }: MessagesListProps) {
   const [messages, setMessages] = React.useState<Message[]>(initialMessages)
   const [search, setSearch] = React.useState('')
   const [expandedId, setExpandedId] = React.useState<string | null>(null)
@@ -110,81 +119,157 @@ export function MessagesList({ initialMessages, stats }: MessagesListProps) {
         </p>
       </div>
 
-      {/* Grid Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {/* Messages inbox card */}
-        <div className="col-span-2 md:col-span-1 p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between relative overflow-hidden group">
-          {unreadCount > 0 && (
-            <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full filter blur-xl group-hover:bg-primary/20 transition-all" />
-          )}
-          <div className="flex justify-between items-start">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Inbox</span>
-            <div className={cn(
-              "p-2 rounded-xl text-primary",
-              unreadCount > 0 ? "bg-primary/15 animate-pulse" : "bg-white/5"
-            )}>
-              <Inbox className="w-4 h-4" />
+      {/* Missing Database Table Alert */}
+      {visitorStats?.isMissingTable && (
+        <div className="p-5 rounded-2xl border border-amber-500/20 bg-amber-500/10 text-amber-200 text-xs md:text-sm space-y-3 animate-fade-in">
+          <div className="flex items-center gap-2 font-bold">
+            <AlertCircle className="w-5 h-5 text-amber-500 shrink-0" />
+            <span>Fitur Analisis Pengunjung Belum Aktif</span>
+          </div>
+          <p className="text-amber-200/80 leading-relaxed">
+            Tabel database <code>page_views</code> tidak ditemukan. Untuk mengaktifkan pelacakan pengunjung dan pengunjung unik, silakan buka SQL Editor di dashboard Supabase Anda, lalu salin dan jalankan perintah berikut:
+          </p>
+          <pre className="p-4 rounded-xl bg-black/40 border border-white/5 text-amber-300 font-mono overflow-x-auto text-[11px] whitespace-pre select-all">
+{`CREATE TABLE IF NOT EXISTS public.page_views (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  visitor_id UUID NOT NULL,
+  page_path VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public insert on page_views" ON public.page_views FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow admin select on page_views" ON public.page_views FOR SELECT USING (auth.role() = 'authenticated');`}
+          </pre>
+          <p className="text-[11px] text-amber-200/60 italic font-medium">
+            *Catatan: Setelah menjalankan skrip di atas, silakan muat ulang halaman ini.
+          </p>
+        </div>
+      )}
+
+      {/* Row 1: Traffic & Inbox Stats */}
+      <div className="space-y-3">
+        <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-1">Engagement & Traffic</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* Total Views Card */}
+          <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between relative overflow-hidden group">
+            <div className="flex justify-between items-start">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Total Views</span>
+              <div className="p-2 rounded-xl bg-white/5 text-primary">
+                <Eye className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-4 flex items-baseline justify-between">
+              <div>
+                <h3 className="text-2xl font-black tracking-tight">{visitorStats?.totalViews ?? 0}</h3>
+                <p className="text-[10px] text-muted-foreground mt-0.5">Page hits recorded</p>
+              </div>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold flex items-center gap-1">
+                +{visitorStats?.todayViews ?? 0} today
+              </span>
             </div>
           </div>
-          <div className="mt-4">
-            <h3 className="text-2xl font-black tracking-tight">{unreadCount}</h3>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Unread messages</p>
+
+          {/* Unique Visitors Card */}
+          <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between relative overflow-hidden group">
+            <div className="flex justify-between items-start">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Unique Visitors</span>
+              <div className="p-2 rounded-xl bg-white/5 text-cyan-400">
+                <Users className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-4 flex items-baseline justify-between">
+              <div>
+                <h3 className="text-2xl font-black tracking-tight">{visitorStats?.uniqueVisitors ?? 0}</h3>
+                <p className="text-[10px] text-muted-foreground mt-0.5">Distinct user sessions</p>
+              </div>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 font-semibold flex items-center gap-1">
+                +{visitorStats?.todayUnique ?? 0} today
+              </span>
+            </div>
+          </div>
+
+          {/* Messages inbox card */}
+          <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between relative overflow-hidden group">
+            {unreadCount > 0 && (
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full filter blur-xl group-hover:bg-primary/20 transition-all" />
+            )}
+            <div className="flex justify-between items-start">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Inbox</span>
+              <div className={cn(
+                "p-2 rounded-xl text-primary",
+                unreadCount > 0 ? "bg-primary/15 animate-pulse" : "bg-white/5"
+              )}>
+                <Inbox className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-4">
+              <h3 className="text-2xl font-black tracking-tight">{unreadCount}</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Unread messages</p>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Projects card */}
-        <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between">
-          <div className="flex justify-between items-start">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Projects</span>
-            <div className="p-2 rounded-xl bg-white/5 text-muted-foreground">
-              <Coffee className="w-4 h-4" />
+      {/* Row 2: Portfolio Content Stats */}
+      <div className="space-y-3">
+        <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-1">Portfolio Content</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Projects card */}
+          <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between">
+            <div className="flex justify-between items-start">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Projects</span>
+              <div className="p-2 rounded-xl bg-white/5 text-muted-foreground">
+                <Coffee className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-4">
+              <h3 className="text-2xl font-black tracking-tight">{stats.projects}</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Showcase works</p>
             </div>
           </div>
-          <div className="mt-4">
-            <h3 className="text-2xl font-black tracking-tight">{stats.projects}</h3>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Showcase works</p>
-          </div>
-        </div>
 
-        {/* Education card */}
-        <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between">
-          <div className="flex justify-between items-start">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Education</span>
-            <div className="p-2 rounded-xl bg-white/5 text-muted-foreground">
-              <GraduationCap className="w-4 h-4" />
+          {/* Education card */}
+          <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between">
+            <div className="flex justify-between items-start">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Education</span>
+              <div className="p-2 rounded-xl bg-white/5 text-muted-foreground">
+                <GraduationCap className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-4">
+              <h3 className="text-2xl font-black tracking-tight">{stats.education}</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Timeline milestones</p>
             </div>
           </div>
-          <div className="mt-4">
-            <h3 className="text-2xl font-black tracking-tight">{stats.education}</h3>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Timeline milestones</p>
-          </div>
-        </div>
 
-        {/* Experience card */}
-        <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between">
-          <div className="flex justify-between items-start">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Experiences</span>
-            <div className="p-2 rounded-xl bg-white/5 text-muted-foreground">
-              <Briefcase className="w-4 h-4" />
+          {/* Experience card */}
+          <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between">
+            <div className="flex justify-between items-start">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Experiences</span>
+              <div className="p-2 rounded-xl bg-white/5 text-muted-foreground">
+                <Briefcase className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-4">
+              <h3 className="text-2xl font-black tracking-tight">{stats.experience}</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Work history roles</p>
             </div>
           </div>
-          <div className="mt-4">
-            <h3 className="text-2xl font-black tracking-tight">{stats.experience}</h3>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Work history roles</p>
-          </div>
-        </div>
 
-        {/* Certificates card */}
-        <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between">
-          <div className="flex justify-between items-start">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Certificates</span>
-            <div className="p-2 rounded-xl bg-white/5 text-muted-foreground">
-              <Award className="w-4 h-4" />
+          {/* Certificates card */}
+          <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between">
+            <div className="flex justify-between items-start">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Certificates</span>
+              <div className="p-2 rounded-xl bg-white/5 text-muted-foreground">
+                <Award className="w-4 h-4" />
+              </div>
             </div>
-          </div>
-          <div className="mt-4">
-            <h3 className="text-2xl font-black tracking-tight">{stats.certificates}</h3>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Credentials issued</p>
+            <div className="mt-4">
+              <h3 className="text-2xl font-black tracking-tight">{stats.certificates}</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Credentials issued</p>
+            </div>
           </div>
         </div>
       </div>

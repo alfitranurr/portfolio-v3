@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Sidebar } from "@/components/sidebar";
 import { AdminSidebar } from "@/components/admin-sidebar";
+import { VisitorTracker } from "@/components/visitor-tracker";
 import NextTopLoader from 'nextjs-toploader';
 import { InitialLoader } from "@/components/initial-loader";
 import { ScrollToTop } from "@/components/scroll-to-top";
@@ -55,6 +56,7 @@ export default async function RootLayout({
         >
           <InitialLoader />
           <ScrollToTop />
+          <VisitorTracker />
           <NextTopLoader
             color="#38bdf8"
             initialPosition={0.08}

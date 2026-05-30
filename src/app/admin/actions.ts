@@ -947,5 +947,38 @@ export async function deleteSkillAction(id: string) {
   }
 }
 
+// ----------------------------------------------------
+// 9. VISITOR ANALYTICS ACTIONS
+// ----------------------------------------------------
+
+export async function trackPageViewAction(pagePath: string, visitorId: string) {
+  if (!hasSupabaseConfig()) {
+    return { success: true, message: 'Mock track successful.' }
+  }
+
+  try {
+    const supabase = await createClient()
+    const { error } = await supabase
+      .from('page_views')
+      .insert([{ 
+        visitor_id: visitorId, 
+        page_path: pagePath,
+        created_at: new Date().toISOString()
+      }])
+    if (error) {
+      if (error.code === '42P01') {
+        // Table doesn't exist yet, fail silently
+        return { success: false, code: '42P01' }
+      }
+      throw error
+    }
+    return { success: true }
+  } catch (err: any) {
+    console.error('trackPageViewAction error:', err)
+    return { success: false, error: err.message }
+  }
+}
+
+
 
 
