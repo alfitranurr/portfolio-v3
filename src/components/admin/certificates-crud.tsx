@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { saveCertificateAction, deleteCertificateAction } from '@/app/admin/actions'
 import { cn, getDirectImageUrl } from '@/lib/utils'
+import { BlurImage } from '@/components/ui/blur-image'
 
 interface Certificate {
   id: string
@@ -422,8 +423,7 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
 
                     {cert.image_url && (
                       <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-950/40 border border-slate-200/10 dark:border-slate-800/10 flex items-center justify-center max-w-[160px] mt-2">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img 
+                        <BlurImage 
                           src={getDirectImageUrl(cert.image_url)} 
                           alt={cert.title} 
                           referrerPolicy="no-referrer"

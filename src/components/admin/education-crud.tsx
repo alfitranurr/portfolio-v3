@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { saveEducationAction, deleteEducationAction, uploadAssetAction } from '@/app/admin/actions'
 import { cn, getDirectImageUrl } from '@/lib/utils'
+import { BlurImage } from '@/components/ui/blur-image'
 
 interface Education {
   id: string
@@ -311,7 +312,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                     <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center shrink-0">
                       {editingItem.logo_url ? (
                         <>
-                          <img
+                          <BlurImage
                             src={getDirectImageUrl(editingItem.logo_url, 200)}
                             alt="Logo preview"
                             className="w-full h-full object-contain p-1 bg-white"
@@ -496,7 +497,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                     <div className="flex items-start gap-3.5">
                       {item.logo_url && (
                         <div className="w-12 h-12 rounded-xl overflow-hidden bg-white flex items-center justify-center shrink-0 border border-slate-200/10 p-1">
-                          <img 
+                          <BlurImage 
                             src={getDirectImageUrl(item.logo_url, 100)} 
                             alt={item.institution} 
                             className="w-full h-full object-contain"

@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { saveExperienceAction, deleteExperienceAction, uploadAssetAction } from '@/app/admin/actions'
 import { cn, getDirectImageUrl } from '@/lib/utils'
+import { BlurImage } from '@/components/ui/blur-image'
 
 interface Experience {
   id: string
@@ -351,7 +352,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                     <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center shrink-0">
                       {editingItem.logo_url ? (
                         <>
-                          <img
+                          <BlurImage
                             src={getDirectImageUrl(editingItem.logo_url, 200)}
                             alt="Logo preview"
                             className={`w-full h-full object-contain p-1 ${(editingItem.company?.toLowerCase().includes('indef') || editingItem.logo_url?.includes('edu-logo-1779640956114')) ? 'bg-zinc-950' : 'bg-white'}`}
@@ -636,7 +637,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                       <div className="flex items-start gap-3">
                         {item.logo_url && (
                           <div className={`w-10 h-10 rounded-xl overflow-hidden p-1 flex items-center justify-center shrink-0 border border-slate-200/10 ${(item.company.toLowerCase().includes('indef') || item.logo_url.includes('edu-logo-1779640956114')) ? 'bg-zinc-950' : 'bg-white'}`}>
-                            <img 
+                            <BlurImage 
                               src={getDirectImageUrl(item.logo_url, 100)} 
                               alt={item.company} 
                               className="w-full h-full object-contain"

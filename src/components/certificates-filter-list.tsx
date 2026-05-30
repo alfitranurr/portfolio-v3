@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Award, Calendar, ExternalLink, ShieldCheck, Trophy, Landmark, Users, Search } from 'lucide-react'
 import { cn, getDirectImageUrl } from '@/lib/utils'
 import { Certificate } from '@/lib/types'
+import { BlurImage } from '@/components/ui/blur-image'
 
 interface CertificatesFilterListProps {
   initialCertificates: Certificate[]
@@ -120,8 +121,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                   {/* Image container */}
                   {cert.image_url && (
                     <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-slate-200/10 to-slate-200/5 dark:from-slate-800/10 dark:to-slate-800/5 border border-slate-200/10 dark:border-slate-800/10 flex items-center justify-center">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img 
+                      <BlurImage 
                         src={getDirectImageUrl(cert.image_url)} 
                         alt={cert.title} 
                         referrerPolicy="no-referrer"

@@ -3,6 +3,7 @@ import { ArrowUpRight, Download, ExternalLink, Terminal, Presentation, BookOpen,
 import { Github, Linkedin } from '@/components/icons'
 import { getProfile, getProjects, getSkills } from '@/lib/data-service'
 import { SkillsMarquee } from '@/components/skills-marquee'
+import { BlurImage } from '@/components/ui/blur-image'
 
 export const dynamic = 'force-dynamic'
 
@@ -91,13 +92,17 @@ export default async function HomePage() {
                   {project.cover_image ? (
                     <>
                       {/* Ambient blur background */}
-                      <img 
+                      <BlurImage 
                         src={project.cover_image} 
                         alt="" 
-                        className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-30 group-hover:scale-115 transition-transform duration-500 select-none pointer-events-none"
+                        initialBlur="blur-xl opacity-0"
+                        initialScale="scale-110"
+                        loadedBlur="blur-xl opacity-30"
+                        loadedScale="scale-110"
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-115 transition-transform duration-500 select-none pointer-events-none"
                       />
                       {/* Contained foreground image */}
-                      <img 
+                      <BlurImage 
                         src={project.cover_image} 
                         alt={project.title} 
                         className="w-full h-full object-contain relative z-10 group-hover:scale-103 transition-transform duration-500"

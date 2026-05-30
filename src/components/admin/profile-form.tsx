@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { Github, Linkedin, Instagram } from '@/components/icons'
 import { cn } from '@/lib/utils'
+import { BlurImage } from '@/components/ui/blur-image'
 
 interface Profile {
   name: string
@@ -210,8 +211,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
             {/* Circle Preview */}
             <div className="relative group w-32 h-32 rounded-full overflow-hidden border border-slate-200/20 dark:border-slate-800/10 bg-slate-200/5 flex items-center justify-center">
               {avatarPreview ? (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
+                <BlurImage
                   src={avatarPreview}
                   alt="Avatar preview"
                   className="w-full h-full object-cover"

@@ -23,6 +23,7 @@ import {
 import { saveProjectAction, deleteProjectAction, uploadAssetAction } from '@/app/admin/actions'
 import { cn, getDirectImageUrl } from '@/lib/utils'
 import { Github } from '@/components/icons'
+import { BlurImage } from '@/components/ui/blur-image'
 
 interface Project {
   id: string
@@ -454,7 +455,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                     <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center shrink-0">
                       {editingProject.cover_image ? (
                         <>
-                          <img
+                          <BlurImage
                             src={getDirectImageUrl(editingProject.cover_image, 200)}
                             alt="Cover preview"
                             className="w-full h-full object-cover"
@@ -709,15 +710,17 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                       {proj.cover_image ? (
                         <>
                           {/* Ambient blur background */}
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img 
+                          <BlurImage 
                             src={getDirectImageUrl(proj.cover_image, 400)} 
                             alt="" 
-                            className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-30 select-none pointer-events-none"
+                            initialBlur="blur-xl opacity-0"
+                            initialScale="scale-110"
+                            loadedBlur="blur-xl opacity-30"
+                            loadedScale="scale-110"
+                            className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
                           />
                           {/* Contained foreground image */}
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img 
+                          <BlurImage 
                             src={getDirectImageUrl(proj.cover_image, 400)} 
                             alt={proj.title} 
                             referrerPolicy="no-referrer"
