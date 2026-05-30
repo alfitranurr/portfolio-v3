@@ -205,3 +205,23 @@ ALTER TABLE public.skills ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public select on skills" ON public.skills FOR SELECT USING (true);
 CREATE POLICY "Allow admin write on skills" ON public.skills FOR ALL USING (auth.role() = 'authenticated');
 
+
+-- ====================================================
+-- 9. Page Views Table (For Visitor Analytics)
+-- ====================================================
+CREATE TABLE IF NOT EXISTS public.page_views (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  visitor_id UUID NOT NULL,
+  page_path VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
+
+-- Policies
+-- Anyone can log a page view
+CREATE POLICY "Allow public insert on page_views" ON public.page_views FOR INSERT WITH CHECK (true);
+-- Only authenticated admins can fetch page views
+CREATE POLICY "Allow admin select on page_views" ON public.page_views FOR SELECT USING (auth.role() = 'authenticated');
+
+

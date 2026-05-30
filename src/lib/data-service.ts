@@ -543,4 +543,72 @@ export async function getSkills(): Promise<Skill[]> {
   }
 }
 
+export interface VisitorStats {
+  totalViews: number
+  uniqueVisitors: number
+  todayViews: number
+  todayUnique: number
+  isMissingTable?: boolean
+}
+
+export async function getVisitorStats(): Promise<VisitorStats> {
+  if (!hasSupabaseConfig()) {
+    return {
+      totalViews: 1248,
+      uniqueVisitors: 382,
+      todayViews: 24,
+      todayUnique: 8,
+      isMissingTable: false
+    }
+  }
+
+  try {
+    const supabase = await createClient()
+
+    // Test query and get exact total view count
+    const { data: allViews, error } = await supabase
+      .from('page_views')
+      .select('visitor_id, created_at')
+
+    if (error) {
+      // Check if it is a missing relation/table error (Postgres error code 42P01)
+      if (error.code === '42P01') {
+        return { totalViews: 0, uniqueVisitors: 0, todayViews: 0, todayUnique: 0, isMissingTable: true }
+      }
+      throw error
+    }
+
+    const totalViewsCount = allViews.length
+    const uniqueVisitorsSet = new Set(allViews.map(v => v.visitor_id))
+    const uniqueVisitorsCount = uniqueVisitorsSet.size
+
+    // Filter today's views (timezone safe comparison using date string prefix YYYY-MM-DD)
+    const todayStr = new Date().toISOString().split('T')[0]
+    const todayViews = allViews.filter(v => v.created_at.startsWith(todayStr))
+    const todayViewsCount = todayViews.length
+    const todayUniqueCount = new Set(todayViews.map(v => v.visitor_id)).size
+
+    return {
+      totalViews: totalViewsCount,
+      uniqueVisitors: uniqueVisitorsCount,
+      todayViews: todayViewsCount,
+      todayUnique: todayUniqueCount,
+      isMissingTable: false
+    }
+  } catch (err: any) {
+    console.warn('Visitor stats connection error or table missing:', err)
+    if (err?.code === '42P01' || err?.message?.includes('relation "public.page_views" does not exist')) {
+      return { totalViews: 0, uniqueVisitors: 0, todayViews: 0, todayUnique: 0, isMissingTable: true }
+    }
+    return {
+      totalViews: 0,
+      uniqueVisitors: 0,
+      todayViews: 0,
+      todayUnique: 0,
+      isMissingTable: true
+    }
+  }
+}
+
+
 
