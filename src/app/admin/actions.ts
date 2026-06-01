@@ -52,6 +52,10 @@ export async function getMessagesAction() {
 
   try {
     const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      throw new Error('Unauthorized')
+    }
     const { data, error } = await supabase
       .from('messages')
       .select('*')
@@ -76,6 +80,10 @@ export async function toggleMessageReadAction(id: string, isRead: boolean) {
 
   try {
     const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
     const { error } = await supabase
       .from('messages')
       .update({ is_read: isRead })
@@ -101,6 +109,10 @@ export async function deleteMessageAction(id: string) {
 
   try {
     const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
     const { error } = await supabase
       .from('messages')
       .delete()
@@ -276,6 +288,11 @@ export async function saveProjectAction(projectData: any) {
 
   try {
     const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
+    
     const isEdit = !!projectData.id && !projectData.id.startsWith('mock-')
     
     const dbPayload: any = {
@@ -349,6 +366,10 @@ export async function deleteProjectAction(id: string) {
 
   try {
     const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
     const { error } = await supabase
       .from('projects')
       .delete()
@@ -398,6 +419,11 @@ export async function saveEducationAction(eduData: any) {
 
   try {
     const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
+    
     const isEdit = !!eduData.id && !eduData.id.startsWith('mock-')
 
     const dbPayload = {
@@ -458,6 +484,10 @@ export async function deleteEducationAction(id: string) {
 
   try {
     const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
     const { error } = await supabase
       .from('education')
       .delete()
@@ -507,6 +537,11 @@ export async function saveExperienceAction(expData: any) {
 
   try {
     const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
+    
     const isEdit = !!expData.id && !expData.id.startsWith('mock-')
 
     const dbPayload = {
@@ -567,6 +602,10 @@ export async function deleteExperienceAction(id: string) {
 
   try {
     const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
     const { error } = await supabase
       .from('experiences')
       .delete()
@@ -616,6 +655,11 @@ export async function saveCertificateAction(certData: any) {
 
   try {
     const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
+    
     const isEdit = !!certData.id && !certData.id.startsWith('mock-')
 
     const dbPayload = {
@@ -674,6 +718,10 @@ export async function deleteCertificateAction(id: string) {
 
   try {
     const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
     const { error } = await supabase
       .from('certificates')
       .delete()
@@ -749,16 +797,37 @@ export async function getAISettingsAction() {
 }
 
 export async function saveAISettingsAction(settings: AISettings) {
+  if (hasSupabaseConfig()) {
+    const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
+  }
   const res = await saveAISettings(settings)
   revalidatePath('/admin/ai-settings')
   return res
 }
 
 export async function getAIChatLogsAction() {
+  if (hasSupabaseConfig()) {
+    const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      throw new Error('Unauthorized')
+    }
+  }
   return await getAIChatLogs()
 }
 
 export async function clearAIChatLogsAction() {
+  if (hasSupabaseConfig()) {
+    const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
+  }
   const res = await clearAIChatLogs()
   revalidatePath('/admin/ai-settings')
   return res
@@ -877,6 +946,11 @@ export async function saveSkillAction(skillData: any) {
 
   try {
     const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
+    
     const isEdit = !!skillData.id && !skillData.id.startsWith('mock-')
 
     const dbPayload = {
@@ -933,6 +1007,10 @@ export async function deleteSkillAction(id: string) {
 
   try {
     const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
     const { error } = await supabase
       .from('skills')
       .delete()
