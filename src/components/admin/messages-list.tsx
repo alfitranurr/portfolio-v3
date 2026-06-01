@@ -17,10 +17,13 @@ import {
   Briefcase,
   Award,
   Eye,
-  Users
+  Users,
+  RefreshCw
 } from 'lucide-react'
 import { toggleMessageReadAction, deleteMessageAction } from '@/app/admin/actions'
 import { cn } from '@/lib/utils'
+import { MonthlyTrafficChart } from '@/components/admin/monthly-traffic-chart'
+import { useRouter } from 'next/navigation'
 
 interface Message {
   id: string
@@ -49,11 +52,83 @@ interface MessagesListProps {
   }
 }
 
+function RealTimeClock() {
+  const [time, setTime] = React.useState<string>('')
+  const [date, setDate] = React.useState<string>('')
+
+  React.useEffect(() => {
+    const updateTime = () => {
+      const now = new Date()
+      setTime(now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }))
+      setDate(now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))
+    }
+    updateTime()
+    const timer = setInterval(updateTime, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  if (!time) {
+    return (
+      <div className="py-3 px-5 rounded-2xl bg-white/5 border border-slate-200/5 dark:border-slate-800/5 w-[180px] h-[48px] animate-pulse shrink-0" />
+    )
+  }
+
+  return (
+    <div className="py-2.5 px-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex items-center gap-3 shadow-sm text-sm font-bold text-foreground animate-fade-in shrink-0">
+      <Clock className="w-5 h-5 text-primary shrink-0" />
+      <div className="flex flex-col items-start leading-tight gap-0.5">
+        <span className="text-xs md:text-sm font-black tracking-tight">{time}</span>
+        <span className="text-[9px] text-muted-foreground font-semibold uppercase tracking-wider">{date}</span>
+      </div>
+      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0 ml-1.5" />
+    </div>
+  )
+}
+
+interface HeaderActionsProps {
+  onRefresh: () => void
+}
+
+function HeaderActions({ onRefresh }: HeaderActionsProps) {
+  const [isRefreshing, setIsRefreshing] = React.useState(false)
+
+  const handleRefresh = () => {
+    setIsRefreshing(true)
+    onRefresh()
+    setTimeout(() => {
+      setIsRefreshing(false)
+    }, 600)
+  }
+
+  return (
+    <div className="flex items-center gap-3 shrink-0">
+      {/* Refresh Button */}
+      <button
+        onClick={handleRefresh}
+        disabled={isRefreshing}
+        title="Refresh data"
+        className="p-3 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 text-muted-foreground hover:text-foreground cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm flex items-center justify-center"
+      >
+        <RefreshCw className={cn("w-5 h-5", isRefreshing && "animate-spin")} />
+      </button>
+      {/* Clock */}
+      <RealTimeClock />
+    </div>
+  )
+}
+
 export function MessagesList({ initialMessages, stats, visitorStats }: MessagesListProps) {
   const [messages, setMessages] = React.useState<Message[]>(initialMessages)
   const [search, setSearch] = React.useState('')
   const [expandedId, setExpandedId] = React.useState<string | null>(null)
   const [isUpdating, setIsUpdating] = React.useState<string | null>(null)
+  const [refreshTrigger, setRefreshTrigger] = React.useState(0)
+  const router = useRouter()
+
+  const handleRefreshData = () => {
+    router.refresh()
+    setRefreshTrigger(prev => prev + 1)
+  }
 
   React.useEffect(() => {
     setMessages(initialMessages)
@@ -112,11 +187,14 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-black tracking-tight text-foreground">Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Monitor contact inquiries and portfolio statistics in real-time.
-        </p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-black tracking-tight text-foreground">Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Monitor contact inquiries and portfolio statistics in real-time.
+          </p>
+        </div>
+        <HeaderActions onRefresh={handleRefreshData} />
       </div>
 
       {/* Missing Database Table Alert */}
@@ -143,7 +221,7 @@ ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public insert on page_views" ON public.page_views FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow admin select on page_views" ON public.page_views FOR SELECT USING (auth.role() = 'authenticated');
 
--- 2. Buat Fungsi Agregasi Database
+-- 2. Buat Fungsi Agregasi Database (Hari Ini)
 CREATE OR REPLACE FUNCTION public.get_visitor_analytics()
 RETURNS TABLE (
   total_views BIGINT,
@@ -162,8 +240,60 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- 3. Buat Fungsi Agregasi Bulanan
+DROP FUNCTION IF EXISTS public.get_monthly_analytics(INT);
+CREATE OR REPLACE FUNCTION public.get_monthly_analytics(target_year INT)
+RETURNS TABLE (
+  month_num INT,
+  views_count BIGINT,
+  visitors_count BIGINT,
+  yearly_views BIGINT,
+  yearly_visitors BIGINT
+) AS $$
+DECLARE
+  y_views BIGINT;
+  y_visitors BIGINT;
+BEGIN
+  -- Hitung total tahunan secara akurat
+  SELECT COUNT(*), COUNT(DISTINCT visitor_id)
+  INTO y_views, y_visitors
+  FROM public.page_views
+  WHERE EXTRACT(YEAR FROM created_at) = target_year;
+
+  RETURN QUERY
+  SELECT 
+    m.month::INT AS month_num,
+    COALESCE(COUNT(p.id), 0)::BIGINT AS views_count,
+    COALESCE(COUNT(DISTINCT p.visitor_id), 0)::BIGINT AS visitors_count,
+    y_views AS yearly_views,
+    y_visitors AS yearly_visitors
+  FROM generate_series(1, 12) m(month)
+  LEFT JOIN public.page_views p ON EXTRACT(MONTH FROM p.created_at) = m.month 
+                                AND EXTRACT(YEAR FROM p.created_at) = target_year
+  GROUP BY m.month, y_views, y_visitors
+  ORDER BY month_num;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 4. Buat Fungsi Ambil Tahun yang Tersedia
+CREATE OR REPLACE FUNCTION public.get_available_years()
+RETURNS TABLE (
+  year_val INT
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT DISTINCT EXTRACT(YEAR FROM created_at)::INT AS year_val
+  FROM public.page_views
+  ORDER BY year_val DESC;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 REVOKE EXECUTE ON FUNCTION public.get_visitor_analytics() FROM public;
-GRANT EXECUTE ON FUNCTION public.get_visitor_analytics() TO authenticated;`}
+GRANT EXECUTE ON FUNCTION public.get_visitor_analytics() TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.get_monthly_analytics(INT) FROM public;
+GRANT EXECUTE ON FUNCTION public.get_monthly_analytics(INT) TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.get_available_years() FROM public;
+GRANT EXECUTE ON FUNCTION public.get_available_years() TO authenticated;`}
           </pre>
           <p className="text-[11px] text-amber-200/60 italic font-medium">
             *Catatan: Setelah menjalankan skrip di atas, silakan muat ulang halaman ini.
@@ -233,6 +363,11 @@ GRANT EXECUTE ON FUNCTION public.get_visitor_analytics() TO authenticated;`}
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Monthly Line Chart (Views vs Visitors) */}
+      <div className="w-full">
+        <MonthlyTrafficChart refreshTrigger={refreshTrigger} />
       </div>
 
       {/* Row 2: Portfolio Content Stats */}
@@ -320,7 +455,7 @@ GRANT EXECUTE ON FUNCTION public.get_visitor_analytics() TO authenticated;`}
 
         {/* List of messages */}
         {filteredMessages.length === 0 ? (
-          <div className="p-12 text-center rounded-3xl border border-dashed border-slate-200/10 dark:border-slate-800/10 bg-white/5 dark:bg-white/5 space-y-3">
+          <div className="p-12 text-center rounded-3xl border border-dashed border-slate-300 dark:border-slate-800/30 bg-white/5 dark:bg-white/5 space-y-3">
             <Inbox className="w-10 h-10 text-muted-foreground/40 mx-auto" />
             <h3 className="font-extrabold text-foreground">No messages found</h3>
             <p className="text-xs text-muted-foreground max-w-xs mx-auto">

@@ -979,6 +979,52 @@ export async function trackPageViewAction(pagePath: string, visitorId: string) {
   }
 }
 
+export async function getMonthlyVisitorStatsAction(year: number) {
+  if (hasSupabaseConfig()) {
+    try {
+      const supabase = await createClient()
+      const { data: { user }, error } = await supabase.auth.getUser()
+      if (error || !user) {
+        return { success: false, error: 'Unauthorized' }
+      }
+    } catch (err) {
+      return { success: false, error: 'Unauthorized' }
+    }
+  }
+
+  try {
+    const { getMonthlyVisitorStats } = await import('@/lib/data-service')
+    const stats = await getMonthlyVisitorStats(year)
+    return { success: true, data: stats }
+  } catch (err: any) {
+    console.error('getMonthlyVisitorStatsAction error:', err)
+    return { success: false, error: err.message }
+  }
+}
+
+export async function getAvailableYearsAction() {
+  if (hasSupabaseConfig()) {
+    try {
+      const supabase = await createClient()
+      const { data: { user }, error } = await supabase.auth.getUser()
+      if (error || !user) {
+        return { success: false, error: 'Unauthorized' }
+      }
+    } catch (err) {
+      return { success: false, error: 'Unauthorized' }
+    }
+  }
+
+  try {
+    const { getAvailableYears } = await import('@/lib/data-service')
+    const years = await getAvailableYears()
+    return { success: true, data: years }
+  } catch (err: any) {
+    console.error('getAvailableYearsAction error:', err)
+    return { success: false, error: err.message }
+  }
+}
+
 
 
 
