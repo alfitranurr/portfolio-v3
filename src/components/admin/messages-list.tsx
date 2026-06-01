@@ -59,8 +59,8 @@ function RealTimeClock() {
   React.useEffect(() => {
     const updateTime = () => {
       const now = new Date()
-      setTime(now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }))
-      setDate(now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))
+      setTime(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }))
+      setDate(now.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))
     }
     updateTime()
     const timer = setInterval(updateTime, 1000)
@@ -202,13 +202,13 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
         <div className="p-5 rounded-2xl border border-amber-500/20 bg-amber-500/10 text-amber-200 text-xs md:text-sm space-y-3 animate-fade-in">
           <div className="flex items-center gap-2 font-bold">
             <AlertCircle className="w-5 h-5 text-amber-500 shrink-0" />
-            <span>Fitur Analisis Pengunjung Belum Aktif</span>
+            <span>Visitor Analytics Feature Not Active</span>
           </div>
           <p className="text-amber-200/80 leading-relaxed">
-            Tabel database <code>page_views</code> atau fungsi agregasi <code>get_visitor_analytics</code> belum diinisialisasi. Untuk mengaktifkan pelacakan, silakan buka SQL Editor di dashboard Supabase Anda, lalu salin dan jalankan perintah berikut:
+            The database table <code>page_views</code> or the aggregation function <code>get_visitor_analytics</code> has not been initialized. To enable tracking, please open the SQL Editor in your Supabase dashboard, then copy and run the following command:
           </p>
           <pre className="p-4 rounded-xl bg-black/40 border border-white/5 text-amber-300 font-mono overflow-x-auto text-[11px] whitespace-pre select-all">
-{`-- 1. Buat Tabel Page Views
+{`-- 1. Create Page Views Table
 CREATE TABLE IF NOT EXISTS public.page_views (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   visitor_id UUID NOT NULL,
@@ -221,7 +221,7 @@ ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public insert on page_views" ON public.page_views FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow admin select on page_views" ON public.page_views FOR SELECT USING (auth.role() = 'authenticated');
 
--- 2. Buat Fungsi Agregasi Database (Hari Ini)
+-- 2. Create Database Aggregation Function (Today)
 CREATE OR REPLACE FUNCTION public.get_visitor_analytics()
 RETURNS TABLE (
   total_views BIGINT,
@@ -240,7 +240,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 3. Buat Fungsi Agregasi Bulanan
+-- 3. Create Monthly Aggregation Function
 DROP FUNCTION IF EXISTS public.get_monthly_analytics(INT);
 CREATE OR REPLACE FUNCTION public.get_monthly_analytics(target_year INT)
 RETURNS TABLE (
@@ -254,7 +254,7 @@ DECLARE
   y_views BIGINT;
   y_visitors BIGINT;
 BEGIN
-  -- Hitung total tahunan secara akurat
+  -- Calculate annual total accurately
   SELECT COUNT(*), COUNT(DISTINCT visitor_id)
   INTO y_views, y_visitors
   FROM public.page_views
@@ -275,7 +275,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 4. Buat Fungsi Ambil Tahun yang Tersedia
+-- 4. Create Get Available Years Function
 CREATE OR REPLACE FUNCTION public.get_available_years()
 RETURNS TABLE (
   year_val INT
@@ -296,7 +296,7 @@ REVOKE EXECUTE ON FUNCTION public.get_available_years() FROM public;
 GRANT EXECUTE ON FUNCTION public.get_available_years() TO authenticated;`}
           </pre>
           <p className="text-[11px] text-amber-200/60 italic font-medium">
-            *Catatan: Setelah menjalankan skrip di atas, silakan muat ulang halaman ini.
+            *Note: After running the script above, please reload this page.
           </p>
         </div>
       )}
