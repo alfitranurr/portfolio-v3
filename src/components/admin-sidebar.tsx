@@ -4,7 +4,7 @@ import * as React from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { 
-  MessageSquare,
+  LayoutDashboard,
   UserCog, 
   GraduationCap, 
   Briefcase, 
@@ -43,7 +43,7 @@ export function AdminSidebar() {
   }, [])
 
   const navItems = [
-    { name: 'Messages & Inbox', href: '/admin', icon: MessageSquare, exact: true },
+    { name: 'Main Dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
     { name: 'Profile Editor', href: '/admin/profile', icon: UserCog, exact: false },
     { name: 'Manage Projects', href: '/admin/projects', icon: Coffee, exact: false },
     { name: 'Manage Tech Stack', href: '/admin/skills', icon: Terminal, exact: false },
@@ -72,7 +72,7 @@ export function AdminSidebar() {
       {/* Mobile Admin Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 z-40 px-4 flex items-center justify-between glass-panel border-b border-slate-200/20 dark:border-slate-800/10">
         <Link href="/admin" className="flex items-center gap-2 font-bold text-foreground">
-          <ShieldAlert className="text-primary w-5 h-5 animate-pulse" />
+          <Terminal className="text-primary w-5 h-5 animate-pulse" />
           <span className="font-extrabold tracking-tight">Admin Portal</span>
         </Link>
         <div className="flex items-center gap-2">
@@ -98,7 +98,7 @@ export function AdminSidebar() {
           {/* Logo Section */}
           <div className="flex items-center justify-between mb-5 relative">
             <Link href="/admin" className="flex items-center gap-2 font-bold text-base text-foreground">
-              <ShieldAlert className="text-primary w-5 h-5 animate-pulse" />
+              <Terminal className="text-primary w-5 h-5 animate-pulse" />
               <div className="flex flex-col">
                 <span className="leading-tight font-black tracking-wider text-xs text-primary">ADMIN CONSOLE</span>
                 <span className="text-[9px] text-muted-foreground font-normal">Command Center</span>

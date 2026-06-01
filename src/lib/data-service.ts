@@ -587,9 +587,6 @@ export async function getVisitorStats(): Promise<VisitorStats> {
     }
   } catch (err: any) {
     console.warn('Visitor stats connection error or function missing:', err)
-    if (err?.code === '42883' || err?.code === '42P01' || err?.message?.includes('does not exist')) {
-      return { totalViews: 0, uniqueVisitors: 0, todayViews: 0, todayUnique: 0, isMissingTable: true }
-    }
     return {
       totalViews: 0,
       uniqueVisitors: 0,
@@ -599,6 +596,135 @@ export async function getVisitorStats(): Promise<VisitorStats> {
     }
   }
 }
+
+export interface MonthlyVisitorStats {
+  month: number
+  views: number
+  visitors: number
+}
+
+export async function getMonthlyVisitorStats(year: number): Promise<{ 
+  stats: MonthlyVisitorStats[], 
+  yearlyViews: number,
+  yearlyVisitors: number,
+  isMissingFunction: boolean 
+}> {
+  if (!hasSupabaseConfig()) {
+    // Return realistic monthly mock data
+    let mockData = [
+      { month: 1, views: 150, visitors: 45 },
+      { month: 2, views: 220, visitors: 70 },
+      { month: 3, views: 180, visitors: 60 },
+      { month: 4, views: 290, visitors: 95 },
+      { month: 5, views: 340, visitors: 120 },
+      { month: 6, views: 410, visitors: 150 },
+      { month: 7, views: 380, visitors: 135 },
+      { month: 8, views: 480, visitors: 180 },
+      { month: 9, views: 520, visitors: 200 },
+      { month: 10, views: 610, visitors: 230 },
+      { month: 11, views: 750, visitors: 280 },
+      { month: 12, views: 900, visitors: 350 },
+    ]
+    let yearlyViews = 4850
+    let yearlyVisitors = 1100
+
+    if (year === 2025) {
+      mockData = [
+        { month: 1, views: 80, visitors: 25 },
+        { month: 2, views: 95, visitors: 30 },
+        { month: 3, views: 110, visitors: 35 },
+        { month: 4, views: 120, visitors: 40 },
+        { month: 5, views: 130, visitors: 45 },
+        { month: 6, views: 140, visitors: 50 },
+        { month: 7, views: 150, visitors: 52 },
+        { month: 8, views: 160, visitors: 55 },
+        { month: 9, views: 170, visitors: 58 },
+        { month: 10, views: 180, visitors: 60 },
+        { month: 11, views: 190, visitors: 65 },
+        { month: 12, views: 200, visitors: 70 },
+      ]
+      yearlyViews = 1795
+      yearlyVisitors = 420
+    } else if (year === 2026) {
+      yearlyViews = 1248
+      yearlyVisitors = 382
+    }
+    return { stats: mockData, yearlyViews, yearlyVisitors, isMissingFunction: false }
+  }
+
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase.rpc('get_monthly_analytics', { target_year: year })
+
+    if (error) {
+      throw error
+    }
+
+    // Map database result to MonthlyVisitorStats format
+    const mappedStats = Array.from({ length: 12 }, (_, i) => ({
+      month: i + 1,
+      views: 0,
+      visitors: 0
+    }))
+
+    let yearlyViews = 0
+    let yearlyVisitors = 0
+
+    if (data && Array.isArray(data)) {
+      if (data.length > 0) {
+        yearlyViews = Number(data[0].yearly_views ?? 0)
+        yearlyVisitors = Number(data[0].yearly_visitors ?? 0)
+      }
+      data.forEach((row: any) => {
+        const m = Number(row.month_num)
+        if (m >= 1 && m <= 12) {
+          mappedStats[m - 1].views = Number(row.views_count ?? 0)
+          mappedStats[m - 1].visitors = Number(row.visitors_count ?? 0)
+        }
+      })
+    }
+
+    return { stats: mappedStats, yearlyViews, yearlyVisitors, isMissingFunction: false }
+  } catch (err: any) {
+    console.warn(`Monthly stats connection error or function missing for year ${year}:`, err)
+    const isMissing = err?.code === '42883' || err?.code === '42P01' || err?.message?.includes('does not exist')
+    return {
+      stats: Array.from({ length: 12 }, (_, i) => ({
+        month: i + 1,
+        views: 0,
+        visitors: 0
+      })),
+      yearlyViews: 0,
+      yearlyVisitors: 0,
+      isMissingFunction: isMissing
+    }
+  }
+}
+
+export async function getAvailableYears(): Promise<number[]> {
+  if (!hasSupabaseConfig()) {
+    return [2026, 2025]
+  }
+
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase.rpc('get_available_years')
+
+    if (error) {
+      throw error
+    }
+
+    if (data && Array.isArray(data) && data.length > 0) {
+      return data.map((row: any) => Number(row.year_val)).filter(Boolean)
+    }
+
+    return [new Date().getFullYear()]
+  } catch (err) {
+    console.warn('Available years fetch error:', err)
+    return [new Date().getFullYear()]
+  }
+}
+
 
 
 
