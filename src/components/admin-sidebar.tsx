@@ -216,7 +216,7 @@ export function AdminSidebar() {
 
           {/* Footer Metadata */}
           <div className="border-t border-slate-200/20 dark:border-slate-800/20 pt-3 text-center text-[10px] text-muted-foreground/80">
-            <span>© 2026 Admin Panel</span>
+            <span>© 2026 Al Fitra Nur Ramadhani</span>
           </div>
         </div>
       </aside>

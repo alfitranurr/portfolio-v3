@@ -1,5 +1,6 @@
 import { GoogleGenAI } from '@google/genai'
 import { buildRAGContext, buildSystemPrompt } from '@/lib/rag-context'
+import { getAISettings, logAIChat } from '@/lib/ai-service'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,6 +26,9 @@ export async function POST(request: Request) {
       )
     }
 
+    // Fetch user AI config dynamically
+    const settings = await getAISettings()
+
     // Build RAG context from all portfolio data
     const ragContext = await buildRAGContext()
     const systemPrompt = buildSystemPrompt(ragContext)
@@ -32,9 +36,8 @@ export async function POST(request: Request) {
     // Initialize Gemini client
     const ai = new GoogleGenAI({ apiKey })
 
-    // Limit chat history to the last 10 messages (approx 5 conversational turns)
-    // to minimize token usage (TPM) and prevent rate limits.
-    const maxHistory = 10
+    // Limit chat history based on user settings (default to 10 if not set)
+    const maxHistory = settings.max_history || 10
     const historyMessages = messages.slice(0, -1).slice(-maxHistory)
 
     // Convert message history to Gemini format
@@ -54,28 +57,58 @@ export async function POST(request: Request) {
       },
     ]
 
-    // Create streaming chat with Google Search grounding for real-time web info
+    // Configure tools dynamically based on search grounding settings
+    const tools = settings.search_grounding ? [{ googleSearch: {} }] : undefined
+
+    // Create streaming chat with dynamic settings
     const stream = await ai.models.generateContentStream({
-      model: 'gemini-2.5-flash',
+      model: settings.model_name || 'gemini-2.5-flash',
       contents,
       config: {
         systemInstruction: systemPrompt,
-        tools: [{ googleSearch: {} }],
+        temperature: settings.temperature !== undefined ? settings.temperature : 0.7,
+        tools,
       },
     })
+
+    // Capture requester's IP for audit purposes
+    const ip = request.headers.get('x-forwarded-for') || '127.0.0.1'
 
     // Create a ReadableStream for the response
     const encoder = new TextEncoder()
     const readable = new ReadableStream({
       async start(controller) {
         try {
+          let completeText = ''
+          let finalMetadata: any = null
+
           for await (const chunk of stream) {
             const text = chunk.text
             if (text) {
               controller.enqueue(encoder.encode(text))
+              completeText += text
+            }
+            if (chunk.usageMetadata) {
+              finalMetadata = chunk.usageMetadata
             }
           }
           controller.close()
+
+          // Log AI Chat token usage asynchronously
+          const promptTokens = finalMetadata?.promptTokenCount || Math.ceil(lastMessage.content.length / 4)
+          const completionTokens = finalMetadata?.candidatesTokenCount || Math.ceil(completeText.length / 4)
+          const totalTokens = finalMetadata?.totalTokenCount || (promptTokens + completionTokens)
+
+          logAIChat({
+            prompt_preview: lastMessage.content.slice(0, 500),
+            prompt_tokens: promptTokens,
+            completion_tokens: completionTokens,
+            total_tokens: totalTokens,
+            model_name: settings.model_name || 'gemini-2.5-flash',
+            search_grounding: settings.search_grounding,
+            user_ip: ip,
+          }).catch((err) => console.error('Failed async logging of chat event:', err))
+
         } catch (err: any) {
           console.error('Gemini streaming error:', err)
           controller.enqueue(

@@ -225,3 +225,42 @@ CREATE POLICY "Allow public insert on page_views" ON public.page_views FOR INSER
 CREATE POLICY "Allow admin select on page_views" ON public.page_views FOR SELECT USING (auth.role() = 'authenticated');
 
 
+-- ====================================================
+-- 10. AI Chat Settings Table
+-- ====================================================
+CREATE TABLE IF NOT EXISTS public.ai_settings (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  model_name VARCHAR(100) NOT NULL DEFAULT 'gemini-2.5-flash',
+  search_grounding BOOLEAN NOT NULL DEFAULT TRUE,
+  temperature NUMERIC(3,2) NOT NULL DEFAULT 0.7,
+  max_history INT NOT NULL DEFAULT 10,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+ALTER TABLE public.ai_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public select on ai_settings" ON public.ai_settings FOR SELECT USING (true);
+CREATE POLICY "Allow admin write on ai_settings" ON public.ai_settings FOR ALL USING (auth.role() = 'authenticated');
+
+
+-- ====================================================
+-- 11. AI Chat Logs Table (For Token Auditing)
+-- ====================================================
+CREATE TABLE IF NOT EXISTS public.ai_chat_logs (
+  id VARCHAR(255) PRIMARY KEY,
+  prompt_preview TEXT,
+  prompt_tokens INT DEFAULT 0,
+  completion_tokens INT DEFAULT 0,
+  total_tokens INT DEFAULT 0,
+  model_name VARCHAR(100) NOT NULL DEFAULT 'gemini-2.5-flash',
+  search_grounding BOOLEAN NOT NULL DEFAULT TRUE,
+  user_ip VARCHAR(100),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+ALTER TABLE public.ai_chat_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public insert on ai_chat_logs" ON public.ai_chat_logs FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow admin select on ai_chat_logs" ON public.ai_chat_logs FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow admin delete on ai_chat_logs" ON public.ai_chat_logs FOR DELETE USING (auth.role() = 'authenticated');
+
+
