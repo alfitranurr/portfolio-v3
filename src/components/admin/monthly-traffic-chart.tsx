@@ -6,8 +6,8 @@ import { getMonthlyVisitorStatsAction, getAvailableYearsAction } from '@/app/adm
 import { MonthlyVisitorStats } from '@/lib/data-service'
 
 const MONTH_NAMES = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 
-  'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
 ]
 
 interface MonthlyTrafficChartProps {
@@ -143,17 +143,17 @@ export function MonthlyTrafficChart({ refreshTrigger }: MonthlyTrafficChartProps
         <div>
           <div className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-primary" />
-            <h3 className="text-base font-extrabold text-foreground">Grafik Kunjungan Bulanan</h3>
+            <h3 className="text-base font-extrabold text-foreground">Monthly Traffic Chart</h3>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Analisis data page views dan unique visitors per bulan.
+            Analysis of page views and unique visitors per month.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <span className="text-xs text-muted-foreground flex items-center gap-1">
             <Calendar className="w-3.5 h-3.5" />
-            <span>Filter Tahun:</span>
+            <span>Filter Year:</span>
           </span>
           <select
             value={selectedYear}
@@ -196,19 +196,19 @@ export function MonthlyTrafficChart({ refreshTrigger }: MonthlyTrafficChartProps
         {isLoading ? (
           <div className="w-full h-[220px] sm:h-[300px] flex flex-col items-center justify-between py-12 bg-black/5 dark:bg-black/10 backdrop-blur-xs rounded-2xl border border-white/5">
             <Loader2 className="w-8 h-8 text-primary animate-spin" />
-            <span className="text-xs text-muted-foreground font-medium">Memuat data grafik...</span>
+            <span className="text-xs text-muted-foreground font-medium">Loading chart data...</span>
           </div>
         ) : isMissingFunction ? (
           <div className="p-5 rounded-2xl border border-amber-500/20 bg-amber-500/10 text-amber-200 text-xs md:text-sm space-y-3 animate-fade-in">
             <div className="flex items-center gap-2 font-bold">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
-              <span>Fungsi Analisis Bulanan Belum Aktif</span>
+              <span>Monthly Analytics Function Not Active</span>
             </div>
             <p className="text-amber-200/80 leading-relaxed">
-              Fungsi agregasi database <code>get_monthly_analytics</code> atau <code>get_available_years</code> belum dibuat di Supabase Anda. Silakan buka SQL Editor di dashboard Supabase Anda, lalu salin dan jalankan perintah berikut:
+              The database aggregation function <code>get_monthly_analytics</code> or <code>get_available_years</code> has not been created in your Supabase database. Please open the SQL Editor in your Supabase dashboard, then copy and run the following command:
             </p>
             <pre className="p-4 rounded-xl bg-black/40 border border-white/5 text-amber-300 font-mono overflow-x-auto text-[10px] md:text-[11px] whitespace-pre select-all max-h-[200px]">
-{`-- Buat Fungsi Agregasi Bulanan
+{`-- Create Monthly Aggregation Function
 DROP FUNCTION IF EXISTS public.get_monthly_analytics(INT);
 CREATE OR REPLACE FUNCTION public.get_monthly_analytics(target_year INT)
 RETURNS TABLE (
@@ -222,7 +222,7 @@ DECLARE
   y_views BIGINT;
   y_visitors BIGINT;
 BEGIN
-  -- Hitung total tahunan secara akurat
+  -- Calculate annual total accurately
   SELECT COUNT(*), COUNT(DISTINCT visitor_id)
   INTO y_views, y_visitors
   FROM public.page_views
@@ -243,7 +243,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Buat Fungsi Ambil Tahun yang Tersedia
+-- Create Get Available Years Function
 CREATE OR REPLACE FUNCTION public.get_available_years()
 RETURNS TABLE (
   year_val INT
@@ -262,7 +262,7 @@ REVOKE EXECUTE ON FUNCTION public.get_available_years() FROM public;
 GRANT EXECUTE ON FUNCTION public.get_available_years() TO authenticated;`}
             </pre>
             <p className="text-[11px] text-amber-200/60 italic font-medium">
-              *Catatan: Setelah menjalankan skrip di atas, silakan muat ulang halaman ini.
+              *Note: After running the script above, please reload this page.
             </p>
           </div>
         ) : (
