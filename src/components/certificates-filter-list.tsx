@@ -121,11 +121,23 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                   {/* Image container */}
                   {cert.image_url && (
                     <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-slate-200/10 to-slate-200/5 dark:from-slate-800/10 dark:to-slate-800/5 border border-slate-200/10 dark:border-slate-800/10 flex items-center justify-center">
+                      {/* Ambient blur background */}
+                      <BlurImage 
+                        src={getDirectImageUrl(cert.image_url)} 
+                        alt="" 
+                        initialBlur="blur-xl opacity-0"
+                        initialScale="scale-110"
+                        loadedBlur="blur-xl opacity-30"
+                        loadedScale="scale-110"
+                        referrerPolicy="no-referrer"
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-115 transition-transform duration-500 select-none pointer-events-none"
+                      />
+                      {/* Contained foreground image */}
                       <BlurImage 
                         src={getDirectImageUrl(cert.image_url)} 
                         alt={cert.title} 
                         referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-contain relative z-10 group-hover:scale-103 transition-transform duration-500"
                       />
                     </div>
                   )}

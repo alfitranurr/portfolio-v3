@@ -636,7 +636,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-start gap-3">
                         {item.logo_url && (
-                          <div className={`w-10 h-10 rounded-xl overflow-hidden p-1 flex items-center justify-center shrink-0 border border-slate-200/10 ${(item.company.toLowerCase().includes('indef') || item.logo_url.includes('edu-logo-1779640956114')) ? 'bg-zinc-950' : 'bg-white'}`}>
+                          <div className={`relative w-10 h-10 rounded-xl overflow-hidden p-1 flex items-center justify-center shrink-0 border border-slate-200/10 ${(item.company.toLowerCase().includes('indef') || item.logo_url.includes('edu-logo-1779640956114')) ? 'bg-zinc-950' : 'bg-white'}`}>
                             <BlurImage 
                               src={getDirectImageUrl(item.logo_url, 100)} 
                               alt={item.company} 
