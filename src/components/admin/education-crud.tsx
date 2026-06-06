@@ -496,7 +496,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                   <div className="space-y-3">
                     <div className="flex items-start gap-3.5">
                       {item.logo_url && (
-                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-white flex items-center justify-center shrink-0 border border-slate-200/10 p-1">
+                        <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white flex items-center justify-center shrink-0 border border-slate-200/10 p-1">
                           <BlurImage 
                             src={getDirectImageUrl(item.logo_url, 100)} 
                             alt={item.institution} 

@@ -423,11 +423,23 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
 
                     {cert.image_url && (
                       <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-950/40 border border-slate-200/10 dark:border-slate-800/10 flex items-center justify-center max-w-[160px] mt-2">
+                        {/* Ambient blur background */}
+                        <BlurImage 
+                          src={getDirectImageUrl(cert.image_url)} 
+                          alt="" 
+                          initialBlur="blur-xl opacity-0"
+                          initialScale="scale-110"
+                          loadedBlur="blur-xl opacity-30"
+                          loadedScale="scale-110"
+                          referrerPolicy="no-referrer"
+                          className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
+                        />
+                        {/* Contained foreground image */}
                         <BlurImage 
                           src={getDirectImageUrl(cert.image_url)} 
                           alt={cert.title} 
                           referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain relative z-10"
                         />
                       </div>
                     )}

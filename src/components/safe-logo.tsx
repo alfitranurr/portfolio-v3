@@ -20,7 +20,7 @@ export function SafeLogo({ src, alt }: SafeLogoProps) {
   const isDarkLogo = alt.toLowerCase().includes('indef') || src.includes('edu-logo-1779640956114')
 
   return (
-    <div className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden p-1.5 flex items-center justify-center shrink-0 border border-slate-200/10 shadow-md ${isDarkLogo ? 'bg-zinc-950' : 'bg-white'}`}>
+    <div className={`relative w-12 h-12 md:w-14 md:h-14 rounded-2xl overflow-hidden p-1.5 flex items-center justify-center shrink-0 border border-slate-200/10 shadow-md ${isDarkLogo ? 'bg-zinc-950' : 'bg-white'}`}>
       <BlurImage 
         src={processedSrc} 
         alt={alt} 
