@@ -10,6 +10,13 @@ export const metadata = {
 export default function ContactPage() {
   const socialCards = [
     {
+      name: 'Email',
+      username: 'REDACTED_EMAIL',
+      href: 'mailto:REDACTED_EMAIL',
+      icon: Mail,
+      colorClass: 'text-primary',
+    },
+    {
       name: 'LinkedIn',
       username: 'al-fitra-nur-ramadhani',
       href: 'https://www.linkedin.com/in/al-fitra-nur-ramadhani/',
