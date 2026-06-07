@@ -19,7 +19,8 @@ import {
   ChevronRight,
   Moon,
   Sun,
-  Globe
+  Globe,
+  Image as ImageIcon
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { signOutAction } from '@/app/login/actions'
@@ -45,6 +46,7 @@ export function AdminSidebar() {
   const navItems = [
     { name: 'Main Dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
     { name: 'Profile Editor', href: '/admin/profile', icon: UserCog, exact: false },
+    { name: 'Moment Recap', href: '/admin/photos', icon: ImageIcon, exact: false },
     { name: 'Manage Projects', href: '/admin/projects', icon: Coffee, exact: false },
     { name: 'Manage Tech Stack', href: '/admin/skills', icon: Terminal, exact: false },
     { name: 'Manage Education', href: '/admin/education', icon: GraduationCap, exact: false },

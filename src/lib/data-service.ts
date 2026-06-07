@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
-import { Profile, Project, Education, Experience, Certificate, Skill } from '@/lib/types'
+import { Profile, Project, Education, Experience, Certificate, Skill, Photo } from '@/lib/types'
 import { TECH_STACK } from '@/lib/constants'
 
 // 1. MOCK PROFILE
@@ -723,6 +723,104 @@ export async function getAvailableYears(): Promise<number[]> {
     console.warn('Available years fetch error:', err)
     return [new Date().getFullYear()]
   }
+}
+
+// 12. PHOTOS / MOMENT RECAP SERVICE
+export const MOCK_PHOTOS: Photo[] = [
+  {
+    id: "mock-photo-1",
+    title: "The Spark of Code",
+    year: "2020",
+    description: "Began my journey into software engineering, writing my first lines of code and building my first websites.",
+    image_url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "mock-photo-2",
+    title: "Collaboration & Hackathons",
+    year: "2021",
+    description: "Joined my first hackathons, building prototype projects and learning teamwork under tight deadlines.",
+    image_url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "mock-photo-3",
+    title: "Academic Milestone",
+    year: "2022",
+    description: "Graduated with a degree in Computer Science, solidifying core algorithmic and development concepts.",
+    image_url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "mock-photo-4",
+    title: "Entering the Industry",
+    year: "2023",
+    description: "Joined PT. Len Industri as a Frontend Developer, building corporate-grade web applications.",
+    image_url: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "mock-photo-5",
+    title: "Climbing Mountains",
+    year: "2024",
+    description: "Conquered heights in hiking, finding the balance between challenging code and refreshing nature.",
+    image_url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "mock-photo-6",
+    title: "Sharing Knowledge",
+    year: "2025",
+    description: "Began speaking at developer meetups, mentoring junior developers, and contributing to open source.",
+    image_url: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=600&q=80"
+  }
+]
+
+export async function getPhotos(): Promise<Photo[]> {
+  let photos: Photo[] = []
+
+  if (!hasSupabaseConfig()) {
+    try {
+      const cookieStore = await cookies()
+      const mockPhotosStr = cookieStore.get('mock_photos')?.value
+      if (mockPhotosStr) {
+        photos = JSON.parse(mockPhotosStr)
+      } else {
+        photos = MOCK_PHOTOS
+      }
+    } catch (e: any) {
+      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+        throw e
+      }
+      console.warn('Failed to parse mock photos from cookies', e)
+      photos = MOCK_PHOTOS
+    }
+  } else {
+    try {
+      const supabase = await createClient()
+      const { data, error } = await supabase
+        .from('photos')
+        .select('*')
+        .order('year', { ascending: false })
+
+      if (error) {
+        console.warn('Photos table query failed or doesn\'t exist. Falling back to mock data:', error.message)
+        try {
+          const cookieStore = await cookies()
+          const mockPhotosStr = cookieStore.get('mock_photos')?.value
+          if (mockPhotosStr) {
+            return JSON.parse(mockPhotosStr)
+          }
+        } catch (cookieErr) {}
+        return MOCK_PHOTOS
+      }
+
+      if (!data || data.length === 0) {
+        return MOCK_PHOTOS
+      }
+      photos = data
+    } catch (err) {
+      console.warn('Photos connection error, using fallback:', err)
+      return MOCK_PHOTOS
+    }
+  }
+
+  return photos
 }
 
 

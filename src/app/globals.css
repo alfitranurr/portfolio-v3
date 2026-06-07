@@ -364,12 +364,38 @@ button.glass-card:hover {
   }
 }
 
+@keyframes marquee-up {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes marquee-down {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
 .animate-marquee-left {
   animation: marquee-left var(--marquee-duration, 40s) linear infinite;
 }
 
 .animate-marquee-right {
   animation: marquee-right var(--marquee-duration, 40s) linear infinite;
+}
+
+.animate-marquee-up {
+  animation: marquee-up var(--marquee-duration, 40s) linear infinite;
+}
+
+.animate-marquee-down {
+  animation: marquee-down var(--marquee-duration, 40s) linear infinite;
 }
 
 .marquee-container {
@@ -382,3 +408,19 @@ button.glass-card:hover {
   mask-image: linear-gradient(to right, transparent, rgb(0 0 0 / 0.1) 5%, #000 15%, #000 85%, rgb(0 0 0 / 0.1) 95%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, rgb(0 0 0 / 0.1) 5%, #000 15%, #000 85%, rgb(0 0 0 / 0.1) 95%, transparent);
 }
+
+.marquee-vertical-container {
+  overflow: hidden;
+  user-select: none;
+  height: 100%;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 25%, #000 75%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 25%, #000 75%, transparent 100%);
+}
+
+/* Pause the scrolling animation when hovering over the column */
+.marquee-column:hover .animate-marquee-up,
+.marquee-column:hover .animate-marquee-down {
+  animation-play-state: paused !important;
+}
+
+

@@ -264,3 +264,21 @@ CREATE POLICY "Allow admin select on ai_chat_logs" ON public.ai_chat_logs FOR SE
 CREATE POLICY "Allow admin delete on ai_chat_logs" ON public.ai_chat_logs FOR DELETE USING (auth.role() = 'authenticated');
 
 
+-- ====================================================
+-- 12. Photos Table (For Moment Recap)
+-- ====================================================
+CREATE TABLE IF NOT EXISTS public.photos (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  title VARCHAR(255),
+  year VARCHAR(50),
+  description TEXT,
+  image_url TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+ALTER TABLE public.photos ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public select on photos" ON public.photos FOR SELECT USING (true);
+CREATE POLICY "Allow admin write on photos" ON public.photos FOR ALL USING (auth.role() = 'authenticated');
+
+

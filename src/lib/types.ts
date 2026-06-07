@@ -86,3 +86,13 @@ export interface Skill {
   updated_at?: string
 }
 
+export interface Photo {
+  id: string
+  title: string | null
+  year: string | null
+  description: string | null
+  image_url: string
+  created_at?: string
+  updated_at?: string
+}
+
