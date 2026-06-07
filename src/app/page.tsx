@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { ArrowUpRight, Download, ExternalLink, Terminal, Presentation, BookOpen, Rocket } from 'lucide-react'
 import { Github, Linkedin } from '@/components/icons'
-import { getProfile, getProjects, getSkills } from '@/lib/data-service'
+import { getProfile, getProjects, getSkills, getPhotos } from '@/lib/data-service'
 import { SkillsMarquee } from '@/components/skills-marquee'
+import { JourneyMarquee } from '@/components/journey-marquee'
 import { BlurImage } from '@/components/ui/blur-image'
 
 export const dynamic = 'force-dynamic'
@@ -11,6 +12,7 @@ export default async function HomePage() {
   const profile = await getProfile()
   const projects = await getProjects()
   const skills = await getSkills()
+  const photos = await getPhotos()
   const featuredProjects = projects.filter(p => p.is_featured).slice(0, 6)
 
   return (
@@ -204,6 +206,15 @@ export default async function HomePage() {
           <p className="text-xs text-muted-foreground">My technical toolkit and areas of expertise</p>
         </div>
         <SkillsMarquee skills={skills} />
+      </section>
+
+      {/* MOMENT RECAP SECTION */}
+      <section className="space-y-6">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-semibold tracking-tight">Moment Recap</h2>
+          <p className="text-xs text-muted-foreground">Important milestones and snapshots of my life and developer journey</p>
+        </div>
+        <JourneyMarquee initialPhotos={photos} />
       </section>
 
       {/* 4. WORK TOGETHER SECTION */}

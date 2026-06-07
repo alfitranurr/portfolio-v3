@@ -170,7 +170,7 @@ export function SkillsMarquee({ skills }: SkillsMarqueeProps) {
   }
 
   return (
-    <div className="space-y-4 py-4 overflow-hidden relative w-full">
+    <div className="flex flex-col gap-3 py-4 overflow-hidden relative w-full">
       {/* Row 1: Right to Left */}
       {row1.length > 0 && (
         <div className="marquee-container w-full">
