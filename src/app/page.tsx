@@ -212,7 +212,7 @@ export default async function HomePage() {
       <section className="space-y-6">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold tracking-tight">Moment Recap</h2>
-          <p className="text-xs text-muted-foreground">Important milestones and snapshots of my life and developer journey</p>
+          <p className="text-xs text-muted-foreground">Important milestones and snapshots of my life</p>
         </div>
         <JourneyMarquee initialPhotos={photos} />
       </section>
