@@ -62,7 +62,7 @@ export function JourneyMarquee({ initialPhotos }: JourneyMarqueeProps) {
   return (
     <div 
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative overflow-hidden py-2 marquee-vertical-container"
-      style={{ height: '480px' }}
+      style={{ height: '600px' }}
     >
       {/* Top and Bottom Gradient Overlays for 100% seamless fade-out */}
       <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-background to-transparent pointer-events-none z-20" />
