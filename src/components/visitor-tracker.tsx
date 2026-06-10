@@ -17,6 +17,11 @@ export function VisitorTracker() {
       return
     }
 
+    // Check if session has already been tracked to prevent incrementing views on page transition
+    if (sessionStorage.getItem('portfolio_session_tracked') === 'true') {
+      return
+    }
+
     // Retrieve or generate visitor ID
     let visitorId = localStorage.getItem('portfolio_visitor_id')
     if (!visitorId) {
@@ -34,6 +39,7 @@ export function VisitorTracker() {
     }
 
     // Call server action to track
+    sessionStorage.setItem('portfolio_session_tracked', 'true')
     trackPageViewAction(pathname, visitorId).catch(err => {
       console.warn('Analytics tracking error:', err)
     })
