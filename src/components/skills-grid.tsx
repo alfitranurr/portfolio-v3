@@ -17,10 +17,20 @@ import {
   GitIcon,
   ScikitLearnIcon,
   TensorflowIcon,
-  PytorchIcon
+  PytorchIcon,
+  SqlServerIcon,
+  SsisIcon,
+  FigmaIcon,
+  CanvaIcon,
+  BigQueryIcon
 } from '@/components/icons'
 
-function getSkillIcon(name: string, customPath: string | null, className?: string) {
+function getSkillIcon(name: string, customPath: string | null, className?: string, logoUrl?: string | null) {
+  if (logoUrl) {
+    return (
+      <img src={logoUrl} className={className} alt={name} />
+    )
+  }
   if (customPath) {
     return (
       <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -60,6 +70,21 @@ function getSkillIcon(name: string, customPath: string | null, className?: strin
       return <TensorflowIcon className={className} />
     case 'pytorch':
       return <PytorchIcon className={className} />
+    case 'sql server':
+    case 'microsoft sql server':
+    case 'mssql':
+      return <SqlServerIcon className={className} />
+    case 'ssis':
+    case 'sql server integration services':
+      return <SsisIcon className={className} />
+    case 'figma':
+      return <FigmaIcon className={className} />
+    case 'canva':
+      return <CanvaIcon className={className} />
+    case 'bigquery':
+    case 'big query':
+    case 'google bigquery':
+      return <BigQueryIcon className={className} />
     default:
       return <Terminal className={className} />
   }
@@ -112,7 +137,7 @@ export function SkillsGrid({ initialSkills }: SkillsGridProps) {
             <div>
               <div className="flex gap-4 items-start mb-3">
                 <div className="shrink-0 p-2.5 rounded-xl bg-slate-100/50 dark:bg-slate-900/50 border border-slate-200/20 dark:border-slate-800/50 text-slate-700 dark:text-slate-300 flex items-center justify-center w-11 h-11 group-hover:scale-105 group-hover:border-primary/20 transition-all duration-300">
-                  {getSkillIcon(skill.name, skill.svg_path, "w-6 h-6")}
+                  {getSkillIcon(skill.name, skill.svg_path, "w-6 h-6", skill.logo_url)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1">

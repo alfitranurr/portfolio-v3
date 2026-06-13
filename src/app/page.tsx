@@ -202,8 +202,12 @@ export default async function HomePage() {
       {/* 3. TECH STACK SECTION */}
       <section className="space-y-6">
         <div className="space-y-1">
-          <h2 className="text-2xl font-semibold tracking-tight">Tech stacks that i have used</h2>
-          <p className="text-xs text-muted-foreground">My technical toolkit and areas of expertise</p>
+          <h2 className="text-2xl font-semibold tracking-tight">
+            {profile.skills_title || "Tech stacks that i have used"}
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            {profile.skills_subtitle || "My technical toolkit and areas of expertise"}
+          </p>
         </div>
         <SkillsMarquee skills={skills} />
       </section>
