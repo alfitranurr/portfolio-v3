@@ -137,6 +137,8 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
   const instagram_url = formData.get('instagram_url') as string
   const linkedin_url = formData.get('linkedin_url') as string
   const github_url = formData.get('github_url') as string
+  const skills_title = formData.get('skills_title') as string
+  const skills_subtitle = formData.get('skills_subtitle') as string
   const avatarFile = formData.get('avatar_file') as File | null
   const resumeFile = formData.get('resume_file') as File | null
 
@@ -156,7 +158,9 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
       resume_url: null,
       instagram_url: "https://www.instagram.com/rmdhani_ii",
       linkedin_url: "https://www.linkedin.com/in/al-fitra-nur-ramadhani/",
-      github_url: "https://github.com/alfitranurr"
+      github_url: "https://github.com/alfitranurr",
+      skills_title: "Tech stacks that i have used",
+      skills_subtitle: "My technical toolkit and areas of expertise"
     }
 
     const updated = {
@@ -166,7 +170,9 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
       about_me,
       instagram_url,
       linkedin_url,
-      github_url
+      github_url,
+      skills_title,
+      skills_subtitle
     }
 
     // Mock upload by simulating data URLs or storing file names
@@ -237,6 +243,8 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
         instagram_url,
         linkedin_url,
         github_url,
+        skills_title,
+        skills_subtitle,
         updated_at: new Date().toISOString()
       })
 
@@ -852,6 +860,10 @@ function slugifyForSimpleIcons(name: string): string {
   if (slug === 'aws' || slug === 'amazon web services') return 'amazonaws'
   if (slug === 'gcp' || slug === 'google cloud') return 'googlecloud'
   if (slug === 'azure') return 'microsoftazure'
+  if (slug === 'sql server' || slug === 'microsoft sql server' || slug === 'mssql') return 'microsoftsqlserver'
+  if (slug === 'big query' || slug === 'bigquery' || slug === 'google bigquery') return 'googlebigquery'
+  if (slug === 'figma') return 'figma'
+  if (slug === 'canva') return 'canva'
 
   slug = slug
     .replace(/\.js$/, 'dotjs')
@@ -881,6 +893,7 @@ export async function saveSkillAction(skillData: any) {
   const level = parseInt(skillData.level) || 50
   const desc = skillData.desc ? skillData.desc.trim() : ''
   let svg_path = skillData.svg_path ? skillData.svg_path.trim() : ''
+  const logo_url = skillData.logo_url ? skillData.logo_url.trim() : null
 
   if (!name || !category) {
     return { success: false, error: 'Name and Category are required.' }
@@ -912,7 +925,8 @@ export async function saveSkillAction(skillData: any) {
         category: item.category,
         level: item.level,
         desc: item.desc,
-        svg_path: null
+        svg_path: null,
+        logo_url: null
       }))
     }
 
@@ -921,7 +935,7 @@ export async function saveSkillAction(skillData: any) {
     if (isEdit) {
       list = list.map((s: any) => 
         s.id === skillData.id 
-          ? { ...s, name, category, level, desc, svg_path, updated_at: new Date().toISOString() } 
+          ? { ...s, name, category, level, desc, svg_path, logo_url, updated_at: new Date().toISOString() } 
           : s
       )
     } else {
@@ -932,6 +946,7 @@ export async function saveSkillAction(skillData: any) {
         level,
         desc,
         svg_path: svg_path || null,
+        logo_url,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }
@@ -959,6 +974,7 @@ export async function saveSkillAction(skillData: any) {
       level,
       desc,
       svg_path: svg_path || null,
+      logo_url,
       updated_at: new Date().toISOString()
     }
 
@@ -1021,6 +1037,69 @@ export async function deleteSkillAction(id: string) {
     return { success: true }
   } catch (err: any) {
     console.error('deleteSkillAction error:', err)
+    return { success: false, error: err.message }
+  }
+}
+
+export async function updateSkillsTextAction(title: string, subtitle: string) {
+  const cookieStore = await cookies()
+  if (!hasSupabaseConfig()) {
+    const existingStr = cookieStore.get('mock_profile')?.value
+    const existing = existingStr ? JSON.parse(existingStr) : {
+      name: "Al Fitra Nur Ramadhani",
+      headline: "Data Science Professional",
+      about_me: "Welcome to my portfolio! Update this in your admin panel.",
+      avatar_url: null,
+      resume_url: null,
+      instagram_url: "https://www.instagram.com/rmdhani_ii",
+      linkedin_url: "https://www.linkedin.com/in/al-fitra-nur-ramadhani/",
+      github_url: "https://github.com/alfitranurr",
+      skills_title: "Tech stacks that i have used",
+      skills_subtitle: "My technical toolkit and areas of expertise"
+    }
+
+    const updated = {
+      ...existing,
+      skills_title: title,
+      skills_subtitle: subtitle
+    }
+
+    cookieStore.set('mock_profile', JSON.stringify(updated), { path: '/' })
+    revalidatePath('/')
+    revalidatePath('/admin/skills')
+    return { success: true, message: 'Tech Stack text updated successfully (Mock Mode).' }
+  }
+
+  try {
+    const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized admin user' }
+    }
+
+    const { data: existingProfile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    const { error } = await supabase
+      .from('profiles')
+      .upsert({
+        ...existingProfile,
+        id: user.id,
+        skills_title: title,
+        skills_subtitle: subtitle,
+        updated_at: new Date().toISOString()
+      })
+
+    if (error) throw error
+
+    revalidatePath('/')
+    revalidatePath('/admin/skills')
+    return { success: true, message: 'Tech Stack text updated successfully.' }
+  } catch (err: any) {
+    console.error('updateSkillsTextAction error:', err)
     return { success: false, error: err.message }
   }
 }

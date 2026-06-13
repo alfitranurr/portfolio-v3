@@ -8,6 +8,8 @@ export interface Profile {
   instagram_url: string | null
   linkedin_url: string | null
   github_url: string | null
+  skills_title?: string | null
+  skills_subtitle?: string | null
 }
 
 export interface Project {
@@ -82,6 +84,7 @@ export interface Skill {
   level: number
   desc: string
   svg_path: string | null
+  logo_url?: string | null
   created_at?: string
   updated_at?: string
 }

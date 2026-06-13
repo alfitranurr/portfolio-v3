@@ -11,4 +11,9 @@ export const TECH_STACK = [
   { name: 'Scikit-Learn', category: 'ML / AI', level: 90, desc: 'Classical predictive models' },
   { name: 'TensorFlow', category: 'ML / AI', level: 72, desc: 'Neural network construction' },
   { name: 'PyTorch', category: 'ML / AI', level: 78, desc: 'Deep learning research & modeling' },
+  { name: 'SQL Server', category: 'Database', level: 84, desc: 'Enterprise relational database systems' },
+  { name: 'SSIS', category: 'Tool', level: 80, desc: 'ETL & data integration workflows' },
+  { name: 'Figma', category: 'Tool', level: 82, desc: 'Collaborative UI/UX design & prototyping' },
+  { name: 'Canva', category: 'Tool', level: 85, desc: 'Graphic design & visual asset creation' },
+  { name: 'Big Query', category: 'Database', level: 86, desc: 'Serverless cloud data warehouse' },
 ]

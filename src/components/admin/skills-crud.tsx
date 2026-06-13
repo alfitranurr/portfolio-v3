@@ -13,9 +13,11 @@ import {
   AlertCircle,
   ArrowLeft,
   Sparkles,
-  HelpCircle
+  HelpCircle,
+  UploadCloud,
+  Image as ImageIcon
 } from 'lucide-react'
-import { saveSkillAction, deleteSkillAction } from '@/app/admin/actions'
+import { saveSkillAction, deleteSkillAction, uploadAssetAction } from '@/app/admin/actions'
 import { cn } from '@/lib/utils'
 import { Skill } from '@/lib/types'
 import {
@@ -30,7 +32,12 @@ import {
   GitIcon,
   ScikitLearnIcon,
   TensorflowIcon,
-  PytorchIcon
+  PytorchIcon,
+  SqlServerIcon,
+  SsisIcon,
+  FigmaIcon,
+  CanvaIcon,
+  BigQueryIcon
 } from '@/components/icons'
 
 interface SkillsCrudProps {
@@ -47,7 +54,12 @@ const DEFAULT_SKILL: Omit<Skill, 'id'> = {
   svg_path: ''
 }
 
-function getSkillIcon(name: string, customPath: string | null, className?: string) {
+function getSkillIcon(name: string, customPath: string | null, className?: string, logoUrl?: string | null) {
+  if (logoUrl) {
+    return (
+      <img src={logoUrl} className={className} alt={name} />
+    )
+  }
   if (customPath) {
     return (
       <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -87,6 +99,21 @@ function getSkillIcon(name: string, customPath: string | null, className?: strin
       return <TensorflowIcon className={className} />
     case 'pytorch':
       return <PytorchIcon className={className} />
+    case 'sql server':
+    case 'microsoft sql server':
+    case 'mssql':
+      return <SqlServerIcon className={className} />
+    case 'ssis':
+    case 'sql server integration services':
+      return <SsisIcon className={className} />
+    case 'figma':
+      return <FigmaIcon className={className} />
+    case 'canva':
+      return <CanvaIcon className={className} />
+    case 'bigquery':
+    case 'big query':
+    case 'google bigquery':
+      return <BigQueryIcon className={className} />
     default:
       return <Terminal className={className} />
   }
@@ -98,7 +125,34 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
   const [activeCategory, setActiveCategory] = React.useState<string>('All')
   const [editingItem, setEditingItem] = React.useState<Partial<Skill> | null>(null)
   const [isPending, setIsPending] = React.useState(false)
+  const [isUploading, setIsUploading] = React.useState(false)
   const [notification, setNotification] = React.useState<{ success: boolean; message: string } | null>(null)
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    setNotification(null)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('prefix', 'skill-logo')
+      const res = await uploadAssetAction(formData)
+      if (res.success && res.url) {
+        setEditingItem(prev => prev ? ({ ...prev, logo_url: res.url }) : null)
+        setNotification({ success: true, message: 'Logo uploaded successfully.' })
+      } else {
+        setNotification({ success: false, message: res.error || 'Failed to upload logo.' })
+      }
+    } catch (err: any) {
+      console.error(err)
+      setNotification({ success: false, message: 'Error uploading logo.' })
+    } finally {
+      setIsUploading(false)
+    }
+  }
 
   React.useEffect(() => {
     setSkills(initialSkills)
@@ -328,16 +382,81 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
                   />
                 </div>
 
+                {/* Custom Logo Image (Upload or URL) */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Custom Logo Image (Upload or URL)
+                  </label>
+                  
+                  <div className="flex items-center gap-4">
+                    {/* Preview box */}
+                    <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center shrink-0">
+                      {editingItem.logo_url ? (
+                        <>
+                          <img
+                            src={editingItem.logo_url}
+                            alt="Logo preview"
+                            className="w-full h-full object-contain p-1 bg-white"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setEditingItem(prev => ({ ...prev, logo_url: null }))}
+                            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold cursor-pointer"
+                          >
+                            Remove
+                          </button>
+                        </>
+                      ) : (
+                        <ImageIcon className="w-6 h-6 text-muted-foreground/40" />
+                      )}
+                    </div>
+
+                    <div className="flex-1 space-y-2">
+                      <label className={cn(
+                        "w-full py-2 px-4 rounded-xl bg-white dark:bg-white/5 border border-dashed border-slate-300 dark:border-slate-700/50 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
+                        isUploading && "opacity-50 pointer-events-none"
+                      )}>
+                        {isUploading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                            <span>Uploading...</span>
+                          </>
+                        ) : (
+                          <>
+                            <UploadCloud className="w-4 h-4 text-muted-foreground" />
+                            <span>{editingItem.logo_url ? 'Change Logo File' : 'Upload Logo File'}</span>
+                          </>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleLogoUpload}
+                          className="hidden"
+                          disabled={isUploading}
+                        />
+                      </label>
+                      
+                      <input
+                        type="text"
+                        value={editingItem.logo_url || ''}
+                        onChange={e => setEditingItem(prev => ({ ...prev, logo_url: e.target.value }))}
+                        placeholder="Or paste Logo Image URL (e.g. Google Drive link)"
+                        className="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 {/* Preview Logo */}
-                {(editingItem.svg_path || editingItem.name) && (
+                {(editingItem.svg_path || editingItem.name || editingItem.logo_url) && (
                   <div className="p-4 rounded-2xl bg-white/5 border border-slate-200/5 dark:border-slate-800/5 flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-slate-700 dark:text-slate-300 border border-slate-200/10 dark:border-slate-800/10">
-                      {getSkillIcon(editingItem.name || '', editingItem.svg_path || null, "w-6 h-6")}
+                      {getSkillIcon(editingItem.name || '', editingItem.svg_path || null, "w-6 h-6", editingItem.logo_url)}
                     </div>
                     <div>
                       <h4 className="text-xs font-bold text-foreground">Current Live Preview</h4>
                       <p className="text-[10px] text-muted-foreground mt-0.5">
-                        {editingItem.svg_path ? 'Custom path supplied' : 'Fallbacks to default or fetched Simple Icon'}
+                        {editingItem.logo_url ? 'Custom logo image/URL used' : editingItem.svg_path ? 'Custom path supplied' : 'Fallbacks to default or fetched Simple Icon'}
                       </p>
                     </div>
                   </div>
@@ -434,7 +553,7 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
                   <div className="space-y-4">
                     <div className="flex gap-4 items-start">
                       <div className="shrink-0 p-2 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200/10 dark:border-slate-800/10 text-slate-700 dark:text-slate-300 flex items-center justify-center w-10 h-10 transition-all group-hover:border-primary/20">
-                        {getSkillIcon(skill.name, skill.svg_path, "w-5.5 h-5.5")}
+                        {getSkillIcon(skill.name, skill.svg_path, "w-5.5 h-5.5", skill.logo_url)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-1.5">

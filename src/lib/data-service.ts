@@ -13,7 +13,9 @@ export const MOCK_PROFILE: Profile = {
   resume_url: null,
   instagram_url: "https://www.instagram.com/rmdhani_ii",
   linkedin_url: "https://www.linkedin.com/in/al-fitra-nur-ramadhani/",
-  github_url: "https://github.com/alfitranurr"
+  github_url: "https://github.com/alfitranurr",
+  skills_title: "Tech stacks that i have used",
+  skills_subtitle: "My technical toolkit and areas of expertise"
 }
 
 
@@ -507,7 +509,8 @@ export async function getSkills(): Promise<Skill[]> {
       category: item.category,
       level: item.level,
       desc: item.desc,
-      svg_path: null
+      svg_path: null,
+      logo_url: null
     }))
   }
   try {
@@ -526,7 +529,8 @@ export async function getSkills(): Promise<Skill[]> {
         category: item.category,
         level: item.level,
         desc: item.desc,
-        svg_path: null
+        svg_path: null,
+        logo_url: null
       }))
     }
     return data
@@ -538,7 +542,8 @@ export async function getSkills(): Promise<Skill[]> {
       category: item.category,
       level: item.level,
       desc: item.desc,
-      svg_path: null
+      svg_path: null,
+      logo_url: null
     }))
   }
 }

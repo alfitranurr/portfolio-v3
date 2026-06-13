@@ -27,6 +27,8 @@ interface Profile {
   instagram_url: string | null
   linkedin_url: string | null
   github_url: string | null
+  skills_title?: string | null
+  skills_subtitle?: string | null
 }
 
 interface ProfileFormProps {
@@ -142,6 +144,37 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all resize-none"
                 />
               </div>
+            </div>
+
+            {/* Home Section Customization */}
+            <h2 className="text-sm font-bold uppercase tracking-wider text-primary pt-4 mb-2 block border-t border-slate-200/10 dark:border-slate-800/10">Home Page Sections Customization</h2>
+            
+            {/* Tech Stack Title */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                Tech Stack Section Title
+              </label>
+              <input
+                type="text"
+                name="skills_title"
+                defaultValue={initialProfile.skills_title || 'Tech stacks that i have used'}
+                placeholder="Tech stacks that i have used"
+                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all"
+              />
+            </div>
+            
+            {/* Tech Stack Subtitle */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                Tech Stack Section Subtitle
+              </label>
+              <input
+                type="text"
+                name="skills_subtitle"
+                defaultValue={initialProfile.skills_subtitle || 'My technical toolkit and areas of expertise'}
+                placeholder="My technical toolkit and areas of expertise"
+                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all"
+              />
             </div>
           </div>
 

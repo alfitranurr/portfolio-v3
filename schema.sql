@@ -197,6 +197,7 @@ CREATE TABLE public.skills (
   level INT NOT NULL DEFAULT 50, -- Proficiency level (0-100)
   "desc" TEXT,
   svg_path TEXT, -- Stored SVG path for the logo (automatic or custom)
+  logo_url TEXT, -- URL or path to a custom uploaded image logo
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
