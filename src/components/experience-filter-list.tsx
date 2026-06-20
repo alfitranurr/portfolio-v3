@@ -166,7 +166,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
 
             return (
               <motion.div
-                layout
+                layout="position"
                 key={group.company}
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -179,7 +179,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
 
                 {isSingle ? (
                   /* Glassmorphic Event Card for Single Role */
-                  <div className="p-6 md:p-8 rounded-3xl glass-panel hover:border-primary/20 transition-all duration-300 space-y-4 relative overflow-hidden">
+                  <div className="p-6 md:p-8 rounded-3xl glass-panel hover:border-primary/20 transition-[border-color,background-color,box-shadow] duration-300 space-y-4 relative overflow-hidden">
                     {/* Subtle left indicator bar */}
                     <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-primary/40 to-transparent scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-center" />
                     <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
@@ -241,12 +241,13 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                       <AnimatePresence initial={false}>
                         {!!expandedRoles[singleExp.id] && (
                           <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
+                            initial={{ height: 0, opacity: 0, y: -10 }}
+                            animate={{ height: 'auto', opacity: 1, y: 0 }}
+                            exit={{ height: 0, opacity: 0, y: -10 }}
                             transition={{ 
-                              duration: 0.3,
-                              ease: [0.25, 1, 0.5, 1]
+                              height: { duration: 0.35, ease: [0.04, 0.62, 0.23, 0.98] },
+                              opacity: { duration: 0.25 },
+                              y: { duration: 0.25 }
                             }}
                             className="overflow-hidden"
                           >
@@ -264,7 +265,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                   </div>
                 ) : (
                   /* Glassmorphic Event Card for Multiple Roles */
-                  <div className="p-6 md:p-8 rounded-3xl glass-panel hover:border-primary/20 transition-all duration-300 space-y-6 relative overflow-hidden">
+                  <div className="p-6 md:p-8 rounded-3xl glass-panel hover:border-primary/20 transition-[border-color,background-color,box-shadow] duration-300 space-y-6 relative overflow-hidden">
                     {/* Subtle left indicator bar */}
                     <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-primary/40 to-transparent scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-center" />
                     {/* Company Header */}
@@ -350,12 +351,13 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                               <AnimatePresence initial={false}>
                                 {!!expandedRoles[role.id] && (
                                   <motion.div
-                                    initial={{ height: 0, opacity: 0 }}
-                                    animate={{ height: 'auto', opacity: 1 }}
-                                    exit={{ height: 0, opacity: 0 }}
+                                    initial={{ height: 0, opacity: 0, y: -10 }}
+                                    animate={{ height: 'auto', opacity: 1, y: 0 }}
+                                    exit={{ height: 0, opacity: 0, y: -10 }}
                                     transition={{ 
-                                      duration: 0.3,
-                                      ease: [0.25, 1, 0.5, 1]
+                                      height: { duration: 0.35, ease: [0.04, 0.62, 0.23, 0.98] },
+                                      opacity: { duration: 0.25 },
+                                      y: { duration: 0.25 }
                                     }}
                                     className="overflow-hidden"
                                   >

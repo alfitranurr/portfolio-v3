@@ -6,13 +6,15 @@ import { SkillsMarquee } from '@/components/skills-marquee'
 import { JourneyMarquee } from '@/components/journey-marquee'
 import { BlurImage } from '@/components/ui/blur-image'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600 // Revalidate cache every hour (ISR)
 
 export default async function HomePage() {
-  const profile = await getProfile()
-  const projects = await getProjects()
-  const skills = await getSkills()
-  const photos = await getPhotos()
+  const [profile, projects, skills, photos] = await Promise.all([
+    getProfile(),
+    getProjects(),
+    getSkills(),
+    getPhotos()
+  ])
   const featuredProjects = projects.filter(p => p.is_featured).slice(0, 6)
 
   return (

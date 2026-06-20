@@ -21,6 +21,8 @@ CREATE TABLE public.profiles (
   instagram_url TEXT DEFAULT 'https://www.instagram.com/rmdhani_ii',
   linkedin_url TEXT DEFAULT 'https://www.linkedin.com/in/al-fitra-nur-ramadhani/',
   github_url TEXT DEFAULT 'https://github.com/alfitranurr',
+  skills_title VARCHAR(255) DEFAULT 'Tech stacks that i have used',
+  skills_subtitle VARCHAR(255) DEFAULT 'My technical toolkit and areas of expertise',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
@@ -37,6 +39,7 @@ CREATE TABLE public.projects (
   github_url TEXT,
   demo_url TEXT,
   notebook_url TEXT, -- Link to Jupyter, Colab, or Kaggle
+  slide_url TEXT,
   embed_code TEXT, -- Iframe code for Tableau/Plotly
   is_featured BOOLEAN DEFAULT FALSE,
   pinned_order INT DEFAULT 0,
@@ -54,6 +57,8 @@ CREATE TABLE public.experiences (
   end_date DATE, -- NULL represents "Present"
   description TEXT[] NOT NULL DEFAULT '{}', -- Array of responsibilities/bullet points
   is_current BOOLEAN DEFAULT FALSE,
+  category VARCHAR(100) DEFAULT 'professional',
+  logo_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );

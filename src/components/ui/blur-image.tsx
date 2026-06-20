@@ -16,7 +16,7 @@ export interface BlurImageProps extends Omit<ImageProps, 'src'> {
 // Check if image domain is local, Supabase, or Google Drive (Google User Content)
 const isOptimizable = (src: any) => {
   if (typeof src === 'string') {
-    return src.startsWith('/') || src.includes('supabase.co') || src.includes('googleusercontent.com')
+    return src.startsWith('/') || src.includes('supabase.co') || src.includes('googleusercontent.com') || src.includes('unsplash.com')
   }
   return true; // Statically imported objects are always optimizable
 }

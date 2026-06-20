@@ -6,7 +6,7 @@ export const metadata = {
   description: 'Hackathon competitions, licenses, professional certifications, and seminar workshops.',
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 export default async function CertificatesPage() {
   const certificates = await getCertificates()

@@ -3,10 +3,17 @@ import { notFound } from 'next/navigation'
 import ReactMarkdown from 'react-markdown'
 import { ArrowLeft, ExternalLink, Calendar, BookOpen, Sparkles, Presentation } from 'lucide-react'
 import { Github } from '@/components/icons'
-import { getProjectById } from '@/lib/data-service'
+import { getProjectById, getProjects } from '@/lib/data-service'
 import { BlurImage } from '@/components/ui/blur-image'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
+
+export async function generateStaticParams() {
+  const projects = await getProjects()
+  return projects.map((project) => ({
+    id: project.id,
+  }))
+}
 
 interface PageProps {
   params: Promise<{ id: string }>

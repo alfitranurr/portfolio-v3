@@ -2,6 +2,20 @@ import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import { Profile, Project, Education, Experience, Certificate, Skill, Photo } from '@/lib/types'
 import { TECH_STACK } from '@/lib/constants'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+
+let publicClient: ReturnType<typeof createSupabaseClient> | null = null
+
+function getPublicClient() {
+  if (!publicClient) {
+    publicClient = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+  }
+  return publicClient
+}
+
 
 // 1. MOCK PROFILE
 export const MOCK_PROFILE: Profile = {
@@ -269,7 +283,7 @@ export async function getProfile(): Promise<Profile> {
     return MOCK_PROFILE
   }
   try {
-    const supabase = await createClient()
+    const supabase = getPublicClient()
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
@@ -324,7 +338,7 @@ export async function getProjects(): Promise<Project[]> {
     }
   } else {
     try {
-      const supabase = await createClient()
+      const supabase = getPublicClient()
       const { data, error } = await supabase
         .from('projects')
         .select('*')
@@ -364,7 +378,7 @@ export async function getProjectById(id: string): Promise<Project | null> {
     return MOCK_PROJECTS.find(p => p.id === id) || null
   }
   try {
-    const supabase = await createClient()
+    const supabase = getPublicClient()
     const { data, error } = await supabase
       .from('projects')
       .select('*')
@@ -400,7 +414,7 @@ export async function getEducation(): Promise<Education[]> {
     return MOCK_EDUCATION
   }
   try {
-    const supabase = await createClient()
+    const supabase = getPublicClient()
     const { data, error } = await supabase
       .from('education')
       .select('*')
@@ -435,7 +449,7 @@ export async function getExperience(): Promise<Experience[]> {
     return MOCK_EXPERIENCE
   }
   try {
-    const supabase = await createClient()
+    const supabase = getPublicClient()
     const { data, error } = await supabase
       .from('experiences')
       .select('*')
@@ -470,7 +484,7 @@ export async function getCertificates(): Promise<Certificate[]> {
     return MOCK_CERTIFICATES
   }
   try {
-    const supabase = await createClient()
+    const supabase = getPublicClient()
     const { data, error } = await supabase
       .from('certificates')
       .select('*')
@@ -514,7 +528,7 @@ export async function getSkills(): Promise<Skill[]> {
     }))
   }
   try {
-    const supabase = await createClient()
+    const supabase = getPublicClient()
     const { data, error } = await supabase
       .from('skills')
       .select('*')
@@ -797,7 +811,7 @@ export async function getPhotos(): Promise<Photo[]> {
     }
   } else {
     try {
-      const supabase = await createClient()
+      const supabase = getPublicClient()
       const { data, error } = await supabase
         .from('photos')
         .select('*')
@@ -805,13 +819,6 @@ export async function getPhotos(): Promise<Photo[]> {
 
       if (error) {
         console.warn('Photos table query failed or doesn\'t exist. Falling back to mock data:', error.message)
-        try {
-          const cookieStore = await cookies()
-          const mockPhotosStr = cookieStore.get('mock_photos')?.value
-          if (mockPhotosStr) {
-            return JSON.parse(mockPhotosStr)
-          }
-        } catch (cookieErr) {}
         return MOCK_PHOTOS
       }
 
