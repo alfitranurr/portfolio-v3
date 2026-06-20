@@ -12,11 +12,13 @@ import {
   AlertCircle, 
   Loader2,
   FileText,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Globe
 } from 'lucide-react'
 import { Github, Linkedin, Instagram } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { BlurImage } from '@/components/ui/blur-image'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface Profile {
   name: string
@@ -24,6 +26,7 @@ interface Profile {
   about_me: string | null
   avatar_url: string | null
   resume_url: string | null
+  logo_url?: string | null
   instagram_url: string | null
   linkedin_url: string | null
   github_url: string | null
@@ -37,10 +40,22 @@ interface ProfileFormProps {
 
 export function ProfileForm({ initialProfile }: ProfileFormProps) {
   const [state, formAction, isPending] = useActionState(updateProfileAction, null)
+  const [showNotification, setShowNotification] = React.useState(false)
   const [avatarPreview, setAvatarPreview] = React.useState<string | null>(initialProfile.avatar_url)
+  const [logoPreview, setLogoPreview] = React.useState<string | null>(initialProfile.logo_url || null)
   const [resumeName, setResumeName] = React.useState<string | null>(
     initialProfile.resume_url ? 'Current Resume Document' : null
   )
+
+  React.useEffect(() => {
+    if (state) {
+      setShowNotification(true)
+      const timer = setTimeout(() => {
+        setShowNotification(false)
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [state])
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -48,6 +63,17 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
       const reader = new FileReader()
       reader.onloadend = () => {
         setAvatarPreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setLogoPreview(reader.result as string)
       }
       reader.readAsDataURL(file)
     }
@@ -63,30 +89,64 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
   return (
     <form action={formAction} className="space-y-8 animate-fade-in">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-black tracking-tight text-foreground">Profile Settings</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Customize your biography, headlines, socials, and downloadable CV documents.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/10 dark:border-slate-800/10 pb-5">
+        <div>
+          <h1 className="text-3xl font-black tracking-tight text-foreground">Profile Settings</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Customize your biography, headlines, socials, and downloadable CV documents.
+          </p>
+        </div>
+        
+        {/* Submit Action (Top Right) */}
+        <div className="shrink-0 w-full sm:w-auto">
+          <button
+            type="submit"
+            disabled={isPending}
+            className="w-full sm:w-auto py-2.5 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all hover:bg-primary/95 shadow-lg shadow-primary/10"
+          >
+            {isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Saving Profile...</span>
+              </>
+            ) : (
+              <span>Save Profile Config</span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Notifications */}
-      {state?.success && (
-        <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 text-xs font-semibold flex items-center gap-2.5">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
-          <span>{state.message}</span>
-        </div>
-      )}
-      {state?.success === false && (
-        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs font-semibold flex items-center gap-2.5">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>{state.error}</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {showNotification && state && (
+          <motion.div
+            initial={{ opacity: 0, y: -10, filter: "blur(4px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
+            transition={{ duration: 0.3 }}
+            className={cn(
+              "p-4 rounded-xl text-xs font-semibold flex items-center gap-2.5 border",
+              state.success 
+                ? "bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400" 
+                : "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400"
+            )}
+          >
+            {state.success ? (
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
+            ) : (
+              <AlertCircle className="w-4 h-4 shrink-0" />
+            )}
+            <span>{state.success ? state.message : state.error}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Hidden Fields for current urls to pass them back if not changed */}
       <input type="hidden" name="avatar_url" value={initialProfile.avatar_url || ''} />
       <input type="hidden" name="resume_url" value={initialProfile.resume_url || ''} />
+      <input type="hidden" name="logo_url" value={initialProfile.logo_url || ''} />
+      <input type="hidden" name="skills_title" value={initialProfile.skills_title || ''} />
+      <input type="hidden" name="skills_subtitle" value={initialProfile.skills_subtitle || ''} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Details & Bio */}
@@ -146,36 +206,6 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
               </div>
             </div>
 
-            {/* Home Section Customization */}
-            <h2 className="text-sm font-bold uppercase tracking-wider text-primary pt-4 mb-2 block border-t border-slate-200/10 dark:border-slate-800/10">Home Page Sections Customization</h2>
-            
-            {/* Tech Stack Title */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                Tech Stack Section Title
-              </label>
-              <input
-                type="text"
-                name="skills_title"
-                defaultValue={initialProfile.skills_title || 'Tech stacks that i have used'}
-                placeholder="Tech stacks that i have used"
-                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all"
-              />
-            </div>
-            
-            {/* Tech Stack Subtitle */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                Tech Stack Section Subtitle
-              </label>
-              <input
-                type="text"
-                name="skills_subtitle"
-                defaultValue={initialProfile.skills_subtitle || 'My technical toolkit and areas of expertise'}
-                placeholder="My technical toolkit and areas of expertise"
-                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all"
-              />
-            </div>
           </div>
 
           {/* Social Presence Box */}
@@ -237,6 +267,39 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
 
         {/* Right Column: Files & Uploads */}
         <div className="space-y-6">
+          {/* Logo box */}
+          <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 flex flex-col items-center">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-primary w-full text-left">Website Logo / Favicon</h2>
+            
+            {/* Square Preview */}
+            <div className="relative group w-32 h-32 rounded-3xl overflow-hidden border border-slate-200/20 dark:border-slate-800/10 bg-slate-200/5 flex items-center justify-center">
+              {logoPreview ? (
+                <BlurImage
+                  src={logoPreview}
+                  alt="Logo preview"
+                  className="w-full h-full object-contain p-3"
+                />
+              ) : (
+                <Globe className="w-12 h-12 text-muted-foreground/40" />
+              )}
+            </div>
+
+            <label className="w-full py-2.5 px-4 rounded-xl bg-white/5 border border-dashed border-slate-200/20 dark:border-slate-800/20 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2">
+              <UploadCloud className="w-4 h-4 text-muted-foreground" />
+              <span>Select Logo Image</span>
+              <input
+                type="file"
+                name="logo_file"
+                accept="image/*,.ico"
+                onChange={handleLogoChange}
+                className="hidden"
+              />
+            </label>
+            <p className="text-[10px] text-muted-foreground text-center">
+              PNG, ICO, SVG, or JPG. Recommend square resolution.
+            </p>
+          </div>
+
           {/* Avatar box */}
           <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 flex flex-col items-center">
             <h2 className="text-sm font-bold uppercase tracking-wider text-primary w-full text-left">Avatar Picture</h2>
@@ -315,21 +378,6 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
             </p>
           </div>
 
-          {/* Submit Action */}
-          <button
-            type="submit"
-            disabled={isPending}
-            className="w-full py-3 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all hover:bg-primary/95 shadow-lg shadow-primary/10"
-          >
-            {isPending ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Saving Profile Details...</span>
-              </>
-            ) : (
-              <span>Save Profile Config</span>
-            )}
-          </button>
         </div>
       </div>
     </form>

@@ -141,6 +141,7 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
   const skills_subtitle = formData.get('skills_subtitle') as string
   const avatarFile = formData.get('avatar_file') as File | null
   const resumeFile = formData.get('resume_file') as File | null
+  const logoFile = formData.get('logo_file') as File | null
 
   if (!name || !headline) {
     return { success: false, error: 'Name and Headline are required.' }
@@ -156,6 +157,7 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
       about_me: "Welcome to my portfolio! Update this in your admin panel.",
       avatar_url: null,
       resume_url: null,
+      logo_url: null,
       instagram_url: "https://www.instagram.com/rmdhani_ii",
       linkedin_url: "https://www.linkedin.com/in/al-fitra-nur-ramadhani/",
       github_url: "https://github.com/alfitranurr",
@@ -177,10 +179,25 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
 
     // Mock upload by simulating data URLs or storing file names
     if (avatarFile && avatarFile.size > 0) {
-      updated.avatar_url = `/mock-avatar.png` // Simulator path
+      try {
+        const buffer = await avatarFile.arrayBuffer()
+        const base64 = Buffer.from(buffer).toString('base64')
+        updated.avatar_url = `data:${avatarFile.type};base64,${base64}`
+      } catch (e) {
+        updated.avatar_url = `/mock-avatar.png`
+      }
     }
     if (resumeFile && resumeFile.size > 0) {
       updated.resume_url = `/mock-resume.pdf` // Simulator path
+    }
+    if (logoFile && logoFile.size > 0) {
+      try {
+        const buffer = await logoFile.arrayBuffer()
+        const base64 = Buffer.from(buffer).toString('base64')
+        updated.logo_url = `data:${logoFile.type};base64,${base64}`
+      } catch (e) {
+        updated.logo_url = `/mock-logo.png`
+      }
     }
 
     cookieStore.set('mock_profile', JSON.stringify(updated), { path: '/' })
@@ -201,6 +218,7 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
     // Upload Files if provided
     let avatar_url = formData.get('avatar_url') as string || null
     let resume_url = formData.get('resume_url') as string || null
+    let logo_url = formData.get('logo_url') as string || null
 
     if (avatarFile && avatarFile.size > 0) {
       const ext = avatarFile.name.split('.').pop()
@@ -230,6 +248,20 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
       resume_url = publicUrl
     }
 
+    if (logoFile && logoFile.size > 0) {
+      const ext = logoFile.name.split('.').pop()
+      const fileName = `logo-${user.id}-${Date.now()}.${ext}`
+      const { error: uploadError } = await supabase.storage
+        .from('portfolio-assets')
+        .upload(fileName, logoFile, { upsert: true, contentType: logoFile.type })
+      
+      if (uploadError) throw uploadError
+      const { data: { publicUrl } } = supabase.storage
+        .from('portfolio-assets')
+        .getPublicUrl(fileName)
+      logo_url = publicUrl
+    }
+
     // Upsert Profile
     const { error } = await supabase
       .from('profiles')
@@ -240,6 +272,7 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
         about_me,
         avatar_url,
         resume_url,
+        logo_url,
         instagram_url,
         linkedin_url,
         github_url,

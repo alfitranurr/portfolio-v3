@@ -67,7 +67,17 @@ export function Sidebar({ profile }: { profile: Profile }) {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 z-40 px-4 flex items-center justify-between glass-panel border-b border-slate-200/20 dark:border-slate-800/10">
         <Link href="/" className="flex items-center gap-2 font-bold text-foreground">
-          <Terminal className="text-primary w-5 h-5" />
+          {profile.logo_url ? (
+            <div className="w-6 h-6 relative shrink-0 overflow-hidden rounded-md">
+              <BlurImage
+                src={profile.logo_url}
+                alt="Logo"
+                className="w-full h-full object-contain"
+              />
+            </div>
+          ) : (
+            <Terminal className="text-primary w-5 h-5" />
+          )}
           <span>Al Fitra</span>
         </Link>
         <div className="flex items-center gap-2">

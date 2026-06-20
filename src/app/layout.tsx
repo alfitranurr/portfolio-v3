@@ -21,14 +21,31 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    template: "%s | Al Fitra Nur Ramadhani",
-    default: "Al Fitra Nur Ramadhani | Data Science Portfolio",
-  },
-  description: "Professional portfolio showcasing data analytics, visualization, artificial intelligence, and web development projects.",
-  keywords: ["Data Science", "Data Analyst", "Machine Learning", "Python", "SQL", "Tableau", "PowerBI", "Portfolio"],
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const profile = await getProfile();
+  const name = profile?.name || "Al Fitra Nur Ramadhani";
+  const logoUrl = profile?.logo_url || "/favicon.ico";
+
+  return {
+    title: {
+      template: `%s | ${name}`,
+      default: `${name} | Data Science Portfolio`,
+    },
+    description: "Professional portfolio showcasing data analytics, visualization, artificial intelligence, and web development projects.",
+    keywords: ["Data Science", "Data Analyst", "Machine Learning", "Python", "SQL", "Tableau", "PowerBI", "Portfolio"],
+    icons: {
+      icon: [
+        { url: logoUrl },
+        { url: logoUrl, sizes: "32x32" },
+        { url: logoUrl, sizes: "16x16" }
+      ],
+      shortcut: logoUrl,
+      apple: [
+        { url: logoUrl, sizes: "180x180" }
+      ]
+    }
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",

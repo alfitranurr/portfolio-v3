@@ -23,6 +23,7 @@ CREATE TABLE public.profiles (
   github_url TEXT DEFAULT 'https://github.com/alfitranurr',
   skills_title VARCHAR(255) DEFAULT 'Tech stacks that i have used',
   skills_subtitle VARCHAR(255) DEFAULT 'My technical toolkit and areas of expertise',
+  logo_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );

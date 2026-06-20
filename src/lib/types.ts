@@ -10,6 +10,7 @@ export interface Profile {
   github_url: string | null
   skills_title?: string | null
   skills_subtitle?: string | null
+  logo_url?: string | null
 }
 
 export interface Project {
