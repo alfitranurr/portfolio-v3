@@ -75,6 +75,7 @@ export const BlurImage = React.forwardRef<HTMLImageElement, BlurImageProps>(
         width={!useFill ? Number(width) : undefined}
         height={!useFill ? Number(height) : undefined}
         fill={useFill}
+        sizes={useFill ? (props.sizes ?? "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw") : undefined}
         quality={quality}
         unoptimized={!optimizable}
         className={cn(

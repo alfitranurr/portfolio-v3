@@ -25,6 +25,7 @@ export const MOCK_PROFILE: Profile = {
   about_me: "Informatics graduate from University of Muhammadiyah Malang, specializing in data analytics and machine learning. Proficient in Python, SQL, Excel, and Tableau, with experience in end-to-end data handling and a solid foundation in mathematics and programming, strong analytical, problem-solving skills and a passion for continuous learning. Seeking opportunities to apply expertise in dynamic environments while advancing in data-driven technologies.",
   avatar_url: null,
   resume_url: null,
+  logo_url: null,
   instagram_url: "https://www.instagram.com/rmdhani_ii",
   linkedin_url: "https://www.linkedin.com/in/al-fitra-nur-ramadhani/",
   github_url: "https://github.com/alfitranurr",
