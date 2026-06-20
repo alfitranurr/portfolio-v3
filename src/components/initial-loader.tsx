@@ -15,8 +15,8 @@ export function InitialLoader() {
       return
     }
 
-    const duration = 1600 // 1.6 seconds loading
-    const intervalTime = 20
+    const duration = 700 // 0.7 seconds loading
+    const intervalTime = 15
     const steps = duration / intervalTime
     let step = 0
 
@@ -30,7 +30,7 @@ export function InitialLoader() {
         sessionStorage.setItem('has_loaded_intro', 'true')
         setTimeout(() => {
           setLoading(false)
-        }, 150)
+        }, 100)
       }
     }, intervalTime)
 
@@ -45,8 +45,8 @@ export function InitialLoader() {
           initial={{ opacity: 1, filter: "blur(0px)" }}
           exit={{ 
             opacity: 0,
-            filter: "blur(40px)",
-            transition: { duration: 0.8, ease: [0.25, 1, 0.5, 1] } 
+            filter: "blur(20px)",
+            transition: { duration: 0.4, ease: [0.25, 1, 0.5, 1] } 
           }}
           className="fixed inset-0 bg-slate-950 z-[9999] flex flex-col items-center justify-center select-none overflow-hidden"
         >
@@ -72,7 +72,7 @@ export function InitialLoader() {
                   strokeLinecap="round"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.2, ease: "easeInOut" }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
                 />
                 {/* Right leg of A */}
                 <motion.path
@@ -82,7 +82,7 @@ export function InitialLoader() {
                   strokeLinecap="round"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.2, ease: "easeInOut" }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
                 />
                 {/* Horizontal bar of A */}
                 <motion.path
@@ -92,7 +92,7 @@ export function InitialLoader() {
                   strokeLinecap="round"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
-                  transition={{ duration: 1, delay: 0.3, ease: "easeInOut" }}
+                  transition={{ duration: 0.4, delay: 0.15, ease: "easeInOut" }}
                 />
                 {/* Vertical line of F */}
                 <motion.path
@@ -102,7 +102,7 @@ export function InitialLoader() {
                   strokeLinecap="round"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.2, delay: 0.2, ease: "easeInOut" }}
+                  transition={{ duration: 0.5, delay: 0.1, ease: "easeInOut" }}
                 />
                 {/* Top horizontal bar of F */}
                 <motion.path
@@ -112,7 +112,7 @@ export function InitialLoader() {
                   strokeLinecap="round"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
-                  transition={{ duration: 1, delay: 0.4, ease: "easeInOut" }}
+                  transition={{ duration: 0.4, delay: 0.2, ease: "easeInOut" }}
                 />
                 {/* Middle horizontal bar of F */}
                 <motion.path
@@ -122,7 +122,7 @@ export function InitialLoader() {
                   strokeLinecap="round"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
-                  transition={{ duration: 1, delay: 0.5, ease: "easeInOut" }}
+                  transition={{ duration: 0.4, delay: 0.25, ease: "easeInOut" }}
                 />
                 <defs>
                   <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">

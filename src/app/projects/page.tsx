@@ -6,7 +6,7 @@ export const metadata = {
   description: 'Detailed showcase of Data Science, Artificial Intelligence, Analytics, and Software Engineering projects.',
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 export default async function ProjectsPage() {
   const projects = await getProjects()
