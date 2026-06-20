@@ -22,11 +22,10 @@ export default async function EducationPage() {
       </div>
 
       {/* Timeline Section */}
-      <div className="relative border-l border-slate-200/20 dark:border-slate-800/20 ml-4 md:ml-6 pl-6 md:pl-8 space-y-10 py-2">
+      <div className="space-y-6 py-2">
         {education.map((edu) => (
           <div key={edu.id} className="relative group">
-            {/* Animated Timeline Indicator Dot */}
-            <div className="absolute -left-[31px] md:-left-[39px] top-1.5 w-4 h-4 rounded-full bg-background border-2 border-primary group-hover:bg-primary group-hover:scale-125 transition-all duration-300 z-10" />
+
 
             {/* Glassmorphic Event Card */}
             <div className="p-6 md:p-8 rounded-3xl glass-panel hover:border-primary/20 transition-all duration-300 space-y-4 relative overflow-hidden">

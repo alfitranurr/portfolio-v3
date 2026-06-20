@@ -126,39 +126,41 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
   const Icon = activeCategory === 'professional' ? Briefcase : Users
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-6">
       {/* Top Level Category Tabs */}
-      <div className="flex justify-center">
-        <div className="flex p-1.5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 max-w-lg w-full">
+      <div className="flex justify-center px-2">
+        <div className="flex p-1 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 max-w-lg w-full">
           <button
             onClick={() => setActiveCategory('professional')}
             className={cn(
-              "flex-1 py-2.5 text-xs md:text-sm font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1.5",
+              "flex-1 py-2 sm:py-2.5 text-[10px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap",
               activeCategory === 'professional'
                 ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                 : "text-foreground/75 hover:text-foreground"
             )}
           >
-            <Briefcase className="w-4 h-4" />
-            <span>Professional Experience</span>
+            <Briefcase className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+            <span className="hidden sm:inline">Professional Experience</span>
+            <span className="inline sm:hidden">Professional</span>
           </button>
           <button
             onClick={() => setActiveCategory('committee_organization')}
             className={cn(
-              "flex-1 py-2.5 text-xs md:text-sm font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1.5",
+              "flex-1 py-2 sm:py-2.5 text-[10px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap",
               activeCategory === 'committee_organization'
                 ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                 : "text-foreground/75 hover:text-foreground"
             )}
           >
-            <Users className="w-4 h-4" />
-            <span>Committee & Organization</span>
+            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+            <span className="hidden sm:inline">Committee & Organization</span>
+            <span className="inline sm:hidden">Organization</span>
           </button>
         </div>
       </div>
 
       {/* Timeline Section */}
-      <div className="relative border-l border-slate-200/20 dark:border-slate-800/20 ml-4 md:ml-6 pl-6 md:pl-8 space-y-10 py-2">
+      <div className="space-y-6 py-2">
         <AnimatePresence mode="popLayout">
           {groupedExperiences.map((group) => {
             const isSingle = group.roles.length === 1
@@ -174,8 +176,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                 transition={{ duration: 0.35, ease: "easeInOut" }}
                 className="relative group"
               >
-                {/* Animated Timeline Indicator Dot */}
-                <div className="absolute -left-[31px] md:-left-[39px] top-1.5 w-4 h-4 rounded-full bg-background border-2 border-primary group-hover:bg-primary group-hover:scale-125 transition-all duration-300 z-10" />
+
 
                 {isSingle ? (
                   /* Glassmorphic Event Card for Single Role */
@@ -303,12 +304,9 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                     </div>
 
                     {/* Nested Roles List */}
-                    <div className="relative border-l border-slate-200/20 dark:border-slate-800/20 ml-6 pl-6 space-y-8 py-2">
+                    <div className="space-y-8 py-2">
                       {group.roles.map((role) => (
                         <div key={role.id} className="relative group/role">
-
-                          {/* Nested Role Timeline Dot */}
-                          <div className="absolute -left-[31px] top-1.5 w-3 h-3 rounded-full bg-background border-2 border-primary/50 group-hover/role:border-primary group-hover/role:scale-125 transition-all duration-300 z-10" />
 
                           <div className="space-y-2">
                             <div className="flex flex-col md:flex-row md:items-start justify-between gap-2">
