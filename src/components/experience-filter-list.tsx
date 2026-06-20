@@ -168,10 +168,10 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
               <motion.div
                 layout="position"
                 key={group.company}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, y: 15, filter: "blur(6px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -15, filter: "blur(6px)" }}
+                transition={{ duration: 0.35, ease: "easeInOut" }}
                 className="relative group"
               >
                 {/* Animated Timeline Indicator Dot */}

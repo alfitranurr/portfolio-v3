@@ -127,13 +127,13 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
         <AnimatePresence mode="popLayout">
           {filteredProjects.map((project) => (
             <motion.div
-              layout
+              layout="position"
               key={project.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
-              className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-all duration-300 relative overflow-hidden"
+              initial={{ opacity: 0, scale: 0.94, filter: "blur(8px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, scale: 0.94, filter: "blur(8px)" }}
+              transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+              className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-[border-color,box-shadow] duration-300 relative overflow-hidden"
             >
               {/* Subtle top indicator bar */}
               <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
