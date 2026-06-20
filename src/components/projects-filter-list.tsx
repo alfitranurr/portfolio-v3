@@ -22,7 +22,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
     'Data Visualization Projects',
     'Data Analytics Projects',
     'Artificial Intelligence Projects',
-    'Data Automation Projects',
+    'Automation Projects',
     'Data Modeling and Simulation Projects',
   ]
 
@@ -36,7 +36,21 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
 
   const subCategories = activeCategory === 'data' ? dataSubcategories : nonDataSubcategories
 
+  const getSubCategoryLabel = (sub: string) => {
+    if (sub === 'Data Automation Projects' || sub === 'Automation Projects') {
+      return 'Automation'
+    }
+    return sub.replace(' Projects', '')
+  }
+
   const [searchQuery, setSearchQuery] = React.useState('')
+
+  React.useEffect(() => {
+    const stored = sessionStorage.getItem('project_public_active_category')
+    if (stored === 'data' || stored === 'non-data') {
+      setActiveCategory(stored)
+    }
+  }, [])
 
   // Reset subcategory and search when category switches
   React.useEffect(() => {
@@ -46,7 +60,12 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
 
   const filteredProjects = initialProjects.filter((project) => {
     const categoryMatch = project.category === activeCategory
-    const subCategoryMatch = activeSubCategory === 'All' || project.sub_category === activeSubCategory
+    
+    // Normalize subcategory match for backward compatibility
+    const normalizedProjSub = project.sub_category === 'Data Automation Projects' ? 'Automation Projects' : project.sub_category
+    const normalizedActiveSub = activeSubCategory === 'Data Automation Projects' ? 'Automation Projects' : activeSubCategory
+
+    const subCategoryMatch = normalizedActiveSub === 'All' || normalizedProjSub === normalizedActiveSub
     const searchMatch = searchQuery.trim() === '' || 
       project.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
       project.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -56,24 +75,30 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
   return (
     <div className="space-y-8">
       {/* Top Level Category Tabs */}
-      <div className="flex justify-center">
-        <div className="flex p-1.5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 max-w-md w-full">
+      <div className="flex justify-center px-2">
+        <div className="flex p-1 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 max-w-md w-full">
           <button
-            onClick={() => setActiveCategory('data')}
+            onClick={() => {
+              setActiveCategory('data')
+              sessionStorage.setItem('project_public_active_category', 'data')
+            }}
             className={cn(
-              "flex-1 py-2.5 text-xs md:text-sm font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1.5",
+              "flex-1 py-2 sm:py-2.5 text-[10px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap",
               activeCategory === 'data'
                 ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                 : "text-foreground/75 hover:text-foreground"
             )}
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
             <span>Data Science</span>
           </button>
           <button
-            onClick={() => setActiveCategory('non-data')}
+            onClick={() => {
+              setActiveCategory('non-data')
+              sessionStorage.setItem('project_public_active_category', 'non-data')
+            }}
             className={cn(
-              "flex-1 py-2.5 text-xs md:text-sm font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1.5",
+              "flex-1 py-2 sm:py-2.5 text-[10px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap",
               activeCategory === 'non-data'
                 ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                 : "text-foreground/75 hover:text-foreground"
@@ -97,7 +122,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                 : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-foreground/80 hover:text-foreground"
             )}
           >
-            {sub.replace(' Projects', '')}
+            {getSubCategoryLabel(sub)}
           </button>
         ))}
       </div>
@@ -163,7 +188,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                   ) : (
                     <div className="w-full h-full bg-gradient-to-tr from-cyan-500/10 to-violet-500/10 flex flex-col items-center justify-center p-4">
                       <span className="text-primary/25 group-hover:text-primary/50 group-hover:scale-110 transition-all font-black uppercase tracking-widest text-[9px] text-center leading-normal">
-                        {project.sub_category}
+                        {getSubCategoryLabel(project.sub_category)}
                       </span>
                     </div>
                   )}
@@ -172,7 +197,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                 {/* Details */}
                 <div className="space-y-1">
                   <span className="text-[9px] font-extrabold text-primary uppercase tracking-wider">
-                    {project.sub_category}
+                    {getSubCategoryLabel(project.sub_category)}
                   </span>
                   <h3 className="font-bold text-base leading-snug group-hover:text-primary transition-colors line-clamp-1">
                     {project.title}
