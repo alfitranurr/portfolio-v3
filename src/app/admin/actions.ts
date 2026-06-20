@@ -201,8 +201,7 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
     }
 
     cookieStore.set('mock_profile', JSON.stringify(updated), { path: '/' })
-    revalidatePath('/')
-    revalidatePath('/admin/profile')
+    revalidatePath('/', 'layout')
     return { success: true, message: 'Profile updated successfully (Mock Mode).' }
   }
 
@@ -283,8 +282,7 @@ export async function updateProfileAction(prevState: any, formData: FormData) {
 
     if (error) throw error
 
-    revalidatePath('/')
-    revalidatePath('/admin/profile')
+    revalidatePath('/', 'layout')
     return { success: true, message: 'Profile updated successfully.' }
   } catch (err: any) {
     console.error('updateProfileAction error:', err)
