@@ -91,9 +91,9 @@ export function AdminSidebar() {
       {/* Sidebar Container */}
       <aside
         className={cn(
-          "fixed top-0 bottom-0 left-0 z-50 w-64 glass-panel border-r border-slate-200/20 dark:border-slate-800/10 p-5 flex flex-col justify-between transition-transform duration-300 lg:translate-x-0 overflow-y-auto scrollbar-hide",
+          "fixed top-0 bottom-0 left-0 z-50 w-64 glass-panel border-r border-slate-200/20 dark:border-slate-800/10 p-5 flex flex-col justify-between transition-transform duration-300 overflow-y-auto scrollbar-hide",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
-          "lg:top-4 lg:bottom-4 lg:left-4 lg:rounded-3xl lg:h-[calc(100vh-2rem)]"
+          "lg:sticky lg:top-4 lg:left-auto lg:bottom-auto lg:h-[calc(100vh-2rem)] lg:rounded-3xl lg:z-30 lg:translate-x-0 lg:self-start"
         )}
       >
         <div>
