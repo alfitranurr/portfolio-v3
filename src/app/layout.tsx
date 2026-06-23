@@ -92,19 +92,20 @@ export default async function RootLayout({
             <div className="absolute bottom-[15%] right-[5%] ambient-glow bg-violet-500/20 dark:bg-violet-500/10" />
           </div>
           
-          {/* Persistent Sidebar */}
-          <Sidebar profile={profile} />
-          
-          {/* Admin Sidebar */}
-          <AdminSidebar />
+          {/* Main Layout Container */}
+          <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 lg:px-8 relative z-10 flex flex-col lg:flex-row gap-6 min-h-screen">
+            {/* Persistent Sidebar */}
+            <Sidebar profile={profile} />
+            
+            {/* Admin Sidebar */}
+            <AdminSidebar />
 
-          {/* Content Wrapper */}
-          <div className="flex-1 w-full flex flex-col min-h-screen overflow-x-hidden">
-            {/* Desktop padding-left to leave space for the sidebar (w-64 = 16rem + spacing) */}
-            {/* Mobile padding-top for the fixed mobile header (h-16 = 4rem + spacing) */}
-            <main className="flex-grow w-full max-w-7xl mx-auto px-4 py-6 md:px-8 lg:pl-72 lg:pr-8 pt-20 lg:pt-8 relative z-10 overflow-x-hidden">
-              {children}
-            </main>
+            {/* Content Wrapper */}
+            <div className="flex-1 w-full min-w-0 flex flex-col min-h-screen">
+              <main className="flex-grow w-full pt-20 lg:pt-8 pb-6 relative z-10 overflow-x-hidden">
+                {children}
+              </main>
+            </div>
           </div>
         </ThemeProvider>
       </body>
