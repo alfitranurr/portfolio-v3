@@ -14,7 +14,6 @@ import {
   Menu, 
   X,
   ExternalLink,
-  ShieldAlert,
   Terminal,
   ChevronRight,
   Moon,
@@ -34,14 +33,15 @@ export function AdminSidebar() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
 
+  React.useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 0)
+    return () => clearTimeout(timer)
+  }, [])
+
   // Only show on admin pages
   if (!pathname.startsWith('/admin')) {
     return null
   }
-
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const navItems = [
     { name: 'Main Dashboard', href: '/admin', icon: LayoutDashboard, exact: true },

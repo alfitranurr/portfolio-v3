@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { ArrowUpRight, Download, ExternalLink, Terminal, Presentation, BookOpen, Rocket } from 'lucide-react'
-import { Github, Linkedin } from '@/components/icons'
+import { ArrowUpRight, Download, ExternalLink, Presentation, Rocket } from 'lucide-react'
+import { Github, PythonIcon } from '@/components/icons'
 import { getProfile, getProjects, getSkills, getPhotos } from '@/lib/data-service'
 import { SkillsMarquee } from '@/components/skills-marquee'
 import { JourneyMarquee } from '@/components/journey-marquee'
@@ -191,7 +191,7 @@ export default async function HomePage() {
                       aria-label="Open Notebook"
                       title="Open Notebook"
                     >
-                      <BookOpen className="w-4 h-4" />
+                      <PythonIcon className="w-4 h-4" />
                     </a>
                   )}
                 </div>

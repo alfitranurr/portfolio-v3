@@ -11,7 +11,9 @@ export function InitialLoader() {
     // Check if intro has already run in this session
     const hasLoaded = sessionStorage.getItem('has_loaded_intro')
     if (hasLoaded) {
-      setLoading(false)
+      setTimeout(() => {
+        setLoading(false)
+      }, 0)
       return
     }
 

@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import ReactMarkdown from 'react-markdown'
-import { ArrowLeft, ExternalLink, Calendar, BookOpen, Sparkles, Presentation } from 'lucide-react'
-import { Github } from '@/components/icons'
+import { ArrowLeft, ExternalLink, Calendar, Sparkles, Presentation } from 'lucide-react'
+import { Github, PythonIcon } from '@/components/icons'
 import { getProjectById, getProjects } from '@/lib/data-service'
 import { BlurImage } from '@/components/ui/blur-image'
 
@@ -27,6 +27,12 @@ export async function generateMetadata({ params }: PageProps) {
     title: project.title,
     description: project.description,
   }
+}
+
+const cleanProps = (props: Record<string, unknown>) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { node, ...rest } = props
+  return rest
 }
 
 export default async function ProjectDetailPage({ params }: PageProps) {
@@ -102,7 +108,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500/15 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400 font-semibold hover:bg-cyan-500/25 transition-all text-xs cursor-pointer"
             >
-              <BookOpen className="w-4 h-4" />
+              <PythonIcon className="w-4 h-4" />
               <span>Open Notebook</span>
             </a>
           )}
@@ -166,45 +172,50 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       <article className="p-6 md:p-10 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10">
         <ReactMarkdown
           components={{
-            h1: ({node, ...props}) => <h1 className="text-2xl md:text-3xl font-bold mt-8 mb-4 pb-2 border-b border-slate-200/10 dark:border-slate-800/10 text-foreground" {...props} />,
-            h2: ({node, ...props}) => <h2 className="text-xl md:text-2xl font-bold mt-8 mb-4 pb-2 border-b border-slate-200/10 dark:border-slate-800/10 text-foreground/95" {...props} />,
-            h3: ({node, ...props}) => <h3 className="text-lg md:text-xl font-bold mt-6 mb-3 text-foreground/90" {...props} />,
-            h4: ({node, ...props}) => <h4 className="text-base md:text-lg font-bold mt-4 mb-2 text-foreground/85" {...props} />,
-            p: ({node, ...props}) => <p className="text-sm md:text-base text-foreground/80 leading-relaxed mb-4" {...props} />,
-            ul: ({node, ...props}) => <ul className="list-disc list-outside mb-4 pl-6 text-sm md:text-base text-foreground/80 space-y-1.5" {...props} />,
-            ol: ({node, ...props}) => <ol className="list-decimal list-outside mb-4 pl-6 text-sm md:text-base text-foreground/80 space-y-1.5" {...props} />,
-            li: ({node, ...props}) => {
-              if (!props.children || (Array.isArray(props.children) && props.children.length === 0)) return null;
-              const isEmpty = Array.isArray(props.children)
-                ? props.children.every(c => typeof c === 'string' && c.trim() === '')
-                : typeof props.children === 'string' && props.children.trim() === '';
+            h1: (props: React.ComponentPropsWithoutRef<'h1'> & { node?: unknown }) => <h1 className="text-2xl md:text-3xl font-bold mt-8 mb-4 pb-2 border-b border-slate-200/10 dark:border-slate-800/10 text-foreground" {...cleanProps(props as Record<string, unknown>)} />,
+            h2: (props: React.ComponentPropsWithoutRef<'h2'> & { node?: unknown }) => <h2 className="text-xl md:text-2xl font-bold mt-8 mb-4 pb-2 border-b border-slate-200/10 dark:border-slate-800/10 text-foreground/95" {...cleanProps(props as Record<string, unknown>)} />,
+            h3: (props: React.ComponentPropsWithoutRef<'h3'> & { node?: unknown }) => <h3 className="text-lg md:text-xl font-bold mt-6 mb-3 text-foreground/90" {...cleanProps(props as Record<string, unknown>)} />,
+            h4: (props: React.ComponentPropsWithoutRef<'h4'> & { node?: unknown }) => <h4 className="text-base md:text-lg font-bold mt-4 mb-2 text-foreground/85" {...cleanProps(props as Record<string, unknown>)} />,
+            p: (props: React.ComponentPropsWithoutRef<'p'> & { node?: unknown }) => <p className="text-sm md:text-base text-foreground/80 leading-relaxed mb-4" {...cleanProps(props as Record<string, unknown>)} />,
+            ul: (props: React.ComponentPropsWithoutRef<'ul'> & { node?: unknown }) => <ul className="list-disc list-outside mb-4 pl-6 text-sm md:text-base text-foreground/80 space-y-1.5" {...cleanProps(props as Record<string, unknown>)} />,
+            ol: (props: React.ComponentPropsWithoutRef<'ol'> & { node?: unknown }) => <ol className="list-decimal list-outside mb-4 pl-6 text-sm md:text-base text-foreground/80 space-y-1.5" {...cleanProps(props as Record<string, unknown>)} />,
+            li: (props: React.ComponentPropsWithoutRef<'li'> & { node?: unknown }) => {
+              const cleaned = cleanProps(props as Record<string, unknown>);
+              if (!cleaned.children || (Array.isArray(cleaned.children) && cleaned.children.length === 0)) return null;
+              const isEmpty = Array.isArray(cleaned.children)
+                ? cleaned.children.every((c: unknown) => typeof c === 'string' && c.trim() === '')
+                : typeof cleaned.children === 'string' && cleaned.children.trim() === '';
               if (isEmpty) return null;
-              return <li className="pl-1 leading-relaxed mb-0.5" {...props} />;
+              return <li className="pl-1 leading-relaxed mb-0.5" {...cleaned} />;
             },
-            code({node, className, children, ...props}: any) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            code(props: any) {
+              const { node, className, children, ...rest } = props;
+              void node;
               const match = /language-(\w+)/.exec(className || '')
-              const isInline = !match && !children.includes('\n')
+              const codeContent = String(children || '')
+              const isInline = !match && !codeContent.includes('\n')
               return isInline ? (
-                <code className="bg-slate-200/10 dark:bg-slate-800/20 text-primary dark:text-primary-foreground/90 px-1.5 py-0.5 rounded font-mono text-xs border border-slate-200/5 dark:border-slate-800/5" {...props}>
+                <code className="bg-slate-200/10 dark:bg-slate-800/20 text-primary dark:text-primary-foreground/90 px-1.5 py-0.5 rounded font-mono text-xs border border-slate-200/5 dark:border-slate-800/5" {...rest}>
                   {children}
                 </code>
               ) : (
                 <pre className="bg-slate-950 dark:bg-slate-900/40 text-slate-100 p-4 rounded-xl font-mono text-xs overflow-x-auto border border-slate-200/5 dark:border-slate-800/10 my-4 shadow-inner">
-                  <code className={className} {...props}>
+                  <code className={className} {...rest}>
                     {children}
                   </code>
                 </pre>
               )
             },
-            hr: ({node, ...props}) => <hr className="my-6 border-t border-slate-200/10 dark:border-slate-800/10" {...props} />,
-            blockquote: ({node, ...props}) => (
-              <blockquote className="border-l-4 border-slate-300 dark:border-slate-700 pl-4 py-1.5 italic text-muted-foreground my-4" {...props} />
+            hr: (props: React.ComponentPropsWithoutRef<'hr'> & { node?: unknown }) => <hr className="my-6 border-t border-slate-200/10 dark:border-slate-800/10" {...cleanProps(props as Record<string, unknown>)} />,
+            blockquote: (props: React.ComponentPropsWithoutRef<'blockquote'> & { node?: unknown }) => (
+              <blockquote className="border-l-4 border-slate-300 dark:border-slate-700 pl-4 py-1.5 italic text-muted-foreground my-4" {...cleanProps(props as Record<string, unknown>)} />
             ),
-            table: ({node, ...props}) => <table className="w-full border-collapse border border-slate-200/10 dark:border-slate-800/10 mb-4" {...props} />,
-            thead: ({node, ...props}) => <thead className="bg-slate-200/5 dark:bg-slate-800/5" {...props} />,
-            th: ({node, ...props}) => <th className="border border-slate-200/10 dark:border-slate-800/10 px-4 py-2 text-left font-bold text-sm" {...props} />,
-            td: ({node, ...props}) => <td className="border border-slate-200/10 dark:border-slate-800/10 px-4 py-2 text-sm text-foreground/80" {...props} />,
-            a: ({node, ...props}) => <a className="text-primary hover:text-primary/80 underline decoration-primary/30 hover:decoration-primary/60 transition-colors font-semibold" target="_blank" rel="noopener noreferrer" {...props} />
+            table: (props: React.ComponentPropsWithoutRef<'table'> & { node?: unknown }) => <table className="w-full border-collapse border border-slate-200/10 dark:border-slate-800/10 mb-4" {...cleanProps(props as Record<string, unknown>)} />,
+            thead: (props: React.ComponentPropsWithoutRef<'thead'> & { node?: unknown }) => <thead className="bg-slate-200/5 dark:bg-slate-800/5" {...cleanProps(props as Record<string, unknown>)} />,
+            th: (props: React.ComponentPropsWithoutRef<'th'> & { node?: unknown }) => <th className="border border-slate-200/10 dark:border-slate-800/10 px-4 py-2 text-left font-bold text-sm" {...cleanProps(props as Record<string, unknown>)} />,
+            td: (props: React.ComponentPropsWithoutRef<'td'> & { node?: unknown }) => <td className="border border-slate-200/10 dark:border-slate-800/10 px-4 py-2 text-sm text-foreground/80" {...cleanProps(props as Record<string, unknown>)} />,
+            a: (props: React.ComponentPropsWithoutRef<'a'> & { node?: unknown }) => <a className="text-primary hover:text-primary/80 underline decoration-primary/30 hover:decoration-primary/60 transition-colors font-semibold" target="_blank" rel="noopener noreferrer" {...cleanProps(props as Record<string, unknown>)} />
           }}
         >
           {project.content || '*No case study documentation provided yet.*'}

@@ -13,7 +13,6 @@ import {
   Menu, 
   X,
   Terminal,
-  Settings,
   MessageSquareText,
   Moon,
   Sun,
@@ -32,7 +31,8 @@ export function Sidebar({ profile }: { profile: Profile }) {
   const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
-    setMounted(true)
+    const timer = setTimeout(() => setMounted(true), 0)
+    return () => clearTimeout(timer)
   }, [])
 
   // Disable sidebar on admin pages
