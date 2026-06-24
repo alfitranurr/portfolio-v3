@@ -3,8 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUpRight, ExternalLink, Sparkles, Presentation, Search } from 'lucide-react'
-import { Github, PythonIcon } from '@/components/icons'
+import { ArrowUpRight, Sparkles, Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Project } from '@/lib/types'
 import { BlurImage } from '@/components/ui/blur-image'
@@ -216,62 +215,11 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
               <div className="flex items-center gap-3 pt-4 border-t border-slate-200/10 dark:border-slate-800/10 mt-4">
                 <Link
                   href={`/projects/${project.id}`}
-                  className="flex items-center gap-1 text-xs font-bold text-foreground group-hover:text-primary transition-colors cursor-pointer"
+                  className="flex items-center gap-1 text-xs font-bold text-foreground group-hover:text-primary transition-colors cursor-pointer shrink-0 whitespace-nowrap"
                 >
                   <span>Explore Writeup</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </Link>
-                
-                <div className="ml-auto flex items-center gap-1.5">
-                  {project.github_url && (
-                    <a
-                      href={project.github_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 rounded-lg transition-all"
-                      aria-label="GitHub Repository"
-                      title="GitHub Repository"
-                    >
-                      <Github className="w-4 h-4" />
-                    </a>
-                  )}
-                  {project.slide_url && (
-                    <a
-                      href={project.slide_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 rounded-lg transition-all"
-                      aria-label="Reporting Presentation"
-                      title="Reporting Presentation"
-                    >
-                      <Presentation className="w-4 h-4" />
-                    </a>
-                  )}
-                  {project.demo_url && (
-                    <a
-                      href={project.demo_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 rounded-lg transition-all"
-                      aria-label="Live Demo"
-                      title="Live Demo"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                  )}
-                  {project.notebook_url && (
-                    <a
-                      href={project.notebook_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 dark:hover:bg-white/5 rounded-lg transition-all"
-                      aria-label="Open Notebook"
-                      title="Open Notebook"
-                    >
-                      <PythonIcon className="w-4 h-4" />
-                    </a>
-                  )}
-                </div>
               </div>
             </motion.div>
           ))}
