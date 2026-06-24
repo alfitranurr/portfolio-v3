@@ -324,23 +324,42 @@ export async function saveProjectAction(projectData: {
     }
 
     if (projectData.id && projectData.id.startsWith('mock-') || list.some((p: Project) => p.id === projectData.id)) {
-      list = list.map((p: Project) => p.id === projectData.id ? { 
-        ...p, 
-        title: projectData.title || p.title,
-        description: projectData.description || p.description,
-        content: projectData.content !== undefined ? projectData.content : p.content,
-        category: (projectData.category === 'data' || projectData.category === 'non-data') ? projectData.category : p.category,
-        sub_category: projectData.sub_category || p.sub_category,
-        cover_image: projectData.cover_image !== undefined ? projectData.cover_image : p.cover_image,
-        github_url: projectData.github_url !== undefined ? projectData.github_url : p.github_url,
-        demo_url: projectData.demo_url !== undefined ? projectData.demo_url : p.demo_url,
-        notebook_url: projectData.notebook_url !== undefined ? projectData.notebook_url : p.notebook_url,
-        slide_url: projectData.slide_url !== undefined ? projectData.slide_url : p.slide_url,
-        embed_code: projectData.embed_code !== undefined ? projectData.embed_code : p.embed_code,
-        is_featured: projectData.is_featured ?? p.is_featured,
-        pinned_order: parseInt(String(projectData.pinned_order)) || p.pinned_order
-      } : p)
+      list = list.map((p: Project) => {
+        if (p.id === projectData.id) {
+          let pinnedOrder = parseInt(String(projectData.pinned_order)) || p.pinned_order || 0
+          if (pinnedOrder <= 0) {
+            const category = (projectData.category === 'data' || projectData.category === 'non-data') ? projectData.category : p.category
+            const catProjects = list.filter((item: Project) => item.category === category && item.id !== p.id)
+            const maxPin = catProjects.reduce((max: number, item: Project) => Math.max(max, item.pinned_order || 0), 0)
+            pinnedOrder = maxPin + 1
+          }
+          return { 
+            ...p, 
+            title: projectData.title || p.title,
+            description: projectData.description || p.description,
+            content: projectData.content !== undefined ? projectData.content : p.content,
+            category: (projectData.category === 'data' || projectData.category === 'non-data') ? projectData.category : p.category,
+            sub_category: projectData.sub_category || p.sub_category,
+            cover_image: projectData.cover_image !== undefined ? projectData.cover_image : p.cover_image,
+            github_url: projectData.github_url !== undefined ? projectData.github_url : p.github_url,
+            demo_url: projectData.demo_url !== undefined ? projectData.demo_url : p.demo_url,
+            notebook_url: projectData.notebook_url !== undefined ? projectData.notebook_url : p.notebook_url,
+            slide_url: projectData.slide_url !== undefined ? projectData.slide_url : p.slide_url,
+            embed_code: projectData.embed_code !== undefined ? projectData.embed_code : p.embed_code,
+            is_featured: projectData.is_featured ?? p.is_featured,
+            pinned_order: pinnedOrder
+          }
+        }
+        return p
+      })
     } else {
+      let pinnedOrder = parseInt(String(projectData.pinned_order)) || 0
+      if (pinnedOrder <= 0) {
+        const category = (projectData.category === 'data' || projectData.category === 'non-data') ? projectData.category : 'data'
+        const catProjects = list.filter((item: Project) => item.category === category)
+        const maxPin = catProjects.reduce((max: number, item: Project) => Math.max(max, item.pinned_order || 0), 0)
+        pinnedOrder = maxPin + 1
+      }
       const newProj: Project = {
         id: `mock-proj-${Date.now()}`,
         title: projectData.title || '',
@@ -355,7 +374,7 @@ export async function saveProjectAction(projectData: {
         slide_url: projectData.slide_url || null,
         embed_code: projectData.embed_code || null,
         is_featured: !!projectData.is_featured,
-        pinned_order: parseInt(String(projectData.pinned_order)) || 0,
+        pinned_order: pinnedOrder,
         created_at: projectData.created_at ? new Date(projectData.created_at).toISOString() : new Date().toISOString()
       }
       list.push(newProj)
@@ -378,6 +397,23 @@ export async function saveProjectAction(projectData: {
     
     const isEdit = !!projectData.id && !projectData.id.startsWith('mock-')
     
+    let pinnedOrder = parseInt(String(projectData.pinned_order)) || 0
+    if (pinnedOrder <= 0) {
+      const category = (projectData.category === 'data' || projectData.category === 'non-data') ? projectData.category : 'data'
+      let query = supabase
+        .from('projects')
+        .select('pinned_order')
+        .eq('category', category)
+      
+      if (isEdit) {
+        query = query.neq('id', projectData.id)
+      }
+      
+      const { data: catProjects } = await query
+      const maxPin = catProjects ? catProjects.reduce((max: number, p: { pinned_order: number | null }) => Math.max(max, p.pinned_order || 0), 0) : 0
+      pinnedOrder = maxPin + 1
+    }
+
     const dbPayload: Omit<Project, 'id' | 'created_at'> & { created_at?: string; updated_at: string } = {
       title: projectData.title || '',
       description: projectData.description || '',
@@ -391,7 +427,7 @@ export async function saveProjectAction(projectData: {
       slide_url: projectData.slide_url || null,
       embed_code: projectData.embed_code || null,
       is_featured: !!projectData.is_featured,
-      pinned_order: parseInt(String(projectData.pinned_order)) || 0,
+      pinned_order: pinnedOrder,
       updated_at: new Date().toISOString()
     }
 
@@ -466,6 +502,75 @@ export async function deleteProjectAction(id: string) {
     return { success: true }
   } catch (err) {
     console.error('deleteProjectAction error:', err)
+    return { success: false, error: err instanceof Error ? err.message : String(err) }
+  }
+}
+
+export async function updateProjectsOrderAction(updates: { id: string; pinned_order: number; is_featured?: boolean }[]) {
+  const cookieStore = await cookies()
+  if (!hasSupabaseConfig()) {
+    const mockProjectsStr = cookieStore.get('mock_projects')?.value
+    let list: Project[] = []
+    if (mockProjectsStr) {
+      list = JSON.parse(mockProjectsStr)
+    } else {
+      const { MOCK_PROJECTS } = await import('@/lib/data-service')
+      list = MOCK_PROJECTS
+    }
+    
+    // Update matching mock projects
+    list = list.map((p: Project) => {
+      const update = updates.find(u => u.id === p.id)
+      if (update) {
+        return { 
+          ...p, 
+          pinned_order: update.pinned_order,
+          is_featured: update.is_featured !== undefined ? update.is_featured : p.is_featured
+        }
+      }
+      return p
+    })
+    
+    cookieStore.set('mock_projects', JSON.stringify(list), { path: '/' })
+    revalidatePath('/')
+    revalidatePath('/projects')
+    revalidatePath('/admin/projects')
+    return { success: true }
+  }
+
+  try {
+    const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
+
+    await Promise.all(
+      updates.map(async (update) => {
+        if (update.id.startsWith('mock-')) return
+        
+        const payload: { pinned_order: number; updated_at: string; is_featured?: boolean } = { 
+          pinned_order: update.pinned_order, 
+          updated_at: new Date().toISOString() 
+        }
+        if (update.is_featured !== undefined) {
+          payload.is_featured = update.is_featured
+        }
+
+        const { error } = await supabase
+          .from('projects')
+          .update(payload)
+          .eq('id', update.id)
+        if (error) throw error
+      })
+    )
+
+    revalidatePath('/')
+    revalidatePath('/projects')
+    revalidatePath('/admin/projects')
+    return { success: true }
+  } catch (err) {
+    console.error('updateProjectsOrderAction error:', err)
     return { success: false, error: err instanceof Error ? err.message : String(err) }
   }
 }

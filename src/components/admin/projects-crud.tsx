@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Coffee, 
@@ -18,9 +19,11 @@ import {
   ArrowLeft,
   UploadCloud,
   Image as ImageIcon,
-  Presentation
+  Presentation,
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react'
-import { saveProjectAction, deleteProjectAction, uploadAssetAction } from '@/app/admin/actions'
+import { saveProjectAction, deleteProjectAction, uploadAssetAction, updateProjectsOrderAction } from '@/app/admin/actions'
 import { cn, getDirectImageUrl } from '@/lib/utils'
 import { Github } from '@/components/icons'
 import { BlurImage } from '@/components/ui/blur-image'
@@ -116,9 +119,327 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
     }, 0)
   }, [activeCategory])
   const [editingProject, setEditingProject] = React.useState<Partial<Project> | null>(null)
+  const [mounted, setMounted] = React.useState(false)
+  
+  React.useEffect(() => {
+    setTimeout(() => {
+      setMounted(true)
+    }, 0)
+  }, [])
+
+  React.useEffect(() => {
+    if (!mounted) return
+
+    const needsPinning = projects.some(p => p.pinned_order === null || p.pinned_order === undefined || p.pinned_order === 0)
+    if (!needsPinning) return
+
+    const categories: ('data' | 'non-data')[] = ['data', 'non-data']
+    const allUpdates: { id: string; pinned_order: number }[] = []
+    let updatedProjectsList = [...projects]
+    let hasChanges = false
+
+    categories.forEach(cat => {
+      const catProjects = updatedProjectsList.filter(p => p.category === cat)
+      if (catProjects.length === 0) return
+
+      // Sort currently pinned projects
+      const pinned = catProjects.filter(p => p.pinned_order !== null && p.pinned_order !== undefined && p.pinned_order > 0)
+      pinned.sort((a, b) => (a.pinned_order || 0) - (b.pinned_order || 0))
+
+      // Sort unpinned projects by date desc
+      const unpinned = catProjects.filter(p => p.pinned_order === null || p.pinned_order === undefined || p.pinned_order === 0)
+      unpinned.sort((a, b) => {
+        const aTime = a.created_at ? new Date(a.created_at).getTime() : 0
+        const bTime = b.created_at ? new Date(b.created_at).getTime() : 0
+        return bTime - aTime
+      })
+
+      const combined = [...pinned, ...unpinned]
+      combined.forEach((proj, idx) => {
+        const expectedOrder = idx + 1
+        if (proj.pinned_order !== expectedOrder) {
+          allUpdates.push({ id: proj.id, pinned_order: expectedOrder })
+          hasChanges = true
+          
+          updatedProjectsList = updatedProjectsList.map(p => 
+            p.id === proj.id ? { ...p, pinned_order: expectedOrder } : p
+          )
+        }
+      })
+    })
+
+    if (hasChanges) {
+      setTimeout(() => {
+        setProjects(updatedProjectsList)
+        updateProjectsOrderAction(allUpdates).catch(err => {
+          console.error('Error auto-pinning projects on mount:', err)
+        })
+      }, 0)
+    }
+  }, [projects, mounted])
+
   const [isPending, setIsPending] = React.useState(false)
   const [isUploading, setIsUploading] = React.useState(false)
   const [notification, setNotification] = React.useState<{ success: boolean; message: string } | null>(null)
+
+  // Order popup state and methods
+  const [isOrderModalOpen, setIsOrderModalOpen] = React.useState(false)
+  const [orderModalList, setOrderModalList] = React.useState<Project[]>([])
+
+  React.useEffect(() => {
+    if (isOrderModalOpen && editingProject) {
+      const categoryProjects = [...projects.filter(p => p.category === editingProject.category)]
+      
+      // Separate currently pinned projects and sort them
+      const pinned = categoryProjects.filter(p => p.pinned_order !== null && p.pinned_order !== undefined && p.pinned_order > 0)
+      pinned.sort((a, b) => (a.pinned_order || 0) - (b.pinned_order || 0))
+      
+      // Separate currently unpinned projects and sort by date desc
+      const unpinned = categoryProjects.filter(p => p.pinned_order === null || p.pinned_order === undefined || p.pinned_order === 0)
+      unpinned.sort((a, b) => {
+        const aTime = a.created_at ? new Date(a.created_at).getTime() : 0
+        const bTime = b.created_at ? new Date(b.created_at).getTime() : 0
+        return bTime - aTime
+      })
+      
+      let combined = [...pinned, ...unpinned]
+      
+      const isEditingInList = combined.some(p => p.id === editingProject.id)
+      if (!isEditingInList) {
+        const currentProjTemp: Project = {
+          id: editingProject.id || 'temp-current-id',
+          title: editingProject.title || 'Untitled Project (Current)',
+          description: editingProject.description || '',
+          content: editingProject.content || null,
+          category: editingProject.category || 'data',
+          sub_category: editingProject.sub_category || '',
+          cover_image: editingProject.cover_image || null,
+          github_url: editingProject.github_url || null,
+          demo_url: editingProject.demo_url || null,
+          notebook_url: editingProject.notebook_url || null,
+          embed_code: editingProject.embed_code || null,
+          is_featured: editingProject.is_featured || false,
+          pinned_order: editingProject.pinned_order || 0,
+          created_at: editingProject.created_at || new Date().toISOString()
+        }
+        combined.push(currentProjTemp)
+      } else {
+        combined = combined.map(p => p.id === editingProject.id ? { ...p, title: editingProject.title || p.title } : p)
+      }
+      
+      // Auto-assign order index sequentially (pin all projects automatically)
+      const listWithOrders = combined.map((p, idx) => ({
+        ...p,
+        pinned_order: idx + 1
+      }))
+      
+      setTimeout(() => {
+        setOrderModalList(listWithOrders)
+      }, 0)
+    }
+  }, [isOrderModalOpen, editingProject, projects])
+
+  // Featured order modal state and methods
+  const [isFeaturedOrderModalOpen, setIsFeaturedOrderModalOpen] = React.useState(false)
+  const [featuredOrderList, setFeaturedOrderList] = React.useState<Project[]>([])
+
+  React.useEffect(() => {
+    if (isFeaturedOrderModalOpen && editingProject) {
+      const featured = projects.filter(p => p.is_featured)
+      featured.sort((a, b) => (a.pinned_order || 0) - (b.pinned_order || 0))
+      
+      const isEditingFeatured = featured.some(p => p.id === editingProject.id)
+      let initialList = [...featured]
+      
+      if (!isEditingFeatured && editingProject.is_featured) {
+        const currentProjTemp: Project = {
+          id: editingProject.id || 'temp-current-id',
+          title: editingProject.title || 'Untitled Project (Current)',
+          description: editingProject.description || '',
+          content: editingProject.content || null,
+          category: editingProject.category || 'data',
+          sub_category: editingProject.sub_category || '',
+          cover_image: editingProject.cover_image || null,
+          github_url: editingProject.github_url || null,
+          demo_url: editingProject.demo_url || null,
+          notebook_url: editingProject.notebook_url || null,
+          embed_code: editingProject.embed_code || null,
+          is_featured: true,
+          pinned_order: editingProject.pinned_order || 0,
+          created_at: editingProject.created_at || new Date().toISOString()
+        }
+        initialList.push(currentProjTemp)
+      } else {
+        initialList = initialList.map(p => p.id === editingProject.id ? { ...p, title: editingProject.title || p.title } : p)
+      }
+      
+      setTimeout(() => {
+        setFeaturedOrderList(initialList)
+      }, 0)
+    }
+  }, [isFeaturedOrderModalOpen, editingProject, projects])
+
+  React.useEffect(() => {
+    if (isOrderModalOpen || isFeaturedOrderModalOpen) {
+      document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+      document.documentElement.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+      document.documentElement.style.overflow = ''
+    }
+  }, [isOrderModalOpen, isFeaturedOrderModalOpen])
+
+  const moveItem = (index: number, direction: 'up' | 'down') => {
+    const newList = [...orderModalList]
+    const targetIndex = direction === 'up' ? index - 1 : index + 1
+    
+    if (targetIndex < 0 || targetIndex >= newList.length) return
+    
+    // Swap items
+    const temp = newList[index]
+    newList[index] = newList[targetIndex]
+    newList[targetIndex] = temp
+    
+    setOrderModalList(newList)
+  }
+
+  const handleSaveOrder = async () => {
+    setIsPending(true)
+    try {
+      const updatesToDb: { id: string; pinned_order: number }[] = []
+      let newEditingProjectPinnedOrder = 0
+
+      orderModalList.forEach((proj, idx) => {
+        const newIdx = idx + 1
+        
+        if (proj.id === (editingProject?.id || 'temp-current-id')) {
+          newEditingProjectPinnedOrder = newIdx
+        }
+        
+        if (proj.id && proj.id !== 'temp-current-id') {
+          updatesToDb.push({ id: proj.id, pinned_order: newIdx })
+        }
+      })
+
+      if (updatesToDb.length > 0) {
+        const res = await updateProjectsOrderAction(updatesToDb)
+        if (!res.success) {
+          throw new Error(res.error || 'Failed to update orders of other projects')
+        }
+      }
+
+      setProjects(prev => prev.map(p => {
+        const update = updatesToDb.find(u => u.id === p.id)
+        if (update) {
+          return { ...p, pinned_order: update.pinned_order }
+        }
+        return p
+      }))
+
+      setEditingProject(prev => prev ? { ...prev, pinned_order: newEditingProjectPinnedOrder } : null)
+      setNotification({ success: true, message: 'Projects reordered successfully.' })
+      setIsOrderModalOpen(false)
+    } catch (err) {
+      console.error(err)
+      setNotification({ success: false, message: err instanceof Error ? err.message : 'Error reordering projects.' })
+    } finally {
+      setIsPending(false)
+    }
+  }
+
+  const moveFeaturedItem = (index: number, direction: 'up' | 'down') => {
+    const newList = [...featuredOrderList]
+    const targetIndex = direction === 'up' ? index - 1 : index + 1
+    
+    if (targetIndex < 0 || targetIndex >= newList.length) return
+    
+    // Swap items
+    const temp = newList[index]
+    newList[index] = newList[targetIndex]
+    newList[targetIndex] = temp
+    
+    setFeaturedOrderList(newList)
+  }
+
+  const unfeatureProject = (id: string) => {
+    setFeaturedOrderList(prev => prev.filter(p => p.id !== id))
+  }
+
+  const handleSaveFeaturedOrder = async () => {
+    setIsPending(true)
+    try {
+      const updatesToDb: { id: string; pinned_order: number; is_featured?: boolean }[] = []
+      let newEditingProjectPinnedOrder = editingProject?.pinned_order || 0
+      let newEditingProjectIsFeatured = !!editingProject?.is_featured
+
+      // Identify removed featured projects
+      const originalFeatured = projects.filter(p => p.is_featured)
+      const removedProjects = originalFeatured.filter(op => 
+        op.id !== editingProject?.id && 
+        !featuredOrderList.some(f => f.id === op.id)
+      )
+
+      featuredOrderList.forEach((proj, idx) => {
+        const newIdx = idx + 1
+        
+        if (proj.id === (editingProject?.id || 'temp-current-id')) {
+          newEditingProjectPinnedOrder = newIdx
+          newEditingProjectIsFeatured = true
+        }
+        
+        if (proj.id && proj.id !== 'temp-current-id') {
+          updatesToDb.push({ id: proj.id, pinned_order: newIdx, is_featured: true })
+        }
+      })
+
+      removedProjects.forEach(proj => {
+        updatesToDb.push({ id: proj.id, pinned_order: 0, is_featured: false })
+      })
+
+      if (updatesToDb.length > 0) {
+        const res = await updateProjectsOrderAction(updatesToDb)
+        if (!res.success) {
+          throw new Error(res.error || 'Failed to update featured projects order')
+        }
+      }
+
+      setProjects(prev => prev.map(p => {
+        const update = updatesToDb.find(u => u.id === p.id)
+        if (update) {
+          return { 
+            ...p, 
+            pinned_order: update.pinned_order,
+            is_featured: update.is_featured !== undefined ? update.is_featured : p.is_featured 
+          }
+        }
+        return p
+      }))
+
+      const isCurrentInList = featuredOrderList.some(proj => proj.id === (editingProject?.id || 'temp-current-id'))
+      if (!isCurrentInList) {
+        newEditingProjectPinnedOrder = 0
+        newEditingProjectIsFeatured = false
+      }
+
+      setEditingProject(prev => prev ? { 
+        ...prev, 
+        pinned_order: newEditingProjectPinnedOrder, 
+        is_featured: newEditingProjectIsFeatured 
+      } : null)
+
+      setNotification({ success: true, message: 'Featured projects reordered successfully.' })
+      setIsFeaturedOrderModalOpen(false)
+    } catch (err) {
+      console.error(err)
+      setNotification({ success: false, message: err instanceof Error ? err.message : 'Error reordering featured projects.' })
+    } finally {
+      setIsPending(false)
+    }
+  }
 
   const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -230,10 +551,14 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
   }
 
   const handleCreateNew = () => {
+    const categoryProjects = projects.filter(p => p.category === activeCategory)
+    const maxPin = categoryProjects.reduce((max, p) => Math.max(max, p.pinned_order || 0), 0)
+
     setEditingProject({ 
       ...DEFAULT_PROJECT,
       category: activeCategory,
-      sub_category: activeCategory === 'data' ? 'Data Analytics Projects' : 'Web Development Projects'
+      sub_category: activeCategory === 'data' ? 'Data Analytics Projects' : 'Web Development Projects',
+      pinned_order: maxPin + 1
     })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -412,10 +737,16 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                       onChange={e => {
                         const newCat = e.target.value as 'data' | 'non-data'
                         const defaultSub = newCat === 'data' ? 'Data Analytics Projects' : 'Web Development Projects'
+                        
+                        // Calculate next pinned order for the new category
+                        const categoryProjects = projects.filter(p => p.category === newCat)
+                        const maxPin = categoryProjects.reduce((max, p) => Math.max(max, p.pinned_order || 0), 0)
+
                         setEditingProject(prev => ({
                           ...prev,
                           category: newCat,
-                          sub_category: defaultSub
+                          sub_category: defaultSub,
+                          pinned_order: maxPin + 1
                         }))
                       }}
                       className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/50 text-foreground text-sm focus:outline-none focus:border-primary/50"
@@ -585,43 +916,65 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                 {/* Priority and Toggle flags */}
                 <div className="grid grid-cols-2 gap-4 items-center pt-2">
                   <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="is_featured"
-                      checked={!!editingProject.is_featured}
-                      onChange={e => {
-                        const val = e.target.checked
-                        if (val) {
-                          const featuredCount = projects.filter(p => p.is_featured && p.id !== editingProject.id).length
-                          if (featuredCount >= 3) {
-                            alert('You can only feature a maximum of 3 projects on the home page. Please unmark another project as featured first.')
-                            return
+                    <button
+                      type="button"
+                      onClick={() => setIsFeaturedOrderModalOpen(true)}
+                      className="p-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-all flex items-center justify-center border border-primary/20 cursor-pointer shrink-0"
+                      title="Manage Featured Orders"
+                      aria-label="Manage Featured Orders"
+                    >
+                      <Layers className="w-3.5 h-3.5" />
+                    </button>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="is_featured"
+                        checked={!!editingProject.is_featured}
+                        onChange={e => {
+                          const val = e.target.checked
+                          if (val) {
+                            const featuredCount = projects.filter(p => p.is_featured && p.id !== editingProject.id).length
+                            if (featuredCount >= 3) {
+                              alert('You can only feature a maximum of 3 projects on the home page. Please unmark another project as featured first.')
+                              return
+                            }
                           }
-                        }
-                        setEditingProject(prev => prev ? ({ ...prev, is_featured: val }) : null)
-                      }}
-                      className="w-4 h-4 rounded text-primary focus:ring-primary border-slate-200/20 dark:border-slate-800/15"
-                    />
-                    <label htmlFor="is_featured" className="text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer">
-                      Feature on Home
-                    </label>
+                          setEditingProject(prev => prev ? ({ ...prev, is_featured: val }) : null)
+                        }}
+                        className="w-4 h-4 rounded text-primary focus:ring-primary border-slate-200/20 dark:border-slate-800/15 cursor-pointer"
+                      />
+                      <label htmlFor="is_featured" className="text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer">
+                        Feature on Home
+                      </label>
+                    </div>
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                       Pinned Order Index
                     </label>
-                    <input
-                      type="number"
-                      value={editingProject.pinned_order ?? 0}
-                      onChange={e => setEditingProject(prev => ({ ...prev, pinned_order: parseInt(e.target.value) || 0 }))}
-                      className={cn(
-                        "w-full px-4 py-2 rounded-xl bg-white dark:bg-white/5 border text-foreground text-sm focus:outline-none transition-all",
-                        editingProject.pinned_order && editingProject.pinned_order > 0 && projects.some(p => p.id !== editingProject.id && p.category === editingProject.category && p.pinned_order === editingProject.pinned_order)
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-slate-300 dark:border-slate-700/50 focus:border-primary/50"
-                      )}
-                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setIsOrderModalOpen(true)}
+                        className="p-2.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl transition-all flex items-center justify-center border border-primary/20 cursor-pointer shrink-0"
+                        title="Manage Pinned Orders"
+                        aria-label="Manage Pinned Orders"
+                      >
+                        <Layers className="w-4 h-4" />
+                      </button>
+                      <input
+                        type="number"
+                        value={editingProject.pinned_order ?? 0}
+                        onChange={e => setEditingProject(prev => prev ? ({ ...prev, pinned_order: parseInt(e.target.value) || 0 }) : null)}
+                        className={cn(
+                          "flex-1 min-w-0 px-4 py-2 rounded-xl bg-white dark:bg-white/5 border text-foreground text-sm focus:outline-none transition-all",
+                          editingProject.pinned_order && editingProject.pinned_order > 0 && projects.some(p => p.id !== editingProject.id && p.category === editingProject.category && p.pinned_order === editingProject.pinned_order)
+                            ? "border-red-500 focus:border-red-500"
+                            : "border-slate-300 dark:border-slate-700/50 focus:border-primary/50"
+                        )}
+                      />
+                    </div>
                     {editingProject.pinned_order && editingProject.pinned_order > 0 && projects.some(p => p.id !== editingProject.id && p.category === editingProject.category && p.pinned_order === editingProject.pinned_order) && (
                       <p className="text-[10px] text-red-500 font-semibold leading-normal mt-1">
                         This index is already pinned in the current category!
@@ -918,6 +1271,341 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
             </motion.div>
           )}
         </div>
+      )}
+
+      {/* Reorder Pinned Projects Modal */}
+      {mounted && typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {isOrderModalOpen && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{ duration: 0.2 }}
+                className="w-full max-w-xl rounded-3xl border border-slate-200/10 dark:border-slate-800/10 bg-slate-900/95 dark:bg-slate-950/95 p-6 shadow-2xl text-foreground flex flex-col max-h-[85vh] overflow-hidden"
+              >
+                {/* Modal Header */}
+                <div className="flex justify-between items-start pb-4 border-b border-slate-200/10 dark:border-slate-800/10">
+                  <div>
+                    <h3 className="text-lg font-black tracking-tight text-foreground">
+                      Manage Pinned Orders
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Category: {editingProject?.category === 'data' ? 'Data Science' : 'General Dev'}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-white/5 px-2.5 py-1 rounded-lg text-muted-foreground">
+                      Total: {orderModalList.length} Items
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setIsOrderModalOpen(false)}
+                      className="text-muted-foreground hover:text-foreground text-sm font-bold p-1 rounded-lg hover:bg-white/5 transition-all cursor-pointer"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+
+                {/* Modal Body / Scrollable List */}
+                <div className="flex-1 overflow-y-auto py-4 space-y-3 min-h-[200px]">
+                  {orderModalList.length === 0 ? (
+                    <p className="text-xs text-muted-foreground text-center py-8">
+                      No projects are currently pinned in this category.
+                    </p>
+                  ) : (
+                    <AnimatePresence mode="popLayout">
+                      {orderModalList.map((proj, idx) => {
+                        const isCurrent = proj.id === (editingProject?.id || 'temp-current-id')
+                        
+                        return (
+                          <motion.div
+                            key={proj.id}
+                            layout
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                            className={cn(
+                              "flex items-center gap-3 p-3 rounded-2xl border transition-all",
+                              isCurrent
+                                ? "bg-primary/10 border-primary/30 shadow-md shadow-primary/5"
+                                : "bg-slate-900/50 dark:bg-slate-950/40 border-slate-200/5 dark:border-slate-800/10 hover:border-slate-800/30"
+                            )}
+                          >
+                            {/* Reorder Buttons */}
+                            <div className="flex flex-col gap-1 shrink-0">
+                              <button
+                                type="button"
+                                disabled={idx === 0}
+                                onClick={() => moveItem(idx, 'up')}
+                                className={cn(
+                                  "p-1 rounded hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all cursor-pointer disabled:opacity-20 disabled:pointer-events-none"
+                                )}
+                                title="Move Up"
+                              >
+                                <ArrowUp className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={idx === orderModalList.length - 1}
+                                onClick={() => moveItem(idx, 'down')}
+                                className={cn(
+                                  "p-1 rounded hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all cursor-pointer disabled:opacity-20 disabled:pointer-events-none"
+                                )}
+                                title="Move Down"
+                              >
+                                <ArrowDown className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+
+                            {/* Cover Image Thumbnail */}
+                            <div className="w-12 h-8 rounded-lg overflow-hidden bg-slate-800 shrink-0 relative flex items-center justify-center border border-slate-800/50">
+                              {proj.cover_image ? (
+                                <BlurImage
+                                  src={getDirectImageUrl(proj.cover_image, 100)}
+                                  alt=""
+                                  className="object-cover w-full h-full"
+                                />
+                              ) : (
+                                <FileCode className="w-4 h-4 text-muted-foreground/30" />
+                              )}
+                            </div>
+
+                            {/* Info */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <h4 className={cn(
+                                  "text-xs font-semibold truncate",
+                                  isCurrent ? "text-foreground font-black" : "text-muted-foreground hover:text-foreground"
+                                )}>
+                                  {proj.title}
+                                </h4>
+                                {isCurrent && (
+                                  <span className="px-1.5 py-0.5 bg-primary/20 text-primary text-[8px] font-black uppercase rounded">
+                                    Current
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-muted-foreground/60 truncate">
+                                {SUBCATEGORY_MAP[proj.sub_category] || proj.sub_category.replace(' Projects', '')}
+                              </p>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="px-2 py-0.5 bg-slate-800 dark:bg-slate-900 text-muted-foreground text-[10px] font-mono rounded-lg border border-slate-700/30">
+                                Order: {idx + 1}
+                              </span>
+                            </div>
+                          </motion.div>
+                        )
+                      })}
+                    </AnimatePresence>
+                  )}
+                </div>
+
+                {/* Modal Footer */}
+                <div className="flex justify-end gap-3 pt-4 border-t border-slate-200/10 dark:bg-slate-950/10 dark:border-slate-800/10">
+                  <button
+                    type="button"
+                    onClick={() => setIsOrderModalOpen(false)}
+                    className="py-2 px-4 rounded-xl text-xs font-bold border border-slate-200/10 dark:border-slate-800/10 text-foreground hover:bg-white/5 transition-all cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isPending}
+                    onClick={handleSaveOrder}
+                    className="py-2 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-xs flex items-center gap-1.5 hover:bg-primary/95 transition-all cursor-pointer disabled:opacity-55"
+                  >
+                    {isPending ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <span>Save Order</span>
+                    )}
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+
+      {/* Reorder Featured Projects Modal */}
+      {mounted && typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {isFeaturedOrderModalOpen && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{ duration: 0.2 }}
+                className="w-full max-w-xl rounded-3xl border border-slate-200/10 dark:border-slate-800/10 bg-slate-900/95 dark:bg-slate-950/95 p-6 shadow-2xl text-foreground flex flex-col max-h-[85vh] overflow-hidden"
+              >
+                {/* Modal Header */}
+                <div className="flex justify-between items-start pb-4 border-b border-slate-200/10 dark:border-slate-800/10">
+                  <div>
+                    <h3 className="text-lg font-black tracking-tight text-foreground">
+                      Manage Featured Orders
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Sort which projects show up first on the home page (Max 3/6 shown)
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsFeaturedOrderModalOpen(false)}
+                    className="text-muted-foreground hover:text-foreground text-sm font-bold p-1 rounded-lg hover:bg-white/5 transition-all cursor-pointer"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {/* Modal Body / Scrollable List */}
+                <div className="flex-1 overflow-y-auto py-4 space-y-3 min-h-[200px]">
+                  {featuredOrderList.length === 0 ? (
+                    <p className="text-xs text-muted-foreground text-center py-8">
+                      No projects are currently featured on the home page.
+                    </p>
+                  ) : (
+                    <AnimatePresence mode="popLayout">
+                      {featuredOrderList.map((proj, idx) => {
+                        const isCurrent = proj.id === (editingProject?.id || 'temp-current-id')
+                        
+                        return (
+                          <motion.div
+                            key={proj.id}
+                            layout
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                            className={cn(
+                              "flex items-center gap-3 p-3 rounded-2xl border transition-all",
+                              isCurrent
+                                ? "bg-primary/10 border-primary/30 shadow-md shadow-primary/5"
+                                : "bg-slate-900/50 dark:bg-slate-950/40 border-slate-200/5 dark:border-slate-800/10 hover:border-slate-800/30"
+                            )}
+                          >
+                            {/* Reorder Buttons */}
+                            <div className="flex flex-col gap-1 shrink-0">
+                              <button
+                                type="button"
+                                disabled={idx === 0}
+                                onClick={() => moveFeaturedItem(idx, 'up')}
+                                className={cn(
+                                  "p-1 rounded hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all cursor-pointer disabled:opacity-20 disabled:pointer-events-none"
+                                )}
+                                title="Move Up"
+                              >
+                                <ArrowUp className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={idx === featuredOrderList.length - 1}
+                                onClick={() => moveFeaturedItem(idx, 'down')}
+                                className={cn(
+                                  "p-1 rounded hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all cursor-pointer disabled:opacity-20 disabled:pointer-events-none"
+                                )}
+                                title="Move Down"
+                              >
+                                <ArrowDown className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+
+                            {/* Cover Image Thumbnail */}
+                            <div className="w-12 h-8 rounded-lg overflow-hidden bg-slate-800 shrink-0 relative flex items-center justify-center border border-slate-800/50">
+                              {proj.cover_image ? (
+                                <BlurImage
+                                  src={getDirectImageUrl(proj.cover_image, 100)}
+                                  alt=""
+                                  className="object-cover w-full h-full"
+                                />
+                              ) : (
+                                <FileCode className="w-4 h-4 text-muted-foreground/30" />
+                              )}
+                            </div>
+
+                            {/* Info */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <h4 className={cn(
+                                  "text-xs font-semibold truncate",
+                                  isCurrent ? "text-foreground font-black" : "text-muted-foreground hover:text-foreground"
+                                )}>
+                                  {proj.title}
+                                </h4>
+                                {isCurrent && (
+                                  <span className="px-1.5 py-0.5 bg-primary/20 text-primary text-[8px] font-black uppercase rounded">
+                                    Current
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-muted-foreground/60 truncate">
+                                {SUBCATEGORY_MAP[proj.sub_category] || proj.sub_category.replace(' Projects', '')}
+                              </p>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="px-2 py-0.5 bg-slate-800 dark:bg-slate-900 text-muted-foreground text-[10px] font-mono rounded-lg border border-slate-700/30">
+                                Order: {idx + 1}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => unfeatureProject(proj.id)}
+                                className="p-1.5 text-red-400/70 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all cursor-pointer"
+                                title="Remove from Featured"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </motion.div>
+                        )
+                      })}
+                    </AnimatePresence>
+                  )}
+                </div>
+
+                {/* Modal Footer */}
+                <div className="flex justify-end gap-3 pt-4 border-t border-slate-200/10 dark:bg-slate-950/10 dark:border-slate-800/10">
+                  <button
+                    type="button"
+                    onClick={() => setIsFeaturedOrderModalOpen(false)}
+                    className="py-2 px-4 rounded-xl text-xs font-bold border border-slate-200/10 dark:border-slate-800/10 text-foreground hover:bg-white/5 transition-all cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isPending}
+                    onClick={handleSaveFeaturedOrder}
+                    className="py-2 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-xs flex items-center gap-1.5 hover:bg-primary/95 transition-all cursor-pointer disabled:opacity-55"
+                  >
+                    {isPending ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <span>Save Order</span>
+                    )}
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
       )}
     </div>
   )
