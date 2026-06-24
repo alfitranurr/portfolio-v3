@@ -319,6 +319,7 @@ export async function saveProjectAction(projectData: any) {
     }
 
     cookieStore.set('mock_projects', JSON.stringify(list), { path: '/' })
+    revalidatePath('/')
     revalidatePath('/projects')
     revalidatePath(`/projects/${projectData.id}`)
     revalidatePath('/admin/projects')
@@ -375,6 +376,7 @@ export async function saveProjectAction(projectData: any) {
 
     if (error) throw error
 
+    revalidatePath('/')
     revalidatePath('/projects')
     if (isEdit) revalidatePath(`/projects/${projectData.id}`)
     revalidatePath('/admin/projects')
@@ -394,6 +396,7 @@ export async function deleteProjectAction(id: string) {
       const updated = list.filter((p: any) => p.id !== id)
       cookieStore.set('mock_projects', JSON.stringify(updated), { path: '/' })
     }
+    revalidatePath('/')
     revalidatePath('/projects')
     revalidatePath('/admin/projects')
     return { success: true }
@@ -414,6 +417,7 @@ export async function deleteProjectAction(id: string) {
       .delete()
       .eq('id', id)
     if (error) throw error
+    revalidatePath('/')
     revalidatePath('/projects')
     revalidatePath('/admin/projects')
     return { success: true }
