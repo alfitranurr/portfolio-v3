@@ -3,7 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUpRight, Sparkles, Search } from 'lucide-react'
+import { ArrowUpRight, Sparkles, Search, SlidersHorizontal, Check, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Project } from '@/lib/types'
 import { BlurImage } from '@/components/ui/blur-image'
@@ -14,7 +14,8 @@ interface ProjectsFilterListProps {
 
 export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps) {
   const [activeCategory, setActiveCategory] = React.useState<'data' | 'non-data'>('data')
-  const [activeSubCategory, setActiveSubCategory] = React.useState<string>('All')
+  const [selectedSubCategories, setSelectedSubCategories] = React.useState<string[]>([])
+  const [isFilterOpen, setIsFilterOpen] = React.useState(false)
 
   const dataSubcategories = [
     'All',
@@ -55,20 +56,31 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
   // Reset subcategory and search when category switches
   React.useEffect(() => {
     const timer = setTimeout(() => {
-      setActiveSubCategory('All')
+      setSelectedSubCategories([])
       setSearchQuery('')
     }, 0)
     return () => clearTimeout(timer)
   }, [activeCategory])
+
+  const handleToggleSubCategory = (sub: string) => {
+    setSelectedSubCategories(prev =>
+      prev.includes(sub)
+        ? prev.filter(item => item !== sub)
+        : [...prev, sub]
+    )
+  }
 
   const filteredProjects = initialProjects.filter((project) => {
     const categoryMatch = project.category === activeCategory
     
     // Normalize subcategory match for backward compatibility
     const normalizedProjSub = project.sub_category === 'Data Automation Projects' ? 'Automation Projects' : project.sub_category
-    const normalizedActiveSub = activeSubCategory === 'Data Automation Projects' ? 'Automation Projects' : activeSubCategory
 
-    const subCategoryMatch = normalizedActiveSub === 'All' || normalizedProjSub === normalizedActiveSub
+    const subCategoryMatch = selectedSubCategories.length === 0 || selectedSubCategories.some(selectedSub => {
+      const normalizedSelectedSub = selectedSub === 'Data Automation Projects' ? 'Automation Projects' : selectedSub
+      return normalizedProjSub === normalizedSelectedSub
+    })
+
     const searchMatch = searchQuery.trim() === '' || 
       project.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
       project.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -112,39 +124,120 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
         </div>
       </div>
 
-      {/* Sub-category Pills */}
-      <div className="flex flex-wrap gap-2 justify-center">
-        {subCategories.map((sub) => (
-          <button
-            key={sub}
-            onClick={() => setActiveSubCategory(sub)}
-            className={cn(
-              "px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 cursor-pointer",
-              activeSubCategory === sub
-                ? "bg-secondary text-secondary-foreground border-secondary shadow-sm"
-                : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-foreground/80 hover:text-foreground"
-            )}
-          >
-            {getSubCategoryLabel(sub)}
-          </button>
-        ))}
-      </div>
+      {/* Search and Filter Section */}
+      <div className="space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-muted-foreground/60 px-1 pb-0">
+          <div className="relative w-full sm:max-w-md flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
+              <input
+                type="text"
+                placeholder="Search projects..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/45 text-xs focus:outline-none focus:border-primary/50 transition-all"
+              />
+            </div>
+            
+            {/* Filter Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className={cn(
+                "p-2 rounded-xl border transition-all flex items-center gap-1.5 cursor-pointer text-xs font-bold shrink-0",
+                isFilterOpen || selectedSubCategories.length > 0
+                  ? "bg-primary/10 border-primary/30 text-primary"
+                  : "bg-white/5 border-slate-300 dark:border-slate-800/10 text-foreground/80 hover:text-foreground hover:bg-white/10"
+              )}
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              <span>Filters</span>
+              {selectedSubCategories.length > 0 && (
+                <span className="ml-0.5 bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full text-[9px] font-bold">
+                  {selectedSubCategories.length}
+                </span>
+              )}
+            </button>
+          </div>
 
-      {/* Search and Showing entries count */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-muted-foreground/60 px-1 border-b border-slate-200/10 dark:border-slate-800/10 pb-0">
-        <div className="relative w-full sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
-          <input
-            type="text"
-            placeholder="Search projects..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/45 text-xs focus:outline-none focus:border-primary/50 transition-all"
-          />
+          <div className="shrink-0 font-medium self-end sm:self-auto pb-1">
+            Showing <span className="text-foreground font-semibold">{filteredProjects.length}</span> {filteredProjects.length === 1 ? 'entry' : 'entries'}
+          </div>
         </div>
-        <div className="shrink-0 font-medium self-end sm:self-auto pb-1">
-          Showing <span className="text-foreground font-semibold">{filteredProjects.length}</span> {filteredProjects.length === 1 ? 'entry' : 'entries'}
-        </div>
+
+        {/* Collapsible Filter Panel */}
+        <AnimatePresence>
+          {isFilterOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0, overflow: 'hidden' }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+              className="p-4 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground/60">
+                  Filter by Sub Category (Multiple Select)
+                </span>
+                {selectedSubCategories.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedSubCategories([])}
+                    className="text-[10px] font-bold text-primary hover:underline cursor-pointer"
+                  >
+                    Clear All
+                  </button>
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {subCategories.filter(sub => sub !== 'All').map((sub) => {
+                  const isSelected = selectedSubCategories.includes(sub)
+                  return (
+                    <button
+                      key={sub}
+                      type="button"
+                      onClick={() => handleToggleSubCategory(sub)}
+                      className={cn(
+                        "px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 cursor-pointer flex items-center gap-1.5",
+                        isSelected
+                          ? "bg-primary/10 border-primary/30 text-primary shadow-sm"
+                          : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-foreground/80 hover:text-foreground"
+                      )}
+                    >
+                      {isSelected && <Check className="w-3.5 h-3.5 shrink-0" />}
+                      <span>{getSubCategoryLabel(sub)}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Active Selected Badges */}
+        {selectedSubCategories.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 items-center px-1 pt-1">
+            <span className="text-[9px] font-extrabold text-muted-foreground uppercase tracking-widest mr-1">
+              Active Filters:
+            </span>
+            {selectedSubCategories.map((sub) => (
+              <span
+                key={sub}
+                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/10 dark:bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground"
+              >
+                <span>{getSubCategoryLabel(sub)}</span>
+                <button
+                  type="button"
+                  onClick={() => handleToggleSubCategory(sub)}
+                  className="hover:text-red-500 transition-colors cursor-pointer text-muted-foreground/60"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Interactive Project Cards Grid */}

@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Award, Calendar, ExternalLink, ShieldCheck, Trophy, Landmark, Users, Search } from 'lucide-react'
+import { Award, Calendar, ExternalLink, ShieldCheck, Trophy, Landmark, Users, Search, SlidersHorizontal, Check, X } from 'lucide-react'
 import { cn, getDirectImageUrl } from '@/lib/utils'
 import { Certificate } from '@/lib/types'
 import { BlurImage } from '@/components/ui/blur-image'
@@ -35,14 +35,22 @@ const BADGE_MAP = {
 
 
 export function CertificatesFilterList({ initialCertificates }: CertificatesFilterListProps) {
-  const [activeCategory, setActiveCategory] = React.useState<string>('All')
-
+  const [selectedCategories, setSelectedCategories] = React.useState<string[]>([])
+  const [isFilterOpen, setIsFilterOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
 
   const categories = ['All', 'competition', 'seminar_workshop', 'license_certification', 'committee_organization']
 
+  const handleToggleCategory = (cat: string) => {
+    setSelectedCategories(prev =>
+      prev.includes(cat)
+        ? prev.filter(item => item !== cat)
+        : [...prev, cat]
+    )
+  }
+
   const filteredCertificates = initialCertificates.filter(c => {
-    const matchesCategory = activeCategory === 'All' || c.category === activeCategory
+    const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(c.category)
     const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
       c.issuer.toLowerCase().includes(search.toLowerCase()) ||
       (c.credential_id && c.credential_id.toLowerCase().includes(search.toLowerCase()))
@@ -50,40 +58,120 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
   })
 
   return (
-    <div className="space-y-8">
-      {/* Search and Stats */}
-      <div className="flex justify-between items-center gap-4">
-        <div className="relative w-full max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
-          <input
-            type="text"
-            placeholder="Search certificates..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
-          />
+    <div className="space-y-6">
+      {/* Search and Filters panel wrapper */}
+      <div className="space-y-3">
+        <div className="flex justify-between items-center gap-4">
+          <div className="relative w-full max-w-md flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
+              <input
+                type="text"
+                placeholder="Search certificates..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
+              />
+            </div>
+            
+            {/* Filter Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className={cn(
+                "p-2 rounded-xl border transition-all flex items-center gap-1.5 cursor-pointer text-xs font-bold shrink-0",
+                isFilterOpen || selectedCategories.length > 0
+                  ? "bg-primary/10 border-primary/30 text-primary"
+                  : "bg-white/5 border-slate-300 dark:border-slate-800/20 text-foreground/80 hover:text-foreground hover:bg-white/10"
+              )}
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              <span>Filters</span>
+              {selectedCategories.length > 0 && (
+                <span className="ml-0.5 bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full text-[9px] font-bold">
+                  {selectedCategories.length}
+                </span>
+              )}
+            </button>
+          </div>
+          <span className="text-xs text-muted-foreground font-semibold shrink-0">
+            Showing {filteredCertificates.length} {filteredCertificates.length === 1 ? 'entry' : 'entries'}
+          </span>
         </div>
-        <span className="text-xs text-muted-foreground font-semibold shrink-0">
-          Showing {filteredCertificates.length} {filteredCertificates.length === 1 ? 'entry' : 'entries'}
-        </span>
-      </div>
 
-      {/* Category Filters */}
-      <div className="flex flex-wrap gap-1.5 pt-1">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setActiveCategory(cat)}
-            className={cn(
-              "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all duration-200 cursor-pointer",
-              activeCategory === cat
-                ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/10"
-                : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-foreground/80 hover:text-foreground"
-            )}
-          >
-            {CATEGORY_MAP[cat as keyof typeof CATEGORY_MAP]}
-          </button>
-        ))}
+        {/* Collapsible Filter Panel */}
+        <AnimatePresence>
+          {isFilterOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0, overflow: 'hidden' }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+              className="p-4 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/20 space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground/60">
+                  Filter by Category (Multiple Select)
+                </span>
+                {selectedCategories.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCategories([])}
+                    className="text-[10px] font-bold text-primary hover:underline cursor-pointer"
+                  >
+                    Clear All
+                  </button>
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {categories.filter(cat => cat !== 'All').map((cat) => {
+                  const isSelected = selectedCategories.includes(cat)
+                  return (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => handleToggleCategory(cat)}
+                      className={cn(
+                        "px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 cursor-pointer flex items-center gap-1.5",
+                        isSelected
+                          ? "bg-primary/10 border-primary/30 text-primary shadow-sm"
+                          : "bg-white/5 border-slate-200/10 dark:border-slate-800/20 hover:border-slate-200/20 text-foreground/80 hover:text-foreground"
+                      )}
+                    >
+                      {isSelected && <Check className="w-3.5 h-3.5 shrink-0" />}
+                      <span>{CATEGORY_MAP[cat as keyof typeof CATEGORY_MAP]}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Active Selected Badges */}
+        {selectedCategories.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 items-center px-1 pt-1">
+            <span className="text-[9px] font-extrabold text-muted-foreground uppercase tracking-widest mr-1">
+              Active Filters:
+            </span>
+            {selectedCategories.map((cat) => (
+              <span
+                key={cat}
+                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/10 dark:bg-white/5 border border-slate-200/10 dark:border-slate-800/20 text-foreground"
+              >
+                <span>{CATEGORY_MAP[cat as keyof typeof CATEGORY_MAP]}</span>
+                <button
+                  type="button"
+                  onClick={() => handleToggleCategory(cat)}
+                  className="hover:text-red-500 transition-colors cursor-pointer text-muted-foreground/60"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Certificates Grid */}
