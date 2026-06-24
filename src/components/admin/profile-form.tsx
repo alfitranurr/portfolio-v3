@@ -49,11 +49,16 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
 
   React.useEffect(() => {
     if (state) {
-      setShowNotification(true)
+      const showTimer = setTimeout(() => {
+        setShowNotification(true)
+      }, 0)
       const timer = setTimeout(() => {
         setShowNotification(false)
       }, 5000)
-      return () => clearTimeout(timer)
+      return () => {
+        clearTimeout(showTimer)
+        clearTimeout(timer)
+      }
     }
   }, [state])
 
@@ -198,10 +203,10 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                 <BookOpen className="absolute left-3.5 top-3.5 w-4 h-4 text-muted-foreground/60" />
                 <textarea
                   name="about_me"
-                  rows={6}
+                  rows={10}
                   defaultValue={initialProfile.about_me || ''}
                   placeholder="Tell visitors about your professional history and strengths..."
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all resize-none"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all resize-y"
                 />
               </div>
             </div>
