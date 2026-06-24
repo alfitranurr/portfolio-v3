@@ -57,6 +57,7 @@ const DEFAULT_SKILL: Omit<Skill, 'id'> = {
 function getSkillIcon(name: string, customPath: string | null, className?: string, logoUrl?: string | null) {
   if (logoUrl) {
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img src={logoUrl} className={className} alt={name} />
     )
   }
@@ -146,7 +147,7 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
       } else {
         setNotification({ success: false, message: res.error || 'Failed to upload logo.' })
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error(err)
       setNotification({ success: false, message: 'Error uploading logo.' })
     } finally {
@@ -155,14 +156,18 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
   }
 
   React.useEffect(() => {
-    setSkills(initialSkills)
+    setTimeout(() => {
+      setSkills(initialSkills)
+    }, 0)
   }, [initialSkills])
 
   React.useEffect(() => {
     const stored = sessionStorage.getItem('skills_admin_notification')
     if (stored) {
       try {
-        setNotification(JSON.parse(stored))
+        setTimeout(() => {
+          setNotification(JSON.parse(stored))
+        }, 0)
       } catch (e) {
         console.error(e)
       }
@@ -393,6 +398,7 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
                     <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center shrink-0">
                       {editingItem.logo_url ? (
                         <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={editingItem.logo_url}
                             alt="Logo preview"
@@ -540,7 +546,7 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
               <Terminal className="w-10 h-10 text-muted-foreground/40 mx-auto animate-pulse" />
               <h3 className="font-extrabold text-foreground">No Tech Stack found</h3>
               <p className="text-xs text-muted-foreground max-w-xs mx-auto">
-                No items match your query. Click "Add Tech Stack" above to insert your first record.
+                No items match your query. Click &quot;Add Tech Stack&quot; above to insert your first record.
               </p>
             </div>
           ) : (

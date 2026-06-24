@@ -3,8 +3,8 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUpRight, ExternalLink, Sparkles, Presentation, BookOpen, Search } from 'lucide-react'
-import { Github } from '@/components/icons'
+import { ArrowUpRight, ExternalLink, Sparkles, Presentation, Search } from 'lucide-react'
+import { Github, PythonIcon } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { Project } from '@/lib/types'
 import { BlurImage } from '@/components/ui/blur-image'
@@ -48,14 +48,18 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
   React.useEffect(() => {
     const stored = sessionStorage.getItem('project_public_active_category')
     if (stored === 'data' || stored === 'non-data') {
-      setActiveCategory(stored)
+      const timer = setTimeout(() => setActiveCategory(stored), 0)
+      return () => clearTimeout(timer)
     }
   }, [])
 
   // Reset subcategory and search when category switches
   React.useEffect(() => {
-    setActiveSubCategory('All')
-    setSearchQuery('')
+    const timer = setTimeout(() => {
+      setActiveSubCategory('All')
+      setSearchQuery('')
+    }, 0)
+    return () => clearTimeout(timer)
   }, [activeCategory])
 
   const filteredProjects = initialProjects.filter((project) => {
@@ -264,7 +268,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                       aria-label="Open Notebook"
                       title="Open Notebook"
                     >
-                      <BookOpen className="w-4 h-4" />
+                      <PythonIcon className="w-4 h-4" />
                     </a>
                   )}
                 </div>

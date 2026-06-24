@@ -13,7 +13,6 @@ import {
   Loader2, 
   CheckCircle2, 
   AlertCircle,
-  X,
   FileCode,
   Layers,
   ArrowLeft,
@@ -104,13 +103,17 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
   React.useEffect(() => {
     const stored = sessionStorage.getItem('project_admin_active_category')
     if (stored === 'data' || stored === 'non-data') {
-      setActiveCategory(stored)
+      setTimeout(() => {
+        setActiveCategory(stored)
+      }, 0)
     }
   }, [])
 
   React.useEffect(() => {
-    setActiveSubCategory('All')
-    setSearch('')
+    setTimeout(() => {
+      setActiveSubCategory('All')
+      setSearch('')
+    }, 0)
   }, [activeCategory])
   const [editingProject, setEditingProject] = React.useState<Partial<Project> | null>(null)
   const [isPending, setIsPending] = React.useState(false)
@@ -135,7 +138,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
       } else {
         setNotification({ success: false, message: res.error || 'Failed to upload cover image.' })
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error(err)
       setNotification({ success: false, message: 'Error uploading cover image.' })
     } finally {
@@ -174,17 +177,21 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
       return [editingProject.sub_category, ...subCategoryOptions]
     }
     return subCategoryOptions
-  }, [editingProject?.sub_category, subCategoryOptions])
+  }, [editingProject, subCategoryOptions])
 
   React.useEffect(() => {
-    setProjects(initialProjects)
+    setTimeout(() => {
+      setProjects(initialProjects)
+    }, 0)
   }, [initialProjects])
 
   React.useEffect(() => {
     const stored = sessionStorage.getItem('project_admin_notification')
     if (stored) {
       try {
-        setNotification(JSON.parse(stored))
+        setTimeout(() => {
+          setNotification(JSON.parse(stored))
+        }, 0)
       } catch (e) {
         console.error(e)
       }
@@ -261,7 +268,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
     if (editingProject.is_featured) {
       const featuredCount = projects.filter(p => p.is_featured && p.id !== editingProject.id).length
       if (featuredCount >= 3) {
-        alert('You can only feature a maximum of 3 projects on the home page. Please unfeature another project first.')
+        alert('You can only feature a maximum of 3 projects on the home page. Please unmark another project as featured first.')
         return
       }
     }
@@ -587,7 +594,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                         if (val) {
                           const featuredCount = projects.filter(p => p.is_featured && p.id !== editingProject.id).length
                           if (featuredCount >= 3) {
-                            alert('You can only feature a maximum of 3 projects on the home page. Please unfeature another project first.')
+                            alert('You can only feature a maximum of 3 projects on the home page. Please unmark another project as featured first.')
                             return
                           }
                         }
@@ -732,19 +739,19 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
 
           {/* Subcategory Filters */}
           <div className="flex flex-wrap gap-1.5 pt-1">
-            {availableFilters.map((subcat) => (
+            {availableFilters.map((subCategory) => (
               <button
-                key={subcat}
+                key={subCategory}
                 type="button"
-                onClick={() => setActiveSubCategory(subcat)}
+                onClick={() => setActiveSubCategory(subCategory)}
                 className={cn(
                   "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all duration-200 cursor-pointer",
-                  activeSubCategory === subcat
+                  activeSubCategory === subCategory
                     ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/10"
                     : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-foreground/80 hover:text-foreground"
                 )}
               >
-                {SUBCATEGORY_MAP[subcat] || subcat.replace(' Projects', '')}
+                {SUBCATEGORY_MAP[subCategory] || subCategory.replace(' Projects', '')}
               </button>
             ))}
           </div>
