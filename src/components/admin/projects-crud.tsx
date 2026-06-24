@@ -718,11 +718,11 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                   </label>
                   <textarea
                     required
-                    rows={3}
+                    rows={6}
                     value={editingProject.description || ''}
                     onChange={e => setEditingProject(prev => ({ ...prev, description: e.target.value }))}
                     placeholder="Summarize the core impact or solution of the project in 2-3 sentences."
-                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all resize-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all resize-y"
                   />
                 </div>
 
@@ -831,70 +831,6 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                   </div>
                 </div>
 
-                {/* Cover Image Upload Container (Full Width) */}
-                <div className="space-y-1.5 pt-2">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    Cover Image
-                  </label>
-                  
-                  <div className="flex items-center gap-4">
-                    {/* Preview box */}
-                    <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center shrink-0">
-                      {editingProject.cover_image ? (
-                        <>
-                          <BlurImage
-                            src={getDirectImageUrl(editingProject.cover_image, 200)}
-                            alt="Cover preview"
-                            className="w-full h-full object-cover"
-                          />
-                          <button
-                            type="button"
-                            onClick={handleRemoveCoverImage}
-                            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold cursor-pointer"
-                          >
-                            Remove
-                          </button>
-                        </>
-                      ) : (
-                        <ImageIcon className="w-6 h-6 text-muted-foreground/40" />
-                      )}
-                    </div>
-
-                    <div className="flex-1 space-y-2">
-                      <label className={cn(
-                        "w-full py-2.5 px-4 rounded-xl bg-white dark:bg-white/5 border border-dashed border-slate-300 dark:border-slate-700/50 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
-                        isUploading && "opacity-50 pointer-events-none"
-                      )}>
-                        {isUploading ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-                            <span>Uploading...</span>
-                          </>
-                        ) : (
-                          <>
-                            <UploadCloud className="w-4 h-4 text-muted-foreground" />
-                            <span>{editingProject.cover_image ? 'Change Cover' : 'Upload Cover'}</span>
-                          </>
-                        )}
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleCoverImageUpload}
-                          className="hidden"
-                          disabled={isUploading}
-                        />
-                      </label>
-                      
-                      <input
-                        type="text"
-                        value={editingProject.cover_image || ''}
-                        onChange={e => setEditingProject(prev => ({ ...prev, cover_image: e.target.value }))}
-                        placeholder="Or paste Cover Image URL"
-                        className="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
-                      />
-                    </div>
-                  </div>
-                </div>
               </div>
 
               {/* Right Column: Code & Markdown */}
@@ -966,9 +902,9 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                       <input
                         type="number"
                         value={editingProject.pinned_order ?? 0}
-                        onChange={e => setEditingProject(prev => prev ? ({ ...prev, pinned_order: parseInt(e.target.value) || 0 }) : null)}
+                        readOnly
                         className={cn(
-                          "flex-1 min-w-0 px-4 py-2 rounded-xl bg-white dark:bg-white/5 border text-foreground text-sm focus:outline-none transition-all",
+                          "flex-1 min-w-0 px-4 py-2 rounded-xl bg-slate-50 dark:bg-white/3 border text-foreground text-sm focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-not-allowed select-none",
                           editingProject.pinned_order && editingProject.pinned_order > 0 && projects.some(p => p.id !== editingProject.id && p.category === editingProject.category && p.pinned_order === editingProject.pinned_order)
                             ? "border-red-500 focus:border-red-500"
                             : "border-slate-300 dark:border-slate-700/50 focus:border-primary/50"
@@ -997,6 +933,71 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                   <p className="text-[10px] text-muted-foreground leading-normal">
                     Controls chronological ordering on the public portfolio pages.
                   </p>
+                </div>
+
+                {/* Cover Image Upload Container */}
+                <div className="space-y-1.5 pt-2">
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Cover Image
+                  </label>
+                  
+                  <div className="flex items-center gap-4">
+                    {/* Preview box */}
+                    <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center shrink-0">
+                      {editingProject.cover_image ? (
+                        <>
+                          <BlurImage
+                            src={getDirectImageUrl(editingProject.cover_image, 200)}
+                            alt="Cover preview"
+                            className="w-full h-full object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleRemoveCoverImage}
+                            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold cursor-pointer"
+                          >
+                            Remove
+                          </button>
+                        </>
+                      ) : (
+                        <ImageIcon className="w-6 h-6 text-muted-foreground/40" />
+                      )}
+                    </div>
+
+                    <div className="flex-1 space-y-2">
+                      <label className={cn(
+                        "w-full py-2.5 px-4 rounded-xl bg-white dark:bg-white/5 border border-dashed border-slate-300 dark:border-slate-700/50 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
+                        isUploading && "opacity-50 pointer-events-none"
+                      )}>
+                        {isUploading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                            <span>Uploading...</span>
+                          </>
+                        ) : (
+                          <>
+                            <UploadCloud className="w-4 h-4 text-muted-foreground" />
+                            <span>{editingProject.cover_image ? 'Change Cover' : 'Upload Cover'}</span>
+                          </>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleCoverImageUpload}
+                          className="hidden"
+                          disabled={isUploading}
+                        />
+                      </label>
+                      
+                      <input
+                        type="text"
+                        value={editingProject.cover_image || ''}
+                        onChange={e => setEditingProject(prev => ({ ...prev, cover_image: e.target.value }))}
+                        placeholder="Or paste Cover Image URL"
+                        className="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
