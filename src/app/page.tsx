@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowUpRight, Download, Rocket } from 'lucide-react'
-import { getProfile, getProjects, getSkills, getPhotos } from '@/lib/data-service'
+import { getProfile, getProjects, getSkills, getPhotos, sortFeaturedProjects } from '@/lib/data-service'
 import { SkillsMarquee } from '@/components/skills-marquee'
 import { JourneyMarquee } from '@/components/journey-marquee'
 import { BlurImage } from '@/components/ui/blur-image'
@@ -14,7 +14,7 @@ export default async function HomePage() {
     getSkills(),
     getPhotos()
   ])
-  const featuredProjects = projects.filter(p => p.is_featured).slice(0, 6)
+  const featuredProjects = sortFeaturedProjects(projects.filter(p => p.is_featured)).slice(0, 6)
 
   return (
     <div className="space-y-16">

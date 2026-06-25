@@ -28,6 +28,7 @@ export interface Project {
   embed_code: string | null
   is_featured: boolean
   pinned_order: number
+  featured_order?: number
   created_at: string
 }
 

@@ -23,7 +23,7 @@ import {
   ArrowUp,
   ArrowDown
 } from 'lucide-react'
-import { saveProjectAction, deleteProjectAction, uploadAssetAction, updateProjectsOrderAction } from '@/app/admin/actions'
+import { saveProjectAction, deleteProjectAction, uploadAssetAction, updateProjectsOrderAction, updateFeaturedProjectsOrderAction } from '@/app/admin/actions'
 import { cn, getDirectImageUrl } from '@/lib/utils'
 import { Github } from '@/components/icons'
 import { BlurImage } from '@/components/ui/blur-image'
@@ -43,6 +43,7 @@ interface Project {
   embed_code: string | null
   is_featured: boolean | null
   pinned_order: number | null
+  featured_order: number | null
   created_at?: string
   updated_at?: string
 }
@@ -94,6 +95,7 @@ const DEFAULT_PROJECT: Omit<Project, 'id'> = {
   embed_code: '',
   is_featured: false,
   pinned_order: 0,
+  featured_order: 0,
   created_at: new Date().toLocaleDateString('en-CA')
 }
 
@@ -220,6 +222,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
           embed_code: editingProject.embed_code || null,
           is_featured: editingProject.is_featured || false,
           pinned_order: editingProject.pinned_order || 0,
+          featured_order: editingProject.featured_order || 0,
           created_at: editingProject.created_at || new Date().toISOString()
         }
         combined.push(currentProjTemp)
@@ -238,7 +241,6 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
       }, 0)
     }
   }, [isOrderModalOpen, editingProject, projects])
-
   // Featured order modal state and methods
   const [isFeaturedOrderModalOpen, setIsFeaturedOrderModalOpen] = React.useState(false)
   const [featuredOrderList, setFeaturedOrderList] = React.useState<Project[]>([])
@@ -246,7 +248,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
   React.useEffect(() => {
     if (isFeaturedOrderModalOpen && editingProject) {
       const featured = projects.filter(p => p.is_featured)
-      featured.sort((a, b) => (a.pinned_order || 0) - (b.pinned_order || 0))
+      featured.sort((a, b) => (a.featured_order || 0) - (b.featured_order || 0))
       
       const isEditingFeatured = featured.some(p => p.id === editingProject.id)
       let initialList = [...featured]
@@ -266,6 +268,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
           embed_code: editingProject.embed_code || null,
           is_featured: true,
           pinned_order: editingProject.pinned_order || 0,
+          featured_order: editingProject.featured_order || 0,
           created_at: editingProject.created_at || new Date().toISOString()
         }
         initialList.push(currentProjTemp)
@@ -284,12 +287,12 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
       document.body.style.overflow = 'hidden'
       document.documentElement.style.overflow = 'hidden'
     } else {
-      document.body.style.overflow = ''
-      document.documentElement.style.overflow = ''
+      document.body.style.overflow = 'unset'
+      document.documentElement.style.overflow = 'unset'
     }
     return () => {
-      document.body.style.overflow = ''
-      document.documentElement.style.overflow = ''
+      document.body.style.overflow = 'unset'
+      document.documentElement.style.overflow = 'unset'
     }
   }, [isOrderModalOpen, isFeaturedOrderModalOpen])
 
@@ -372,8 +375,8 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
   const handleSaveFeaturedOrder = async () => {
     setIsPending(true)
     try {
-      const updatesToDb: { id: string; pinned_order: number; is_featured?: boolean }[] = []
-      let newEditingProjectPinnedOrder = editingProject?.pinned_order || 0
+      const updatesToDb: { id: string; featured_order: number; is_featured?: boolean }[] = []
+      let newEditingProjectFeaturedOrder = editingProject?.featured_order || 0
       let newEditingProjectIsFeatured = !!editingProject?.is_featured
 
       // Identify removed featured projects
@@ -387,21 +390,21 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
         const newIdx = idx + 1
         
         if (proj.id === (editingProject?.id || 'temp-current-id')) {
-          newEditingProjectPinnedOrder = newIdx
+          newEditingProjectFeaturedOrder = newIdx
           newEditingProjectIsFeatured = true
         }
         
         if (proj.id && proj.id !== 'temp-current-id') {
-          updatesToDb.push({ id: proj.id, pinned_order: newIdx, is_featured: true })
+          updatesToDb.push({ id: proj.id, featured_order: newIdx, is_featured: true })
         }
       })
 
       removedProjects.forEach(proj => {
-        updatesToDb.push({ id: proj.id, pinned_order: 0, is_featured: false })
+        updatesToDb.push({ id: proj.id, featured_order: 0, is_featured: false })
       })
 
       if (updatesToDb.length > 0) {
-        const res = await updateProjectsOrderAction(updatesToDb)
+        const res = await updateFeaturedProjectsOrderAction(updatesToDb)
         if (!res.success) {
           throw new Error(res.error || 'Failed to update featured projects order')
         }
@@ -412,7 +415,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
         if (update) {
           return { 
             ...p, 
-            pinned_order: update.pinned_order,
+            featured_order: update.featured_order,
             is_featured: update.is_featured !== undefined ? update.is_featured : p.is_featured 
           }
         }
@@ -421,13 +424,13 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
 
       const isCurrentInList = featuredOrderList.some(proj => proj.id === (editingProject?.id || 'temp-current-id'))
       if (!isCurrentInList) {
-        newEditingProjectPinnedOrder = 0
+        newEditingProjectFeaturedOrder = 0
         newEditingProjectIsFeatured = false
       }
 
       setEditingProject(prev => prev ? { 
         ...prev, 
-        pinned_order: newEditingProjectPinnedOrder, 
+        featured_order: newEditingProjectFeaturedOrder, 
         is_featured: newEditingProjectIsFeatured 
       } : null)
 
@@ -440,6 +443,8 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
       setIsPending(false)
     }
   }
+
+
 
   const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -589,11 +594,11 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
       return
     }
 
-    // Check limit of featured projects (max 3 globally)
+    // Check limit of featured projects (max 6 globally)
     if (editingProject.is_featured) {
       const featuredCount = projects.filter(p => p.is_featured && p.id !== editingProject.id).length
-      if (featuredCount >= 3) {
-        alert('You can only feature a maximum of 3 projects on the home page. Please unmark another project as featured first.')
+      if (featuredCount >= 6) {
+        alert('You can only feature a maximum of 6 projects on the home page. Please unmark another project as featured first.')
         return
       }
     }
@@ -870,8 +875,8 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                           const val = e.target.checked
                           if (val) {
                             const featuredCount = projects.filter(p => p.is_featured && p.id !== editingProject.id).length
-                            if (featuredCount >= 3) {
-                              alert('You can only feature a maximum of 3 projects on the home page. Please unmark another project as featured first.')
+                            if (featuredCount >= 6) {
+                              alert('You can only feature a maximum of 6 projects on the home page. Please unmark another project as featured first.')
                               return
                             }
                           }
@@ -1440,6 +1445,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
         document.body
       )}
 
+
       {/* Reorder Featured Projects Modal */}
       {mounted && typeof document !== 'undefined' && createPortal(
         <AnimatePresence>
@@ -1459,7 +1465,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                       Manage Featured Orders
                     </h3>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Sort which projects show up first on the home page (Max 3/6 shown)
+                      Sort which projects show up first on the home page (Max 6 shown)
                     </p>
                   </div>
                   <button

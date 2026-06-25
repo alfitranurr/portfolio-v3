@@ -50,6 +50,7 @@ export const MOCK_PROJECTS: Project[] = [
     embed_code: null,
     is_featured: true,
     pinned_order: 1,
+    featured_order: 1,
     created_at: "2026-01-15T00:00:00Z",
     content: `## Executive Summary
 This project analyzes customer attrition using machine learning techniques to help a telecommunication company identify high-risk accounts and formulate retention strategies.
@@ -88,6 +89,7 @@ model.fit(X_train, y_train)
     embed_code: null,
     is_featured: true,
     pinned_order: 2,
+    featured_order: 2,
     created_at: "2026-02-10T00:00:00Z",
     content: `## Deep Learning for Urban Mobility
 An automated video analytics pipeline using PyTorch and OpenCV to identify, count, and classify urban vehicles (sedans, trucks, motorbikes) at complex intersections.
@@ -116,6 +118,7 @@ An automated video analytics pipeline using PyTorch and OpenCV to identify, coun
     embed_code: null,
     is_featured: true,
     pinned_order: 3,
+    featured_order: 3,
     created_at: "2026-03-05T00:00:00Z",
     content: `## Tableau Global Supply Chain Analysis
 An interactive visualization tracking international transport routes, warehouse inventory levels, and logistics delays.
@@ -139,8 +142,9 @@ An interactive visualization tracking international transport routes, warehouse 
     notebook_url: null,
     slide_url: null,
     embed_code: null,
-    is_featured: false,
-    pinned_order: 0,
+    is_featured: true,
+    pinned_order: 4,
+    featured_order: 4,
     created_at: "2026-04-18T00:00:00Z",
     content: `## E-Commerce Visual Aesthetics
 A design-first client interface focusing on animations, dark theme setups, and frictionless item checkout.
@@ -149,6 +153,66 @@ A design-first client interface focusing on animations, dark theme setups, and f
 - Framer Motion slide-in animations.
 - LocalState-cached cart items.
 - Fully typed forms with Zod and React Hook Form.
+`
+  },
+  {
+    id: "mock-proj-5",
+    title: "SQL Query Performance Tuning Dashboard",
+    description: "Developed a diagnostic dashboard highlighting query bottlenecks, slow index lookups, and connection pool starvation scenarios.",
+    category: "data",
+    sub_category: "Data Analytics Projects",
+    cover_image: null,
+    github_url: "https://github.com/alfitranurr",
+    demo_url: null,
+    notebook_url: null,
+    slide_url: null,
+    embed_code: null,
+    is_featured: true,
+    pinned_order: 5,
+    featured_order: 5,
+    created_at: "2026-05-02T00:00:00Z",
+    content: `## SQL Performance Tuning
+This project provides automated diagnostic tools and visualization templates for performance analysis of PostgreSQL and MySQL databases.
+`
+  },
+  {
+    id: "mock-proj-6",
+    title: "Machine Learning Sentiment Analyzer",
+    description: "Created a real-time sentiment analysis web app using fine-tuned BERT on movie and product reviews, featuring a responsive UI.",
+    category: "data",
+    sub_category: "Artificial Intelligence Projects",
+    cover_image: null,
+    github_url: "https://github.com/alfitranurr",
+    demo_url: null,
+    notebook_url: null,
+    slide_url: null,
+    embed_code: null,
+    is_featured: true,
+    pinned_order: 6,
+    featured_order: 6,
+    created_at: "2026-05-20T00:00:00Z",
+    content: `## Sentiment Analysis Engine
+A simple web application exposing a PyTorch model for processing sequences and classification.
+`
+  },
+  {
+    id: "mock-proj-7",
+    title: "Personal Portfolio Website",
+    description: "Designed a personal developer portfolio featuring sleek dark mode, Supabase auth, and integrated server actions.",
+    category: "non-data",
+    sub_category: "Web Development Projects",
+    cover_image: null,
+    github_url: "https://github.com/alfitranurr",
+    demo_url: null,
+    notebook_url: null,
+    slide_url: null,
+    embed_code: null,
+    is_featured: false,
+    pinned_order: 0,
+    featured_order: 0,
+    created_at: "2026-06-01T00:00:00Z",
+    content: `## Custom Portfolio Website
+A modern, animated portfolio built with Next.js App Router and Tailwind CSS.
 `
   }
 ]
@@ -309,6 +373,21 @@ function sortProjects(list: Project[]): Project[] {
 
     if (aPin !== bPin) {
       return aPin - bPin
+    }
+
+    const aTime = a.created_at ? new Date(a.created_at).getTime() : 0
+    const bTime = b.created_at ? new Date(b.created_at).getTime() : 0
+    return bTime - aTime
+  })
+}
+
+export function sortFeaturedProjects(list: Project[]): Project[] {
+  return [...list].sort((a, b) => {
+    const aOrder = a.featured_order !== null && a.featured_order !== undefined && a.featured_order > 0 ? a.featured_order : Infinity
+    const bOrder = b.featured_order !== null && b.featured_order !== undefined && b.featured_order > 0 ? b.featured_order : Infinity
+
+    if (aOrder !== bOrder) {
+      return aOrder - bOrder
     }
 
     const aTime = a.created_at ? new Date(a.created_at).getTime() : 0
