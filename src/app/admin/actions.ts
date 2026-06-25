@@ -310,6 +310,7 @@ export async function saveProjectAction(projectData: {
   embed_code?: string | null;
   is_featured?: boolean | null;
   pinned_order?: string | number | null;
+  featured_order?: string | number | null;
   created_at?: string;
 }) {
   const cookieStore = await cookies()
@@ -347,7 +348,8 @@ export async function saveProjectAction(projectData: {
             slide_url: projectData.slide_url !== undefined ? projectData.slide_url : p.slide_url,
             embed_code: projectData.embed_code !== undefined ? projectData.embed_code : p.embed_code,
             is_featured: projectData.is_featured ?? p.is_featured,
-            pinned_order: pinnedOrder
+            pinned_order: pinnedOrder,
+            featured_order: projectData.featured_order !== undefined ? parseInt(String(projectData.featured_order)) || 0 : (p.featured_order || 0)
           }
         }
         return p
@@ -375,6 +377,7 @@ export async function saveProjectAction(projectData: {
         embed_code: projectData.embed_code || null,
         is_featured: !!projectData.is_featured,
         pinned_order: pinnedOrder,
+        featured_order: parseInt(String(projectData.featured_order)) || 0,
         created_at: projectData.created_at ? new Date(projectData.created_at).toISOString() : new Date().toISOString()
       }
       list.push(newProj)
@@ -401,9 +404,9 @@ export async function saveProjectAction(projectData: {
     if (pinnedOrder <= 0) {
       const category = (projectData.category === 'data' || projectData.category === 'non-data') ? projectData.category : 'data'
       let query = supabase
-        .from('projects')
-        .select('pinned_order')
-        .eq('category', category)
+          .from('projects')
+          .select('pinned_order')
+          .eq('category', category)
       
       if (isEdit) {
         query = query.neq('id', projectData.id)
@@ -428,6 +431,7 @@ export async function saveProjectAction(projectData: {
       embed_code: projectData.embed_code || null,
       is_featured: !!projectData.is_featured,
       pinned_order: pinnedOrder,
+      featured_order: projectData.featured_order !== undefined ? parseInt(String(projectData.featured_order)) || 0 : undefined,
       updated_at: new Date().toISOString()
     }
 
@@ -571,6 +575,75 @@ export async function updateProjectsOrderAction(updates: { id: string; pinned_or
     return { success: true }
   } catch (err) {
     console.error('updateProjectsOrderAction error:', err)
+    return { success: false, error: err instanceof Error ? err.message : String(err) }
+  }
+}
+
+export async function updateFeaturedProjectsOrderAction(updates: { id: string; featured_order: number; is_featured?: boolean }[]) {
+  const cookieStore = await cookies()
+  if (!hasSupabaseConfig()) {
+    const mockProjectsStr = cookieStore.get('mock_projects')?.value
+    let list: Project[] = []
+    if (mockProjectsStr) {
+      list = JSON.parse(mockProjectsStr)
+    } else {
+      const { MOCK_PROJECTS } = await import('@/lib/data-service')
+      list = MOCK_PROJECTS
+    }
+    
+    // Update matching mock projects
+    list = list.map((p: Project) => {
+      const update = updates.find(u => u.id === p.id)
+      if (update) {
+        return { 
+          ...p, 
+          featured_order: update.featured_order,
+          is_featured: update.is_featured !== undefined ? update.is_featured : p.is_featured
+        }
+      }
+      return p
+    })
+    
+    cookieStore.set('mock_projects', JSON.stringify(list), { path: '/' })
+    revalidatePath('/')
+    revalidatePath('/projects')
+    revalidatePath('/admin/projects')
+    return { success: true }
+  }
+
+  try {
+    const supabase = await createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { success: false, error: 'Unauthorized' }
+    }
+
+    await Promise.all(
+      updates.map(async (update) => {
+        if (update.id.startsWith('mock-')) return
+        
+        const payload: { featured_order: number; updated_at: string; is_featured?: boolean } = { 
+          featured_order: update.featured_order, 
+          updated_at: new Date().toISOString() 
+        }
+        if (update.is_featured !== undefined) {
+          payload.is_featured = update.is_featured
+        }
+
+        const { error } = await supabase
+          .from('projects')
+          .update(payload)
+          .eq('id', update.id)
+        if (error) throw error
+      })
+    )
+
+    revalidatePath('/')
+    revalidatePath('/projects')
+    revalidatePath('/admin/projects')
+    return { success: true }
+  } catch (err) {
+    console.error('updateFeaturedProjectsOrderAction error:', err)
     return { success: false, error: err instanceof Error ? err.message : String(err) }
   }
 }
