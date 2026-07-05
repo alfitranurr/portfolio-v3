@@ -1,3 +1,4 @@
+// cspell:ignore plpgsql
 'use client'
 
 import * as React from 'react'
@@ -18,9 +19,10 @@ import {
   Award,
   Eye,
   Users,
-  RefreshCw
+  RefreshCw,
+  RotateCcw
 } from 'lucide-react'
-import { toggleMessageReadAction, deleteMessageAction } from '@/app/admin/actions'
+import { toggleMessageReadAction, deleteMessageAction, getVisitorStatsAction, resetVisitorAnalyticsAction } from '@/app/admin/actions'
 import { cn } from '@/lib/utils'
 import { MonthlyTrafficChart } from '@/components/admin/monthly-traffic-chart'
 import { useRouter } from 'next/navigation'
@@ -118,7 +120,20 @@ function HeaderActions({ onRefresh }: HeaderActionsProps) {
 }
 
 export function MessagesList({ initialMessages, stats, visitorStats }: MessagesListProps) {
+  const [prevInitialMessages, setPrevInitialMessages] = React.useState(initialMessages)
   const [messages, setMessages] = React.useState<Message[]>(initialMessages)
+  if (initialMessages !== prevInitialMessages) {
+    setPrevInitialMessages(initialMessages)
+    setMessages(initialMessages)
+  }
+
+  const [prevVisitorStats, setPrevVisitorStats] = React.useState(visitorStats)
+  const [currentVisitorStats, setCurrentVisitorStats] = React.useState(visitorStats)
+  if (visitorStats !== prevVisitorStats) {
+    setPrevVisitorStats(visitorStats)
+    setCurrentVisitorStats(visitorStats)
+  }
+
   const [search, setSearch] = React.useState('')
   const [expandedId, setExpandedId] = React.useState<string | null>(null)
   const [isUpdating, setIsUpdating] = React.useState<string | null>(null)
@@ -128,11 +143,14 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
   const handleRefreshData = () => {
     router.refresh()
     setRefreshTrigger(prev => prev + 1)
+    getVisitorStatsAction().then(res => {
+      if (res.success && res.data) {
+        setCurrentVisitorStats(res.data)
+      }
+    }).catch(err => {
+      console.warn('Failed to refresh visitor stats:', err)
+    })
   }
-
-  React.useEffect(() => {
-    setMessages(initialMessages)
-  }, [initialMessages])
 
   // Count unread
   const unreadCount = messages.filter(m => !m.is_read).length
@@ -184,6 +202,30 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
     }
   }
 
+  const handleResetAnalytics = async () => {
+    if (confirm('Are you sure you want to reset all Total Views and Unique Visitors statistics to 0?')) {
+      try {
+        const res = await resetVisitorAnalyticsAction()
+        if (res.success) {
+          setCurrentVisitorStats({
+            totalViews: 0,
+            uniqueVisitors: 0,
+            todayViews: 0,
+            todayUnique: 0,
+            isMissingTable: false
+          })
+          setRefreshTrigger(prev => prev + 1)
+          alert('Analytics statistics have been reset to 0.')
+        } else {
+          alert(`Reset failed: ${res.error || 'Unknown error'}`)
+        }
+      } catch (err) {
+        console.error(err)
+        alert('An unexpected error occurred while resetting analytics.')
+      }
+    }
+  }
+
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
@@ -198,7 +240,7 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
       </div>
 
       {/* Missing Database Table Alert */}
-      {visitorStats?.isMissingTable && (
+      {currentVisitorStats?.isMissingTable && (
         <div className="p-5 rounded-2xl border border-amber-500/20 bg-amber-500/10 text-amber-200 text-xs md:text-sm space-y-3 animate-fade-in">
           <div className="flex items-center gap-2 font-bold">
             <AlertCircle className="w-5 h-5 text-amber-500 shrink-0" />
@@ -208,7 +250,7 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
             The database table <code>page_views</code> or the aggregation function <code>get_visitor_analytics</code> has not been initialized. To enable tracking, please open the SQL Editor in your Supabase dashboard, then copy and run the following command:
           </p>
           <pre className="p-4 rounded-xl bg-black/40 border border-white/5 text-amber-300 font-mono overflow-x-auto text-[11px] whitespace-pre select-all">
-{`-- 1. Create Page Views Table
+{`-- 1. Create Page Views Table & Performance Indexes
 CREATE TABLE IF NOT EXISTS public.page_views (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   visitor_id UUID NOT NULL,
@@ -216,12 +258,29 @@ CREATE TABLE IF NOT EXISTS public.page_views (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
+CREATE INDEX IF NOT EXISTS idx_page_views_created_at ON public.page_views (created_at);
+CREATE INDEX IF NOT EXISTS idx_page_views_visitor_id ON public.page_views (visitor_id);
+
 ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow public insert on page_views" ON public.page_views;
 CREATE POLICY "Allow public insert on page_views" ON public.page_views FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow admin select on page_views" ON public.page_views;
 CREATE POLICY "Allow admin select on page_views" ON public.page_views FOR SELECT USING (auth.role() = 'authenticated');
 
--- 2. Create Database Aggregation Function (Today)
+DROP POLICY IF EXISTS "Allow admin delete on page_views" ON public.page_views;
+CREATE POLICY "Allow admin delete on page_views" ON public.page_views FOR DELETE USING (auth.role() = 'authenticated');
+
+-- 2. Create Reset Function
+CREATE OR REPLACE FUNCTION public.reset_visitor_analytics()
+RETURNS void AS $$
+BEGIN
+  DELETE FROM public.page_views;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 3. Create Database Aggregation Function (Today)
 CREATE OR REPLACE FUNCTION public.get_visitor_analytics()
 RETURNS TABLE (
   total_views BIGINT,
@@ -234,8 +293,8 @@ BEGIN
   SELECT 
     COUNT(*)::BIGINT AS total_views,
     COUNT(DISTINCT visitor_id)::BIGINT AS unique_visitors,
-    COUNT(CASE WHEN created_at >= TIMEZONE('utc', CURRENT_DATE) THEN 1 END)::BIGINT AS today_views,
-    COUNT(DISTINCT CASE WHEN created_at >= TIMEZONE('utc', CURRENT_DATE) THEN visitor_id END)::BIGINT AS today_unique
+    COUNT(CASE WHEN created_at >= (NOW() AT TIME ZONE 'utc')::date THEN 1 END)::BIGINT AS today_views,
+    COUNT(DISTINCT CASE WHEN created_at >= (NOW() AT TIME ZONE 'utc')::date THEN visitor_id END)::BIGINT AS today_unique
   FROM public.page_views;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -255,7 +314,9 @@ DECLARE
   y_visitors BIGINT;
 BEGIN
   -- Calculate annual total accurately
-  SELECT COUNT(*), COUNT(DISTINCT visitor_id)
+  SELECT 
+    COALESCE(COUNT(*), 0), 
+    COALESCE(COUNT(DISTINCT visitor_id), 0)
   INTO y_views, y_visitors
   FROM public.page_views
   WHERE EXTRACT(YEAR FROM created_at) = target_year;
@@ -288,6 +349,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+REVOKE EXECUTE ON FUNCTION public.reset_visitor_analytics() FROM public;
+GRANT EXECUTE ON FUNCTION public.reset_visitor_analytics() TO authenticated;
 REVOKE EXECUTE ON FUNCTION public.get_visitor_analytics() FROM public;
 GRANT EXECUTE ON FUNCTION public.get_visitor_analytics() TO authenticated;
 REVOKE EXECUTE ON FUNCTION public.get_monthly_analytics(INT) FROM public;
@@ -303,7 +366,17 @@ GRANT EXECUTE ON FUNCTION public.get_available_years() TO authenticated;`}
 
       {/* Row 1: Traffic & Inbox Stats */}
       <div className="space-y-3">
-        <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-1">Engagement & Traffic</h3>
+        <div className="flex justify-between items-center px-1">
+          <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Engagement & Traffic</h3>
+          <button
+            onClick={handleResetAnalytics}
+            title="Reset visitor statistics to 0"
+            className="text-[10px] text-red-400 hover:text-red-300 font-bold uppercase tracking-wider flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all cursor-pointer"
+          >
+            <RotateCcw className="w-3 h-3" />
+            <span>Reset Stats</span>
+          </button>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* Total Views Card */}
           <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between relative overflow-hidden group">
@@ -315,11 +388,11 @@ GRANT EXECUTE ON FUNCTION public.get_available_years() TO authenticated;`}
             </div>
             <div className="mt-4 flex items-baseline justify-between">
               <div>
-                <h3 className="text-2xl font-black tracking-tight">{visitorStats?.totalViews ?? 0}</h3>
+                <h3 className="text-2xl font-black tracking-tight">{currentVisitorStats?.totalViews ?? 0}</h3>
                 <p className="text-[10px] text-muted-foreground mt-0.5">Page hits recorded</p>
               </div>
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold flex items-center gap-1">
-                +{visitorStats?.todayViews ?? 0} today
+                +{currentVisitorStats?.todayViews ?? 0} today
               </span>
             </div>
           </div>
@@ -334,11 +407,11 @@ GRANT EXECUTE ON FUNCTION public.get_available_years() TO authenticated;`}
             </div>
             <div className="mt-4 flex items-baseline justify-between">
               <div>
-                <h3 className="text-2xl font-black tracking-tight">{visitorStats?.uniqueVisitors ?? 0}</h3>
+                <h3 className="text-2xl font-black tracking-tight">{currentVisitorStats?.uniqueVisitors ?? 0}</h3>
                 <p className="text-[10px] text-muted-foreground mt-0.5">Distinct user sessions</p>
               </div>
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 font-semibold flex items-center gap-1">
-                +{visitorStats?.todayUnique ?? 0} today
+                +{currentVisitorStats?.todayUnique ?? 0} today
               </span>
             </div>
           </div>

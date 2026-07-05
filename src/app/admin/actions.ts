@@ -1428,6 +1428,67 @@ export async function trackPageViewAction(pagePath: string, visitorId: string) {
   }
 }
 
+export async function getVisitorStatsAction() {
+  if (hasSupabaseConfig()) {
+    try {
+      const supabase = await createClient()
+      const { data: { user }, error } = await supabase.auth.getUser()
+      if (error || !user) {
+        return { success: false, error: 'Unauthorized' }
+      }
+    } catch {
+      return { success: false, error: 'Unauthorized' }
+    }
+  }
+
+  try {
+    const { getVisitorStats } = await import('@/lib/data-service')
+    const stats = await getVisitorStats()
+    return { success: true, data: stats }
+  } catch (err) {
+    console.error('getVisitorStatsAction error:', err)
+    return { success: false, error: err instanceof Error ? err.message : String(err) }
+  }
+}
+
+export async function resetVisitorAnalyticsAction() {
+  if (hasSupabaseConfig()) {
+    try {
+      const supabase = await createClient()
+      const { data: { user }, error: authErr } = await supabase.auth.getUser()
+      if (authErr || !user) {
+        return { success: false, error: 'Unauthorized' }
+      }
+
+      // 1. Try database RPC reset function first (bypasses RLS issues)
+      const { error: rpcErr } = await supabase.rpc('reset_visitor_analytics')
+      
+      if (!rpcErr) {
+        return { success: true }
+      }
+
+      // 2. Fallback to direct DELETE query
+      const { error } = await supabase
+        .from('page_views')
+        .delete()
+        .neq('id', '00000000-0000-0000-0000-000000000000')
+
+      if (error) {
+        if (error.code === '42P01') {
+          return { success: true, message: 'Table does not exist yet' }
+        }
+        throw error
+      }
+      return { success: true }
+    } catch (err) {
+      console.error('resetVisitorAnalyticsAction error:', err)
+      return { success: false, error: err instanceof Error ? err.message : String(err) }
+    }
+  }
+
+  return { success: true }
+}
+
 export async function getMonthlyVisitorStatsAction(year: number) {
   if (hasSupabaseConfig()) {
     try {

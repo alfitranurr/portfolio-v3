@@ -1,3 +1,4 @@
+// cspell:ignore plpgsql gridlines
 'use client'
 
 import * as React from 'react'
@@ -208,7 +209,15 @@ export function MonthlyTrafficChart({ refreshTrigger }: MonthlyTrafficChartProps
               The database aggregation function <code>get_monthly_analytics</code> or <code>get_available_years</code> has not been created in your Supabase database. Please open the SQL Editor in your Supabase dashboard, then copy and run the following command:
             </p>
             <pre className="p-4 rounded-xl bg-black/40 border border-white/5 text-amber-300 font-mono overflow-x-auto text-[10px] md:text-[11px] whitespace-pre select-all max-h-[200px]">
-{`-- Create Monthly Aggregation Function
+{`-- 1. Create Reset Function
+CREATE OR REPLACE FUNCTION public.reset_visitor_analytics()
+RETURNS void AS $$
+BEGIN
+  DELETE FROM public.page_views;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 2. Create Monthly Aggregation Function
 DROP FUNCTION IF EXISTS public.get_monthly_analytics(INT);
 CREATE OR REPLACE FUNCTION public.get_monthly_analytics(target_year INT)
 RETURNS TABLE (
@@ -223,7 +232,9 @@ DECLARE
   y_visitors BIGINT;
 BEGIN
   -- Calculate annual total accurately
-  SELECT COUNT(*), COUNT(DISTINCT visitor_id)
+  SELECT 
+    COALESCE(COUNT(*), 0), 
+    COALESCE(COUNT(DISTINCT visitor_id), 0)
   INTO y_views, y_visitors
   FROM public.page_views
   WHERE EXTRACT(YEAR FROM created_at) = target_year;
@@ -243,7 +254,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Create Get Available Years Function
+-- 3. Create Get Available Years Function
 CREATE OR REPLACE FUNCTION public.get_available_years()
 RETURNS TABLE (
   year_val INT
@@ -256,6 +267,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+REVOKE EXECUTE ON FUNCTION public.reset_visitor_analytics() FROM public;
+GRANT EXECUTE ON FUNCTION public.reset_visitor_analytics() TO authenticated;
 REVOKE EXECUTE ON FUNCTION public.get_monthly_analytics(INT) FROM public;
 GRANT EXECUTE ON FUNCTION public.get_monthly_analytics(INT) TO authenticated;
 REVOKE EXECUTE ON FUNCTION public.get_available_years() FROM public;
@@ -284,7 +297,7 @@ GRANT EXECUTE ON FUNCTION public.get_available_years() TO authenticated;`}
                 </linearGradient>
               </defs>
 
-              {/* Horizontal Gridlines */}
+              {/* Horizontal Grid Lines */}
               {Array.from({ length: 5 }).map((_, i) => {
                 const val = (maxVal / 4) * i
                 const y = getY(val)
