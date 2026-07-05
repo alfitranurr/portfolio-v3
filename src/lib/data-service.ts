@@ -653,10 +653,10 @@ export interface VisitorStats {
 export async function getVisitorStats(): Promise<VisitorStats> {
   if (!hasSupabaseConfig()) {
     return {
-      totalViews: 1248,
-      uniqueVisitors: 382,
-      todayViews: 24,
-      todayUnique: 8,
+      totalViews: 0,
+      uniqueVisitors: 0,
+      todayViews: 0,
+      todayUnique: 0,
       isMissingTable: false
     }
   }
@@ -709,45 +709,14 @@ export async function getMonthlyVisitorStats(year: number): Promise<{
   isMissingFunction: boolean 
 }> {
   if (!hasSupabaseConfig()) {
-    // Return realistic monthly mock data
-    let mockData = [
-      { month: 1, views: 150, visitors: 45 },
-      { month: 2, views: 220, visitors: 70 },
-      { month: 3, views: 180, visitors: 60 },
-      { month: 4, views: 290, visitors: 95 },
-      { month: 5, views: 340, visitors: 120 },
-      { month: 6, views: 410, visitors: 150 },
-      { month: 7, views: 380, visitors: 135 },
-      { month: 8, views: 480, visitors: 180 },
-      { month: 9, views: 520, visitors: 200 },
-      { month: 10, views: 610, visitors: 230 },
-      { month: 11, views: 750, visitors: 280 },
-      { month: 12, views: 900, visitors: 350 },
-    ]
-    let yearlyViews = 4850
-    let yearlyVisitors = 1100
+    let mockData = Array.from({ length: 12 }, (_, i) => ({
+      month: i + 1,
+      views: 0,
+      visitors: 0
+    }))
+    let yearlyViews = 0
+    let yearlyVisitors = 0
 
-    if (year === 2025) {
-      mockData = [
-        { month: 1, views: 80, visitors: 25 },
-        { month: 2, views: 95, visitors: 30 },
-        { month: 3, views: 110, visitors: 35 },
-        { month: 4, views: 120, visitors: 40 },
-        { month: 5, views: 130, visitors: 45 },
-        { month: 6, views: 140, visitors: 50 },
-        { month: 7, views: 150, visitors: 52 },
-        { month: 8, views: 160, visitors: 55 },
-        { month: 9, views: 170, visitors: 58 },
-        { month: 10, views: 180, visitors: 60 },
-        { month: 11, views: 190, visitors: 65 },
-        { month: 12, views: 200, visitors: 70 },
-      ]
-      yearlyViews = 1795
-      yearlyVisitors = 420
-    } else if (year === 2026) {
-      yearlyViews = 1248
-      yearlyVisitors = 382
-    }
     return { stats: mockData, yearlyViews, yearlyVisitors, isMissingFunction: false }
   }
 
