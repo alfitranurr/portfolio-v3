@@ -15,3 +15,32 @@ export function getDirectImageUrl(url: string | null | undefined, width: number 
   return url
 }
 
+export function formatDuration(startDateStr: string, endDateStr: string | null, isCurrent: boolean = false) {
+  const start = new Date(startDateStr)
+  const end = endDateStr ? new Date(endDateStr) : new Date()
+  
+  let years = end.getFullYear() - start.getFullYear()
+  let months = end.getMonth() - start.getMonth()
+  
+  if (months < 0) {
+    years -= 1
+    months += 12
+  }
+  
+  months += 1
+  if (months >= 12) {
+    years += 1
+    months -= 12
+  }
+  
+  const parts: string[] = []
+  if (years > 0) {
+    parts.push(`${years} yr${years > 1 ? 's' : ''}`)
+  }
+  if (months > 0) {
+    parts.push(`${months} mo${months > 1 ? 's' : ''}`)
+  }
+  
+  return parts.join(' ') || '1 mo'
+}
+

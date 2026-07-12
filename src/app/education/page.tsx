@@ -2,6 +2,7 @@ import { getEducation } from '@/lib/data-service'
 import { GraduationCap, Calendar, MapPin, Award } from 'lucide-react'
 import { SafeSchoolLogo } from '@/components/safe-school-logo'
 import { CollapsibleEducationDescription } from '@/components/collapsible-education-description'
+import { formatDuration } from '@/lib/utils'
 
 export const metadata = {
   title: 'Education',
@@ -51,8 +52,8 @@ export default async function EducationPage() {
                 </div>
 
                 {/* Metadata row */}
-                <div className="flex flex-wrap md:flex-col md:items-end gap-x-3 gap-y-1.5 text-xs text-muted-foreground self-start md:self-auto shrink-0 md:text-right">
-                  <span className="flex items-center gap-1.5 font-medium md:flex-row-reverse">
+                <div className="flex flex-col md:items-end gap-1.5 text-xs text-muted-foreground self-start md:self-auto shrink-0 md:text-right font-medium">
+                  <span className="flex items-center gap-1.5 md:flex-row-reverse">
                     <Calendar className="w-3.5 h-3.5 text-primary/80 shrink-0" />
                     <span>
                       {new Date(edu.start_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
@@ -60,27 +61,23 @@ export default async function EducationPage() {
                       {edu.end_date 
                         ? new Date(edu.end_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
                         : 'Present'}
+                      {` · ${formatDuration(edu.start_date, edu.end_date, !edu.end_date)}`}
                     </span>
                   </span>
                   {edu.location && (
-                    <>
-                      <span className="text-slate-200/20 dark:text-slate-800/40 md:hidden font-light">•</span>
-                      <span className="flex items-center gap-1.5 font-medium md:flex-row-reverse">
-                        <MapPin className="w-3.5 h-3.5 text-primary/80 shrink-0" />
-                        <span>{edu.location}</span>
-                      </span>
-                    </>
+                    <span className="flex items-center gap-1.5 md:flex-row-reverse">
+                      <MapPin className="w-3.5 h-3.5 text-primary/80 shrink-0" />
+                      <span>{edu.location}</span>
+                    </span>
+                  )}
+                  {edu.gpa && (
+                    <div className="inline-flex items-center gap-1 text-xs font-extrabold text-primary bg-primary/10 px-2.5 py-1 rounded-lg border border-primary/20 mt-1 md:mt-2">
+                      <Award className="w-3.5 h-3.5" />
+                      <span>GPA: {edu.gpa}</span>
+                    </div>
                   )}
                 </div>
               </div>
-
-              {/* GPA display */}
-              {edu.gpa && (
-                <div className="inline-flex items-center gap-1 text-xs font-extrabold text-primary bg-primary/10 px-2.5 py-1 rounded-lg border border-primary/20">
-                  <Award className="w-3.5 h-3.5" />
-                  <span>GPA: {edu.gpa}</span>
-                </div>
-              )}
 
               {/* Description */}
               {edu.description && (

@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Briefcase, Calendar, MapPin, Users, ChevronDown } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatDuration } from '@/lib/utils'
 import { Experience } from '@/lib/types'
 import { SafeLogo } from '@/components/safe-logo'
 
@@ -36,34 +36,6 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
     roles: Experience[]
   }
 
-  const formatDuration = (startDateStr: string, endDateStr: string | null, isCurrent: boolean) => {
-    const start = new Date(startDateStr)
-    const end = endDateStr ? new Date(endDateStr) : new Date()
-    
-    let years = end.getFullYear() - start.getFullYear()
-    let months = end.getMonth() - start.getMonth()
-    
-    if (months < 0) {
-      years -= 1
-      months += 12
-    }
-    
-    months += 1
-    if (months >= 12) {
-      years += 1
-      months -= 12
-    }
-    
-    const parts: string[] = []
-    if (years > 0) {
-      parts.push(`${years} yr${years > 1 ? 's' : ''}`)
-    }
-    if (months > 0) {
-      parts.push(`${months} mo${months > 1 ? 's' : ''}`)
-    }
-    
-    return parts.join(' ') || '1 mo'
-  }
 
   // Group experiences by company name
   const groupExperiences = (exps: Experience[]): GroupedExperience[] => {
@@ -198,13 +170,13 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                       </div>
 
                       {/* Metadata row */}
-                      <div className="flex flex-wrap md:flex-col md:items-end gap-x-3 gap-y-1.5 text-xs text-muted-foreground self-start md:self-auto shrink-0 md:text-right">
+                      <div className="flex flex-col md:items-end gap-1.5 text-xs text-muted-foreground self-start md:self-auto shrink-0 md:text-right font-medium">
                         {singleExp.is_current && (
-                          <span className="bg-primary/10 border border-primary/20 text-primary px-2 py-0.5 rounded-md text-[10px] font-extrabold animate-pulse md:mb-1">
+                          <span className="bg-primary/10 border border-primary/20 text-primary px-2 py-0.5 rounded-md text-[10px] font-extrabold animate-pulse md:mb-0.5 self-start md:self-auto">
                             Current
                           </span>
                         )}
-                        <span className="flex items-center gap-1.5 font-medium md:flex-row-reverse">
+                        <span className="flex items-center gap-1.5 md:flex-row-reverse">
                           <Calendar className="w-3.5 h-3.5 text-primary/80 shrink-0" />
                           <span>
                             {new Date(singleExp.start_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
@@ -216,13 +188,10 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                           </span>
                         </span>
                         {singleExp.location && (
-                          <>
-                            <span className="text-slate-200/20 dark:text-slate-800/40 md:hidden font-light">•</span>
-                            <span className="flex items-center gap-1.5 font-medium md:flex-row-reverse">
-                              <MapPin className="w-3.5 h-3.5 text-primary/80 shrink-0" />
-                              <span>{singleExp.location}</span>
-                            </span>
-                          </>
+                          <span className="flex items-center gap-1.5 md:flex-row-reverse">
+                            <MapPin className="w-3.5 h-3.5 text-primary/80 shrink-0" />
+                            <span>{singleExp.location}</span>
+                          </span>
                         )}
                       </div>
                     </div>
