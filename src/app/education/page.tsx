@@ -50,10 +50,10 @@ export default async function EducationPage() {
                   </div>
                 </div>
 
-                {/* Metadata badges */}
-                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground self-start md:self-auto">
-                  <span className="flex items-center gap-1 bg-white/5 dark:bg-white/5 border border-slate-200/10 dark:border-slate-800/10 px-2.5 py-1 rounded-lg font-medium">
-                    <Calendar className="w-3.5 h-3.5" />
+                {/* Metadata row */}
+                <div className="flex flex-wrap md:flex-col md:items-end gap-x-3 gap-y-1.5 text-xs text-muted-foreground self-start md:self-auto shrink-0 md:text-right">
+                  <span className="flex items-center gap-1.5 font-medium md:flex-row-reverse">
+                    <Calendar className="w-3.5 h-3.5 text-primary/80 shrink-0" />
                     <span>
                       {new Date(edu.start_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
                       {' - '}
@@ -63,10 +63,13 @@ export default async function EducationPage() {
                     </span>
                   </span>
                   {edu.location && (
-                    <span className="flex items-center gap-1 bg-white/5 dark:bg-white/5 border border-slate-200/10 dark:border-slate-800/10 px-2.5 py-1 rounded-lg font-medium">
-                      <MapPin className="w-3.5 h-3.5" />
-                      <span>{edu.location}</span>
-                    </span>
+                    <>
+                      <span className="text-slate-200/20 dark:text-slate-800/40 md:hidden font-light">•</span>
+                      <span className="flex items-center gap-1.5 font-medium md:flex-row-reverse">
+                        <MapPin className="w-3.5 h-3.5 text-primary/80 shrink-0" />
+                        <span>{edu.location}</span>
+                      </span>
+                    </>
                   )}
                 </div>
               </div>
