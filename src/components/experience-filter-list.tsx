@@ -197,15 +197,15 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                         </div>
                       </div>
 
-                      {/* Metadata badges */}
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground self-start md:self-auto">
+                      {/* Metadata row */}
+                      <div className="flex flex-wrap md:flex-col md:items-end gap-x-3 gap-y-1.5 text-xs text-muted-foreground self-start md:self-auto shrink-0 md:text-right">
                         {singleExp.is_current && (
-                          <span className="bg-primary/10 border border-primary/20 text-primary px-2.5 py-1 rounded-lg font-extrabold animate-pulse">
+                          <span className="bg-primary/10 border border-primary/20 text-primary px-2 py-0.5 rounded-md text-[10px] font-extrabold animate-pulse md:mb-1">
                             Current
                           </span>
                         )}
-                        <span className="flex items-center gap-1 bg-white/5 dark:bg-white/5 border border-slate-200/10 dark:border-slate-800/10 px-2.5 py-1 rounded-lg font-medium">
-                          <Calendar className="w-3.5 h-3.5" />
+                        <span className="flex items-center gap-1.5 font-medium md:flex-row-reverse">
+                          <Calendar className="w-3.5 h-3.5 text-primary/80 shrink-0" />
                           <span>
                             {new Date(singleExp.start_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
                             {' - '}
@@ -216,10 +216,13 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                           </span>
                         </span>
                         {singleExp.location && (
-                          <span className="flex items-center gap-1 bg-white/5 dark:bg-white/5 border border-slate-200/10 dark:border-slate-800/10 px-2.5 py-1 rounded-lg font-medium">
-                            <MapPin className="w-3.5 h-3.5" />
-                            <span>{singleExp.location}</span>
-                          </span>
+                          <>
+                            <span className="text-slate-200/20 dark:text-slate-800/40 md:hidden font-light">•</span>
+                            <span className="flex items-center gap-1.5 font-medium md:flex-row-reverse">
+                              <MapPin className="w-3.5 h-3.5 text-primary/80 shrink-0" />
+                              <span>{singleExp.location}</span>
+                            </span>
+                          </>
                         )}
                       </div>
                     </div>
