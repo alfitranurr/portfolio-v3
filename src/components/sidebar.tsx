@@ -143,27 +143,32 @@ export function Sidebar({ profile }: { profile: Profile }) {
           </div>
 
           {/* Navigation Links */}
-          <nav className="space-y-0.5">
+          <nav className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon
-              const isActive = pathname === item.href
+              const isActive = item.href === '/' 
+                ? pathname === '/' 
+                : pathname.startsWith(item.href)
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
                   className={cn(
-                    "flex items-center justify-between px-3.5 py-2 rounded-xl transition-all duration-200 text-xs font-semibold",
+                    "flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-200 text-xs font-semibold group border",
                     isActive 
-                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/10 scale-[1.01]" 
-                      : "text-foreground/75 hover:bg-white/10 dark:hover:bg-white/5 hover:text-foreground hover:translate-x-0.5"
+                      ? "bg-primary/10 text-primary border-primary/20 shadow-sm shadow-primary/5 scale-[1.01]" 
+                      : "text-muted-foreground border-transparent hover:bg-slate-200/50 dark:hover:bg-white/5 hover:text-foreground hover:translate-x-0.5"
                   )}
                 >
                   <div className="flex items-center gap-2.5">
-                    <Icon className={cn("w-4 h-4", isActive ? "text-primary-foreground" : "text-muted-foreground")} />
+                    <Icon className={cn(
+                      "w-4 h-4 transition-transform duration-200 group-hover:scale-105", 
+                      isActive ? "text-primary scale-105" : "text-muted-foreground group-hover:text-foreground/80"
+                    )} />
                     {item.name}
                   </div>
-                  {isActive && <ChevronRight className="w-3.5 h-3.5 text-primary-foreground" />}
+                  {isActive && <ChevronRight className="w-3.5 h-3.5 text-primary" />}
                 </Link>
               )
             })}

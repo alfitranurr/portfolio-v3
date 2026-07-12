@@ -43,15 +43,25 @@ export function AdminSidebar() {
     return null
   }
 
-  const navItems = [
-    { name: 'Main Dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
-    { name: 'Profile Editor', href: '/admin/profile', icon: UserCog, exact: false },
-    { name: 'Moment Recap', href: '/admin/photos', icon: ImageIcon, exact: false },
-    { name: 'Manage Projects', href: '/admin/projects', icon: Coffee, exact: false },
-    { name: 'Manage Tech Stack', href: '/admin/skills', icon: Terminal, exact: false },
-    { name: 'Manage Education', href: '/admin/education', icon: GraduationCap, exact: false },
-    { name: 'Manage Experience', href: '/admin/experience', icon: Briefcase, exact: false },
-    { name: 'Manage Certificates', href: '/admin/certificates', icon: Award, exact: false },
+  const categories = [
+    {
+      title: 'Overview',
+      items: [
+        { name: 'Dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
+        { name: 'Profile Editor', href: '/admin/profile', icon: UserCog, exact: false },
+        { name: 'Moment Recap', href: '/admin/photos', icon: ImageIcon, exact: false },
+      ]
+    },
+    {
+      title: 'Portfolio Content',
+      items: [
+        { name: 'Projects', href: '/admin/projects', icon: Coffee, exact: false },
+        { name: 'Tech Stack', href: '/admin/skills', icon: Terminal, exact: false },
+        { name: 'Education', href: '/admin/education', icon: GraduationCap, exact: false },
+        { name: 'Experience', href: '/admin/experience', icon: Briefcase, exact: false },
+        { name: 'Certificates', href: '/admin/certificates', icon: Award, exact: false },
+      ]
+    }
   ]
 
   const handleSignOut = async () => {
@@ -67,6 +77,32 @@ export function AdminSidebar() {
         setIsSigningOut(false)
       }
     }
+  }
+
+  const renderThemeButton = () => {
+    if (!mounted) {
+      return (
+        <div className="w-full h-9 rounded-xl bg-slate-200/10 dark:bg-slate-800/10 animate-pulse" />
+      )
+    }
+
+    const isDark = theme === 'dark'
+    return (
+      <button
+        onClick={() => setTheme(isDark ? 'light' : 'dark')}
+        className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-muted-foreground hover:bg-slate-200/50 dark:hover:bg-white/5 hover:text-foreground hover:translate-x-0.5 border border-transparent transition-all cursor-pointer group"
+      >
+        <div className="flex items-center gap-2.5">
+          {isDark ? (
+            <Moon className="w-4 h-4 text-sky-400 transition-transform duration-200 group-hover:scale-110" />
+          ) : (
+            <Sun className="w-4 h-4 text-amber-500 transition-transform duration-200 group-hover:scale-110" />
+          )}
+          <span>{isDark ? 'Dark Theme' : 'Light Theme'}</span>
+        </div>
+        <span className="text-[9px] text-muted-foreground/40 font-bold uppercase tracking-wider">Switch</span>
+      </button>
+    )
   }
 
   return (
@@ -96,129 +132,107 @@ export function AdminSidebar() {
           "lg:sticky lg:top-4 lg:left-auto lg:bottom-auto lg:h-[calc(100vh-2rem)] lg:rounded-3xl lg:z-30 lg:translate-x-0 lg:self-start"
         )}
       >
-        <div>
-          {/* Logo Section */}
-          <div className="flex items-center justify-between mb-5 relative">
-            <Link href="/admin" className="flex items-center gap-2 font-bold text-base text-foreground">
-              <Terminal className="text-primary w-5 h-5 animate-pulse" />
-              <div className="flex flex-col">
-                <span className="leading-tight font-black tracking-wider text-xs text-primary">ADMIN CONSOLE</span>
-                <span className="text-[9px] text-muted-foreground font-normal">Command Center</span>
-              </div>
-            </Link>
-            {/* Mobile close button */}
-            <button
-              onClick={() => setIsOpen(false)}
-              className="lg:hidden absolute top-0 right-0 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-foreground cursor-pointer z-10"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+        <div className="flex flex-col h-full justify-between">
+          <div className="space-y-6">
+            {/* Logo Section */}
+            <div className="flex items-center justify-between relative">
+              <Link href="/admin" className="flex items-center gap-3 font-bold text-base text-foreground">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 shadow-sm">
+                  <Terminal className="text-primary w-4.5 h-4.5 animate-pulse" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="leading-none font-extrabold tracking-wider text-xs text-foreground">Admin Console</span>
+                  <span className="text-[10px] text-muted-foreground mt-0.5 font-normal">Command Center</span>
+                </div>
+              </Link>
+              {/* Mobile close button */}
+              <button
+                onClick={() => setIsOpen(false)}
+                className="lg:hidden absolute top-0 right-0 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-foreground cursor-pointer z-10"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-          {/* Navigation Links */}
-          <nav className="space-y-0.5">
-            {navItems.map((item) => {
-              const Icon = item.icon
-              const isActive = item.exact 
-                ? pathname === item.href 
-                : pathname.startsWith(item.href)
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className={cn(
-                    "flex items-center justify-between px-3.5 py-2 rounded-xl transition-all duration-200 text-xs font-semibold",
-                    isActive 
-                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/10 scale-[1.01]" 
-                      : "text-foreground/75 hover:bg-white/10 dark:hover:bg-white/5 hover:text-foreground hover:translate-x-0.5"
-                  )}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Icon className={cn("w-4 h-4", isActive ? "text-primary-foreground" : "text-muted-foreground")} />
-                    {item.name}
-                  </div>
-                  {isActive && <ChevronRight className="w-3.5 h-3.5 text-primary-foreground" />}
-                </Link>
-              )
-            })}
-          </nav>
-        </div>
-
-        {/* Sidebar Footer */}
-        <div className="space-y-4">
-          {/* Theming Section */}
-          <div className="pt-3 border-t border-slate-200/20 dark:border-slate-800/10 space-y-2 px-3.5">
-            <span className="text-[9px] font-extrabold uppercase tracking-wider text-muted-foreground/60 block">Theming</span>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-foreground">
-                {!mounted ? (
-                  <div className="w-4 h-4 rounded-md bg-slate-200/30 dark:bg-slate-800/30 animate-pulse" />
-                ) : theme === 'dark' ? (
-                  <Moon className="w-4 h-4 text-sky-400" />
-                ) : (
-                  <Sun className="w-4 h-4 text-amber-500" />
-                )}
-                <span className="text-xs font-semibold">Dark Mode</span>
-              </div>
-              
-              {!mounted ? (
-                <div className="w-10 h-5.5 rounded-full bg-slate-200/30 dark:bg-slate-800/30 animate-pulse" />
-              ) : (
-                <button
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className={cn(
-                    "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
-                    theme === 'dark' ? "bg-white" : "bg-slate-300 dark:bg-slate-700"
-                  )}
-                  aria-label="Toggle dark mode"
-                >
-                  <span
-                    className={cn(
-                      "pointer-events-none inline-block h-4.5 w-4.5 transform rounded-full shadow ring-0 transition duration-200 ease-in-out",
-                      theme === 'dark' ? "translate-x-4 bg-black" : "translate-x-0 bg-white"
-                    )}
-                  />
-                </button>
-              )}
+            {/* Navigation Categories */}
+            <div className="space-y-6">
+              {categories.map((category) => (
+                <div key={category.title} className="space-y-1.5">
+                  <h3 className="text-[10px] font-extrabold text-muted-foreground/50 uppercase tracking-widest px-3.5">
+                    {category.title}
+                  </h3>
+                  <nav className="space-y-1">
+                    {category.items.map((item) => {
+                      const Icon = item.icon
+                      const isActive = item.exact 
+                        ? pathname === item.href 
+                        : pathname.startsWith(item.href)
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setIsOpen(false)}
+                          className={cn(
+                            "flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-200 text-xs font-semibold group border",
+                            isActive 
+                              ? "bg-primary/10 text-primary border-primary/20 shadow-sm shadow-primary/5 scale-[1.01]" 
+                              : "text-muted-foreground border-transparent hover:bg-slate-200/50 dark:hover:bg-white/5 hover:text-foreground hover:translate-x-0.5"
+                          )}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <Icon className={cn(
+                              "w-4 h-4 transition-transform duration-200 group-hover:scale-105", 
+                              isActive ? "text-primary scale-105" : "text-muted-foreground group-hover:text-foreground/80"
+                            )} />
+                            <span>{item.name}</span>
+                          </div>
+                          {isActive && <ChevronRight className="w-3.5 h-3.5 text-primary" />}
+                        </Link>
+                      )
+                    })}
+                  </nav>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Actions Section */}
-          <div className="pt-3 border-t border-slate-200/20 dark:border-slate-800/10 space-y-2">
-            <span className="text-[9px] font-extrabold uppercase tracking-wider text-muted-foreground/60 block px-3.5">Console Actions</span>
+          {/* Sidebar Footer */}
+          <div className="mt-auto pt-4 border-t border-slate-200/15 dark:border-slate-800/15 space-y-3">
             <div className="space-y-1">
+              {/* Theme Selector */}
+              {renderThemeButton()}
+
               {/* View Website Link */}
               <a
                 href="/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between px-3.5 py-2 rounded-xl border border-dashed border-slate-200/20 dark:border-slate-800/20 text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-primary/45 transition-all"
+                className="flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold text-muted-foreground hover:bg-slate-200/50 dark:hover:bg-white/5 hover:text-foreground hover:translate-x-0.5 border border-transparent transition-all group"
               >
                 <div className="flex items-center gap-2.5">
-                  <Globe className="w-4 h-4 text-muted-foreground" />
+                  <Globe className="w-4 h-4 text-muted-foreground group-hover:text-foreground/80 transition-transform duration-200 group-hover:scale-110" />
                   <span>Live Portfolio</span>
                 </div>
-                <ExternalLink className="w-3.5 h-3.5 text-primary" />
+                <ExternalLink className="w-3.5 h-3.5 text-muted-foreground/50 group-hover:text-primary transition-colors" />
               </a>
 
               {/* Sign Out Trigger */}
               <button
                 onClick={handleSignOut}
                 disabled={isSigningOut}
-                className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-500/10 active:scale-[0.98] transition-all cursor-pointer"
+                className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-500/10 active:scale-[0.98] transition-all cursor-pointer border border-transparent"
               >
                 <div className="flex items-center gap-2.5">
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-4 h-4 text-red-500" />
                   <span>{isSigningOut ? 'Signing out...' : 'Sign Out'}</span>
                 </div>
               </button>
             </div>
-          </div>
 
-          {/* Footer Metadata */}
-          <div className="border-t border-slate-200/20 dark:border-slate-800/20 pt-3 text-center text-[10px] text-muted-foreground/80">
-            <span>© 2026 Al Fitra Nur Ramadhani</span>
+            {/* Footer Metadata */}
+            <div className="text-center text-[10px] text-muted-foreground/50 font-normal">
+              <span>© 2026 Al Fitra Nur Ramadhani</span>
+            </div>
           </div>
         </div>
       </aside>

@@ -231,19 +231,29 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                   )}
 
                   {/* Title & Info */}
-                  <div className="space-y-1">
-                    <h3 className="font-extrabold text-base leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                  <div className="space-y-2.5">
+                    <h3 className="font-bold text-xs sm:text-[13px] leading-snug text-foreground group-hover:text-primary transition-colors text-justify">
                       {cert.title}
                     </h3>
-                    <p className="text-xs font-semibold text-foreground/90">{cert.issuer}</p>
-                    {cert.credential_id && (
-                      <p className="text-[10px] text-muted-foreground font-mono">ID: {cert.credential_id}</p>
-                    )}
+                    
+                    {/* Divider and Metadata layout aligned with left margin */}
+                    <div className="border-t border-slate-200/10 dark:border-slate-800/20 pt-2.5 space-y-2">
+                      <div className="flex flex-col">
+                        <span className="text-[8px] uppercase tracking-widest text-muted-foreground/50 font-bold">Organizer</span>
+                        <span className="text-[11px] font-semibold text-foreground/90 mt-0.5">{cert.issuer}</span>
+                      </div>
+                      {cert.credential_id && (
+                        <div className="flex flex-col border-t border-slate-200/10 dark:border-slate-800/30 pt-2 mt-2">
+                          <span className="text-[8px] uppercase tracking-widest text-muted-foreground/50 font-bold">Credential ID</span>
+                          <span className="text-[9.5px] font-mono text-muted-foreground mt-0.5 break-all">{cert.credential_id}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 {/* Footer details */}
-                <div className="flex items-center gap-3 pt-4 border-t border-slate-200/10 dark:border-slate-800/10 mt-4">
+                <div className="flex items-center gap-3 pt-3 border-t border-slate-200/10 dark:border-slate-800/10 mt-3">
                   <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
                     <Calendar className="w-3.5 h-3.5" />
                     <span>
@@ -256,7 +266,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                       href={cert.image_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="ml-auto inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline cursor-pointer"
+                      className="ml-auto inline-flex items-center gap-1 text-[11px] font-bold text-primary hover:underline cursor-pointer"
                     >
                       <span>View Certificate</span>
                       <ExternalLink className="w-3.5 h-3.5" />
