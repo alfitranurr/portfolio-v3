@@ -27,6 +27,7 @@ export interface Project {
   slide_url?: string | null
   embed_code: string | null
   is_featured: boolean
+  is_on_progress?: boolean | null
   pinned_order: number
   featured_order?: number
   created_at: string

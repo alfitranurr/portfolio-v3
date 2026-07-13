@@ -42,6 +42,7 @@ interface Project {
   slide_url?: string | null
   embed_code: string | null
   is_featured: boolean | null
+  is_on_progress: boolean | null
   pinned_order: number | null
   featured_order: number | null
   created_at?: string
@@ -66,6 +67,18 @@ const NON_DATA_SUBCATEGORIES = [
   'Digital Marketing Projects',
   'Graphic Design Projects',
 ]
+
+const CATEGORY_MAP: Record<string, string> = {
+  'Data Analytics Projects': 'Data Analytics',
+  'Data Visualization Projects': 'Data Viz',
+  'Artificial Intelligence Projects': 'AI/ML',
+  'Automation Projects': 'Automation',
+  'Data Modeling and Simulation Projects': 'Modeling/Sim',
+  'Web Development Projects': 'Web Dev',
+  'Mobile Development Projects': 'Mobile Dev',
+  'Digital Marketing Projects': 'Digital Marketing',
+  'Graphic Design Projects': 'Graphic Design',
+}
 
 const SUBCATEGORY_MAP: Record<string, string> = {
   'All': 'All Subcategories',
@@ -94,6 +107,7 @@ const DEFAULT_PROJECT: Omit<Project, 'id'> = {
   slide_url: '',
   embed_code: '',
   is_featured: false,
+  is_on_progress: false,
   pinned_order: 0,
   featured_order: 0,
   created_at: new Date().toLocaleDateString('en-CA')
@@ -221,6 +235,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
           notebook_url: editingProject.notebook_url || null,
           embed_code: editingProject.embed_code || null,
           is_featured: editingProject.is_featured || false,
+          is_on_progress: editingProject.is_on_progress || false,
           pinned_order: editingProject.pinned_order || 0,
           featured_order: editingProject.featured_order || 0,
           created_at: editingProject.created_at || new Date().toISOString()
@@ -267,6 +282,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
           notebook_url: editingProject.notebook_url || null,
           embed_code: editingProject.embed_code || null,
           is_featured: true,
+          is_on_progress: editingProject.is_on_progress || false,
           pinned_order: editingProject.pinned_order || 0,
           featured_order: editingProject.featured_order || 0,
           created_at: editingProject.created_at || new Date().toISOString()
@@ -594,11 +610,11 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
       return
     }
 
-    // Check limit of featured projects (max 6 globally)
+    // Check limit of featured projects (max 9 globally)
     if (editingProject.is_featured) {
       const featuredCount = projects.filter(p => p.is_featured && p.id !== editingProject.id).length
-      if (featuredCount >= 6) {
-        alert('You can only feature a maximum of 6 projects on the home page. Please unmark another project as featured first.')
+      if (featuredCount >= 9) {
+        alert('You can only feature a maximum of 9 projects on the home page. Please unmark another project as featured first.')
         return
       }
     }
@@ -856,36 +872,54 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
 
                 {/* Priority and Toggle flags */}
                 <div className="grid grid-cols-2 gap-4 items-center pt-2">
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setIsFeaturedOrderModalOpen(true)}
-                      className="p-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-all flex items-center justify-center border border-primary/20 cursor-pointer shrink-0"
-                      title="Manage Featured Orders"
-                      aria-label="Manage Featured Orders"
-                    >
-                      <Layers className="w-3.5 h-3.5" />
-                    </button>
+                  <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setIsFeaturedOrderModalOpen(true)}
+                        className="p-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-all flex items-center justify-center border border-primary/20 cursor-pointer shrink-0"
+                        title="Manage Featured Orders"
+                        aria-label="Manage Featured Orders"
+                      >
+                        <Layers className="w-3.5 h-3.5" />
+                      </button>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="is_featured"
+                          checked={!!editingProject.is_featured}
+                          onChange={e => {
+                            const val = e.target.checked
+                            if (val) {
+                              const featuredCount = projects.filter(p => p.is_featured && p.id !== editingProject.id).length
+                              if (featuredCount >= 9) {
+                                alert('You can only feature a maximum of 9 projects on the home page. Please unmark another project as featured first.')
+                                return
+                              }
+                            }
+                            setEditingProject(prev => prev ? ({ ...prev, is_featured: val }) : null)
+                          }}
+                          className="w-4 h-4 rounded text-primary focus:ring-primary border-slate-200/20 dark:border-slate-800/15 cursor-pointer"
+                        />
+                        <label htmlFor="is_featured" className="text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer">
+                          Feature on Home
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 pl-9">
                       <input
                         type="checkbox"
-                        id="is_featured"
-                        checked={!!editingProject.is_featured}
+                        id="is_on_progress"
+                        checked={!!editingProject.is_on_progress}
                         onChange={e => {
                           const val = e.target.checked
-                          if (val) {
-                            const featuredCount = projects.filter(p => p.is_featured && p.id !== editingProject.id).length
-                            if (featuredCount >= 6) {
-                              alert('You can only feature a maximum of 6 projects on the home page. Please unmark another project as featured first.')
-                              return
-                            }
-                          }
-                          setEditingProject(prev => prev ? ({ ...prev, is_featured: val }) : null)
+                          setEditingProject(prev => prev ? ({ ...prev, is_on_progress: val }) : null)
                         }}
                         className="w-4 h-4 rounded text-primary focus:ring-primary border-slate-200/20 dark:border-slate-800/15 cursor-pointer"
                       />
-                      <label htmlFor="is_featured" className="text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer">
-                        Feature on Home
+                      <label htmlFor="is_on_progress" className="text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer">
+                        On Progress
                       </label>
                     </div>
                   </div>
@@ -1465,7 +1499,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                       Manage Featured Orders
                     </h3>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Sort which projects show up first on the home page (Max 6 shown)
+                      Sort which projects show up first on the home page (Max 9 shown)
                     </p>
                   </div>
                   <button

@@ -14,7 +14,7 @@ export default async function HomePage() {
     getSkills(),
     getPhotos()
   ])
-  const featuredProjects = sortFeaturedProjects(projects.filter(p => p.is_featured)).slice(0, 6)
+  const featuredProjects = sortFeaturedProjects(projects.filter(p => p.is_featured)).slice(0, 9)
 
   return (
     <div className="space-y-16">
@@ -122,9 +122,16 @@ export default async function HomePage() {
 
                 {/* Details */}
                 <div className="space-y-1">
-                  <span className="text-[9px] font-extrabold text-primary uppercase tracking-wider">
-                    {project.sub_category}
-                  </span>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[9px] font-extrabold text-primary uppercase tracking-wider">
+                      {project.sub_category}
+                    </span>
+                    {project.is_on_progress && (
+                      <span className="text-[9px] font-extrabold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse shrink-0">
+                        On Progress
+                      </span>
+                    )}
+                  </div>
                   <h3 className="font-bold text-base leading-snug group-hover:text-primary transition-colors line-clamp-1">
                     {project.title}
                   </h3>
