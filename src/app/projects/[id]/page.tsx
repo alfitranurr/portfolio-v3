@@ -61,6 +61,11 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             <span className="text-[10px] font-extrabold text-primary uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full">
               {project.sub_category}
             </span>
+            {project.is_on_progress && (
+              <span className="text-[10px] font-extrabold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full uppercase tracking-widest animate-pulse shrink-0">
+                On Progress
+              </span>
+            )}
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-white/5 dark:bg-white/5 border border-slate-200/10 dark:border-slate-800/10 px-3 py-1 rounded-full">
               <Calendar className="w-3.5 h-3.5" />
               <span>

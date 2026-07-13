@@ -309,6 +309,7 @@ export async function saveProjectAction(projectData: {
   slide_url?: string | null;
   embed_code?: string | null;
   is_featured?: boolean | null;
+  is_on_progress?: boolean | null;
   pinned_order?: string | number | null;
   featured_order?: string | number | null;
   created_at?: string;
@@ -348,6 +349,7 @@ export async function saveProjectAction(projectData: {
             slide_url: projectData.slide_url !== undefined ? projectData.slide_url : p.slide_url,
             embed_code: projectData.embed_code !== undefined ? projectData.embed_code : p.embed_code,
             is_featured: projectData.is_featured ?? p.is_featured,
+            is_on_progress: projectData.is_on_progress ?? p.is_on_progress,
             pinned_order: pinnedOrder,
             featured_order: projectData.featured_order !== undefined ? parseInt(String(projectData.featured_order)) || 0 : (p.featured_order || 0)
           }
@@ -376,6 +378,7 @@ export async function saveProjectAction(projectData: {
         slide_url: projectData.slide_url || null,
         embed_code: projectData.embed_code || null,
         is_featured: !!projectData.is_featured,
+        is_on_progress: !!projectData.is_on_progress,
         pinned_order: pinnedOrder,
         featured_order: parseInt(String(projectData.featured_order)) || 0,
         created_at: projectData.created_at ? new Date(projectData.created_at).toISOString() : new Date().toISOString()
@@ -430,6 +433,7 @@ export async function saveProjectAction(projectData: {
       slide_url: projectData.slide_url || null,
       embed_code: projectData.embed_code || null,
       is_featured: !!projectData.is_featured,
+      is_on_progress: !!projectData.is_on_progress,
       pinned_order: pinnedOrder,
       featured_order: projectData.featured_order !== undefined ? parseInt(String(projectData.featured_order)) || 0 : undefined,
       updated_at: new Date().toISOString()

@@ -43,6 +43,7 @@ CREATE TABLE public.projects (
   slide_url TEXT,
   embed_code TEXT, -- Iframe code for Tableau/Plotly
   is_featured BOOLEAN DEFAULT FALSE,
+  is_on_progress BOOLEAN DEFAULT FALSE,
   pinned_order INT DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
@@ -192,6 +193,7 @@ USING (bucket_id = 'portfolio-assets');
 -- MIGRATION: RUN THIS IF TABLE ALREADY EXISTS
 -- ALTER TABLE public.education ADD COLUMN logo_url TEXT;
 -- ALTER TABLE public.projects ADD COLUMN slide_url TEXT;
+-- ALTER TABLE public.projects ADD COLUMN is_on_progress BOOLEAN DEFAULT FALSE;
 
 -- ====================================================
 -- 8. Skills Table (For Interactive Tech Stack)
