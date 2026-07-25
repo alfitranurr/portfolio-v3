@@ -2,6 +2,7 @@ import { GoogleGenAI } from '@google/genai'
 import { buildRAGContext, buildSystemPrompt } from '@/lib/rag-context'
 import { getAISettings, logAIChat } from '@/lib/ai-service'
 
+// Force recompile rag-context module
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: Request) {
