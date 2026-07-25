@@ -1,5 +1,6 @@
 {
   "css.lint.unknownAtRules": "ignore",
+  "cSpell.language": "en,id",
   "cSpell.words": [
     "supabase",
     "Supabase",
@@ -48,6 +49,10 @@
     "Hackathon",
     "BNSP",
     "Hackathons",
-    "Industri"
+    "Industri",
+    "ossp",
+    "Colab",
+    "Kaggle",
+    "plpgsql"
   ]
 }
