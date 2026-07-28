@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { Skill } from '@/lib/types'
 import { Terminal } from 'lucide-react'
@@ -28,7 +29,14 @@ import {
 function getSkillIcon(name: string, customPath: string | null, className?: string, logoUrl?: string | null) {
   if (logoUrl) {
     return (
-      <img src={logoUrl} className={className} alt={name} />
+      <Image
+        src={logoUrl}
+        className={className}
+        alt={name}
+        width={24}
+        height={24}
+        unoptimized
+      />
     )
   }
   if (customPath) {
@@ -115,7 +123,7 @@ export function SkillsGrid({ initialSkills }: SkillsGridProps) {
               "px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 cursor-pointer",
               activeCategory === cat
                 ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/10"
-                : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-foreground/80 hover:text-foreground"
+                : "bg-white dark:bg-white/5 border-slate-300 dark:border-slate-800/10 hover:border-slate-400 dark:hover:border-slate-700 text-foreground/80 hover:text-foreground shadow-2xs"
             )}
           >
             {cat}
