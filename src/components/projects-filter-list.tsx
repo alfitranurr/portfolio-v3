@@ -135,8 +135,19 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                 placeholder="Search projects..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/45 text-xs focus:outline-none focus:border-primary/50 transition-all"
+                className="w-full pl-9 pr-8 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/45 text-xs focus:outline-none focus:border-primary/50 transition-all"
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-muted-foreground/60 hover:text-foreground hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition-all cursor-pointer"
+                  title="Clear search"
+                  aria-label="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
             
             {/* Filter Toggle Button */}
@@ -293,7 +304,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                 {/* Details */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[9px] font-extrabold text-primary uppercase tracking-wider">
+                    <span className="text-[9px] font-extrabold text-primary uppercase tracking-wider bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded-md">
                       {getSubCategoryLabel(project.sub_category)}
                     </span>
                     {project.is_on_progress && (

@@ -422,7 +422,7 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                     </div>
 
                     {cert.image_url && (
-                      <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-950/40 border border-slate-200/10 dark:border-slate-800/10 flex items-center justify-center max-w-[160px] mt-2">
+                      <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-100/90 dark:bg-slate-950/40 border border-slate-300 dark:border-slate-800/60 flex items-center justify-center max-w-[160px] mt-2 shadow-xs">
                         {/* Ambient blur background */}
                         <BlurImage 
                           src={getDirectImageUrl(cert.image_url)} 

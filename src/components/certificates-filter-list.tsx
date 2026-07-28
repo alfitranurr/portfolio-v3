@@ -70,8 +70,19 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                 placeholder="Search certificates..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
+                className="w-full pl-9 pr-8 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
               />
+              {search && (
+                <button
+                  type="button"
+                  onClick={() => setSearch('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-muted-foreground/60 hover:text-foreground hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition-all cursor-pointer"
+                  title="Clear search"
+                  aria-label="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
             
             {/* Filter Toggle Button */}
@@ -190,7 +201,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                 animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                 exit={{ opacity: 0, scale: 0.94, filter: "blur(8px)" }}
                 transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-                className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-[border-color,box-shadow] duration-300 relative overflow-hidden"
+                className="group p-6 rounded-3xl glass-panel border border-slate-300/80 dark:border-slate-800/30 hover:border-primary/40 shadow-xs hover:shadow-md flex flex-col justify-between transition-all duration-300 relative overflow-hidden"
               >
                 {/* Subtle top indicator bar */}
                 <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
@@ -201,14 +212,14 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                     <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
                       <Icon className="w-5 h-5" />
                     </div>
-                    <span className="text-[9px] font-bold text-muted-foreground uppercase bg-white/5 border border-slate-200/10 dark:border-slate-800/10 px-2 py-0.5 rounded">
+                    <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 bg-slate-200/80 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 px-2.5 py-1 rounded-lg shadow-2xs">
                       {BADGE_MAP[cert.category as keyof typeof BADGE_MAP] || cert.category.replace('_', ' ')}
                     </span>
                   </div>
 
                   {/* Image container */}
                   {cert.image_url && (
-                    <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-slate-200/10 to-slate-200/5 dark:from-slate-800/10 dark:to-slate-800/5 border border-slate-200/10 dark:border-slate-800/10 flex items-center justify-center">
+                    <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-100/90 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-800/60 shadow-xs flex items-center justify-center">
                       {/* Ambient blur background */}
                       <BlurImage 
                         src={getDirectImageUrl(cert.image_url)} 
