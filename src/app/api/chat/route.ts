@@ -1,3 +1,4 @@
+/* cspell:disable */
 import { GoogleGenAI } from '@google/genai'
 import { buildRAGContext, buildSystemPrompt } from '@/lib/rag-context'
 import { getAISettings, logAIChat } from '@/lib/ai-service'
@@ -81,7 +82,11 @@ export async function POST(request: Request) {
       async start(controller) {
         try {
           let completeText = ''
-          let finalMetadata: any = null
+          let finalMetadata: {
+            promptTokenCount?: number
+            candidatesTokenCount?: number
+            totalTokenCount?: number
+          } | null = null
 
           for await (const chunk of stream) {
             const text = chunk.text
@@ -110,7 +115,7 @@ export async function POST(request: Request) {
             user_ip: ip,
           }).catch((err) => console.error('Failed async logging of chat event:', err))
 
-        } catch (err: any) {
+        } catch (err) {
           console.error('Gemini streaming error:', err)
           controller.enqueue(
             encoder.encode('\n\n⚠️ Terjadi error saat memproses respons AI.')
@@ -127,11 +132,12 @@ export async function POST(request: Request) {
         'Transfer-Encoding': 'chunked',
       },
     })
-  } catch (err: any) {
+  } catch (err) {
     console.error('Chat API error:', err)
 
     // Parse Gemini quota / rate limit errors
-    const errMsg = String(err.message || err || '')
+    const errorObj = err as Error
+    const errMsg = String(errorObj?.message || err || '')
     if (errMsg.includes('429') || errMsg.includes('RESOURCE_EXHAUSTED') || errMsg.includes('quota')) {
       return Response.json(
         { error: 'AI sedang sibuk (rate limit). Silakan coba lagi dalam beberapa detik.' },
@@ -140,7 +146,7 @@ export async function POST(request: Request) {
     }
 
     return Response.json(
-      { error: err.message || 'Internal server error' },
+      { error: errorObj?.message || 'Internal server error' },
       { status: 500 }
     )
   }

@@ -26,26 +26,44 @@ import { Profile } from '@/lib/types'
 import { useTheme } from 'next-themes'
 import { BlurImage } from '@/components/ui/blur-image'
 
+function subscribeSidebarStorage(callback: () => void) {
+  window.addEventListener('storage', callback)
+  window.addEventListener('sidebar_toggle', callback)
+  return () => {
+    window.removeEventListener('storage', callback)
+    window.removeEventListener('sidebar_toggle', callback)
+  }
+}
+
+function getSidebarCollapsedSnapshot() {
+  if (typeof window === 'undefined') return false
+  return localStorage.getItem('sidebar_collapsed') === 'true'
+}
+
+function getSidebarCollapsedServerSnapshot() {
+  return false
+}
+
 export function Sidebar({ profile }: { profile: Profile }) {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = React.useState(false)
-  const [isCollapsed, setIsCollapsed] = React.useState(false)
+  const isCollapsed = React.useSyncExternalStore(
+    subscribeSidebarStorage,
+    getSidebarCollapsedSnapshot,
+    getSidebarCollapsedServerSnapshot
+  )
   const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 0)
-    const saved = localStorage.getItem('sidebar_collapsed')
-    if (saved !== null) {
-      setIsCollapsed(saved === 'true')
-    }
-    return () => clearTimeout(timer)
-  }, [])
+  const mounted = React.useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
 
   const toggleCollapse = () => {
     const nextState = !isCollapsed
-    setIsCollapsed(nextState)
     localStorage.setItem('sidebar_collapsed', String(nextState))
+    window.dispatchEvent(new Event('storage'))
+    window.dispatchEvent(new Event('sidebar_toggle'))
   }
 
   // Disable sidebar on admin pages
@@ -125,7 +143,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
                   ? "w-10 h-10 mx-auto mb-4" 
                   : "absolute top-0 right-0 w-8 h-8"
               )}
-              title={isCollapsed ? "Buka Sidebar" : "Tutup Sidebar"}
+              title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
               aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
             >
               {isCollapsed ? (

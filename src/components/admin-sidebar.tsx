@@ -31,12 +31,11 @@ export function AdminSidebar() {
   const [isOpen, setIsOpen] = React.useState(false)
   const [isSigningOut, setIsSigningOut] = React.useState(false)
   const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 0)
-    return () => clearTimeout(timer)
-  }, [])
+  const mounted = React.useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
 
   // Only show on admin pages
   if (!pathname.startsWith('/admin')) {

@@ -184,7 +184,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
               transition={{ duration: 0.2, ease: 'easeInOut' }}
-              className="p-4 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-3"
+              className="p-4 rounded-2xl glass-panel border border-slate-300 dark:border-slate-800/10 space-y-3"
             >
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground/60">
@@ -213,7 +213,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                         "px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 cursor-pointer flex items-center gap-1.5",
                         isSelected
                           ? "bg-primary/10 border-primary/30 text-primary shadow-sm"
-                          : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-foreground/80 hover:text-foreground"
+                          : "bg-white dark:bg-white/5 border-slate-300 dark:border-slate-800/10 hover:border-slate-400 dark:hover:border-slate-700 text-foreground/80 hover:text-foreground shadow-2xs"
                       )}
                     >
                       {isSelected && <Check className="w-3.5 h-3.5 shrink-0" />}
@@ -235,7 +235,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
             {selectedSubCategories.map((sub) => (
               <span
                 key={sub}
-                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/10 dark:bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground"
+                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/10 text-foreground shadow-2xs"
               >
                 <span>{getSubCategoryLabel(sub)}</span>
                 <button

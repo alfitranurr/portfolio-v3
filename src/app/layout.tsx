@@ -8,6 +8,7 @@ import { VisitorTracker } from "@/components/visitor-tracker";
 import NextTopLoader from 'nextjs-toploader';
 import { InitialLoader } from "@/components/initial-loader";
 import { ScrollToTop } from "@/components/scroll-to-top";
+import { MainLayoutContainer } from "@/components/main-layout-container";
 import { getProfile } from "@/lib/data-service";
 
 const poppins = Poppins({
@@ -93,7 +94,7 @@ export default async function RootLayout({
           </div>
           
           {/* Main Layout Container */}
-          <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 lg:px-8 relative z-10 flex flex-col lg:flex-row gap-6 min-h-screen">
+          <MainLayoutContainer>
             {/* Persistent Sidebar */}
             <Sidebar profile={profile} />
             
@@ -106,7 +107,7 @@ export default async function RootLayout({
                 {children}
               </main>
             </div>
-          </div>
+          </MainLayoutContainer>
         </ThemeProvider>
       </body>
     </html>
