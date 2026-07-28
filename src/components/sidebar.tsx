@@ -47,11 +47,25 @@ function getSidebarCollapsedServerSnapshot() {
 export function Sidebar({ profile }: { profile: Profile }) {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = React.useState(false)
-  const isCollapsed = React.useSyncExternalStore(
+  const isCollapsedStored = React.useSyncExternalStore(
     subscribeSidebarStorage,
     getSidebarCollapsedSnapshot,
     getSidebarCollapsedServerSnapshot
   )
+  const [isMobile, setIsMobile] = React.useState(false)
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // On mobile (< 1024px), sidebar drawer should always be normal/expanded
+  const isCollapsed = isMobile ? false : isCollapsedStored
+
   const { theme, setTheme } = useTheme()
   const mounted = React.useSyncExternalStore(
     () => () => {},
@@ -60,7 +74,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
   )
 
   const toggleCollapse = () => {
-    const nextState = !isCollapsed
+    const nextState = !isCollapsedStored
     localStorage.setItem('sidebar_collapsed', String(nextState))
     window.dispatchEvent(new Event('storage'))
     window.dispatchEvent(new Event('sidebar_toggle'))
