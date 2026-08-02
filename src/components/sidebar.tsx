@@ -102,9 +102,24 @@ export function Sidebar({ profile }: { profile: Profile }) {
   ]
 
   const socials = [
-    { icon: Instagram, href: 'https://www.instagram.com/rmdhani_ii', label: 'Instagram' },
-    { icon: Linkedin, href: 'https://www.linkedin.com/in/al-fitra-nur-ramadhani/', label: 'LinkedIn' },
-    { icon: Github, href: 'https://github.com/alfitranurr', label: 'GitHub' },
+    { 
+      icon: Instagram, 
+      href: 'https://www.instagram.com/rmdhani_ii', 
+      label: 'Instagram',
+      hoverClasses: 'hover:text-[#E4405F] hover:border-[#E4405F]/50 hover:bg-[#E4405F]/10 hover:shadow-sm hover:shadow-[#E4405F]/20' 
+    },
+    { 
+      icon: Linkedin, 
+      href: 'https://www.linkedin.com/in/al-fitra-nur-ramadhani/', 
+      label: 'LinkedIn',
+      hoverClasses: 'hover:text-[#0A66C2] hover:border-[#0A66C2]/50 hover:bg-[#0A66C2]/10 hover:shadow-sm hover:shadow-[#0A66C2]/20' 
+    },
+    { 
+      icon: Github, 
+      href: 'https://github.com/alfitranurr', 
+      label: 'GitHub',
+      hoverClasses: 'hover:text-slate-900 dark:hover:text-white hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-500/15 hover:shadow-sm' 
+    },
   ]
 
   return (
@@ -324,7 +339,10 @@ export function Sidebar({ profile }: { profile: Profile }) {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 flex items-center justify-center rounded-lg glass-card text-muted-foreground hover:text-foreground hover:scale-105 hover:border-primary/25 transition-all cursor-pointer"
+                    className={cn(
+                      "w-8 h-8 flex items-center justify-center rounded-lg glass-card text-muted-foreground hover:scale-110 transition-all duration-300 cursor-pointer",
+                      social.hoverClasses
+                    )}
                     aria-label={social.label}
                     title={isCollapsed ? social.label : undefined}
                   >
