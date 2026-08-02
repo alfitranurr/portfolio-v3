@@ -527,10 +527,10 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
                     <tr>
                       <th className="py-3.5 px-4 w-12 text-center">#</th>
                       <th className="py-3.5 px-4 min-w-[180px]">Skill Name</th>
-                      <th className="py-3.5 px-4 whitespace-nowrap">Category</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap text-center">Category</th>
                       <th className="py-3.5 px-4 min-w-[160px]">Proficiency</th>
                       <th className="py-3.5 px-4 min-w-[200px]">Description</th>
-                      <th className="py-3.5 px-4 text-right whitespace-nowrap">Actions</th>
+                      <th className="py-3.5 px-4 text-center whitespace-nowrap">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200/5 dark:divide-slate-800/10 font-medium">
@@ -557,7 +557,7 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
                         </td>
 
                         {/* Category */}
-                        <td className="py-3.5 px-4 whitespace-nowrap">
+                        <td className="py-3.5 px-4 whitespace-nowrap text-center">
                           <span className="px-2.5 py-1 rounded-md bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-[10px] font-bold text-muted-foreground">
                             {item.category}
                           </span>
@@ -587,8 +587,8 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
                         </td>
 
                         {/* Actions */}
-                        <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                          <div className="flex items-center justify-end gap-1.5">
+                        <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                          <div className="flex items-center justify-center gap-1.5">
                             <button
                               onClick={() => handleEdit(item)}
                               title="Edit Skill"

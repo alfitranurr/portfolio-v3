@@ -601,10 +601,10 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                     <tr>
                       <th className="py-3.5 px-4 w-12 text-center">#</th>
                       <th className="py-3.5 px-4 min-w-[280px]">Certificate Title & Issuer</th>
-                      <th className="py-3.5 px-4 whitespace-nowrap">Category</th>
-                      <th className="py-3.5 px-4 whitespace-nowrap">Issue Date</th>
-                      <th className="py-3.5 px-4 whitespace-nowrap">Credential ID</th>
-                      <th className="py-3.5 px-4 text-right whitespace-nowrap">Actions</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap text-center">Category</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap text-center">Issue Date</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap text-center">Credential ID</th>
+                      <th className="py-3.5 px-4 text-center whitespace-nowrap">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200/5 dark:divide-slate-800/10 font-medium">
@@ -646,20 +646,22 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                         </td>
 
                         {/* Category Badge */}
-                        <td className="py-3.5 px-4 whitespace-nowrap">
-                          {getCategoryBadge(cert.category)}
+                        <td className="py-3.5 px-4 whitespace-nowrap text-center">
+                          <div className="flex justify-center">
+                            {getCategoryBadge(cert.category)}
+                          </div>
                         </td>
 
                         {/* Issue Date */}
-                        <td className="py-3.5 px-4 whitespace-nowrap text-[11px] text-muted-foreground">
-                          <div className="flex items-center gap-1.5">
+                        <td className="py-3.5 px-4 whitespace-nowrap text-[11px] text-muted-foreground text-center">
+                          <div className="flex items-center justify-center gap-1.5">
                             <Calendar className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
                             <span>{formatDate(cert.issue_date)}</span>
                           </div>
                         </td>
 
                         {/* Credential ID */}
-                        <td className="py-3.5 px-4 whitespace-nowrap">
+                        <td className="py-3.5 px-4 whitespace-nowrap text-center">
                           {cert.credential_id ? (
                             <span 
                               className="font-mono text-[10px] px-2.5 py-1 rounded-md bg-slate-800/60 border border-slate-700/50 text-slate-300 inline-block tracking-tight max-w-[180px] truncate"
@@ -673,8 +675,8 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                         </td>
 
                         {/* Actions */}
-                        <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                          <div className="flex items-center justify-end gap-1.5">
+                        <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                          <div className="flex items-center justify-center gap-1.5">
                             {(cert.credential_url || cert.image_url) && (
                               <a
                                 href={cert.credential_url || cert.image_url || '#'}
