@@ -1,6 +1,5 @@
 /* cspell:disable */
-import { getProfile, getProjects, getEducation, getExperience, getCertificates } from '@/lib/data-service'
-import { TECH_STACK } from '@/lib/constants'
+import { getProfile, getProjects, getEducation, getExperience, getCertificates, getSkills, getPhotos } from '@/lib/data-service'
 
 /**
  * Builds a comprehensive RAG context string from all portfolio data.
@@ -9,12 +8,14 @@ import { TECH_STACK } from '@/lib/constants'
  */
 export async function buildRAGContext(): Promise<string> {
   // Fetch all data in parallel for performance
-  const [profile, projects, education, experience, certificates] = await Promise.all([
+  const [profile, projects, education, experience, certificates, skills, photos] = await Promise.all([
     getProfile(),
     getProjects(),
     getEducation(),
     getExperience(),
     getCertificates(),
+    getSkills(),
+    getPhotos(),
   ])
 
   const sections: string[] = []
@@ -30,8 +31,8 @@ export async function buildRAGContext(): Promise<string> {
 - Resume/CV: ${profile.resume_url || 'Belum tersedia'}`)
 
   // --- Tech Stack ---
-  const techLines = TECH_STACK.map(
-    (t) => `- ${t.name} (${t.category}) — Profisiensi: ${t.level}% — ${t.desc}`
+  const techLines = skills.map(
+    (t) => `- ${t.name} (${t.category}) — Profisiensi: ${t.level}% — ${t.desc || ''}`
   )
   sections.push(`## TECH STACK & SKILLS\n${techLines.join('\n')}`)
 
@@ -104,6 +105,16 @@ ${descList}`
     return `- ${c.title} — oleh ${c.issuer} (${catMap[c.category] || c.category}) — ${date}`
   })
   sections.push(`## SERTIFIKAT & PENGHARGAAN\n${certLines.join('\n')}`)
+
+  // --- Photos / Moment Recap ---
+  const photoLines = photos.map((ph) => {
+    const parts = [`- ${ph.title || 'Momen'} (${ph.year || '-'})`]
+    if (ph.description) parts.push(`  Keterangan: ${ph.description}`)
+    return parts.join('\n')
+  })
+  if (photoLines.length > 0) {
+    sections.push(`## DOKUMENTASI & MOMEN (MOMENT RECAP)\n${photoLines.join('\n')}`)
+  }
 
   return sections.join('\n\n---\n\n')
 }

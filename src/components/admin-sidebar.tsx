@@ -99,7 +99,27 @@ export function AdminSidebar() {
           )}
           <span>{isDark ? 'Dark Theme' : 'Light Theme'}</span>
         </div>
-        <span className="text-[9px] text-muted-foreground/40 font-bold uppercase tracking-wider">Switch</span>
+
+        {/* Animated Toggle Switch */}
+        <div 
+          className={cn(
+            "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-200 ease-in-out shadow-inner",
+            isDark ? "bg-primary" : "bg-slate-300 dark:bg-slate-700"
+          )}
+        >
+          <span
+            className={cn(
+              "pointer-events-none inline-flex h-4.5 w-4.5 items-center justify-center transform rounded-full bg-white shadow-md transition duration-200 ease-in-out text-[9px]",
+              isDark ? "translate-x-4" : "translate-x-0"
+            )}
+          >
+            {isDark ? (
+              <Moon className="w-2.5 h-2.5 text-slate-900" />
+            ) : (
+              <Sun className="w-2.5 h-2.5 text-amber-500" />
+            )}
+          </span>
+        </div>
       </button>
     )
   }
@@ -126,7 +146,7 @@ export function AdminSidebar() {
       {/* Sidebar Container */}
       <aside
         className={cn(
-          "fixed top-0 bottom-0 left-0 z-50 w-64 glass-panel border-r border-slate-200/20 dark:border-slate-800/10 p-5 flex flex-col justify-between transition-transform duration-300 overflow-y-auto scrollbar-hide",
+          "fixed top-0 bottom-0 left-0 z-50 w-52 glass-panel border-r border-slate-200/20 dark:border-slate-800/10 p-3.5 flex flex-col justify-between transition-transform duration-300 overflow-y-auto scrollbar-hide",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
           "lg:sticky lg:top-4 lg:left-auto lg:bottom-auto lg:h-[calc(100vh-2rem)] lg:rounded-3xl lg:z-30 lg:translate-x-0 lg:self-start"
         )}
@@ -172,7 +192,7 @@ export function AdminSidebar() {
                           href={item.href}
                           onClick={() => setIsOpen(false)}
                           className={cn(
-                            "flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-200 text-xs font-semibold group border",
+                            "flex items-center justify-between px-2.5 py-2 rounded-xl transition-all duration-200 text-xs font-semibold group border",
                             isActive 
                               ? "bg-primary/10 text-primary border-primary/20 shadow-sm shadow-primary/5 scale-[1.01]" 
                               : "text-muted-foreground border-transparent hover:bg-slate-200/50 dark:hover:bg-white/5 hover:text-foreground hover:translate-x-0.5"

@@ -142,7 +142,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
           "fixed top-0 bottom-0 left-0 z-50 glass-panel border-r border-slate-200/20 dark:border-slate-800/10 flex flex-col justify-between transition-all duration-300 ease-in-out overflow-y-auto scrollbar-hide",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
           "lg:sticky lg:top-4 lg:left-auto lg:bottom-auto lg:h-[calc(100vh-2rem)] lg:rounded-3xl lg:z-30 lg:translate-x-0 lg:self-start",
-          isCollapsed ? "w-64 lg:w-20 p-3" : "w-64 p-5"
+          isCollapsed ? "w-56 lg:w-20 p-3" : "w-56 p-4"
         )}
       >
         <div>

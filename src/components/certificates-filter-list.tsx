@@ -6,6 +6,7 @@ import { Award, Calendar, ExternalLink, ShieldCheck, Trophy, Landmark, Users, Se
 import { cn, getDirectImageUrl } from '@/lib/utils'
 import { Certificate } from '@/lib/types'
 import { BlurImage } from '@/components/ui/blur-image'
+import { CustomSortDropdown } from '@/components/ui/custom-sort-dropdown'
 
 interface CertificatesFilterListProps {
   initialCertificates: Certificate[]
@@ -33,11 +34,35 @@ const BADGE_MAP = {
   committee_organization: 'Work & Organization',
 }
 
+const CATEGORY_COLOR_MAP: Record<string, { badge: string; icon: string }> = {
+  license_certification: {
+    badge: 'bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30',
+    icon: 'bg-sky-500/15 text-sky-500 dark:text-sky-400 border border-sky-500/20'
+  },
+  competition: {
+    badge: 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30',
+    icon: 'bg-amber-500/15 text-amber-500 dark:text-amber-400 border border-amber-500/20'
+  },
+  seminar_workshop: {
+    badge: 'bg-purple-500/15 text-purple-600 dark:text-purple-400 border-purple-500/30',
+    icon: 'bg-purple-500/15 text-purple-500 dark:text-purple-400 border border-purple-500/20'
+  },
+  committee_organization: {
+    badge: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30',
+    icon: 'bg-emerald-500/15 text-emerald-500 dark:text-emerald-400 border border-emerald-500/20'
+  }
+}
+
+
+
 
 export function CertificatesFilterList({ initialCertificates }: CertificatesFilterListProps) {
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>([])
   const [isFilterOpen, setIsFilterOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
+
+  type SortField = 'newest' | 'oldest' | 'title' | 'issuer'
+  const [sortField, setSortField] = React.useState<SortField>('newest')
 
   const categories = ['All', 'competition', 'seminar_workshop', 'license_certification', 'committee_organization']
 
@@ -49,20 +74,41 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
     )
   }
 
-  const filteredCertificates = initialCertificates.filter(c => {
-    const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(c.category)
-    const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
-      c.issuer.toLowerCase().includes(search.toLowerCase()) ||
-      (c.credential_id && c.credential_id.toLowerCase().includes(search.toLowerCase()))
-    return matchesCategory && matchesSearch
-  })
+  const filteredAndSortedCertificates = React.useMemo(() => {
+    const result = initialCertificates.filter(c => {
+      const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(c.category)
+      const q = search.toLowerCase()
+      const matchesSearch = c.title.toLowerCase().includes(q) ||
+        c.issuer.toLowerCase().includes(q) ||
+        (c.credential_id && c.credential_id.toLowerCase().includes(q))
+      return matchesCategory && matchesSearch
+    })
+
+    result.sort((a, b) => {
+      if (sortField === 'newest') {
+        return new Date(b.issue_date || 0).getTime() - new Date(a.issue_date || 0).getTime()
+      }
+      if (sortField === 'oldest') {
+        return new Date(a.issue_date || 0).getTime() - new Date(b.issue_date || 0).getTime()
+      }
+      if (sortField === 'title') {
+        return a.title.localeCompare(b.title)
+      }
+      if (sortField === 'issuer') {
+        return a.issuer.localeCompare(b.issuer)
+      }
+      return 0
+    })
+
+    return result
+  }, [initialCertificates, selectedCategories, search, sortField])
 
   return (
     <div className="space-y-6">
       {/* Search and Filters panel wrapper */}
-      <div className="space-y-3">
-        <div className="flex justify-between items-center gap-4">
-          <div className="relative w-full max-w-md flex gap-2">
+      <div className="space-y-3 relative z-30">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="relative w-full md:max-w-md flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
               <input
@@ -90,7 +136,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
               type="button"
               onClick={() => setIsFilterOpen(!isFilterOpen)}
               className={cn(
-                "p-2 rounded-xl border transition-all flex items-center gap-1.5 cursor-pointer text-xs font-bold shrink-0",
+                "px-3 py-2 rounded-xl border transition-all flex items-center gap-1.5 cursor-pointer text-xs font-bold shrink-0",
                 isFilterOpen || selectedCategories.length > 0
                   ? "bg-primary/10 border-primary/30 text-primary"
                   : "bg-white/5 border-slate-300 dark:border-slate-800/20 text-foreground/80 hover:text-foreground hover:bg-white/10"
@@ -105,9 +151,23 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
               )}
             </button>
           </div>
-          <span className="text-xs text-muted-foreground font-semibold shrink-0">
-            Showing {filteredCertificates.length} {filteredCertificates.length === 1 ? 'entry' : 'entries'}
-          </span>
+          {/* Sort Selector & Counter */}
+          <div className="flex items-center justify-between md:justify-end gap-3 shrink-0">
+            <CustomSortDropdown
+              value={sortField}
+              onChange={setSortField}
+              options={[
+                { label: 'Newest First', value: 'newest' },
+                { label: 'Oldest First', value: 'oldest' },
+                { label: 'Title (A-Z)', value: 'title' },
+                { label: 'Issuer (A-Z)', value: 'issuer' },
+              ]}
+            />
+
+            <span className="text-xs text-muted-foreground font-semibold shrink-0">
+              Showing {filteredAndSortedCertificates.length} {filteredAndSortedCertificates.length === 1 ? 'entry' : 'entries'}
+            </span>
+          </div>
         </div>
 
         {/* Collapsible Filter Panel */}
@@ -191,8 +251,12 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
         <AnimatePresence mode="popLayout">
-          {filteredCertificates.map((cert) => {
+          {filteredAndSortedCertificates.map((cert) => {
             const Icon = ICON_MAP[cert.category as keyof typeof ICON_MAP] || Award
+            const colors = CATEGORY_COLOR_MAP[cert.category] || {
+              badge: 'bg-primary/15 text-primary border-primary/30',
+              icon: 'bg-primary/15 text-primary border border-primary/20'
+            }
             return (
               <motion.div
                 layout="position"
@@ -209,10 +273,13 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                 <div className="space-y-4">
                   {/* Category icon header */}
                   <div className="flex items-center justify-between">
-                    <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+                    <div className={cn("p-2.5 rounded-xl transition-transform duration-300 group-hover:scale-105", colors.icon)}>
                       <Icon className="w-5 h-5" />
                     </div>
-                    <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 bg-slate-200/80 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 px-2.5 py-1 rounded-lg shadow-2xs">
+                    <span className={cn(
+                      "text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-lg shadow-2xs transition-all duration-300 border",
+                      colors.badge
+                    )}>
                       {BADGE_MAP[cert.category as keyof typeof BADGE_MAP] || cert.category.replace('_', ' ')}
                     </span>
                   </div>
@@ -289,7 +356,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
           })}
         </AnimatePresence>
 
-        {filteredCertificates.length === 0 && (
+        {filteredAndSortedCertificates.length === 0 && (
           <div className="col-span-full py-16 text-center text-muted-foreground text-sm font-semibold">
             No credentials found in this category yet.
           </div>

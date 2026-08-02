@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Coffee, 
   Plus, 
+  PlusCircle, 
   Edit3, 
   Trash2, 
   Search, 
@@ -21,12 +22,19 @@ import {
   Image as ImageIcon,
   Presentation,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  LayoutList,
+  LayoutGrid,
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+  X
 } from 'lucide-react'
 import { saveProjectAction, deleteProjectAction, uploadAssetAction, updateProjectsOrderAction, updateFeaturedProjectsOrderAction } from '@/app/admin/actions'
 import { cn, getDirectImageUrl } from '@/lib/utils'
 import { Github } from '@/components/icons'
 import { BlurImage } from '@/components/ui/blur-image'
+import { CustomSortDropdown } from '@/components/ui/custom-sort-dropdown'
 
 interface Project {
   id: string
@@ -118,6 +126,10 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
   const [activeCategory, setActiveCategory] = React.useState<'data' | 'non-data'>('data')
   const [search, setSearch] = React.useState('')
   const [activeSubCategory, setActiveSubCategory] = React.useState<string>('All')
+  const [viewMode, setViewMode] = React.useState<'grid' | 'table'>('grid')
+  const [sortField, setSortField] = React.useState<'newest' | 'oldest' | 'title' | 'pinned'>('newest')
+  const [currentPage, setCurrentPage] = React.useState(1)
+  const [pageSize, setPageSize] = React.useState(12)
 
   React.useEffect(() => {
     const stored = sessionStorage.getItem('project_admin_active_category')
@@ -550,21 +562,51 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
     }
   }, [notification])
 
-  // Filter
-  const filtered = projects.filter(p => {
-    const matchesCategory = p.category === activeCategory
-    const matchesSearch = 
-      p.title.toLowerCase().includes(search.toLowerCase()) ||
-      p.sub_category.toLowerCase().includes(search.toLowerCase()) ||
-      p.description.toLowerCase().includes(search.toLowerCase())
-    
-    // Normalize subcategory match for backward compatibility
-    const normalizedProjSub = p.sub_category === 'Data Automation Projects' ? 'Automation Projects' : p.sub_category
-    const normalizedActiveSub = activeSubCategory === 'Data Automation Projects' ? 'Automation Projects' : activeSubCategory
+  // Filter and Sort logic
+  const filteredAndSorted = React.useMemo(() => {
+    let result = projects.filter(p => {
+      const matchesCategory = p.category === activeCategory
+      const q = search.toLowerCase()
+      const matchesSearch = 
+        p.title.toLowerCase().includes(q) ||
+        p.sub_category.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q)
+      
+      // Normalize subcategory match for backward compatibility
+      const normalizedProjSub = p.sub_category === 'Data Automation Projects' ? 'Automation Projects' : p.sub_category
+      const normalizedActiveSub = activeSubCategory === 'Data Automation Projects' ? 'Automation Projects' : activeSubCategory
 
-    const matchesSubCategory = normalizedActiveSub === 'All' || normalizedProjSub === normalizedActiveSub
-    return matchesCategory && matchesSearch && matchesSubCategory
-  })
+      const matchesSubCategory = normalizedActiveSub === 'All' || normalizedProjSub === normalizedActiveSub
+      return matchesCategory && matchesSearch && matchesSubCategory
+    })
+
+    result.sort((a, b) => {
+      if (sortField === 'newest') {
+        return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+      }
+      if (sortField === 'oldest') {
+        return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime()
+      }
+      if (sortField === 'title') {
+        return a.title.localeCompare(b.title)
+      }
+      if (sortField === 'pinned') {
+        return (a.pinned_order || 999) - (b.pinned_order || 999)
+      }
+      return 0
+    })
+
+    return result
+  }, [projects, activeCategory, search, activeSubCategory, sortField])
+
+  React.useEffect(() => {
+    setCurrentPage(1)
+  }, [search, activeCategory, activeSubCategory, pageSize, sortField])
+
+  const totalItems = filteredAndSorted.length
+  const totalPages = Math.ceil(totalItems / pageSize) || 1
+  const startIndex = (currentPage - 1) * pageSize
+  const paginatedItems = filteredAndSorted.slice(startIndex, startIndex + pageSize)
 
   const handleEdit = (project: Project) => {
     setEditingProject(project)
@@ -663,20 +705,29 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-black tracking-tight text-foreground">Projects Catalog</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Publish and manage data science case studies and web applications.
+      {/* Header Glass Card Container */}
+      <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+        <div className="absolute -top-12 -right-12 w-44 h-44 bg-primary/10 rounded-full filter blur-3xl pointer-events-none" />
+        <div className="space-y-1 z-10">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
+              <Coffee className="w-5 h-5" />
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+              Projects Catalog
+            </h1>
+          </div>
+          <p className="text-xs sm:text-sm text-muted-foreground pt-0.5">
+            Publish and manage data science case studies, analytics dashboards, and web applications.
           </p>
         </div>
+
         {!editingProject && (
           <button
             onClick={handleCreateNew}
-            className="py-2.5 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-xs flex items-center gap-1.5 hover:bg-primary/95 transition-all cursor-pointer shadow-lg shadow-primary/10"
+            className="group py-2.5 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-xs flex items-center gap-2 hover:bg-primary/90 active:scale-[0.98] transition-all cursor-pointer shadow-md shadow-primary/20 shrink-0 self-start sm:self-center z-10"
           >
-            <Plus className="w-4 h-4" />
+            <PlusCircle className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90" />
             <span>Add Project</span>
           </button>
         )}
@@ -1072,99 +1123,270 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
         </div>
       )}
 
-      {/* Grid listing */}
+      {/* Main Listing Controls & Views */}
       {!editingProject && (
-        <div className="space-y-6">
-          {/* Top Level Category Tabs */}
-          <div className="flex justify-center">
-            <div className="flex p-1 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 max-w-md w-full">
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveCategory('data')
-                  sessionStorage.setItem('project_admin_active_category', 'data')
-                }}
-                className={cn(
-                  "flex-1 py-2 text-xs font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap",
-                  activeCategory === 'data'
-                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                    : "text-foreground/75 hover:text-foreground"
+        <div className="space-y-4">
+          {/* Controls Bar Container */}
+          <div className="p-4 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 relative z-30">
+            {/* Top row: Main Category Switcher */}
+            <div className="flex justify-center">
+              <div className="flex p-1 rounded-2xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 max-w-md w-full">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveCategory('data')
+                    sessionStorage.setItem('project_admin_active_category', 'data')
+                  }}
+                  className={cn(
+                    "flex-1 py-2 text-xs font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap",
+                    activeCategory === 'data'
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                      : "text-foreground/75 hover:text-foreground"
+                  )}
+                >
+                  <Presentation className="w-3.5 h-3.5 shrink-0" />
+                  <span>Data Science</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveCategory('non-data')
+                    sessionStorage.setItem('project_admin_active_category', 'non-data')
+                  }}
+                  className={cn(
+                    "flex-1 py-2 text-xs font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap",
+                    activeCategory === 'non-data'
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                      : "text-foreground/75 hover:text-foreground"
+                  )}
+                >
+                  <FileCode className="w-3.5 h-3.5 shrink-0" />
+                  <span>General Dev</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Middle row: Search, Sort, View Switcher */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+              {/* Search input */}
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
+                <input
+                  type="text"
+                  placeholder="Search by title, subcategory, or description..."
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
+                />
+                {search && (
+                  <button
+                    onClick={() => setSearch('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
                 )}
-              >
-                <Presentation className="w-3.5 h-3.5 shrink-0" />
-                <span>Data Science</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveCategory('non-data')
-                  sessionStorage.setItem('project_admin_active_category', 'non-data')
-                }}
-                className={cn(
-                  "flex-1 py-2 text-xs font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap",
-                  activeCategory === 'non-data'
-                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                    : "text-foreground/75 hover:text-foreground"
-                )}
-              >
-                <FileCode className="w-3.5 h-3.5 shrink-0" />
-                <span>General Dev</span>
-              </button>
+              </div>
+
+              {/* Controls Group */}
+              <div className="flex items-center gap-2 shrink-0">
+                {/* Sort Field Selector */}
+                <CustomSortDropdown
+                  value={sortField}
+                  onChange={setSortField}
+                  options={[
+                    { label: 'Newest First', value: 'newest' },
+                    { label: 'Oldest First', value: 'oldest' },
+                    { label: 'Title (A-Z)', value: 'title' },
+                    { label: 'Pinned Order', value: 'pinned' },
+                  ]}
+                />
+
+                {/* View Switcher */}
+                <div className="flex items-center p-1 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-700/50">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    title="Grid View"
+                    className={cn(
+                      "p-1.5 rounded-lg transition-all cursor-pointer",
+                      viewMode === 'grid'
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('table')}
+                    title="Table View"
+                    className={cn(
+                      "p-1.5 rounded-lg transition-all cursor-pointer",
+                      viewMode === 'table'
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <LayoutList className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom row: Subcategory Pills & Counter */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200/5 dark:border-slate-800/5">
+              <div className="flex flex-wrap gap-1.5">
+                {availableFilters.map((subCategory) => (
+                  <button
+                    key={subCategory}
+                    type="button"
+                    onClick={() => setActiveSubCategory(subCategory)}
+                    className={cn(
+                      "px-3 py-1.5 rounded-xl text-[10px] font-extrabold uppercase tracking-wider border transition-all duration-200 cursor-pointer",
+                      activeSubCategory === subCategory
+                        ? "bg-primary border-primary text-primary-foreground shadow-sm shadow-primary/10"
+                        : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    {SUBCATEGORY_MAP[subCategory] || subCategory.replace(' Projects', '')}
+                  </button>
+                ))}
+              </div>
+
+              <span className="text-[11px] font-semibold text-muted-foreground shrink-0">
+                Showing {paginatedItems.length} of {totalItems} {totalItems === 1 ? 'project' : 'projects'}
+              </span>
             </div>
           </div>
 
-          {/* Filtering */}
-          <div className="flex justify-between items-center gap-4">
-            <div className="relative w-full max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
-              <input
-                type="text"
-                placeholder="Search projects..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
-              />
-            </div>
-            <span className="text-xs text-muted-foreground font-semibold shrink-0">
-              Showing {filtered.length} projects
-            </span>
-          </div>
-
-          {/* Subcategory Filters */}
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            {availableFilters.map((subCategory) => (
-              <button
-                key={subCategory}
-                type="button"
-                onClick={() => setActiveSubCategory(subCategory)}
-                className={cn(
-                  "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all duration-200 cursor-pointer",
-                  activeSubCategory === subCategory
-                    ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/10"
-                    : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-foreground/80 hover:text-foreground"
-                )}
-              >
-                {SUBCATEGORY_MAP[subCategory] || subCategory.replace(' Projects', '')}
-              </button>
-            ))}
-          </div>
-
-          {/* Cards */}
-          {filtered.length === 0 ? (
-            <div className="p-12 text-center rounded-3xl border border-dashed border-slate-200/10 dark:border-slate-800/10 bg-white/5 space-y-3">
-              <Coffee className="w-10 h-10 text-muted-foreground/40 mx-auto" />
-              <h3 className="font-extrabold text-foreground">No projects found</h3>
-              <p className="text-xs text-muted-foreground max-w-xs mx-auto">
-                No items match your search. Create one by clicking the Add Project button above.
+          {/* Views */}
+          {filteredAndSorted.length === 0 ? (
+            <div className="p-12 text-center rounded-3xl border border-dashed border-slate-200/10 dark:border-slate-800/10 glass-panel space-y-3">
+              <Coffee className="w-12 h-12 text-muted-foreground/30 mx-auto" />
+              <h3 className="font-extrabold text-foreground text-base">No projects found</h3>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                No items match your search &quot;{search}&quot;. Click Add Project button to publish new projects.
               </p>
             </div>
+          ) : viewMode === 'table' ? (
+            /* ============================================================ */
+            /* TABLE VIEW */
+            /* ============================================================ */
+            <div className="rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 overflow-hidden shadow-sm relative z-10">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-100/50 dark:bg-slate-900/60 border-b border-slate-200/10 dark:border-slate-800/20 uppercase tracking-wider font-extrabold text-[10px] text-muted-foreground">
+                    <tr>
+                      <th className="py-3.5 px-4 w-12 text-center">#</th>
+                      <th className="py-3.5 px-4 min-w-[260px]">Project Title</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap">Subcategory</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap">Status & Pin</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap">Created Date</th>
+                      <th className="py-3.5 px-4 text-right whitespace-nowrap">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200/5 dark:divide-slate-800/10 font-medium">
+                    {paginatedItems.map((proj, index) => (
+                      <tr 
+                        key={proj.id}
+                        className="hover:bg-slate-500/5 transition-colors group"
+                      >
+                        {/* Index */}
+                        <td className="py-3.5 px-4 text-center text-muted-foreground/60 font-mono text-[11px]">
+                          {startIndex + index + 1}
+                        </td>
+
+                        {/* Title & Cover */}
+                        <td className="py-3.5 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-9 rounded-lg overflow-hidden bg-slate-900 border border-slate-700/60 shrink-0 relative p-0.5 shadow-xs">
+                              {proj.cover_image ? (
+                                <BlurImage
+                                  src={getDirectImageUrl(proj.cover_image, 150)}
+                                  alt={proj.title}
+                                  className="w-full h-full object-cover rounded-md"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-muted-foreground/40">
+                                  <ImageIcon className="w-4 h-4" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="space-y-0.5 min-w-0">
+                              <h4 className="font-bold text-foreground text-xs leading-snug group-hover:text-primary transition-colors line-clamp-1" title={proj.title}>
+                                {proj.title}
+                              </h4>
+                              <p className="text-[10px] text-muted-foreground/70 line-clamp-1">
+                                {proj.description}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Subcategory */}
+                        <td className="py-3.5 px-4 whitespace-nowrap">
+                          <span className="px-2.5 py-1 rounded-md bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-[10px] font-bold text-muted-foreground">
+                            {SUBCATEGORY_MAP[proj.sub_category] || proj.sub_category.replace(' Projects', '')}
+                          </span>
+                        </td>
+
+                        {/* Status & Pin */}
+                        <td className="py-3.5 px-4 whitespace-nowrap">
+                          <div className="flex items-center gap-1.5">
+                            {proj.is_featured && (
+                              <span className="px-2 py-0.5 rounded bg-primary/15 text-primary border border-primary/20 text-[9px] font-black uppercase">
+                                Featured
+                              </span>
+                            )}
+                            {proj.pinned_order !== null && proj.pinned_order !== undefined && proj.pinned_order > 0 ? (
+                              <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[9px] font-bold">
+                                Pin: {proj.pinned_order}
+                              </span>
+                            ) : (
+                              <span className="text-muted-foreground/40 text-[10px]">-</span>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Created Date */}
+                        <td className="py-3.5 px-4 whitespace-nowrap text-[11px] text-muted-foreground font-mono">
+                          {proj.created_at ? new Date(proj.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
+                        </td>
+
+                        {/* Actions */}
+                        <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={() => handleEdit(proj)}
+                              title="Edit Project"
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-foreground transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(proj.id)}
+                              title="Delete Project"
+                              className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer border border-red-500/10"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           ) : (
+            /* ============================================================ */
+            /* GRID VIEW */
+            /* ============================================================ */
             <motion.div 
               layout
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
             >
               <AnimatePresence mode="popLayout">
-                {filtered.map((proj) => (
+                {paginatedItems.map((proj) => (
                   <motion.div
                     layout="position"
                     key={proj.id}
@@ -1172,7 +1394,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                     animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                     exit={{ opacity: 0, scale: 0.94, filter: "blur(8px)" }}
                     transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-                    className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 hover:border-primary/30 transition-all flex flex-col justify-between"
+                    className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 hover:border-primary/30 transition-all flex flex-col justify-between group"
                   >
                     <div className="space-y-2">
                       <div className="flex justify-between items-start gap-2">
@@ -1180,7 +1402,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                           {proj.title}
                         </h3>
                         {proj.is_featured && (
-                          <span className="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[9px] font-black uppercase tracking-wider">
+                          <span className="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[9px] font-black uppercase tracking-wider shrink-0">
                             Featured
                           </span>
                         )}
@@ -1210,7 +1432,6 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                       <div className="relative aspect-video w-full max-h-[140px] rounded-xl overflow-hidden bg-slate-950/40 border border-slate-200/10 dark:border-slate-800/10 mt-2 flex items-center justify-center shrink-0">
                         {proj.cover_image ? (
                           <>
-                            {/* Ambient blur background */}
                             <BlurImage 
                               src={getDirectImageUrl(proj.cover_image, 400)} 
                               alt="" 
@@ -1220,7 +1441,6 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                               loadedScale="scale-110"
                               className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
                             />
-                            {/* Contained foreground image */}
                             <BlurImage 
                               src={getDirectImageUrl(proj.cover_image, 400)} 
                               alt={proj.title} 
@@ -1263,32 +1483,15 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="p-2 rounded-lg bg-white/5 text-muted-foreground hover:text-foreground transition-all"
+                            title="Live Demo"
                           >
                             <ExternalLink className="w-4 h-4" />
                           </a>
                         )}
-                        {proj.slide_url && (
-                          <a
-                            href={proj.slide_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2 rounded-lg bg-white/5 text-muted-foreground hover:text-foreground transition-all"
-                            title="Presentation Deck"
-                          >
-                            <Presentation className="w-4 h-4" />
-                          </a>
-                        )}
-                        {proj.embed_code && (
-                          <span className="p-2 rounded-lg bg-white/5 text-primary flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider">
-                            <Layers className="w-3.5 h-3.5" />
-                            Dashboard
-                          </span>
-                        )}
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
                         <button
-                          type="button"
                           onClick={() => handleEdit(proj)}
                           className="py-1.5 px-3 rounded-lg bg-white/5 hover:bg-white/10 text-foreground font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
                         >
@@ -1296,7 +1499,6 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                           <span>Edit</span>
                         </button>
                         <button
-                          type="button"
                           onClick={() => handleDelete(proj.id)}
                           className="py-1.5 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/15 text-red-600 dark:text-red-400 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer"
                         >
@@ -1309,6 +1511,64 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                 ))}
               </AnimatePresence>
             </motion.div>
+          )}
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground font-semibold">
+                <span>Per page:</span>
+                <select
+                  value={pageSize}
+                  onChange={e => setPageSize(Number(e.target.value))}
+                  className="px-2.5 py-1 rounded-lg bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground text-xs font-bold focus:outline-none cursor-pointer"
+                >
+                  <option value={12}>12</option>
+                  <option value={24}>24</option>
+                  <option value={48}>48</option>
+                </select>
+                <span>
+                  Showing {startIndex + 1} - {Math.min(startIndex + pageSize, totalItems)} of {totalItems}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-foreground disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                  title="Previous Page"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={cn(
+                        "w-8 h-8 rounded-xl text-xs font-bold transition-all cursor-pointer border",
+                        currentPage === page
+                          ? "bg-primary border-primary text-primary-foreground shadow-sm"
+                          : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 text-muted-foreground hover:text-foreground hover:bg-white/10"
+                      )}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-foreground disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                  title="Next Page"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           )}
         </div>
       )}

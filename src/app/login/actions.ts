@@ -11,6 +11,15 @@ export async function loginAction(prevState: any, formData: FormData) {
     return { success: false, error: 'Email and password are required.' }
   }
 
+  const mockEmail = process.env.ADMIN_MOCK_EMAIL || 'admin@portfolio.local'
+  const mockPassword = process.env.ADMIN_MOCK_PASSWORD || 'admin123'
+
+  if (email === mockEmail && password === mockPassword) {
+    const cookieStore = await cookies()
+    cookieStore.set('mock_logged_in', 'true', { path: '/' })
+    return { success: true, redirect: '/admin' }
+  }
+
   const hasConfig = !!(
     process.env.NEXT_PUBLIC_SUPABASE_URL && 
     process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http') &&
@@ -18,14 +27,6 @@ export async function loginAction(prevState: any, formData: FormData) {
   )
 
   if (!hasConfig) {
-    const mockEmail = process.env.ADMIN_MOCK_EMAIL || 'admin@portfolio.local'
-    const mockPassword = process.env.ADMIN_MOCK_PASSWORD || 'admin123'
-
-    if (email === mockEmail && password === mockPassword) {
-      const cookieStore = await cookies()
-      cookieStore.set('mock_logged_in', 'true', { path: '/' })
-      return { success: true, redirect: '/admin' }
-    }
     return { 
       success: false, 
       error: 'Invalid email or password.' 

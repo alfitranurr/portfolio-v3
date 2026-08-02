@@ -93,21 +93,28 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
 
   return (
     <form action={formAction} className="space-y-8 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/10 dark:border-slate-800/10 pb-5">
-        <div>
-          <h1 className="text-3xl font-black tracking-tight text-foreground">Profile Settings</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Customize your biography, headlines, socials, and downloadable CV documents.
+      {/* Header Glass Card Container */}
+      <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+        <div className="absolute -top-12 -right-12 w-44 h-44 bg-primary/10 rounded-full filter blur-3xl pointer-events-none" />
+        <div className="space-y-1 z-10">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
+              <User className="w-5 h-5" />
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+              Profile Settings
+            </h1>
+          </div>
+          <p className="text-xs sm:text-sm text-muted-foreground pt-0.5">
+            Customize your personal biography, headlines, social links, and downloadable CV documents.
           </p>
         </div>
-        
-        {/* Submit Action (Top Right) */}
-        <div className="shrink-0 w-full sm:w-auto">
+
+        <div className="shrink-0 w-full sm:w-auto z-10">
           <button
             type="submit"
             disabled={isPending}
-            className="w-full sm:w-auto py-2.5 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all hover:bg-primary/95 shadow-lg shadow-primary/10"
+            className="w-full sm:w-auto py-2.5 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-xs flex items-center justify-center gap-2 hover:bg-primary/90 active:scale-[0.98] transition-all cursor-pointer shadow-md shadow-primary/20"
           >
             {isPending ? (
               <>

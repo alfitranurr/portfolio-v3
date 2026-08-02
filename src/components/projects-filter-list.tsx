@@ -7,6 +7,7 @@ import { ArrowUpRight, Sparkles, Search, SlidersHorizontal, Check, X } from 'luc
 import { cn } from '@/lib/utils'
 import { Project } from '@/lib/types'
 import { BlurImage } from '@/components/ui/blur-image'
+import { CustomSortDropdown } from '@/components/ui/custom-sort-dropdown'
 
 interface ProjectsFilterListProps {
   initialProjects: Project[]
@@ -70,22 +71,43 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
     )
   }
 
-  const filteredProjects = initialProjects.filter((project) => {
-    const categoryMatch = project.category === activeCategory
-    
-    // Normalize subcategory match for backward compatibility
-    const normalizedProjSub = project.sub_category === 'Data Automation Projects' ? 'Automation Projects' : project.sub_category
+  type SortField = 'pinned' | 'newest' | 'oldest' | 'title'
+  const [sortField, setSortField] = React.useState<SortField>('pinned')
 
-    const subCategoryMatch = selectedSubCategories.length === 0 || selectedSubCategories.some(selectedSub => {
-      const normalizedSelectedSub = selectedSub === 'Data Automation Projects' ? 'Automation Projects' : selectedSub
-      return normalizedProjSub === normalizedSelectedSub
+  const filteredAndSortedProjects = React.useMemo(() => {
+    const result = initialProjects.filter((project) => {
+      const categoryMatch = project.category === activeCategory
+      const normalizedProjSub = project.sub_category === 'Data Automation Projects' ? 'Automation Projects' : project.sub_category
+
+      const subCategoryMatch = selectedSubCategories.length === 0 || selectedSubCategories.some(selectedSub => {
+        const normalizedSelectedSub = selectedSub === 'Data Automation Projects' ? 'Automation Projects' : selectedSub
+        return normalizedProjSub === normalizedSelectedSub
+      })
+
+      const searchMatch = searchQuery.trim() === '' || 
+        project.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        project.description.toLowerCase().includes(searchQuery.toLowerCase())
+      return categoryMatch && subCategoryMatch && searchMatch
     })
 
-    const searchMatch = searchQuery.trim() === '' || 
-      project.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      project.description.toLowerCase().includes(searchQuery.toLowerCase())
-    return categoryMatch && subCategoryMatch && searchMatch
-  })
+    result.sort((a, b) => {
+      if (sortField === 'pinned') {
+        return (a.pinned_order ?? a.featured_order ?? 999) - (b.pinned_order ?? b.featured_order ?? 999)
+      }
+      if (sortField === 'newest') {
+        return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+      }
+      if (sortField === 'oldest') {
+        return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime()
+      }
+      if (sortField === 'title') {
+        return a.title.localeCompare(b.title)
+      }
+      return 0
+    })
+
+    return result
+  }, [initialProjects, activeCategory, selectedSubCategories, searchQuery, sortField])
 
   return (
     <div className="space-y-8">
@@ -125,9 +147,9 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
       </div>
 
       {/* Search and Filter Section */}
-      <div className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-muted-foreground/60 px-1 pb-0">
-          <div className="relative w-full sm:max-w-md flex gap-2">
+      <div className="space-y-3 relative z-30">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="relative w-full md:max-w-md flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
               <input
@@ -171,8 +193,22 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
             </button>
           </div>
 
-          <div className="shrink-0 font-medium self-end sm:self-auto pb-1">
-            Showing <span className="text-foreground font-semibold">{filteredProjects.length}</span> {filteredProjects.length === 1 ? 'entry' : 'entries'}
+          {/* Sort Selector & Counter */}
+          <div className="flex items-center justify-between md:justify-end gap-3 shrink-0">
+            <CustomSortDropdown
+              value={sortField}
+              onChange={setSortField}
+              options={[
+                { label: 'Pinned Order', value: 'pinned' },
+                { label: 'Newest First', value: 'newest' },
+                { label: 'Oldest First', value: 'oldest' },
+                { label: 'Title (A-Z)', value: 'title' },
+              ]}
+            />
+
+            <span className="text-xs text-muted-foreground font-semibold shrink-0">
+              Showing {filteredAndSortedProjects.length} {filteredAndSortedProjects.length === 1 ? 'entry' : 'entries'}
+            </span>
           </div>
         </div>
 
@@ -257,7 +293,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 !-mt-4"
       >
         <AnimatePresence mode="popLayout">
-          {filteredProjects.map((project) => (
+          {filteredAndSortedProjects.map((project) => (
             <motion.div
               layout="position"
               key={project.id}
@@ -336,7 +372,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
           ))}
         </AnimatePresence>
 
-        {filteredProjects.length === 0 && (
+        {filteredAndSortedProjects.length === 0 && (
           <div className="col-span-full py-16 text-center text-muted-foreground text-sm font-semibold">
             No projects found in this category yet.
           </div>
