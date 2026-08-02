@@ -155,25 +155,30 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
 
   return (
     <div className="space-y-8 animate-fade-in">
-      {/* Page Title Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-black tracking-tight text-foreground flex items-center gap-2.5">
-            <Bot className="w-8 h-8 text-primary" />
-            <span>AI Chat Settings</span>
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Configure backend model parameters and audit API token usage.
+      {/* Header Glass Card Container */}
+      <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+        <div className="absolute -top-12 -right-12 w-44 h-44 bg-primary/10 rounded-full filter blur-3xl pointer-events-none" />
+        <div className="space-y-1 z-10">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
+              <Bot className="w-5 h-5" />
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+              AI Chat Settings
+            </h1>
+          </div>
+          <p className="text-xs sm:text-sm text-muted-foreground pt-0.5">
+            Configure backend Gemini model parameters, temperature, search grounding, and audit API token usage.
           </p>
         </div>
-        
+
         {logs.length > 0 && (
           <button
             onClick={handleClearLogs}
             disabled={isClearing}
-            className="self-start sm:self-auto px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-600 dark:text-red-400 bg-red-500/10 hover:bg-red-500/15 transition-all rounded-xl flex items-center gap-2 cursor-pointer"
+            className="py-2.5 px-4 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/20 font-semibold text-xs flex items-center gap-2 transition-all cursor-pointer shrink-0 self-start sm:self-center z-10"
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            <Trash2 className="w-4 h-4" />
             <span>{isClearing ? 'Clearing...' : 'Clear Audit Logs'}</span>
           </button>
         )}

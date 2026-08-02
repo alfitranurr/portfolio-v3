@@ -6,60 +6,50 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
+  const mockLoggedIn = request.cookies.get('mock_logged_in')?.value === 'true'
+
   const hasConfig = !!(
     process.env.NEXT_PUBLIC_SUPABASE_URL && 
     process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http') &&
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   )
 
-  if (!hasConfig) {
-    const mockLoggedIn = request.cookies.get('mock_logged_in')?.value === 'true'
-    
-    if (request.nextUrl.pathname.startsWith('/admin') && !mockLoggedIn) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/login'
-      url.searchParams.set('redirectTo', request.nextUrl.pathname)
-      return NextResponse.redirect(url)
+  let user = null
+  if (hasConfig) {
+    try {
+      const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            getAll() {
+              return request.cookies.getAll()
+            },
+            setAll(cookiesToSet) {
+              cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+              supabaseResponse = NextResponse.next({
+                request,
+              })
+              cookiesToSet.forEach(({ name, value, options }) =>
+                supabaseResponse.cookies.set(name, value, options)
+              )
+            },
+          },
+        }
+      )
+
+      const { data } = await supabase.auth.getUser()
+      user = data?.user || null
+    } catch (err) {
+      console.warn('Middleware auth session refresh error:', err)
     }
-    
-    if (request.nextUrl.pathname.startsWith('/login') && mockLoggedIn) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/admin'
-      return NextResponse.redirect(url)
-    }
-    
-    return supabaseResponse
   }
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({
-            request,
-          })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
-        },
-      },
-    }
-  )
-
-  // Refresh session if expired
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const isAuthenticated = !!user || mockLoggedIn
 
   // Protect admin paths
   if (request.nextUrl.pathname.startsWith('/admin')) {
-    if (!user) {
+    if (!isAuthenticated) {
       // Redirect to login page
       const url = request.nextUrl.clone()
       url.pathname = '/login'
@@ -69,7 +59,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // If user is logged in and tries to access /login, redirect to /admin
-  if (request.nextUrl.pathname.startsWith('/login') && user) {
+  if (request.nextUrl.pathname.startsWith('/login') && isAuthenticated) {
     const url = request.nextUrl.clone()
     url.pathname = '/admin'
     return NextResponse.redirect(url)

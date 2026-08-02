@@ -228,15 +228,26 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
 
   return (
     <div className="space-y-8 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-black tracking-tight text-foreground">Dashboard</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Monitor contact inquiries and portfolio statistics in real-time.
+      {/* Header Glass Card Container */}
+      <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+        <div className="absolute -top-12 -right-12 w-44 h-44 bg-primary/10 rounded-full filter blur-3xl pointer-events-none" />
+        <div className="space-y-1 z-10">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
+              <Inbox className="w-5 h-5" />
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+              Dashboard & Messages
+            </h1>
+          </div>
+          <p className="text-xs sm:text-sm text-muted-foreground pt-0.5">
+            Monitor incoming contact form inquiries, visitor traffic analytics, and portfolio metrics in real-time.
           </p>
         </div>
-        <HeaderActions onRefresh={handleRefreshData} />
+
+        <div className="shrink-0 self-start sm:self-center z-10">
+          <HeaderActions onRefresh={handleRefreshData} />
+        </div>
       </div>
 
       {/* Missing Database Table Alert */}
