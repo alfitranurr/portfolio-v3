@@ -584,10 +584,10 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                     <tr>
                       <th className="py-3.5 px-4 w-12 text-center">#</th>
                       <th className="py-3.5 px-4 min-w-[240px]">Institution & Degree</th>
-                      <th className="py-3.5 px-4 whitespace-nowrap">Period</th>
-                      <th className="py-3.5 px-4 whitespace-nowrap">GPA</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap text-center">Period</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap text-center">GPA</th>
                       <th className="py-3.5 px-4 min-w-[200px]">Location & Details</th>
-                      <th className="py-3.5 px-4 text-right whitespace-nowrap">Actions</th>
+                      <th className="py-3.5 px-4 text-center whitespace-nowrap">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200/5 dark:divide-slate-800/10 font-medium">
@@ -629,15 +629,15 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                         </td>
 
                         {/* Period */}
-                        <td className="py-3.5 px-4 whitespace-nowrap text-[11px] text-muted-foreground">
-                          <div className="flex items-center gap-1.5">
+                        <td className="py-3.5 px-4 whitespace-nowrap text-[11px] text-muted-foreground text-center">
+                          <div className="flex items-center justify-center gap-1.5">
                             <Calendar className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
                             <span>{formatPeriod(item.start_date, item.end_date)}</span>
                           </div>
                         </td>
 
                         {/* GPA */}
-                        <td className="py-3.5 px-4 whitespace-nowrap">
+                        <td className="py-3.5 px-4 whitespace-nowrap text-center">
                           {item.gpa ? (
                             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">
                               <Award className="w-3 h-3" />
@@ -666,8 +666,8 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                         </td>
 
                         {/* Actions */}
-                        <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                          <div className="flex items-center justify-end gap-1.5">
+                        <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                          <div className="flex items-center justify-center gap-1.5">
                             <button
                               onClick={() => handleEdit(item)}
                               title="Edit Entry"

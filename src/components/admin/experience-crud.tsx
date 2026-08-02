@@ -727,10 +727,10 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                     <tr>
                       <th className="py-3.5 px-4 w-12 text-center">#</th>
                       <th className="py-3.5 px-4 min-w-[240px]">Role & Company</th>
-                      <th className="py-3.5 px-4 whitespace-nowrap">Category</th>
-                      <th className="py-3.5 px-4 whitespace-nowrap">Period</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap text-center">Category</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap text-center">Period</th>
                       <th className="py-3.5 px-4 min-w-[200px]">Location & Summary</th>
-                      <th className="py-3.5 px-4 text-right whitespace-nowrap">Actions</th>
+                      <th className="py-3.5 px-4 text-center whitespace-nowrap">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200/5 dark:divide-slate-800/10 font-medium">
@@ -772,13 +772,15 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                         </td>
 
                         {/* Category */}
-                        <td className="py-3.5 px-4 whitespace-nowrap">
-                          {getCategoryBadge(item.category)}
+                        <td className="py-3.5 px-4 whitespace-nowrap text-center">
+                          <div className="flex justify-center">
+                            {getCategoryBadge(item.category)}
+                          </div>
                         </td>
 
                         {/* Period */}
-                        <td className="py-3.5 px-4 whitespace-nowrap text-[11px] text-muted-foreground">
-                          <div className="flex items-center gap-1.5">
+                        <td className="py-3.5 px-4 whitespace-nowrap text-[11px] text-muted-foreground text-center">
+                          <div className="flex items-center justify-center gap-1.5">
                             <Calendar className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
                             <span>{formatPeriod(item.start_date, item.end_date, item.is_current)}</span>
                           </div>
@@ -802,8 +804,8 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                         </td>
 
                         {/* Actions */}
-                        <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                          <div className="flex items-center justify-end gap-1.5">
+                        <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                          <div className="flex items-center justify-center gap-1.5">
                             <button
                               onClick={() => handleEdit(item)}
                               title="Edit Entry"

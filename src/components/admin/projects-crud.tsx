@@ -1278,10 +1278,10 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                     <tr>
                       <th className="py-3.5 px-4 w-12 text-center">#</th>
                       <th className="py-3.5 px-4 min-w-[260px]">Project Title</th>
-                      <th className="py-3.5 px-4 whitespace-nowrap">Subcategory</th>
-                      <th className="py-3.5 px-4 whitespace-nowrap">Status & Pin</th>
-                      <th className="py-3.5 px-4 whitespace-nowrap">Created Date</th>
-                      <th className="py-3.5 px-4 text-right whitespace-nowrap">Actions</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap text-center">Subcategory</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap text-center">Status & Pin</th>
+                      <th className="py-3.5 px-4 whitespace-nowrap text-center">Created Date</th>
+                      <th className="py-3.5 px-4 text-center whitespace-nowrap">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200/5 dark:divide-slate-800/10 font-medium">
@@ -1323,15 +1323,15 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                         </td>
 
                         {/* Subcategory */}
-                        <td className="py-3.5 px-4 whitespace-nowrap">
+                        <td className="py-3.5 px-4 whitespace-nowrap text-center">
                           <span className="px-2.5 py-1 rounded-md bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-[10px] font-bold text-muted-foreground">
                             {SUBCATEGORY_MAP[proj.sub_category] || proj.sub_category.replace(' Projects', '')}
                           </span>
                         </td>
 
                         {/* Status & Pin */}
-                        <td className="py-3.5 px-4 whitespace-nowrap">
-                          <div className="flex items-center gap-1.5">
+                        <td className="py-3.5 px-4 whitespace-nowrap text-center">
+                          <div className="flex items-center justify-center gap-1.5">
                             {proj.is_featured && (
                               <span className="px-2 py-0.5 rounded bg-primary/15 text-primary border border-primary/20 text-[9px] font-black uppercase">
                                 Featured
@@ -1348,13 +1348,13 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                         </td>
 
                         {/* Created Date */}
-                        <td className="py-3.5 px-4 whitespace-nowrap text-[11px] text-muted-foreground font-mono">
+                        <td className="py-3.5 px-4 whitespace-nowrap text-[11px] text-muted-foreground font-mono text-center">
                           {proj.created_at ? new Date(proj.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
                         </td>
 
                         {/* Actions */}
-                        <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                          <div className="flex items-center justify-end gap-1.5">
+                        <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                          <div className="flex items-center justify-center gap-1.5">
                             <button
                               onClick={() => handleEdit(proj)}
                               title="Edit Project"
