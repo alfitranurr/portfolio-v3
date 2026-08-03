@@ -23,7 +23,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
-  ShieldCheck
+  ShieldCheck,
+  Eye,
+  Copy
 } from 'lucide-react'
 import { saveCertificateAction, deleteCertificateAction } from '@/app/admin/actions'
 import { cn, getDirectImageUrl } from '@/lib/utils'
@@ -153,9 +155,22 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
   const startIndex = (currentPage - 1) * pageSize
   const paginatedItems = filteredAndSorted.slice(startIndex, startIndex + pageSize)
 
+  const [previewItem, setPreviewItem] = React.useState<Certificate | null>(null)
+
   const handleEdit = (item: Certificate) => {
     const issue_date = item.issue_date ? item.issue_date.split('T')[0] : ''
     setEditingItem({ ...item, issue_date })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleDuplicate = (item: Certificate) => {
+    const issue_date = item.issue_date ? item.issue_date.split('T')[0] : ''
+    setEditingItem({
+      ...item,
+      id: undefined,
+      title: `${item.title} (Copy)`,
+      issue_date
+    })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -677,12 +692,26 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                         {/* Actions */}
                         <td className="py-3.5 px-4 text-center whitespace-nowrap">
                           <div className="flex items-center justify-center gap-1.5">
+                            <button
+                              onClick={() => setPreviewItem(cert)}
+                              title="View Details"
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-cyan-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDuplicate(cert)}
+                              title="Duplicate Entry"
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-amber-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                            </button>
                             {(cert.credential_url || cert.image_url) && (
                               <a
                                 href={cert.credential_url || cert.image_url || '#'}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                title="View Credential"
+                                title="View External Credential"
                                 className="p-1.5 rounded-lg bg-white/5 hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
                               >
                                 <ExternalLink className="w-3.5 h-3.5" />
@@ -781,6 +810,20 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
 
                     <div className="flex items-center gap-1.5">
                       <button
+                        onClick={() => setPreviewItem(cert)}
+                        title="View Details"
+                        className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-cyan-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDuplicate(cert)}
+                        title="Duplicate Entry"
+                        className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-amber-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                      </button>
+                      <button
                         onClick={() => handleEdit(cert)}
                         className="py-1.5 px-3 rounded-lg bg-white/5 hover:bg-white/10 text-foreground font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
                       >
@@ -789,7 +832,7 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
                       </button>
                       <button
                         onClick={() => handleDelete(cert.id)}
-                        className="py-1.5 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/15 text-red-600 dark:text-red-400 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer"
+                        className="py-1.5 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer border border-red-500/10"
                       >
                         <Trash2 className="w-3 h-3" />
                         <span>Delete</span>
@@ -876,6 +919,78 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Detail Preview Modal (Read) */}
+      {previewItem && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl relative animate-fade-in">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                {previewItem.image_url ? (
+                  <div className="w-16 h-12 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shrink-0 relative">
+                    <BlurImage src={getDirectImageUrl(previewItem.image_url)} alt={previewItem.title} className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+                    <Award className="w-6 h-6" />
+                  </div>
+                )}
+                <div>
+                  <h3 className="text-lg font-bold text-foreground leading-snug">{previewItem.title}</h3>
+                  <p className="text-sm font-semibold text-sky-400">{previewItem.issuer}</p>
+                </div>
+              </div>
+              <button onClick={() => setPreviewItem(null)} className="p-2 rounded-xl hover:bg-white/10 text-muted-foreground hover:text-foreground cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-2 text-xs text-muted-foreground border-y border-slate-800 py-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-primary shrink-0" />
+                  <span className="font-semibold text-foreground">{formatDate(previewItem.issue_date)}</span>
+                </div>
+                {getCategoryBadge(previewItem.category)}
+              </div>
+              {previewItem.credential_id && (
+                <div className="flex items-center gap-2 font-mono text-[11px]">
+                  <span className="text-muted-foreground/60">Credential ID:</span>
+                  <span className="text-amber-400 font-bold">{previewItem.credential_id}</span>
+                </div>
+              )}
+            </div>
+
+            {previewItem.credential_url && (
+              <div className="pt-1">
+                <a
+                  href={previewItem.credential_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 text-primary border border-primary/20 text-xs font-bold hover:bg-primary/20 transition-all"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Verify Credential Online</span>
+                </a>
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                onClick={() => {
+                  const itemToEdit = previewItem
+                  setPreviewItem(null)
+                  handleEdit(itemToEdit)
+                }}
+                className="py-2 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-xs flex items-center gap-1.5 hover:bg-primary/90 cursor-pointer shadow-md shadow-primary/20"
+              >
+                <Edit3 className="w-4 h-4" />
+                <span>Edit Entry</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
