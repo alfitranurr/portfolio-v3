@@ -375,7 +375,73 @@ GRANT EXECUTE ON FUNCTION public.get_available_years() TO authenticated;`}
         </div>
       )}
 
-      {/* Row 1: Traffic & Inbox Stats */}
+      {/* Row 1: Portfolio Content Stats (Top) */}
+      <div className="space-y-3">
+        <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-1">Portfolio Content</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Projects card (Sky Blue) */}
+          <div className="p-5 rounded-2xl glass-panel border border-sky-500/20 dark:border-sky-500/20 flex flex-col justify-between relative overflow-hidden group hover:border-sky-500/40 transition-all">
+            <div className="absolute -top-10 -right-10 w-28 h-28 bg-sky-500/10 rounded-full filter blur-xl group-hover:bg-sky-500/20 transition-all pointer-events-none" />
+            <div className="flex justify-between items-start z-10">
+              <span className="text-xs font-bold text-sky-400 uppercase tracking-wider">Projects</span>
+              <div className="p-2 rounded-xl bg-sky-500/15 text-sky-400 border border-sky-500/20">
+                <Coffee className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-4 z-10">
+              <h3 className="text-2xl font-black tracking-tight">{stats.projects}</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Showcase works</p>
+            </div>
+          </div>
+
+          {/* Education card (Emerald Green) */}
+          <div className="p-5 rounded-2xl glass-panel border border-emerald-500/20 dark:border-emerald-500/20 flex flex-col justify-between relative overflow-hidden group hover:border-emerald-500/40 transition-all">
+            <div className="absolute -top-10 -right-10 w-28 h-28 bg-emerald-500/10 rounded-full filter blur-xl group-hover:bg-emerald-500/20 transition-all pointer-events-none" />
+            <div className="flex justify-between items-start z-10">
+              <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Education</span>
+              <div className="p-2 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                <GraduationCap className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-4 z-10">
+              <h3 className="text-2xl font-black tracking-tight">{stats.education}</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Timeline milestones</p>
+            </div>
+          </div>
+
+          {/* Experience card (Amber Orange) */}
+          <div className="p-5 rounded-2xl glass-panel border border-amber-500/20 dark:border-amber-500/20 flex flex-col justify-between relative overflow-hidden group hover:border-amber-500/40 transition-all">
+            <div className="absolute -top-10 -right-10 w-28 h-28 bg-amber-500/10 rounded-full filter blur-xl group-hover:bg-amber-500/20 transition-all pointer-events-none" />
+            <div className="flex justify-between items-start z-10">
+              <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Experiences</span>
+              <div className="p-2 rounded-xl bg-amber-500/15 text-amber-400 border border-amber-500/20">
+                <Briefcase className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-4 z-10">
+              <h3 className="text-2xl font-black tracking-tight">{stats.experience}</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Work history roles</p>
+            </div>
+          </div>
+
+          {/* Certificates card (Purple) */}
+          <div className="p-5 rounded-2xl glass-panel border border-purple-500/20 dark:border-purple-500/20 flex flex-col justify-between relative overflow-hidden group hover:border-purple-500/40 transition-all">
+            <div className="absolute -top-10 -right-10 w-28 h-28 bg-purple-500/10 rounded-full filter blur-xl group-hover:bg-purple-500/20 transition-all pointer-events-none" />
+            <div className="flex justify-between items-start z-10">
+              <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">Certificates</span>
+              <div className="p-2 rounded-xl bg-purple-500/15 text-purple-400 border border-purple-500/20">
+                <Award className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-4 z-10">
+              <h3 className="text-2xl font-black tracking-tight">{stats.certificates}</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Credentials issued</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Row 2: Traffic & Inbox Stats */}
       <div className="space-y-3">
         <div className="flex justify-between items-center px-1">
           <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Engagement & Traffic</h3>
@@ -389,59 +455,59 @@ GRANT EXECUTE ON FUNCTION public.get_available_years() TO authenticated;`}
           </button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* Total Views Card */}
-          <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between relative overflow-hidden group">
-            <div className="flex justify-between items-start">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Total Views</span>
-              <div className="p-2 rounded-xl bg-white/5 text-primary">
+          {/* Total Views Card (Cyan) */}
+          <div className="p-5 rounded-2xl glass-panel border border-cyan-500/20 dark:border-cyan-500/20 flex flex-col justify-between relative overflow-hidden group hover:border-cyan-500/40 transition-all">
+            <div className="absolute -top-10 -right-10 w-28 h-28 bg-cyan-500/10 rounded-full filter blur-xl group-hover:bg-cyan-500/20 transition-all pointer-events-none" />
+            <div className="flex justify-between items-start z-10">
+              <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">Total Views</span>
+              <div className="p-2 rounded-xl bg-cyan-500/15 text-cyan-400 border border-cyan-500/20">
                 <Eye className="w-4 h-4" />
               </div>
             </div>
-            <div className="mt-4 flex items-baseline justify-between">
+            <div className="mt-4 flex items-baseline justify-between z-10">
               <div>
                 <h3 className="text-2xl font-black tracking-tight">{currentVisitorStats?.totalViews ?? 0}</h3>
                 <p className="text-[10px] text-muted-foreground mt-0.5">Page hits recorded</p>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold flex items-center gap-1">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-semibold flex items-center gap-1">
                 +{currentVisitorStats?.todayViews ?? 0} today
               </span>
             </div>
           </div>
 
-          {/* Unique Visitors Card */}
-          <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between relative overflow-hidden group">
-            <div className="flex justify-between items-start">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Unique Visitors</span>
-              <div className="p-2 rounded-xl bg-white/5 text-cyan-400">
+          {/* Unique Visitors Card (Indigo) */}
+          <div className="p-5 rounded-2xl glass-panel border border-indigo-500/20 dark:border-indigo-500/20 flex flex-col justify-between relative overflow-hidden group hover:border-indigo-500/40 transition-all">
+            <div className="absolute -top-10 -right-10 w-28 h-28 bg-indigo-500/10 rounded-full filter blur-xl group-hover:bg-indigo-500/20 transition-all pointer-events-none" />
+            <div className="flex justify-between items-start z-10">
+              <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider">Unique Visitors</span>
+              <div className="p-2 rounded-xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/20">
                 <Users className="w-4 h-4" />
               </div>
             </div>
-            <div className="mt-4 flex items-baseline justify-between">
+            <div className="mt-4 flex items-baseline justify-between z-10">
               <div>
                 <h3 className="text-2xl font-black tracking-tight">{currentVisitorStats?.uniqueVisitors ?? 0}</h3>
                 <p className="text-[10px] text-muted-foreground mt-0.5">Distinct user sessions</p>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 font-semibold flex items-center gap-1">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-semibold flex items-center gap-1">
                 +{currentVisitorStats?.todayUnique ?? 0} today
               </span>
             </div>
           </div>
 
-          {/* Messages inbox card */}
-          <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between relative overflow-hidden group">
-            {unreadCount > 0 && (
-              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full filter blur-xl group-hover:bg-primary/20 transition-all" />
-            )}
-            <div className="flex justify-between items-start">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Inbox</span>
+          {/* Messages inbox card (Rose Pink) */}
+          <div className="p-5 rounded-2xl glass-panel border border-rose-500/20 dark:border-rose-500/20 flex flex-col justify-between relative overflow-hidden group hover:border-rose-500/40 transition-all">
+            <div className="absolute -top-10 -right-10 w-28 h-28 bg-rose-500/10 rounded-full filter blur-xl group-hover:bg-rose-500/20 transition-all pointer-events-none" />
+            <div className="flex justify-between items-start z-10">
+              <span className="text-xs font-bold text-rose-400 uppercase tracking-wider">Inbox</span>
               <div className={cn(
-                "p-2 rounded-xl text-primary",
-                unreadCount > 0 ? "bg-primary/15 animate-pulse" : "bg-white/5"
+                "p-2 rounded-xl text-rose-400 border border-rose-500/20",
+                unreadCount > 0 ? "bg-rose-500/20 animate-pulse" : "bg-rose-500/15"
               )}>
                 <Inbox className="w-4 h-4" />
               </div>
             </div>
-            <div className="mt-4">
+            <div className="mt-4 z-10">
               <h3 className="text-2xl font-black tracking-tight">{unreadCount}</h3>
               <p className="text-[10px] text-muted-foreground mt-0.5">Unread messages</p>
             </div>
@@ -452,68 +518,6 @@ GRANT EXECUTE ON FUNCTION public.get_available_years() TO authenticated;`}
       {/* Monthly Line Chart (Views vs Visitors) */}
       <div className="w-full">
         <MonthlyTrafficChart refreshTrigger={refreshTrigger} />
-      </div>
-
-      {/* Row 2: Portfolio Content Stats */}
-      <div className="space-y-3">
-        <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-1">Portfolio Content</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {/* Projects card */}
-          <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between">
-            <div className="flex justify-between items-start">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Projects</span>
-              <div className="p-2 rounded-xl bg-white/5 text-muted-foreground">
-                <Coffee className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <h3 className="text-2xl font-black tracking-tight">{stats.projects}</h3>
-              <p className="text-[10px] text-muted-foreground mt-0.5">Showcase works</p>
-            </div>
-          </div>
-
-          {/* Education card */}
-          <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between">
-            <div className="flex justify-between items-start">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Education</span>
-              <div className="p-2 rounded-xl bg-white/5 text-muted-foreground">
-                <GraduationCap className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <h3 className="text-2xl font-black tracking-tight">{stats.education}</h3>
-              <p className="text-[10px] text-muted-foreground mt-0.5">Timeline milestones</p>
-            </div>
-          </div>
-
-          {/* Experience card */}
-          <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between">
-            <div className="flex justify-between items-start">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Experiences</span>
-              <div className="p-2 rounded-xl bg-white/5 text-muted-foreground">
-                <Briefcase className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <h3 className="text-2xl font-black tracking-tight">{stats.experience}</h3>
-              <p className="text-[10px] text-muted-foreground mt-0.5">Work history roles</p>
-            </div>
-          </div>
-
-          {/* Certificates card */}
-          <div className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between">
-            <div className="flex justify-between items-start">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Certificates</span>
-              <div className="p-2 rounded-xl bg-white/5 text-muted-foreground">
-                <Award className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <h3 className="text-2xl font-black tracking-tight">{stats.certificates}</h3>
-              <p className="text-[10px] text-muted-foreground mt-0.5">Credentials issued</p>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Messages Viewer Area */}
