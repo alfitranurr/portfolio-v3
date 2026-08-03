@@ -24,7 +24,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
-  Award
+  Award,
+  Eye,
+  Copy
 } from 'lucide-react'
 import { saveEducationAction, deleteEducationAction, uploadAssetAction } from '@/app/admin/actions'
 import { cn, getDirectImageUrl } from '@/lib/utils'
@@ -177,10 +179,26 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
   const startIndex = (currentPage - 1) * pageSize
   const paginatedItems = filteredAndSorted.slice(startIndex, startIndex + pageSize)
 
+  const [previewItem, setPreviewItem] = React.useState<Education | null>(null)
+
   const handleEdit = (item: Education) => {
     const start_date = item.start_date ? item.start_date.split('T')[0] : ''
     const end_date = item.end_date ? item.end_date.split('T')[0] : ''
-    setEditingItem({ ...item, start_date, end_date })
+    setEditingItem({ ...item, start_date, end_date, logo_url: item.logo_url || '' })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleDuplicate = (item: Education) => {
+    const start_date = item.start_date ? item.start_date.split('T')[0] : ''
+    const end_date = item.end_date ? item.end_date.split('T')[0] : ''
+    setEditingItem({ 
+      ...item, 
+      id: undefined, 
+      degree: `${item.degree} (Copy)`, 
+      start_date, 
+      end_date, 
+      logo_url: item.logo_url || '' 
+    })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -669,6 +687,20 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                         <td className="py-3.5 px-4 text-center whitespace-nowrap">
                           <div className="flex items-center justify-center gap-1.5">
                             <button
+                              onClick={() => setPreviewItem(item)}
+                              title="View Details"
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-cyan-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDuplicate(item)}
+                              title="Duplicate Entry"
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-amber-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                            </button>
+                            <button
                               onClick={() => handleEdit(item)}
                               title="Edit Entry"
                               className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-foreground transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
@@ -752,7 +784,21 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                     )}
                   </div>
 
-                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200/10 dark:border-slate-800/10">
+                  <div className="flex items-center justify-end gap-1.5 pt-3 border-t border-slate-200/10 dark:border-slate-800/10">
+                    <button
+                      onClick={() => setPreviewItem(item)}
+                      title="View Details"
+                      className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-cyan-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDuplicate(item)}
+                      title="Duplicate Entry"
+                      className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-amber-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </button>
                     <button
                       onClick={() => handleEdit(item)}
                       className="py-1.5 px-3 rounded-lg bg-white/5 hover:bg-white/10 text-foreground font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
@@ -762,7 +808,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                     </button>
                     <button
                       onClick={() => handleDelete(item.id)}
-                      className="py-1.5 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/15 text-red-600 dark:text-red-400 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer"
+                      className="py-1.5 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer border border-red-500/10"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                       <span>Delete</span>
@@ -830,6 +876,76 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Detail Preview Modal (Read) */}
+      {previewItem && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl relative animate-fade-in">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                {previewItem.logo_url ? (
+                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 p-1 shrink-0 relative">
+                    <BlurImage src={getDirectImageUrl(previewItem.logo_url)} alt={previewItem.institution} className="w-full h-full object-contain" />
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+                    <GraduationCap className="w-6 h-6" />
+                  </div>
+                )}
+                <div>
+                  <h3 className="text-lg font-bold text-foreground leading-snug">{previewItem.degree}</h3>
+                  <p className="text-sm font-semibold text-sky-400">{previewItem.institution}</p>
+                </div>
+              </div>
+              <button onClick={() => setPreviewItem(null)} className="p-2 rounded-xl hover:bg-white/10 text-muted-foreground hover:text-foreground cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-2 text-xs text-muted-foreground border-y border-slate-800 py-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-primary shrink-0" />
+                  <span className="font-semibold text-foreground">{formatPeriod(previewItem.start_date, previewItem.end_date)}</span>
+                </div>
+                {previewItem.gpa && (
+                  <span className="px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-bold flex items-center gap-1">
+                    <Award className="w-3.5 h-3.5" />
+                    <span>GPA: {previewItem.gpa}</span>
+                  </span>
+                )}
+              </div>
+              {previewItem.location && (
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-primary shrink-0" />
+                  <span>{previewItem.location}</span>
+                </div>
+              )}
+            </div>
+
+            {previewItem.description && (
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Description & Achievements</span>
+                <p className="text-xs text-slate-300 leading-relaxed whitespace-pre-line">{previewItem.description}</p>
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                onClick={() => {
+                  const itemToEdit = previewItem
+                  setPreviewItem(null)
+                  handleEdit(itemToEdit)
+                }}
+                className="py-2 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-xs flex items-center gap-1.5 hover:bg-primary/90 cursor-pointer shadow-md shadow-primary/20"
+              >
+                <Edit3 className="w-4 h-4" />
+                <span>Edit Entry</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

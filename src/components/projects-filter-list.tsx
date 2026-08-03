@@ -71,7 +71,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
     )
   }
 
-  type SortField = 'pinned' | 'newest' | 'oldest' | 'title'
+  type SortField = 'pinned' | 'featured' | 'newest' | 'oldest' | 'title'
   const [sortField, setSortField] = React.useState<SortField>('pinned')
 
   const filteredAndSortedProjects = React.useMemo(() => {
@@ -93,6 +93,12 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
     result.sort((a, b) => {
       if (sortField === 'pinned') {
         return (a.pinned_order ?? a.featured_order ?? 999) - (b.pinned_order ?? b.featured_order ?? 999)
+      }
+      if (sortField === 'featured') {
+        if (a.is_featured !== b.is_featured) {
+          return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0)
+        }
+        return (a.featured_order ?? a.pinned_order ?? 999) - (b.featured_order ?? b.pinned_order ?? 999)
       }
       if (sortField === 'newest') {
         return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
@@ -200,6 +206,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
               onChange={setSortField}
               options={[
                 { label: 'Pinned Order', value: 'pinned' },
+                { label: 'Featured First', value: 'featured' },
                 { label: 'Newest First', value: 'newest' },
                 { label: 'Oldest First', value: 'oldest' },
                 { label: 'Title (A-Z)', value: 'title' },

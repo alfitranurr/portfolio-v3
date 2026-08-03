@@ -23,6 +23,8 @@ import {
   Image as ImageIcon,
   LayoutList,
   LayoutGrid,
+  Eye,
+  Copy,
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
@@ -189,11 +191,29 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
   const startIndex = (currentPage - 1) * pageSize
   const paginatedItems = filteredAndSorted.slice(startIndex, startIndex + pageSize)
 
+  const [previewItem, setPreviewItem] = React.useState<Experience | null>(null)
+
   const handleEdit = (item: Experience) => {
     const start_date = item.start_date ? item.start_date.split('T')[0] : ''
     const end_date = item.end_date ? item.end_date.split('T')[0] : ''
     setEditingItem({ ...item, start_date, end_date, category: item.category || 'professional', logo_url: item.logo_url || '' })
     setDescriptionBullets(item.description || [])
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleDuplicate = (item: Experience) => {
+    const start_date = item.start_date ? item.start_date.split('T')[0] : ''
+    const end_date = item.end_date ? item.end_date.split('T')[0] : ''
+    setEditingItem({ 
+      ...item, 
+      id: undefined, 
+      role: `${item.role} (Copy)`,
+      start_date, 
+      end_date, 
+      category: item.category || 'professional', 
+      logo_url: item.logo_url || '' 
+    })
+    setDescriptionBullets(item.description ? [...item.description] : [])
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -807,6 +827,20 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                         <td className="py-3.5 px-4 text-center whitespace-nowrap">
                           <div className="flex items-center justify-center gap-1.5">
                             <button
+                              onClick={() => setPreviewItem(item)}
+                              title="View Details"
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-cyan-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDuplicate(item)}
+                              title="Duplicate Entry"
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-amber-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                            </button>
+                            <button
                               onClick={() => handleEdit(item)}
                               title="Edit Entry"
                               className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-foreground transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
@@ -891,7 +925,21 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                     )}
                   </div>
 
-                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200/10 dark:border-slate-800/10">
+                  <div className="flex items-center justify-end gap-1.5 pt-3 border-t border-slate-200/10 dark:border-slate-800/10">
+                    <button
+                      onClick={() => setPreviewItem(item)}
+                      title="View Details"
+                      className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-cyan-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDuplicate(item)}
+                      title="Duplicate Entry"
+                      className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-amber-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </button>
                     <button
                       onClick={() => handleEdit(item)}
                       className="py-1.5 px-3 rounded-lg bg-white/5 hover:bg-white/10 text-foreground font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
@@ -901,7 +949,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                     </button>
                     <button
                       onClick={() => handleDelete(item.id)}
-                      className="py-1.5 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/15 text-red-600 dark:text-red-400 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer"
+                      className="py-1.5 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer border border-red-500/10"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                       <span>Delete</span>
@@ -984,6 +1032,75 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Detail Preview Modal (Read) */}
+      {previewItem && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl relative animate-fade-in">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                {previewItem.logo_url ? (
+                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 p-1 shrink-0 relative">
+                    <BlurImage src={getDirectImageUrl(previewItem.logo_url)} alt={previewItem.company} className="w-full h-full object-contain" />
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+                    <Briefcase className="w-6 h-6" />
+                  </div>
+                )}
+                <div>
+                  <h3 className="text-lg font-bold text-foreground leading-snug">{previewItem.role}</h3>
+                  <p className="text-sm font-semibold text-sky-400">{previewItem.company}</p>
+                </div>
+              </div>
+              <button onClick={() => setPreviewItem(null)} className="p-2 rounded-xl hover:bg-white/10 text-muted-foreground hover:text-foreground cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-2 text-xs text-muted-foreground border-y border-slate-800 py-3">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-primary shrink-0" />
+                <span className="font-semibold text-foreground">{formatPeriod(previewItem.start_date, previewItem.end_date, previewItem.is_current)}</span>
+              </div>
+              {previewItem.location && (
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-primary shrink-0" />
+                  <span>{previewItem.location}</span>
+                </div>
+              )}
+            </div>
+
+            {previewItem.description && previewItem.description.length > 0 && (
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Key Responsibilities</span>
+                <ul className="space-y-1.5 text-xs text-slate-300">
+                  {previewItem.description.map((bullet, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="text-primary font-bold">•</span>
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                onClick={() => {
+                  const itemToEdit = previewItem
+                  setPreviewItem(null)
+                  handleEdit(itemToEdit)
+                }}
+                className="py-2 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-xs flex items-center gap-1.5 hover:bg-primary/90 cursor-pointer shadow-md shadow-primary/20"
+              >
+                <Edit3 className="w-4 h-4" />
+                <span>Edit Entry</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

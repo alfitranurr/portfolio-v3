@@ -28,6 +28,8 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
+  Eye,
+  Copy,
   X
 } from 'lucide-react'
 import { saveProjectAction, deleteProjectAction, uploadAssetAction, updateProjectsOrderAction, updateFeaturedProjectsOrderAction } from '@/app/admin/actions'
@@ -127,7 +129,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
   const [search, setSearch] = React.useState('')
   const [activeSubCategory, setActiveSubCategory] = React.useState<string>('All')
   const [viewMode, setViewMode] = React.useState<'grid' | 'table'>('grid')
-  const [sortField, setSortField] = React.useState<'newest' | 'oldest' | 'title' | 'pinned'>('newest')
+  const [sortField, setSortField] = React.useState<'pinned' | 'featured' | 'newest' | 'oldest' | 'title'>('pinned')
   const [currentPage, setCurrentPage] = React.useState(1)
   const [pageSize, setPageSize] = React.useState(12)
 
@@ -581,6 +583,15 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
     })
 
     result.sort((a, b) => {
+      if (sortField === 'pinned') {
+        return (a.pinned_order || 999) - (b.pinned_order || 999)
+      }
+      if (sortField === 'featured') {
+        if (a.is_featured !== b.is_featured) {
+          return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0)
+        }
+        return (a.featured_order || a.pinned_order || 999) - (b.featured_order || b.pinned_order || 999)
+      }
       if (sortField === 'newest') {
         return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
       }
@@ -589,9 +600,6 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
       }
       if (sortField === 'title') {
         return a.title.localeCompare(b.title)
-      }
-      if (sortField === 'pinned') {
-        return (a.pinned_order || 999) - (b.pinned_order || 999)
       }
       return 0
     })
@@ -608,8 +616,23 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
   const startIndex = (currentPage - 1) * pageSize
   const paginatedItems = filteredAndSorted.slice(startIndex, startIndex + pageSize)
 
+  const [previewProject, setPreviewProject] = React.useState<Project | null>(null)
+
   const handleEdit = (project: Project) => {
     setEditingProject(project)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleDuplicate = (project: Project) => {
+    const categoryProjects = projects.filter(p => p.category === project.category)
+    const maxPin = categoryProjects.reduce((max, p) => Math.max(max, p.pinned_order || 0), 0)
+
+    setEditingProject({
+      ...project,
+      id: undefined,
+      title: `${project.title} (Copy)`,
+      pinned_order: maxPin + 1
+    })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -1195,10 +1218,11 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                   value={sortField}
                   onChange={setSortField}
                   options={[
+                    { label: 'Pinned Order', value: 'pinned' },
+                    { label: 'Featured First', value: 'featured' },
                     { label: 'Newest First', value: 'newest' },
                     { label: 'Oldest First', value: 'oldest' },
                     { label: 'Title (A-Z)', value: 'title' },
-                    { label: 'Pinned Order', value: 'pinned' },
                   ]}
                 />
 
@@ -1356,6 +1380,20 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                         <td className="py-3.5 px-4 text-center whitespace-nowrap">
                           <div className="flex items-center justify-center gap-1.5">
                             <button
+                              onClick={() => setPreviewProject(proj)}
+                              title="View Details"
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-cyan-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDuplicate(proj)}
+                              title="Duplicate Project"
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-amber-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                            </button>
+                            <button
                               onClick={() => handleEdit(proj)}
                               title="Edit Project"
                               className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-foreground transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
@@ -1492,6 +1530,20 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
 
                       <div className="flex items-center gap-1.5">
                         <button
+                          onClick={() => setPreviewProject(proj)}
+                          title="View Details"
+                          className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-cyan-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDuplicate(proj)}
+                          title="Duplicate Project"
+                          className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-amber-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                        </button>
+                        <button
                           onClick={() => handleEdit(proj)}
                           className="py-1.5 px-3 rounded-lg bg-white/5 hover:bg-white/10 text-foreground font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
                         >
@@ -1500,7 +1552,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                         </button>
                         <button
                           onClick={() => handleDelete(proj.id)}
-                          className="py-1.5 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/15 text-red-600 dark:text-red-400 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer"
+                          className="py-1.5 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer border border-red-500/10"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                           <span>Delete</span>
@@ -1907,6 +1959,74 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
           )}
         </AnimatePresence>,
         document.body
+      )}
+
+      {/* Detail Preview Modal (Read) */}
+      {previewProject && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl relative animate-fade-in">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                {previewProject.cover_image ? (
+                  <div className="w-16 h-12 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shrink-0 relative">
+                    <BlurImage src={getDirectImageUrl(previewProject.cover_image, 200)} alt={previewProject.title} className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+                    <Coffee className="w-6 h-6" />
+                  </div>
+                )}
+                <div>
+                  <h3 className="text-lg font-bold text-foreground leading-snug">{previewProject.title}</h3>
+                  <p className="text-xs font-semibold text-sky-400">{SUBCATEGORY_MAP[previewProject.sub_category] || previewProject.sub_category}</p>
+                </div>
+              </div>
+              <button onClick={() => setPreviewProject(null)} className="p-2 rounded-xl hover:bg-white/10 text-muted-foreground hover:text-foreground cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2 text-xs text-muted-foreground border-y border-slate-800 py-3">
+              <span className="px-2.5 py-1 rounded-md bg-white/5 font-bold text-foreground">{previewProject.category === 'data' ? 'Data Science' : 'General Dev'}</span>
+              {previewProject.is_featured && <span className="px-2.5 py-1 rounded-md bg-primary/15 text-primary font-bold uppercase">Featured</span>}
+              {previewProject.pinned_order !== null && previewProject.pinned_order !== undefined && previewProject.pinned_order > 0 && (
+                <span className="px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold">Pin: #{previewProject.pinned_order}</span>
+              )}
+            </div>
+
+            <div className="space-y-2 max-h-48 overflow-y-auto pr-2 text-xs text-slate-300">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Description</span>
+              <p className="leading-relaxed">{previewProject.description}</p>
+            </div>
+
+            <div className="flex items-center justify-between pt-2 border-t border-slate-800">
+              <div className="flex items-center gap-2">
+                {previewProject.github_url && (
+                  <a href={previewProject.github_url} target="_blank" rel="noopener noreferrer" className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-foreground transition-all" title="GitHub">
+                    <FileCode className="w-4 h-4" />
+                  </a>
+                )}
+                {previewProject.demo_url && (
+                  <a href={previewProject.demo_url} target="_blank" rel="noopener noreferrer" className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-foreground transition-all" title="Live Demo">
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                )}
+              </div>
+
+              <button
+                onClick={() => {
+                  const projToEdit = previewProject
+                  setPreviewProject(null)
+                  handleEdit(projToEdit)
+                }}
+                className="py-2 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-xs flex items-center gap-1.5 hover:bg-primary/90 cursor-pointer shadow-md shadow-primary/20"
+              >
+                <Edit3 className="w-4 h-4" />
+                <span>Edit Project</span>
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
