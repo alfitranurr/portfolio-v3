@@ -533,17 +533,17 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
             /* ============================================================ */
             /* TABLE VIEW */
             /* ============================================================ */
-            <div className="rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 overflow-hidden shadow-sm relative z-10">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
+            <div className="rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 overflow-hidden shadow-sm relative z-10 w-full">
+              <div className="w-full overflow-hidden">
+                <table className="w-full text-left text-xs table-auto">
                   <thead className="bg-slate-100/50 dark:bg-slate-900/60 border-b border-slate-200/10 dark:border-slate-800/20 uppercase tracking-wider font-extrabold text-[10px] text-muted-foreground">
                     <tr>
-                      <th className="py-3.5 px-4 w-12 text-center">#</th>
-                      <th className="py-3.5 px-4 min-w-[180px]">Skill Name</th>
-                      <th className="py-3.5 px-4 whitespace-nowrap text-center">Category</th>
-                      <th className="py-3.5 px-4 min-w-[160px]">Proficiency</th>
-                      <th className="py-3.5 px-4 min-w-[200px]">Description</th>
-                      <th className="py-3.5 px-4 text-center whitespace-nowrap">Actions</th>
+                      <th className="py-2.5 px-3 w-10 text-center">#</th>
+                      <th className="py-2.5 px-3 w-1/4">Skill Name</th>
+                      <th className="py-2.5 px-3 whitespace-nowrap text-center">Category</th>
+                      <th className="py-2.5 px-3 w-32">Proficiency</th>
+                      <th className="py-2.5 px-3">Description</th>
+                      <th className="py-2.5 px-3 text-center whitespace-nowrap w-36">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200/5 dark:divide-slate-800/10 font-medium">
@@ -553,16 +553,16 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
                         className="hover:bg-slate-500/5 transition-colors group"
                       >
                         {/* Index */}
-                        <td className="py-3.5 px-4 text-center text-muted-foreground/60 font-mono text-[11px]">
+                        <td className="py-2.5 px-3 text-center text-muted-foreground/60 font-mono text-[11px]">
                           {startIndex + index + 1}
                         </td>
 
                         {/* Skill Name & Icon */}
-                        <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-3">
-                            {renderIcon(item, "w-6 h-6")}
-                            <div className="space-y-0.5">
-                              <h4 className="font-bold text-foreground text-xs leading-snug group-hover:text-primary transition-colors">
+                        <td className="py-2.5 px-3">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            {renderIcon(item, "w-5 h-5")}
+                            <div className="space-y-0.5 min-w-0 flex-1">
+                              <h4 className="font-bold text-foreground text-xs leading-snug group-hover:text-primary transition-colors line-clamp-1">
                                 {item.name}
                               </h4>
                             </div>
@@ -570,15 +570,15 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
                         </td>
 
                         {/* Category */}
-                        <td className="py-3.5 px-4 whitespace-nowrap text-center">
-                          <span className="px-2.5 py-1 rounded-md bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-[10px] font-bold text-muted-foreground">
+                        <td className="py-2.5 px-3 whitespace-nowrap text-center">
+                          <span className="px-2 py-0.5 rounded-md bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-[10px] font-bold text-muted-foreground">
                             {item.category}
                           </span>
                         </td>
 
                         {/* Proficiency */}
-                        <td className="py-3.5 px-4">
-                          <div className="space-y-1 max-w-[140px]">
+                        <td className="py-2.5 px-3">
+                          <div className="space-y-1 w-full max-w-[120px]">
                             <div className="flex justify-between text-[10px] font-bold">
                               <span className="text-muted-foreground">Mastery</span>
                               <span className="text-primary">{item.level || 85}%</span>
@@ -593,14 +593,14 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
                         </td>
 
                         {/* Description */}
-                        <td className="py-3.5 px-4">
+                        <td className="py-2.5 px-3">
                           <p className="text-[10px] text-muted-foreground/80 line-clamp-1">
                             {item.desc || '-'}
                           </p>
                         </td>
 
                         {/* Actions */}
-                        <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                        <td className="py-2.5 px-3 text-center whitespace-nowrap">
                           <div className="flex items-center justify-center gap-1.5">
                             <button
                               onClick={() => setPreviewItem(item)}
