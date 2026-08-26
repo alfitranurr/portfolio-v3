@@ -3,7 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUpRight, Sparkles, Search, SlidersHorizontal, Check, X } from 'lucide-react'
+import { ArrowUpRight, Sparkles, Code2, Search, SlidersHorizontal, Check, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Project } from '@/lib/types'
 import { BlurImage } from '@/components/ui/blur-image'
@@ -13,10 +13,34 @@ interface ProjectsFilterListProps {
   initialProjects: Project[]
 }
 
+function getInitialProjectCategory(): 'data' | 'non-data' {
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = sessionStorage.getItem('project_public_active_category') || localStorage.getItem('project_public_active_category')
+      if (stored === 'data' || stored === 'non-data') {
+        return stored
+      }
+    } catch {
+      // fallback
+    }
+  }
+  return 'data'
+}
+
 export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps) {
-  const [activeCategory, setActiveCategory] = React.useState<'data' | 'non-data'>('data')
+  const [activeCategory, setActiveCategory] = React.useState<'data' | 'non-data'>(getInitialProjectCategory)
   const [selectedSubCategories, setSelectedSubCategories] = React.useState<string[]>([])
   const [isFilterOpen, setIsFilterOpen] = React.useState(false)
+
+  const handleCategoryChange = (cat: 'data' | 'non-data') => {
+    setActiveCategory(cat)
+    try {
+      sessionStorage.setItem('project_public_active_category', cat)
+      localStorage.setItem('project_public_active_category', cat)
+    } catch {
+      // ignore
+    }
+  }
 
   const dataSubcategories = [
     'All',
@@ -46,22 +70,17 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
 
   const [searchQuery, setSearchQuery] = React.useState('')
 
-  React.useEffect(() => {
-    const stored = sessionStorage.getItem('project_public_active_category')
-    if (stored === 'data' || stored === 'non-data') {
-      const timer = setTimeout(() => setActiveCategory(stored), 0)
-      return () => clearTimeout(timer)
-    }
-  }, [])
-
   // Reset subcategory and search when category switches
+  const isFirstMount = React.useRef(true)
   React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setSelectedSubCategories([])
-      setSearchQuery('')
-    }, 0)
-    return () => clearTimeout(timer)
+    if (isFirstMount.current) {
+      isFirstMount.current = false
+      return
+    }
+    setSelectedSubCategories([])
+    setSearchQuery('')
   }, [activeCategory])
+
 
   const handleToggleSubCategory = (sub: string) => {
     setSelectedSubCategories(prev =>
@@ -121,10 +140,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
       <div className="flex justify-center px-2">
         <div className="flex p-1 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 max-w-md w-full">
           <button
-            onClick={() => {
-              setActiveCategory('data')
-              sessionStorage.setItem('project_public_active_category', 'data')
-            }}
+            onClick={() => handleCategoryChange('data')}
             className={cn(
               "flex-1 py-2 sm:py-2.5 text-[10px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap",
               activeCategory === 'data'
@@ -136,10 +152,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
             <span>Data Science</span>
           </button>
           <button
-            onClick={() => {
-              setActiveCategory('non-data')
-              sessionStorage.setItem('project_public_active_category', 'non-data')
-            }}
+            onClick={() => handleCategoryChange('non-data')}
             className={cn(
               "flex-1 py-2 sm:py-2.5 text-[10px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap",
               activeCategory === 'non-data'
@@ -147,6 +160,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                 : "text-foreground/75 hover:text-foreground"
             )}
           >
+            <Code2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
             <span>General Dev</span>
           </button>
         </div>
