@@ -3,7 +3,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export default function AskAILoading() {
   return (
-    <div className="flex flex-col h-[calc(100dvh-7.8rem)] sm:h-[calc(100dvh-8.2rem)] lg:h-[calc(100vh-4.8rem)] space-y-3 sm:space-y-4 w-full animate-in fade-in duration-200">
+    <div className="flex flex-col h-[calc(100dvh-5.8rem)] sm:h-[calc(100dvh-6.2rem)] lg:h-[calc(100vh-5rem)] max-h-[calc(100dvh-5.8rem)] sm:max-h-[calc(100dvh-6.2rem)] lg:max-h-[calc(100vh-5rem)] space-y-2.5 sm:space-y-4 w-full -mt-2 sm:mt-0 overflow-hidden animate-in fade-in duration-200">
       {/* Header */}
       <div className="flex items-center justify-between gap-3 shrink-0">
         <div className="space-y-1">
@@ -20,7 +20,7 @@ export default function AskAILoading() {
       </div>
 
       {/* Terminal / Chat window mockup skeleton */}
-      <div className="flex-1 min-h-0 rounded-2xl sm:rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 p-3 sm:p-5 flex flex-col justify-between shimmer-card">
+      <div className="flex-1 min-h-0 rounded-2xl sm:rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 p-3 sm:p-5 flex flex-col justify-between shimmer-card overflow-hidden">
         {/* Messages placeholder */}
         <div className="space-y-3 max-w-xl">
           <div className="flex gap-2.5 items-start">
