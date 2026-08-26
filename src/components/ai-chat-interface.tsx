@@ -2,7 +2,7 @@
 'use client'
 
 import * as React from 'react'
-import { Send, Bot, User, Sparkles, RefreshCw, Trash2 } from 'lucide-react'
+import { Send, Bot, User, Sparkles, RefreshCw, Trash2, ArrowUpRight } from 'lucide-react'
 import { motion, AnimatePresence, Variants } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
 import { cn } from '@/lib/utils'
@@ -14,7 +14,40 @@ interface ChatMessage {
   timestamp: Date
 }
 
-const SUGGESTED_QUESTIONS = [
+const MOBILE_SUGGESTIONS = [
+  {
+    icon: '👤',
+    title: 'Tentang Al Fitra',
+    prompt: 'Siapa Al Fitra Nur Ramadhani dan apa fokus keahliannya?',
+  },
+  {
+    icon: '🚀',
+    title: 'Proyek Portofolio',
+    prompt: 'Proyek apa saja yang pernah dibuat oleh Al Fitra?',
+  },
+  {
+    icon: '⚡',
+    title: 'Tech Stack & Skill',
+    prompt: 'Skills, bahasa pemrograman, dan tools apa yang dikuasai?',
+  },
+  {
+    icon: '💼',
+    title: 'Pengalaman Kerja',
+    prompt: 'Pengalaman kerja dan organisasi apa yang dimiliki?',
+  },
+  {
+    icon: '🎓',
+    title: 'Pendidikan',
+    prompt: 'Bagaimana riwayat dan latar belakang pendidikan Al Fitra?',
+  },
+  {
+    icon: '🏆',
+    title: 'Sertifikasi',
+    prompt: 'Sertifikat kompetensi dan penghargaan apa saja yang diraih?',
+  },
+]
+
+const DESKTOP_SUGGESTIONS = [
   'Siapa Al Fitra Nur Ramadhani?',
   'Proyek apa saja yang pernah dibuat?',
   'Skills dan tech stack apa yang dikuasai?',
@@ -302,23 +335,58 @@ export function AIChatInterface() {
                     <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                   </motion.div>
 
-                  <h3 className="text-sm sm:text-lg md:text-xl font-extrabold text-foreground mb-2 sm:mb-6 shrink-0">
+                  <h3 className="text-sm sm:text-lg md:text-xl font-extrabold text-foreground mb-1 sm:mb-6 shrink-0">
                     Tanya apa saja tentang Al Fitra
                   </h3>
+                  <p className="text-[11px] text-muted-foreground/80 mb-3 max-w-sm sm:hidden shrink-0">
+                    Pilih topik di bawah ini atau ketik pertanyaan langsung di kolom chat
+                  </p>
 
-                  {/* Suggested Questions: 1-column on mobile, flex-wrap centered pills on desktop */}
+                  {/* Mobile View (< sm): Rich 1-Column Cards matching screenshot */}
                   <motion.div
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="grid grid-cols-1 sm:flex sm:flex-wrap justify-center gap-1.5 sm:gap-2.5 w-full max-w-2xl shrink-0 px-1"
+                    className="flex flex-col gap-2 w-full sm:hidden text-left"
                   >
-                    {SUGGESTED_QUESTIONS.map((q, i) => (
+                    {MOBILE_SUGGESTIONS.map((item, i) => (
+                      <motion.button
+                        key={i}
+                        variants={itemVariants}
+                        onClick={() => sendMessage(item.prompt)}
+                        className="w-full p-2.5 rounded-2xl glass-card border border-slate-200/70 dark:border-slate-800/70 hover:border-primary/40 bg-white/5 dark:bg-slate-800/30 text-left transition-all group cursor-pointer active:scale-[0.98] flex items-center justify-between gap-3 shadow-2xs hover:shadow-md hover:shadow-primary/5 transform-gpu"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                          <span className="text-sm shrink-0 p-1.5 rounded-xl bg-white/5 dark:bg-slate-700/30 border border-slate-200/10 dark:border-slate-700/20">
+                            {item.icon}
+                          </span>
+                          <div className="space-y-0.5 min-w-0 flex-1">
+                            <h4 className="font-bold text-xs text-foreground group-hover:text-primary transition-colors leading-tight">
+                              {item.title}
+                            </h4>
+                            <p className="text-[10px] text-muted-foreground/80 truncate leading-snug">
+                              {item.prompt}
+                            </p>
+                          </div>
+                        </div>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                      </motion.button>
+                    ))}
+                  </motion.div>
+
+                  {/* Desktop View (>= sm): Horizontal Centered Pill Buttons */}
+                  <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="hidden sm:flex sm:flex-wrap justify-center gap-2.5 w-full max-w-2xl shrink-0 px-1 text-center"
+                  >
+                    {DESKTOP_SUGGESTIONS.map((q, i) => (
                       <motion.button
                         key={i}
                         variants={itemVariants}
                         onClick={() => sendMessage(q)}
-                        className="w-full sm:w-auto text-left sm:text-center px-3.5 py-2 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-medium rounded-xl bg-slate-200/40 dark:bg-slate-800/40 backdrop-blur-md border border-slate-200/60 dark:border-slate-700/50 text-foreground/85 hover:text-primary hover:border-primary/40 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:shadow-md hover:shadow-primary/10 active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer transform-gpu"
+                        className="px-4 py-2 text-xs font-medium rounded-xl bg-slate-200/40 dark:bg-slate-800/40 backdrop-blur-md border border-slate-200/60 dark:border-slate-700/50 text-foreground/85 hover:text-primary hover:border-primary/40 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:shadow-md hover:shadow-primary/10 active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer transform-gpu"
                       >
                         {q}
                       </motion.button>
