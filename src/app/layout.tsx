@@ -78,14 +78,14 @@ export default async function RootLayout({
           <VisitorTracker />
           <NextTopLoader
             color="#38bdf8"
-            initialPosition={0.08}
-            crawlSpeed={200}
-            height={3}
+            initialPosition={0.05}
+            crawlSpeed={150}
+            height={2.5}
             crawl={true}
             showSpinner={false}
-            easing="ease"
-            speed={200}
-            shadow="0 0 10px #38bdf8,0 0 5px #38bdf8"
+            easing="cubic-bezier(0.16, 1, 0.3, 1)"
+            speed={300}
+            shadow="0 0 12px #38bdf8, 0 0 4px #38bdf8"
           />
           {/* Background Ambient Glows */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
