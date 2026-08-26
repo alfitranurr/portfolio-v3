@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function AskAIPage() {
   return (
-    <div className="flex flex-col h-[calc(100dvh-7.5rem)] lg:h-[calc(100vh-5rem)] space-y-3 sm:space-y-4 w-full">
+    <div className="flex-1 min-h-0 flex flex-col space-y-3 sm:space-y-4 w-full">
       {/* Page Header */}
       <div className="flex items-center justify-between gap-3 shrink-0">
         <div className="space-y-0.5 sm:space-y-1">

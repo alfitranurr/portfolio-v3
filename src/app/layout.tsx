@@ -103,7 +103,7 @@ export default async function RootLayout({
 
             {/* Content Wrapper */}
             <div className="flex-1 w-full min-w-0 flex flex-col min-h-screen">
-              <main className="flex-grow w-full pt-20 lg:pt-8 pb-6 relative z-10 overflow-x-hidden">
+              <main className="flex-grow w-full pt-20 lg:pt-8 pb-6 relative z-10 overflow-x-hidden flex flex-col">
                 {children}
               </main>
             </div>
