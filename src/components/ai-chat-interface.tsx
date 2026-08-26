@@ -123,18 +123,32 @@ export function AIChatInterface() {
     }
   }, [messages, isHistoryLoaded])
 
-  const messagesEndRef = React.useRef<HTMLDivElement>(null)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
   const chatContainerRef = React.useRef<HTMLDivElement>(null)
+  const prevMessagesLength = React.useRef(0)
 
-  // Auto-scroll to bottom when new messages arrive
-  const scrollToBottom = React.useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
+  // Ensure the page viewport always stays at the top on initial load
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
+
+  // Auto-scroll ONLY inside the chat container when new messages are added
+  const scrollToBottom = React.useCallback((behavior: ScrollBehavior = 'smooth') => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior,
+      })
+    }
   }, [])
 
   React.useEffect(() => {
-    scrollToBottom()
+    if (messages.length > 0 && messages.length !== prevMessagesLength.current) {
+      scrollToBottom(prevMessagesLength.current === 0 ? 'auto' : 'smooth')
+      prevMessagesLength.current = messages.length
+    }
   }, [messages, scrollToBottom])
+
 
   // Auto-resize textarea
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -208,6 +222,9 @@ export function AIChatInterface() {
               m.id === assistantId ? { ...m, content: m.content + chunk } : m
             )
           )
+          if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
+          }
         }
       }
     } catch (error) {
@@ -408,7 +425,6 @@ export function AIChatInterface() {
             )}
           </AnimatePresence>
         )}
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Input Area */}
