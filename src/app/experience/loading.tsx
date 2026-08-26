@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { HeaderSkeleton, FilterTabsSkeleton, ExperienceCardSkeleton } from '@/components/ui/skeleton'
+import { HeaderSkeleton, ExperienceCardSkeleton, Skeleton } from '@/components/ui/skeleton'
 
 export default function ExperienceLoading() {
   return (
@@ -10,8 +10,11 @@ export default function ExperienceLoading() {
         subtitleWidth="w-full max-w-sm" 
       />
 
-      {/* Tabs */}
-      <FilterTabsSkeleton count={3} />
+      {/* 2 Category Switcher (Professional / Leadership) */}
+      <div className="flex p-1.5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 max-w-md gap-2">
+        <Skeleton className="h-10 flex-1 rounded-xl" />
+        <Skeleton className="h-10 flex-1 rounded-xl" />
+      </div>
 
       {/* Experience list */}
       <div className="space-y-6">

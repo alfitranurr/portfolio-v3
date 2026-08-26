@@ -199,3 +199,77 @@ export function AdminTableSkeleton({ rowCount = 5 }: { rowCount?: number }) {
     </div>
   )
 }
+
+export function HeroAboutSkeleton() {
+  return (
+    <section className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <Skeleton className="h-8 w-36 rounded-lg" />
+        <Skeleton className="h-7 w-48 rounded-full" />
+      </div>
+
+      <div className="p-6 md:p-10 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/20 space-y-4 shimmer-card">
+        <Skeleton className="h-5 w-52 rounded-md" />
+        <div className="space-y-2 pt-1">
+          <Skeleton className="h-4 w-full rounded" />
+          <Skeleton className="h-4 w-11/12 rounded" />
+          <Skeleton className="h-4 w-4/5 rounded" />
+        </div>
+        <div className="pt-2">
+          <Skeleton className="h-12 w-56 rounded-xl" />
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export function MarqueeSkeleton({ count = 8 }: { count?: number }) {
+  return (
+    <div className="flex gap-4 overflow-hidden py-3">
+      {Array.from({ length: count }).map((_, i) => (
+        <div
+          key={i}
+          className="flex items-center gap-3 px-5 py-3 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 shrink-0 shimmer-card"
+        >
+          <Skeleton className="w-6 h-6 rounded-lg" />
+          <Skeleton className="h-4 w-20 rounded" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export function PhotosMarqueeSkeleton({ count = 5 }: { count?: number }) {
+  return (
+    <div className="flex gap-4 overflow-hidden py-3">
+      {Array.from({ length: count }).map((_, i) => (
+        <div
+          key={i}
+          className="w-52 sm:w-64 h-64 sm:h-72 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 p-3 space-y-3 shrink-0 shimmer-card flex flex-col justify-between"
+        >
+          <Skeleton className="w-full h-44 rounded-2xl" />
+          <div className="space-y-1 px-1">
+            <Skeleton className="h-4 w-3/4 rounded" />
+            <Skeleton className="h-3 w-1/2 rounded" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export function WorkTogetherSkeleton() {
+  return (
+    <section className="p-6 md:p-10 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/20 space-y-4 shimmer-card">
+      <div className="flex items-center gap-3">
+        <Skeleton className="w-7 h-7 rounded-lg shrink-0" />
+        <Skeleton className="h-7 w-56 rounded-md" />
+      </div>
+      <Skeleton className="h-4 w-full max-w-md rounded" />
+      <div className="pt-2">
+        <Skeleton className="h-12 w-36 rounded-full" />
+      </div>
+    </section>
+  )
+}
+
