@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { HeaderSkeleton, FilterTabsSkeleton, CertificateCardSkeleton } from '@/components/ui/skeleton'
+import { HeaderSkeleton, FilterTabsSkeleton, CertificateCardSkeleton, Skeleton } from '@/components/ui/skeleton'
 
 export default function CertificatesLoading() {
   return (
@@ -10,8 +10,17 @@ export default function CertificatesLoading() {
         subtitleWidth="w-full max-w-md" 
       />
 
-      {/* Tabs */}
+      {/* Filter Tabs */}
       <FilterTabsSkeleton count={5} />
+
+      {/* Search Bar + Filters + Sort row */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Skeleton className="h-11 flex-1 rounded-2xl" />
+        <div className="flex gap-2">
+          <Skeleton className="h-11 w-32 rounded-2xl" />
+          <Skeleton className="h-11 w-36 rounded-2xl" />
+        </div>
+      </div>
 
       {/* Grid of Certificates */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
