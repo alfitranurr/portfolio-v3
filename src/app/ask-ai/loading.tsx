@@ -3,12 +3,12 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export default function AskAILoading() {
   return (
-    <div className="flex flex-col h-[calc(100dvh-6.5rem)] sm:h-[calc(100vh-7.5rem)] lg:h-[calc(100vh-5rem)] space-y-4 sm:space-y-6 animate-in fade-in duration-200">
+    <div className="flex flex-col h-[calc(100dvh-7.8rem)] sm:h-[calc(100dvh-8.2rem)] lg:h-[calc(100vh-4.8rem)] space-y-3 sm:space-y-4 w-full animate-in fade-in duration-200">
       {/* Header */}
       <div className="flex items-center justify-between gap-3 shrink-0">
         <div className="space-y-1">
-          <Skeleton className="h-8 sm:h-10 w-36 sm:w-48 rounded-lg" />
-          <Skeleton className="h-4 w-48 sm:w-80 rounded" />
+          <Skeleton className="h-8 sm:h-10 w-28 sm:w-48 rounded-lg" />
+          <Skeleton className="h-4 w-48 sm:w-80 rounded hidden sm:block" />
         </div>
         <div className="flex items-center gap-2.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl glass-card border border-slate-200/80 dark:border-slate-800/80">
           <Skeleton className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0" />
