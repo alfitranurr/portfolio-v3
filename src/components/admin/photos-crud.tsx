@@ -2,7 +2,6 @@
 
 import * as React from 'react'
 import { 
-  Plus, 
   PlusCircle, 
   Edit3, 
   Trash2, 
@@ -41,6 +40,13 @@ type ViewMode = 'grid' | 'table'
 
 export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
   const [photos, setPhotos] = React.useState<Photo[]>(initialPhotos)
+  const [prevInitialPhotos, setPrevInitialPhotos] = React.useState(initialPhotos)
+
+  if (initialPhotos !== prevInitialPhotos) {
+    setPrevInitialPhotos(initialPhotos)
+    setPhotos(initialPhotos)
+  }
+
   const [search, setSearch] = React.useState('')
   const [viewMode, setViewMode] = React.useState<ViewMode>('grid')
 
@@ -54,19 +60,18 @@ export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
   const [notification, setNotification] = React.useState<{ success: boolean; message: string } | null>(null)
 
   React.useEffect(() => {
-    setPhotos(initialPhotos)
-  }, [initialPhotos])
-
-  React.useEffect(() => {
-    const stored = sessionStorage.getItem('photos_admin_notification')
-    if (stored) {
-      try {
-        setNotification(JSON.parse(stored))
-      } catch (e) {
-        console.error(e)
+    const timer = setTimeout(() => {
+      const stored = sessionStorage.getItem('photos_admin_notification')
+      if (stored) {
+        try {
+          setNotification(JSON.parse(stored))
+        } catch (e) {
+          console.error(e)
+        }
+        sessionStorage.removeItem('photos_admin_notification')
       }
-      sessionStorage.removeItem('photos_admin_notification')
-    }
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   React.useEffect(() => {
@@ -113,15 +118,11 @@ export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
     return photos.filter(p => p.image_url.toLowerCase().includes(search.toLowerCase()))
   }, [photos, search])
 
-  // Reset page 1 on search change
-  React.useEffect(() => {
-    setCurrentPage(1)
-  }, [search, pageSize])
-
   // Pagination calculations
   const totalItems = filtered.length
-  const totalPages = Math.ceil(totalItems / pageSize) || 1
-  const startIndex = (currentPage - 1) * pageSize
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
+  const startIndex = (safeCurrentPage - 1) * pageSize
   const paginatedItems = filtered.slice(startIndex, startIndex + pageSize)
 
   const handleEdit = (photo: Photo) => {
@@ -356,12 +357,18 @@ export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
                 type="text"
                 placeholder="Search by photo image URL..."
                 value={search}
-                onChange={e => setSearch(e.target.value)}
+                onChange={e => {
+                  setSearch(e.target.value)
+                  setCurrentPage(1)
+                }}
                 className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
               />
               {search && (
                 <button
-                  onClick={() => setSearch('')}
+                  onClick={() => {
+                    setSearch('')
+                    setCurrentPage(1)
+                  }}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -538,7 +545,10 @@ export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
                 <span>Per page:</span>
                 <select
                   value={pageSize}
-                  onChange={e => setPageSize(Number(e.target.value))}
+                  onChange={e => {
+                    setPageSize(Number(e.target.value))
+                    setCurrentPage(1)
+                  }}
                   className="px-2.5 py-1 rounded-lg bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground text-xs font-bold focus:outline-none cursor-pointer"
                 >
                   <option value={12}>12</option>

@@ -5,7 +5,6 @@ import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Coffee, 
-  Plus, 
   PlusCircle, 
   Edit3, 
   Trash2, 
@@ -25,7 +24,6 @@ import {
   ArrowDown,
   LayoutList,
   LayoutGrid,
-  ArrowUpDown,
   ChevronLeft,
   ChevronRight,
   Eye,
@@ -52,9 +50,9 @@ interface Project {
   slide_url?: string | null
   embed_code: string | null
   is_featured: boolean | null
-  is_on_progress: boolean | null
-  pinned_order: number | null
-  featured_order: number | null
+  is_on_progress?: boolean | null
+  pinned_order?: number | null
+  featured_order?: number | null
   created_at?: string
   updated_at?: string
 }
@@ -77,18 +75,6 @@ const NON_DATA_SUBCATEGORIES = [
   'Digital Marketing Projects',
   'Graphic Design Projects',
 ]
-
-const CATEGORY_MAP: Record<string, string> = {
-  'Data Analytics Projects': 'Data Analytics',
-  'Data Visualization Projects': 'Data Viz',
-  'Artificial Intelligence Projects': 'AI/ML',
-  'Automation Projects': 'Automation',
-  'Data Modeling and Simulation Projects': 'Modeling/Sim',
-  'Web Development Projects': 'Web Dev',
-  'Mobile Development Projects': 'Mobile Dev',
-  'Digital Marketing Projects': 'Digital Marketing',
-  'Graphic Design Projects': 'Graphic Design',
-}
 
 const SUBCATEGORY_MAP: Record<string, string> = {
   'All': 'All Subcategories',
@@ -125,6 +111,13 @@ const DEFAULT_PROJECT: Omit<Project, 'id'> = {
 
 export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
   const [projects, setProjects] = React.useState<Project[]>(initialProjects)
+  const [prevInitialProjects, setPrevInitialProjects] = React.useState(initialProjects)
+
+  if (initialProjects !== prevInitialProjects) {
+    setPrevInitialProjects(initialProjects)
+    setProjects(initialProjects)
+  }
+
   const [activeCategory, setActiveCategory] = React.useState<'data' | 'non-data'>('data')
   const [search, setSearch] = React.useState('')
   const [activeSubCategory, setActiveSubCategory] = React.useState<string>('All')
@@ -566,7 +559,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
 
   // Filter and Sort logic
   const filteredAndSorted = React.useMemo(() => {
-    let result = projects.filter(p => {
+    const result = projects.filter(p => {
       const matchesCategory = p.category === activeCategory
       const q = search.toLowerCase()
       const matchesSearch = 
@@ -607,13 +600,10 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
     return result
   }, [projects, activeCategory, search, activeSubCategory, sortField])
 
-  React.useEffect(() => {
-    setCurrentPage(1)
-  }, [search, activeCategory, activeSubCategory, pageSize, sortField])
-
   const totalItems = filteredAndSorted.length
-  const totalPages = Math.ceil(totalItems / pageSize) || 1
-  const startIndex = (currentPage - 1) * pageSize
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
+  const startIndex = (safeCurrentPage - 1) * pageSize
   const paginatedItems = filteredAndSorted.slice(startIndex, startIndex + pageSize)
 
   const [previewProject, setPreviewProject] = React.useState<Project | null>(null)
@@ -1158,6 +1148,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                   type="button"
                   onClick={() => {
                     setActiveCategory('data')
+                    setCurrentPage(1)
                     sessionStorage.setItem('project_admin_active_category', 'data')
                   }}
                   className={cn(
@@ -1174,6 +1165,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                   type="button"
                   onClick={() => {
                     setActiveCategory('non-data')
+                    setCurrentPage(1)
                     sessionStorage.setItem('project_admin_active_category', 'non-data')
                   }}
                   className={cn(
@@ -1198,12 +1190,18 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                   type="text"
                   placeholder="Search by title, subcategory, or description..."
                   value={search}
-                  onChange={e => setSearch(e.target.value)}
+                  onChange={e => {
+                    setSearch(e.target.value)
+                    setCurrentPage(1)
+                  }}
                   className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
                 />
                 {search && (
                   <button
-                    onClick={() => setSearch('')}
+                    onClick={() => {
+                      setSearch('')
+                      setCurrentPage(1)
+                    }}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
@@ -1216,7 +1214,10 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                 {/* Sort Field Selector */}
                 <CustomSortDropdown
                   value={sortField}
-                  onChange={setSortField}
+                  onChange={val => {
+                    setSortField(val as 'pinned' | 'featured' | 'newest' | 'oldest' | 'title')
+                    setCurrentPage(1)
+                  }}
                   options={[
                     { label: 'Pinned Order', value: 'pinned' },
                     { label: 'Featured First', value: 'featured' },
@@ -1263,7 +1264,10 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                   <button
                     key={subCategory}
                     type="button"
-                    onClick={() => setActiveSubCategory(subCategory)}
+                    onClick={() => {
+                      setActiveSubCategory(subCategory)
+                      setCurrentPage(1)
+                    }}
                     className={cn(
                       "px-3 py-1.5 rounded-xl text-[10px] font-extrabold uppercase tracking-wider border transition-all duration-200 cursor-pointer",
                       activeSubCategory === subCategory
@@ -1572,7 +1576,10 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                 <span>Per page:</span>
                 <select
                   value={pageSize}
-                  onChange={e => setPageSize(Number(e.target.value))}
+                  onChange={e => {
+                    setPageSize(Number(e.target.value))
+                    setCurrentPage(1)
+                  }}
                   className="px-2.5 py-1 rounded-lg bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground text-xs font-bold focus:outline-none cursor-pointer"
                 >
                   <option value={12}>12</option>

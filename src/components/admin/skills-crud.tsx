@@ -3,7 +3,6 @@
 import * as React from 'react'
 import { 
   Terminal, 
-  Plus, 
   PlusCircle, 
   Edit3, 
   Trash2, 
@@ -15,10 +14,8 @@ import {
   ArrowLeft,
   Sparkles,
   UploadCloud,
-  ImageIcon,
   LayoutList,
   LayoutGrid,
-  ArrowUpDown,
   ChevronLeft,
   ChevronRight,
   Eye,
@@ -51,6 +48,13 @@ type SortField = 'name' | 'level' | 'category'
 
 export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
   const [skills, setSkills] = React.useState<Skill[]>(initialSkills)
+  const [prevInitialSkills, setPrevInitialSkills] = React.useState(initialSkills)
+
+  if (initialSkills !== prevInitialSkills) {
+    setPrevInitialSkills(initialSkills)
+    setSkills(initialSkills)
+  }
+
   const [search, setSearch] = React.useState('')
   const [activeCategory, setActiveCategory] = React.useState<string>('All')
   const [viewMode, setViewMode] = React.useState<ViewMode>('table')
@@ -66,19 +70,18 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
   const [notification, setNotification] = React.useState<{ success: boolean; message: string } | null>(null)
 
   React.useEffect(() => {
-    setSkills(initialSkills)
-  }, [initialSkills])
-
-  React.useEffect(() => {
-    const stored = sessionStorage.getItem('skills_admin_notification')
-    if (stored) {
-      try {
-        setNotification(JSON.parse(stored))
-      } catch (e) {
-        console.error(e)
+    const timer = setTimeout(() => {
+      const stored = sessionStorage.getItem('skills_admin_notification')
+      if (stored) {
+        try {
+          setNotification(JSON.parse(stored))
+        } catch (e) {
+          console.error(e)
+        }
+        sessionStorage.removeItem('skills_admin_notification')
       }
-      sessionStorage.removeItem('skills_admin_notification')
-    }
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   React.useEffect(() => {
@@ -133,7 +136,7 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
 
   // Filter & Sort
   const filteredAndSorted = React.useMemo(() => {
-    let result = skills.filter(s => {
+    const result = skills.filter(s => {
       const q = search.toLowerCase()
       const matchesSearch = 
         s.name.toLowerCase().includes(q) ||
@@ -159,15 +162,11 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
     return result
   }, [skills, search, activeCategory, sortField])
 
-  // Reset page 1 on filter change
-  React.useEffect(() => {
-    setCurrentPage(1)
-  }, [search, activeCategory, pageSize, sortField])
-
   // Pagination calculations
   const totalItems = filteredAndSorted.length
-  const totalPages = Math.ceil(totalItems / pageSize) || 1
-  const startIndex = (currentPage - 1) * pageSize
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
+  const startIndex = (safeCurrentPage - 1) * pageSize
   const paginatedItems = filteredAndSorted.slice(startIndex, startIndex + pageSize)
 
   const [previewItem, setPreviewItem] = React.useState<Skill | null>(null)
@@ -438,12 +437,18 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
                   type="text"
                   placeholder="Search skills by name or description..."
                   value={search}
-                  onChange={e => setSearch(e.target.value)}
+                  onChange={e => {
+                    setSearch(e.target.value)
+                    setCurrentPage(1)
+                  }}
                   className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
                 />
                 {search && (
                   <button
-                    onClick={() => setSearch('')}
+                    onClick={() => {
+                      setSearch('')
+                      setCurrentPage(1)
+                    }}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
@@ -456,7 +461,10 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
                 {/* Sort Selector */}
                 <CustomSortDropdown
                   value={sortField}
-                  onChange={setSortField}
+                  onChange={val => {
+                    setSortField(val as SortField)
+                    setCurrentPage(1)
+                  }}
                   options={[
                     { label: 'Highest Level', value: 'level' },
                     { label: 'Name (A-Z)', value: 'name' },
@@ -501,7 +509,10 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
                   <button
                     key={cat}
                     type="button"
-                    onClick={() => setActiveCategory(cat)}
+                    onClick={() => {
+                      setActiveCategory(cat)
+                      setCurrentPage(1)
+                    }}
                     className={cn(
                       "px-3 py-1.5 rounded-xl text-[10px] font-extrabold uppercase tracking-wider border transition-all duration-200 cursor-pointer",
                       activeCategory === cat
@@ -720,7 +731,10 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
                 <span>Per page:</span>
                 <select
                   value={pageSize}
-                  onChange={e => setPageSize(Number(e.target.value))}
+                  onChange={e => {
+                    setPageSize(Number(e.target.value))
+                    setCurrentPage(1)
+                  }}
                   className="px-2.5 py-1 rounded-lg bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground text-xs font-bold focus:outline-none cursor-pointer"
                 >
                   <option value={10}>10</option>
