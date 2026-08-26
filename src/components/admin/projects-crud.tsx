@@ -1430,13 +1430,19 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
               <AnimatePresence mode="popLayout">
                 {paginatedItems.map((proj) => (
                   <motion.div
-                    layout="position"
+                    layout
                     key={proj.id}
-                    initial={{ opacity: 0, scale: 0.94, filter: "blur(8px)" }}
-                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, scale: 0.94, filter: "blur(8px)" }}
-                    transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-                    className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 hover:border-primary/30 transition-all flex flex-col justify-between group"
+                    initial={{ opacity: 0, scale: 0.95, y: 8 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -8 }}
+                    transition={{
+                      layout: { type: 'spring', stiffness: 220, damping: 24, mass: 0.8 },
+                      opacity: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
+                      scale: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
+                      y: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }
+                    }}
+                    className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 hover:border-primary/30 transition-[border-color,box-shadow] duration-300 flex flex-col justify-between group transform-gpu"
+                    style={{ willChange: 'transform, opacity' }}
                   >
                     <div className="space-y-2">
                       <div className="flex justify-between items-start gap-2">

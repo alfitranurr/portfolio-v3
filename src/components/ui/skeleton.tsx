@@ -128,10 +128,10 @@ export function CertificateCardSkeleton() {
         {/* Certificate preview */}
         <Skeleton className="w-full h-40 rounded-2xl" />
         
-        {/* Category & Date */}
+        {/* Category icon & badge */}
         <div className="flex items-center justify-between">
-          <Skeleton className="h-5 w-28 rounded-lg" />
-          <Skeleton className="h-4 w-16 rounded" />
+          <Skeleton className="w-7 h-7 rounded-lg" />
+          <Skeleton className="h-6 w-32 rounded-lg" />
         </div>
 
         {/* Title */}

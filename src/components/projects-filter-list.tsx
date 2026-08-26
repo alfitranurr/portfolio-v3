@@ -297,18 +297,25 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
       {/* Interactive Project Cards Grid */}
       <motion.div 
         layout
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 !-mt-4"
       >
         <AnimatePresence mode="popLayout">
           {filteredAndSortedProjects.map((project) => (
             <motion.div
-              layout="position"
+              layout
               key={project.id}
-              initial={{ opacity: 0, scale: 0.94, filter: "blur(8px)" }}
-              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, scale: 0.94, filter: "blur(8px)" }}
-              transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-              className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-[border-color,box-shadow] duration-300 relative overflow-hidden"
+              initial={{ opacity: 0, scale: 0.95, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -8 }}
+              transition={{
+                layout: { type: 'spring', stiffness: 220, damping: 24, mass: 0.8 },
+                opacity: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
+                scale: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
+                y: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }
+              }}
+              className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-[border-color,box-shadow] duration-300 relative overflow-hidden transform-gpu"
+              style={{ willChange: 'transform, opacity' }}
             >
               {/* Subtle top indicator bar */}
               <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
