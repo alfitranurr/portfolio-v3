@@ -296,7 +296,7 @@ export function AIChatInterface() {
       {/* Messages Area */}
       <div
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto pr-1 sm:pr-2 space-y-3 sm:space-y-4 scroll-smooth min-h-0"
+        className="flex-1 overflow-y-auto overscroll-contain pr-1 sm:pr-2 space-y-3 sm:space-y-4 scroll-smooth min-h-0"
       >
         {!isHistoryLoaded ? (
           <div className="flex flex-col h-full items-center justify-center min-h-[200px]">

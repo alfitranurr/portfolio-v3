@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function AskAIPage() {
   return (
-    <div className="flex flex-col h-[calc(100dvh-7.8rem)] sm:h-[calc(100dvh-8.2rem)] lg:h-[calc(100vh-4.8rem)] space-y-3 sm:space-y-4 w-full">
+    <div className="flex flex-col h-[calc(100dvh-5.8rem)] sm:h-[calc(100dvh-6.2rem)] lg:h-[calc(100vh-5rem)] max-h-[calc(100dvh-5.8rem)] sm:max-h-[calc(100dvh-6.2rem)] lg:max-h-[calc(100vh-5rem)] space-y-2.5 sm:space-y-4 w-full -mt-2 sm:mt-0 overflow-hidden">
       {/* Page Header */}
       <div className="flex items-center justify-between gap-3 shrink-0">
         <div className="space-y-0.5 sm:space-y-1">
@@ -39,7 +39,7 @@ export default function AskAIPage() {
       </div>
 
       {/* Chat Interface Container */}
-      <div className="flex-1 min-h-0 w-full flex flex-col">
+      <div className="flex-1 min-h-0 w-full flex flex-col overflow-hidden">
         <AIChatInterface />
       </div>
     </div>
