@@ -333,32 +333,34 @@ export function AIChatInterface() {
                     Pilih topik di bawah ini atau ketik pertanyaan langsung di kolom chat
                   </p>
 
-                  {/* Modern 2-Column Responsive Suggested Prompts Grid */}
+                  {/* 1-Column Responsive Suggested Prompts List */}
                   <motion.div
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="grid grid-cols-2 gap-1.5 sm:gap-2.5 w-full text-left"
+                    className="flex flex-col gap-2 w-full max-w-xl text-left"
                   >
                     {SUGGESTIONS.map((item, i) => (
                       <motion.button
                         key={i}
                         variants={itemVariants}
                         onClick={() => sendMessage(item.prompt)}
-                        className="p-2 sm:p-3 rounded-xl sm:rounded-2xl glass-card border border-slate-200/70 dark:border-slate-800/70 hover:border-primary/40 bg-white/5 dark:bg-slate-800/30 text-left transition-all group cursor-pointer active:scale-[0.97] flex flex-col justify-between gap-1 shadow-2xs hover:shadow-md hover:shadow-primary/5 transform-gpu"
+                        className="w-full p-2.5 sm:p-3 rounded-xl sm:rounded-2xl glass-card border border-slate-200/70 dark:border-slate-800/70 hover:border-primary/40 bg-white/5 dark:bg-slate-800/30 text-left transition-all group cursor-pointer active:scale-[0.98] flex items-center justify-between gap-3 shadow-2xs hover:shadow-md hover:shadow-primary/5 transform-gpu"
                       >
-                        <div className="flex items-center justify-between w-full">
-                          <div className="flex items-center gap-1.5 min-w-0">
-                            <span className="text-xs sm:text-sm shrink-0">{item.icon}</span>
-                            <span className="font-bold text-[11px] sm:text-xs text-foreground group-hover:text-primary transition-colors leading-tight truncate">
+                        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                          <span className="text-sm sm:text-base shrink-0 p-1 sm:p-1.5 rounded-lg bg-white/5 dark:bg-slate-700/30 border border-slate-200/10 dark:border-slate-700/20">
+                            {item.icon}
+                          </span>
+                          <div className="space-y-0.5 min-w-0 flex-1">
+                            <h4 className="font-bold text-xs sm:text-sm text-foreground group-hover:text-primary transition-colors leading-tight">
                               {item.title}
-                            </span>
+                            </h4>
+                            <p className="text-[10px] sm:text-xs text-muted-foreground/80 truncate leading-snug">
+                              {item.prompt}
+                            </p>
                           </div>
-                          <ArrowUpRight className="w-3 h-3 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0 hidden sm:block" />
                         </div>
-                        <p className="text-[9.5px] sm:text-[11px] text-muted-foreground/80 line-clamp-1 leading-tight">
-                          {item.prompt}
-                        </p>
+                        <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
                       </motion.button>
                     ))}
                   </motion.div>
