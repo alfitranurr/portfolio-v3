@@ -196,20 +196,19 @@ export function AIChatInterface() {
 
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
-      let fullContent = ''
 
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
 
         const chunk = decoder.decode(value, { stream: true })
-        fullContent += chunk
-
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === assistantId ? { ...m, content: fullContent } : m
+        if (chunk) {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantId ? { ...m, content: m.content + chunk } : m
+            )
           )
-        )
+        }
       }
     } catch (error) {
       console.error('Chat stream error:', error)
