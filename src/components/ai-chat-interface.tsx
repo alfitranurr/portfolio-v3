@@ -2,7 +2,7 @@
 'use client'
 
 import * as React from 'react'
-import { Send, Bot, User, Sparkles, RefreshCw, Trash2 } from 'lucide-react'
+import { Send, Bot, User, Sparkles, RefreshCw, Trash2, ArrowUpRight } from 'lucide-react'
 import { motion, AnimatePresence, Variants } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
 import { cn } from '@/lib/utils'
@@ -14,13 +14,37 @@ interface ChatMessage {
   timestamp: Date
 }
 
-const SUGGESTED_QUESTIONS = [
-  'Siapa Al Fitra Nur Ramadhani?',
-  'Proyek apa saja yang pernah dibuat?',
-  'Skills dan tech stack apa yang dikuasai?',
-  'Bagaimana latar belakang pendidikannya?',
-  'Pengalaman kerja apa yang dimiliki?',
-  'Sertifikat dan penghargaan apa saja?',
+const SUGGESTIONS = [
+  {
+    icon: '👤',
+    title: 'Tentang Al Fitra',
+    prompt: 'Siapa Al Fitra Nur Ramadhani dan apa fokus keahliannya?',
+  },
+  {
+    icon: '🚀',
+    title: 'Proyek Portofolio',
+    prompt: 'Proyek apa saja yang pernah dibuat oleh Al Fitra?',
+  },
+  {
+    icon: '⚡',
+    title: 'Tech Stack & Skill',
+    prompt: 'Skills, bahasa pemrograman, dan tools apa yang dikuasai?',
+  },
+  {
+    icon: '💼',
+    title: 'Pengalaman Kerja',
+    prompt: 'Pengalaman kerja dan organisasi apa yang dimiliki?',
+  },
+  {
+    icon: '🎓',
+    title: 'Pendidikan',
+    prompt: 'Bagaimana riwayat dan latar belakang pendidikan Al Fitra?',
+  },
+  {
+    icon: '🏆',
+    title: 'Sertifikasi',
+    prompt: 'Sertifikat kompetensi dan penghargaan apa saja yang diraih?',
+  },
 ]
 
 const containerVariants: Variants = {
@@ -35,15 +59,15 @@ const containerVariants: Variants = {
 }
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 8, scale: 0.96 },
+  hidden: { opacity: 0, y: 6, scale: 0.97 },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
     transition: {
       type: 'spring',
-      stiffness: 420,
-      damping: 26,
+      stiffness: 400,
+      damping: 25,
     },
   },
 }
@@ -98,6 +122,7 @@ export function AIChatInterface() {
       localStorage.setItem('alfitra_ai_chat_history', JSON.stringify(messages))
     }
   }, [messages, isHistoryLoaded])
+
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
   const chatContainerRef = React.useRef<HTMLDivElement>(null)
@@ -111,21 +136,11 @@ export function AIChatInterface() {
     scrollToBottom()
   }, [messages, scrollToBottom])
 
-  // Lock outer page scroll — only chat area should scroll
-  React.useEffect(() => {
-    document.documentElement.style.overflow = 'hidden'
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.documentElement.style.overflow = ''
-      document.body.style.overflow = ''
-    }
-  }, [])
-
   // Auto-resize textarea
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value)
     e.target.style.height = 'auto'
-    e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px'
+    e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'
   }
 
   const sendMessage = async (content: string) => {
@@ -148,7 +163,6 @@ export function AIChatInterface() {
       inputRef.current.style.height = 'auto'
     }
 
-    // Create placeholder for assistant response
     const assistantId = generateId('assistant')
     const assistantMessage: ChatMessage = {
       id: assistantId,
@@ -156,7 +170,8 @@ export function AIChatInterface() {
       content: '',
       timestamp: getCurrentTimestamp(),
     }
-    setMessages((prev) => [...prev, assistantMessage])
+
+    setMessages([...updatedMessages, assistantMessage])
 
     try {
       const response = await fetch('/api/chat', {
@@ -172,29 +187,35 @@ export function AIChatInterface() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || `HTTP ${response.status}`)
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to get response`)
       }
 
-      // Read streaming response
-      const reader = response.body?.getReader()
+      if (!response.body) {
+        throw new Error('No response stream available')
+      }
+
+      const reader = response.body.getReader()
       const decoder = new TextDecoder()
+      let fullContent = ''
 
-      if (!reader) throw new Error('No response body')
-
-      let accumulated = ''
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
+
         const chunk = decoder.decode(value, { stream: true })
-        accumulated += chunk
-        const currentText = accumulated
+        fullContent += chunk
+
         setMessages((prev) =>
-          prev.map((m) => (m.id === assistantId ? { ...m, content: currentText } : m))
+          prev.map((m) =>
+            m.id === assistantId ? { ...m, content: fullContent } : m
+          )
         )
       }
-    } catch (err: unknown) {
-      console.error('Chat error:', err)
-      const errorMessage = err instanceof Error ? err.message : 'Gagal terhubung ke AI. Coba lagi nanti.'
+    } catch (error) {
+      console.error('Chat stream error:', error)
+      const errorMessage =
+        error instanceof Error ? error.message : 'Something went wrong. Please try again.'
+
       setMessages((prev) =>
         prev.map((m) =>
           m.id === assistantId
@@ -232,24 +253,26 @@ export function AIChatInterface() {
   const isEmptyState = messages.length === 0
 
   return (
-    <div className="flex flex-col h-full w-full border border-slate-200/80 dark:border-slate-800/80 rounded-2xl bg-card/30 dark:bg-slate-900/40 backdrop-blur-sm p-3 sm:p-5 shadow-sm overflow-hidden">
+    <div className="flex flex-col h-full w-full border border-slate-200/80 dark:border-slate-800/80 rounded-2xl sm:rounded-3xl bg-card/30 dark:bg-slate-900/40 backdrop-blur-sm p-2.5 sm:p-4 shadow-sm overflow-hidden">
       {/* Chat Room Header Toolbar */}
-      <div className="flex items-center justify-between pb-2 sm:pb-3 border-b border-slate-200/60 dark:border-slate-800/60 mb-2 sm:mb-3 shrink-0">
+      <div className="flex items-center justify-between pb-2 border-b border-slate-200/60 dark:border-slate-800/60 mb-2 shrink-0">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
-          <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Session Active</span>
+          <span className="text-[10px] sm:text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+            AI Chat Session Active
+          </span>
         </div>
         {messages.length > 0 && (
           <button
             onClick={clearChat}
-            className="flex items-center gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 text-xs text-muted-foreground hover:text-destructive rounded-lg hover:bg-destructive/10 transition-all cursor-pointer"
+            className="flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[11px] sm:text-xs text-muted-foreground hover:text-destructive rounded-lg hover:bg-destructive/10 transition-all cursor-pointer font-semibold"
             title="Clear chat"
           >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Clear Chat</span>
+            <Trash2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+            <span>Clear Chat</span>
           </button>
         )}
       </div>
@@ -257,128 +280,142 @@ export function AIChatInterface() {
       {/* Messages Area */}
       <div
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto pr-1 sm:pr-2 space-y-3 sm:space-y-4 scroll-smooth"
+        className="flex-1 overflow-y-auto pr-1 sm:pr-2 space-y-3 sm:space-y-4 scroll-smooth min-h-0"
       >
         {!isHistoryLoaded ? (
-          <div className="flex flex-col h-full items-center justify-center min-h-[250px]">
-            <RefreshCw className="w-5 h-5 sm:w-6 sm:h-6 animate-spin text-primary/50" />
+          <div className="flex flex-col h-full items-center justify-center min-h-[200px]">
+            <RefreshCw className="w-5 h-5 animate-spin text-primary/50" />
           </div>
         ) : (
           <AnimatePresence mode="wait">
             {isEmptyState ? (
               <motion.div
                 key="empty-state"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
-                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col items-center justify-center min-h-full py-1 sm:py-4 text-center px-1 sm:px-4 transform-gpu"
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="flex flex-col items-center justify-center min-h-full py-2 sm:py-4 text-center px-1 sm:px-4 transform-gpu"
               >
-                <div className="my-auto flex flex-col items-center w-full">
-                  {/* Animated AI icon */}
+                <div className="my-auto flex flex-col items-center w-full max-w-xl">
+                  {/* Animated AI Sparkles icon */}
                   <motion.div
                     animate={{
-                      scale: [1, 1.05, 1],
+                      scale: [1, 1.06, 1],
                       rotate: [0, 2, -2, 0],
                     }}
                     transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                    className="w-9 h-9 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-cyan-500/20 to-violet-600/20 border border-cyan-500/20 flex items-center justify-center mb-2 sm:mb-4 shrink-0 shadow-inner transform-gpu"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-cyan-500/20 to-violet-600/20 border border-cyan-500/20 flex items-center justify-center mb-2.5 sm:mb-4 shrink-0 shadow-inner transform-gpu"
                   >
-                    <Sparkles className="w-4 h-4 sm:w-6 sm:h-6 text-primary" />
+                    <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                   </motion.div>
 
-                  <h3 className="text-sm sm:text-lg md:text-xl font-extrabold text-foreground mb-2 sm:mb-6 shrink-0">
+                  <h3 className="text-sm sm:text-base md:text-lg font-black text-foreground mb-1">
                     Tanya apa saja tentang Al Fitra
                   </h3>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground/80 mb-3 sm:mb-4 max-w-sm">
+                    Pilih topik di bawah ini atau ketik pertanyaan langsung di kolom chat
+                  </p>
 
-                  {/* Suggested Questions */}
+                  {/* Modern 2-Column Responsive Suggested Prompts Grid */}
                   <motion.div
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="grid grid-cols-1 sm:flex sm:flex-wrap justify-center gap-1.5 sm:gap-2.5 w-full max-w-2xl shrink-0 px-1"
+                    className="grid grid-cols-2 gap-1.5 sm:gap-2.5 w-full text-left"
                   >
-                    {SUGGESTED_QUESTIONS.map((q, i) => (
+                    {SUGGESTIONS.map((item, i) => (
                       <motion.button
                         key={i}
                         variants={itemVariants}
-                        onClick={() => sendMessage(q)}
-                        className="w-full sm:w-auto text-left sm:text-center px-3 py-1.5 sm:px-3.5 sm:py-2 text-[11px] sm:text-xs font-medium rounded-lg sm:rounded-xl bg-slate-200/40 dark:bg-slate-800/40 backdrop-blur-md border border-slate-200/60 dark:border-slate-700/50 text-foreground/85 hover:text-primary hover:border-primary/40 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:shadow-md hover:shadow-primary/10 active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer transform-gpu"
+                        onClick={() => sendMessage(item.prompt)}
+                        className="p-2 sm:p-3 rounded-xl sm:rounded-2xl glass-card border border-slate-200/70 dark:border-slate-800/70 hover:border-primary/40 bg-white/5 dark:bg-slate-800/30 text-left transition-all group cursor-pointer active:scale-[0.97] flex flex-col justify-between gap-1 shadow-2xs hover:shadow-md hover:shadow-primary/5 transform-gpu"
                       >
-                        {q}
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className="text-xs sm:text-sm shrink-0">{item.icon}</span>
+                            <span className="font-bold text-[11px] sm:text-xs text-foreground group-hover:text-primary transition-colors leading-tight truncate">
+                              {item.title}
+                            </span>
+                          </div>
+                          <ArrowUpRight className="w-3 h-3 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0 hidden sm:block" />
+                        </div>
+                        <p className="text-[9.5px] sm:text-[11px] text-muted-foreground/80 line-clamp-1 leading-tight">
+                          {item.prompt}
+                        </p>
                       </motion.button>
                     ))}
                   </motion.div>
                 </div>
               </motion.div>
             ) : (
-            <div key="messages-list" className="space-y-3 sm:space-y-4">
-              {messages.map((message) => (
-                <motion.div
-                  key={message.id}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className={cn(
-                    'flex gap-2 sm:gap-3',
-                    message.role === 'user' ? 'justify-end' : 'justify-start'
-                  )}
-                >
-                  {/* AI Avatar */}
-                  {message.role === 'assistant' && (
-                    <div className="shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center shadow-md shadow-cyan-500/10 mt-1">
-                      <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                    </div>
-                  )}
-
-                  {/* Message Bubble */}
-                  <div
+              <div key="messages-list" className="space-y-3 sm:space-y-4">
+                {messages.map((message) => (
+                  <motion.div
+                    key={message.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25 }}
                     className={cn(
-                      'max-w-[88%] sm:max-w-[75%] rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm leading-relaxed',
-                      message.role === 'user'
-                        ? 'bg-primary text-primary-foreground rounded-br-md shadow-lg shadow-primary/20'
-                        : 'glass-panel rounded-bl-md'
+                      'flex gap-2 sm:gap-3',
+                      message.role === 'user' ? 'justify-end' : 'justify-start'
                     )}
                   >
-                    {message.role === 'assistant' ? (
-                      message.content ? (
-                        <div className="chat-markdown prose prose-sm dark:prose-invert max-w-none">
-                          <ReactMarkdown>{message.content}</ReactMarkdown>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <div className="typing-indicator">
-                            <span />
-                            <span />
-                            <span />
-                          </div>
-                          <span className="text-xs text-muted-foreground">Memikirkan jawaban...</span>
-                        </div>
-                      )
-                    ) : (
-                      <p className="whitespace-pre-wrap">{message.content}</p>
+                    {/* AI Avatar */}
+                    {message.role === 'assistant' && (
+                      <div className="shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center shadow-xs mt-0.5">
+                        <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                      </div>
                     )}
-                  </div>
 
-                  {/* User Avatar */}
-                  {message.role === 'user' && (
-                    <div className="shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-slate-600 to-slate-800 dark:from-slate-500 dark:to-slate-700 flex items-center justify-center shadow-md mt-1">
-                      <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                    {/* Message Bubble */}
+                    <div
+                      className={cn(
+                        'max-w-[88%] sm:max-w-[78%] rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm leading-relaxed shadow-2xs',
+                        message.role === 'user'
+                          ? 'bg-primary text-primary-foreground rounded-br-xs shadow-primary/10'
+                          : 'glass-panel rounded-bl-xs border border-slate-200/70 dark:border-slate-800/70'
+                      )}
+                    >
+                      {message.role === 'assistant' ? (
+                        message.content ? (
+                          <div className="chat-markdown prose prose-sm dark:prose-invert max-w-none text-xs sm:text-sm leading-relaxed">
+                            <ReactMarkdown>{message.content}</ReactMarkdown>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 py-1">
+                            <div className="typing-indicator">
+                              <span />
+                              <span />
+                              <span />
+                            </div>
+                            <span className="text-xs text-muted-foreground">Mengetik jawaban...</span>
+                          </div>
+                        )
+                      ) : (
+                        <p className="whitespace-pre-wrap">{message.content}</p>
+                      )}
                     </div>
-                  )}
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </AnimatePresence>
+
+                    {/* User Avatar */}
+                    {message.role === 'user' && (
+                      <div className="shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-slate-700 dark:bg-slate-600 flex items-center justify-center shadow-xs mt-0.5">
+                        <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </AnimatePresence>
         )}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Input Area */}
-      <div className="pt-2 sm:pt-4 border-t border-slate-200/10 dark:border-slate-800/20 mt-1 sm:mt-2 shrink-0">
+      <div className="pt-2 sm:pt-3 border-t border-slate-200/60 dark:border-slate-800/60 mt-1 shrink-0">
         <form onSubmit={handleSubmit} className="relative">
-          <div className="flex items-end gap-1.5 sm:gap-2 p-1.5 sm:p-2 rounded-xl sm:rounded-2xl glass-panel border border-slate-200/20 dark:border-slate-700/30 focus-within:border-primary/40 focus-within:shadow-lg focus-within:shadow-primary/5 transition-all">
+          <div className="flex items-end gap-1.5 p-1.5 sm:p-2 rounded-xl sm:rounded-2xl glass-panel border border-slate-200/70 dark:border-slate-700/50 focus-within:border-primary/50 focus-within:shadow-md focus-within:shadow-primary/5 transition-all">
             <textarea
               ref={inputRef}
               value={input}
@@ -387,16 +424,16 @@ export function AIChatInterface() {
               placeholder="Tanyakan tentang Al Fitra..."
               disabled={isStreaming}
               rows={1}
-              className="flex-1 bg-transparent text-xs sm:text-sm text-foreground placeholder:text-muted-foreground outline-none resize-none px-2.5 py-2 sm:px-3 sm:py-2.5 max-h-[120px] sm:max-h-[150px] disabled:opacity-50"
+              className="flex-1 bg-transparent text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 outline-none resize-none px-2 py-1.5 sm:px-3 sm:py-2 max-h-[100px] sm:max-h-[120px] disabled:opacity-50 leading-normal"
             />
             <button
               type="submit"
               disabled={!input.trim() || isStreaming}
               className={cn(
-                'shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center transition-all cursor-pointer',
+                'shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl flex items-center justify-center transition-all cursor-pointer',
                 input.trim() && !isStreaming
-                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 hover:bg-primary/90 hover:scale-105 active:scale-95'
-                  : 'bg-slate-200/20 dark:bg-slate-800/30 text-muted-foreground cursor-not-allowed'
+                  ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20 hover:bg-primary/90 hover:scale-105 active:scale-95'
+                  : 'bg-slate-200/30 dark:bg-slate-800/30 text-muted-foreground/50 cursor-not-allowed'
               )}
               aria-label="Send message"
             >
@@ -407,7 +444,7 @@ export function AIChatInterface() {
               )}
             </button>
           </div>
-          <p className="text-[9px] sm:text-[10px] text-muted-foreground/60 text-center mt-1 sm:mt-2">
+          <p className="text-[8.5px] sm:text-[10px] text-muted-foreground/60 text-center mt-1 truncate">
             AI dapat membuat kesalahan. Respon didasarkan pada data portfolio + web search.
           </p>
         </form>
