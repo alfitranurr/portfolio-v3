@@ -11,9 +11,33 @@ interface ExperienceFilterListProps {
   initialExperience: Experience[]
 }
 
+function getInitialExperienceCategory(): 'professional' | 'committee_organization' {
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = sessionStorage.getItem('experience_public_active_category') || localStorage.getItem('experience_public_active_category')
+      if (stored === 'professional' || stored === 'committee_organization') {
+        return stored
+      }
+    } catch {
+      // fallback
+    }
+  }
+  return 'professional'
+}
+
 export function ExperienceFilterList({ initialExperience }: ExperienceFilterListProps) {
-  const [activeCategory, setActiveCategory] = React.useState<'professional' | 'committee_organization'>('professional')
+  const [activeCategory, setActiveCategory] = React.useState<'professional' | 'committee_organization'>(getInitialExperienceCategory)
   const [expandedRoles, setExpandedRoles] = React.useState<Record<string, boolean>>({})
+
+  const handleCategoryChange = (cat: 'professional' | 'committee_organization') => {
+    setActiveCategory(cat)
+    try {
+      sessionStorage.setItem('experience_public_active_category', cat)
+      localStorage.setItem('experience_public_active_category', cat)
+    } catch {
+      // ignore
+    }
+  }
 
   const toggleRole = (id: string) => {
     setExpandedRoles(prev => ({ ...prev, [id]: !prev[id] }))
@@ -103,7 +127,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
       <div className="flex justify-center px-2">
         <div className="flex p-1 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 max-w-lg w-full">
           <button
-            onClick={() => setActiveCategory('professional')}
+            onClick={() => handleCategoryChange('professional')}
             className={cn(
               "flex-1 py-2 sm:py-2.5 text-[10px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap",
               activeCategory === 'professional'
@@ -116,7 +140,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
             <span className="inline sm:hidden">Professional</span>
           </button>
           <button
-            onClick={() => setActiveCategory('committee_organization')}
+            onClick={() => handleCategoryChange('committee_organization')}
             className={cn(
               "flex-1 py-2 sm:py-2.5 text-[10px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap",
               activeCategory === 'committee_organization'
