@@ -3,7 +3,6 @@
 import * as React from 'react'
 import { 
   GraduationCap, 
-  Plus, 
   PlusCircle, 
   Edit3, 
   Trash2, 
@@ -17,10 +16,8 @@ import {
   MapPin,
   ArrowLeft,
   UploadCloud,
-  Image as ImageIcon,
   LayoutList,
   LayoutGrid,
-  ArrowUpDown,
   ChevronLeft,
   ChevronRight,
   Sparkles,
@@ -41,7 +38,7 @@ interface Education {
   location: string | null
   start_date: string
   end_date: string | null
-  gpa: string | null
+  gpa: string | number | null
   description: string | null
   logo_url?: string | null
   created_at?: string
@@ -69,6 +66,13 @@ type SortField = 'newest' | 'oldest' | 'institution' | 'degree'
 
 export function EducationCrud({ initialEducation }: EducationCrudProps) {
   const [educationList, setEducationList] = React.useState<Education[]>(initialEducation)
+  const [prevInitialEducation, setPrevInitialEducation] = React.useState(initialEducation)
+
+  if (initialEducation !== prevInitialEducation) {
+    setPrevInitialEducation(initialEducation)
+    setEducationList(initialEducation)
+  }
+
   const [search, setSearch] = React.useState('')
   const [viewMode, setViewMode] = React.useState<ViewMode>('table')
   const [sortField, setSortField] = React.useState<SortField>('newest')
@@ -83,19 +87,18 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
   const [notification, setNotification] = React.useState<{ success: boolean; message: string } | null>(null)
 
   React.useEffect(() => {
-    setEducationList(initialEducation)
-  }, [initialEducation])
-
-  React.useEffect(() => {
-    const stored = sessionStorage.getItem('education_admin_notification')
-    if (stored) {
-      try {
-        setNotification(JSON.parse(stored))
-      } catch (e) {
-        console.error(e)
+    const timer = setTimeout(() => {
+      const stored = sessionStorage.getItem('education_admin_notification')
+      if (stored) {
+        try {
+          setNotification(JSON.parse(stored))
+        } catch (e) {
+          console.error(e)
+        }
+        sessionStorage.removeItem('education_admin_notification')
       }
-      sessionStorage.removeItem('education_admin_notification')
-    }
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   React.useEffect(() => {
@@ -133,13 +136,9 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
     }
   }
 
-  const handleRemoveLogo = () => {
-    setEditingItem(prev => ({ ...prev, logo_url: null }))
-  }
-
   // Filter and Sort logic
   const filteredAndSorted = React.useMemo(() => {
-    let result = educationList.filter(e => {
+    const result = educationList.filter(e => {
       const q = search.toLowerCase()
       return (
         e.institution.toLowerCase().includes(q) ||
@@ -168,15 +167,11 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
     return result
   }, [educationList, search, sortField])
 
-  // Reset to page 1 whenever search/pageSize changes
-  React.useEffect(() => {
-    setCurrentPage(1)
-  }, [search, pageSize, sortField])
-
-  // Pagination calculations
+  // Pagination calculation
   const totalItems = filteredAndSorted.length
-  const totalPages = Math.ceil(totalItems / pageSize) || 1
-  const startIndex = (currentPage - 1) * pageSize
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
+  const startIndex = (safeCurrentPage - 1) * pageSize
   const paginatedItems = filteredAndSorted.slice(startIndex, startIndex + pageSize)
 
   const [previewItem, setPreviewItem] = React.useState<Education | null>(null)
@@ -515,12 +510,18 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                   type="text"
                   placeholder="Search by institution, degree, or field of study..."
                   value={search}
-                  onChange={e => setSearch(e.target.value)}
+                  onChange={e => {
+                    setSearch(e.target.value)
+                    setCurrentPage(1)
+                  }}
                   className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
                 />
                 {search && (
                   <button
-                    onClick={() => setSearch('')}
+                    onClick={() => {
+                      setSearch('')
+                      setCurrentPage(1)
+                    }}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
@@ -533,7 +534,10 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                 {/* Sort Selector */}
                 <CustomSortDropdown
                   value={sortField}
-                  onChange={setSortField}
+                  onChange={val => {
+                    setSortField(val as SortField)
+                    setCurrentPage(1)
+                  }}
                   options={[
                     { label: 'Newest First', value: 'newest' },
                     { label: 'Oldest First', value: 'oldest' },
@@ -826,7 +830,10 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                 <span>Per page:</span>
                 <select
                   value={pageSize}
-                  onChange={e => setPageSize(Number(e.target.value))}
+                  onChange={e => {
+                    setPageSize(Number(e.target.value))
+                    setCurrentPage(1)
+                  }}
                   className="px-2.5 py-1 rounded-lg bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground text-xs font-bold focus:outline-none cursor-pointer"
                 >
                   <option value={10}>10</option>

@@ -20,12 +20,10 @@ import {
   ChevronUp,
   ChevronDown,
   UploadCloud,
-  Image as ImageIcon,
   LayoutList,
   LayoutGrid,
   Eye,
   Copy,
-  ArrowUpDown,
   ChevronLeft,
   ChevronRight,
   Sparkles,
@@ -79,6 +77,13 @@ type SortField = 'newest' | 'oldest' | 'company' | 'role'
 
 export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
   const [experienceList, setExperienceList] = React.useState<Experience[]>(initialExperience)
+  const [prevInitialExperience, setPrevInitialExperience] = React.useState(initialExperience)
+
+  if (initialExperience !== prevInitialExperience) {
+    setPrevInitialExperience(initialExperience)
+    setExperienceList(initialExperience)
+  }
+
   const [search, setSearch] = React.useState('')
   const [activeCategory, setActiveCategory] = React.useState<string>('All')
   const [viewMode, setViewMode] = React.useState<ViewMode>('table')
@@ -95,19 +100,18 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
   const [notification, setNotification] = React.useState<{ success: boolean; message: string } | null>(null)
 
   React.useEffect(() => {
-    setExperienceList(initialExperience)
-  }, [initialExperience])
-
-  React.useEffect(() => {
-    const stored = sessionStorage.getItem('experience_admin_notification')
-    if (stored) {
-      try {
-        setNotification(JSON.parse(stored))
-      } catch (e) {
-        console.error(e)
+    const timer = setTimeout(() => {
+      const stored = sessionStorage.getItem('experience_admin_notification')
+      if (stored) {
+        try {
+          setNotification(JSON.parse(stored))
+        } catch (e) {
+          console.error(e)
+        }
+        sessionStorage.removeItem('experience_admin_notification')
       }
-      sessionStorage.removeItem('experience_admin_notification')
-    }
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   React.useEffect(() => {
@@ -145,13 +149,9 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
     }
   }
 
-  const handleRemoveLogo = () => {
-    setEditingItem(prev => ({ ...prev, logo_url: null }))
-  }
-
   // Filter and Sort logic
   const filteredAndSorted = React.useMemo(() => {
-    let result = experienceList.filter(e => {
+    const result = experienceList.filter(e => {
       const q = search.toLowerCase()
       const matchesSearch = 
         e.role.toLowerCase().includes(q) ||
@@ -180,15 +180,11 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
     return result
   }, [experienceList, search, activeCategory, sortField])
 
-  // Reset to page 1 whenever filters change
-  React.useEffect(() => {
-    setCurrentPage(1)
-  }, [search, activeCategory, pageSize, sortField])
-
   // Pagination calculations
   const totalItems = filteredAndSorted.length
-  const totalPages = Math.ceil(totalItems / pageSize) || 1
-  const startIndex = (currentPage - 1) * pageSize
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
+  const startIndex = (safeCurrentPage - 1) * pageSize
   const paginatedItems = filteredAndSorted.slice(startIndex, startIndex + pageSize)
 
   const [previewItem, setPreviewItem] = React.useState<Experience | null>(null)
@@ -439,7 +435,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                   </label>
                   <select
                     value={editingItem.category || 'professional'}
-                    onChange={e => setEditingItem(prev => ({ ...prev, category: e.target.value as any }))}
+                    onChange={e => setEditingItem(prev => ({ ...prev, category: e.target.value as Experience['category'] }))}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/50 text-foreground text-sm focus:outline-none focus:border-primary/50"
                   >
                     <option value="professional">Professional Experience</option>
@@ -643,12 +639,18 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                   type="text"
                   placeholder="Search by job role, company, or location..."
                   value={search}
-                  onChange={e => setSearch(e.target.value)}
+                  onChange={e => {
+                    setSearch(e.target.value)
+                    setCurrentPage(1)
+                  }}
                   className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
                 />
                 {search && (
                   <button
-                    onClick={() => setSearch('')}
+                    onClick={() => {
+                      setSearch('')
+                      setCurrentPage(1)
+                    }}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
@@ -661,7 +663,10 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                 {/* Sort Field Selector */}
                 <CustomSortDropdown
                   value={sortField}
-                  onChange={setSortField}
+                  onChange={val => {
+                    setSortField(val as SortField)
+                    setCurrentPage(1)
+                  }}
                   options={[
                     { label: 'Newest First', value: 'newest' },
                     { label: 'Oldest First', value: 'oldest' },
@@ -707,7 +712,10 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                   <button
                     key={cat}
                     type="button"
-                    onClick={() => setActiveCategory(cat)}
+                    onClick={() => {
+                      setActiveCategory(cat)
+                      setCurrentPage(1)
+                    }}
                     className={cn(
                       "px-3 py-1.5 rounded-xl text-[10px] font-extrabold uppercase tracking-wider border transition-all duration-200 cursor-pointer",
                       activeCategory === cat
@@ -967,7 +975,10 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
                 <span>Per page:</span>
                 <select
                   value={pageSize}
-                  onChange={e => setPageSize(Number(e.target.value))}
+                  onChange={e => {
+                    setPageSize(Number(e.target.value))
+                    setCurrentPage(1)
+                  }}
                   className="px-2.5 py-1 rounded-lg bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground text-xs font-bold focus:outline-none cursor-pointer"
                 >
                   <option value={10}>10</option>

@@ -30,7 +30,7 @@ interface AISettingsClientProps {
 }
 
 export function AISettingsClient({ initialSettings, initialLogs }: AISettingsClientProps) {
-  const [settings, setSettings] = React.useState<AISettings>(initialSettings)
+  const [, setSettings] = React.useState<AISettings>(initialSettings)
   const [logs, setLogs] = React.useState<AIChatLog[]>(initialLogs)
   
   // Form states
@@ -87,16 +87,12 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
   }, [logs, searchQuery])
 
   // Paginated logs
+  const totalPages = Math.max(1, Math.ceil(filteredLogs.length / logsPerPage))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
   const paginatedLogs = React.useMemo(() => {
-    const startIndex = (currentPage - 1) * logsPerPage
+    const startIndex = (safeCurrentPage - 1) * logsPerPage
     return filteredLogs.slice(startIndex, startIndex + logsPerPage)
-  }, [filteredLogs, currentPage])
-
-  const totalPages = Math.ceil(filteredLogs.length / logsPerPage)
-
-  React.useEffect(() => {
-    setCurrentPage(1)
-  }, [searchQuery])
+  }, [filteredLogs, safeCurrentPage])
 
   // Clear notification feedback after 4 seconds
   React.useEffect(() => {
@@ -126,7 +122,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
       } else {
         setFeedback({ type: 'error', message: res.error || 'Failed to save configuration.' })
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error(err)
       setFeedback({ type: 'error', message: 'An unexpected error occurred while saving.' })
     } finally {
@@ -400,7 +396,10 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                 type="text"
                 placeholder="Search prompt preview, IP..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  setCurrentPage(1)
+                }}
                 className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
               />
             </div>

@@ -5,7 +5,7 @@ import Image, { ImageProps } from 'next/image'
 import { cn } from '@/lib/utils'
 
 export interface BlurImageProps extends Omit<ImageProps, 'src'> {
-  src?: string | any | null
+  src?: ImageProps['src'] | null
   initialBlur?: string
   initialScale?: string
   loadedBlur?: string
@@ -14,7 +14,7 @@ export interface BlurImageProps extends Omit<ImageProps, 'src'> {
 }
 
 // Check if image domain is local, Supabase, or Google Drive (Google User Content)
-const isOptimizable = (src: any) => {
+const isOptimizable = (src: unknown) => {
   if (typeof src === 'string') {
     return src.startsWith('/') || src.includes('supabase.co') || src.includes('googleusercontent.com') || src.includes('unsplash.com')
   }
