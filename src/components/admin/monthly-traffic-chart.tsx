@@ -138,7 +138,7 @@ export function MonthlyTrafficChart({ refreshTrigger }: MonthlyTrafficChartProps
   // Total metrics are fetched directly from database query responses to avoid double counting unique visitors
 
   return (
-    <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 relative overflow-hidden group">
+    <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 relative overflow-hidden group">
       {/* Header details */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
@@ -159,7 +159,7 @@ export function MonthlyTrafficChart({ refreshTrigger }: MonthlyTrafficChartProps
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(Number(e.target.value))}
-            className="px-3 py-1.5 rounded-xl bg-white/5 dark:bg-black/20 border border-slate-300 dark:border-slate-800/30 text-foreground text-xs focus:outline-none focus:border-primary/50 transition-all font-semibold cursor-pointer"
+            className="px-3 py-1.5 rounded-xl bg-white/80 dark:bg-black/20 border border-slate-300 dark:border-slate-800/30 text-foreground text-xs focus:outline-none focus:border-primary/50 transition-all font-semibold cursor-pointer shadow-2xs"
           >
             {availableYears.map((year) => (
               <option key={year} value={year} className="dark:bg-slate-900 text-foreground">
@@ -171,7 +171,7 @@ export function MonthlyTrafficChart({ refreshTrigger }: MonthlyTrafficChartProps
       </div>
 
       {/* Stats Summary Panel */}
-      <div className="grid grid-cols-2 gap-4 mb-6 p-4 rounded-2xl bg-white/5 border border-slate-200/5 dark:border-slate-800/5">
+      <div className="grid grid-cols-2 gap-4 mb-6 p-4 rounded-2xl bg-white/60 dark:bg-white/5 border border-slate-300 dark:border-slate-800/20 shadow-2xs">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400">
             <Eye className="w-5 h-5" />

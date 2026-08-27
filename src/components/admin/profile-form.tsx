@@ -94,7 +94,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
   return (
     <form action={formAction} className="space-y-8 animate-fade-in">
       {/* Header Glass Card Container */}
-      <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+      <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
         <div className="absolute -top-12 -right-12 w-44 h-44 bg-primary/10 rounded-full filter blur-3xl pointer-events-none" />
         <div className="space-y-1 z-10">
           <div className="flex items-center gap-2.5">
@@ -164,7 +164,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
         {/* Left Column: Details & Bio */}
         <div className="lg:col-span-2 space-y-6">
           {/* Main Info Box */}
-          <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4">
+          <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 space-y-4">
             <h2 className="text-sm font-bold uppercase tracking-wider text-primary mb-2">Identity Details</h2>
             
             {/* Full Name */}
@@ -179,7 +179,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                   name="name"
                   required
                   defaultValue={initialProfile.name}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all shadow-2xs"
                 />
               </div>
             </div>
@@ -196,7 +196,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                   name="headline"
                   required
                   defaultValue={initialProfile.headline}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all shadow-2xs"
                 />
               </div>
             </div>
@@ -213,7 +213,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                   rows={10}
                   defaultValue={initialProfile.about_me || ''}
                   placeholder="Tell visitors about your professional history and strengths..."
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all resize-y"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all resize-y shadow-2xs"
                 />
               </div>
             </div>
@@ -221,7 +221,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
           </div>
 
           {/* Social Presence Box */}
-          <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4">
+          <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 space-y-4">
             <h2 className="text-sm font-bold uppercase tracking-wider text-primary mb-2">Social Networks</h2>
             
             {/* Instagram */}
@@ -236,7 +236,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                   name="instagram_url"
                   defaultValue={initialProfile.instagram_url || ''}
                   placeholder="https://instagram.com/username"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all shadow-2xs"
                 />
               </div>
             </div>
@@ -253,7 +253,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                   name="linkedin_url"
                   defaultValue={initialProfile.linkedin_url || ''}
                   placeholder="https://linkedin.com/in/username"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all shadow-2xs"
                 />
               </div>
             </div>
@@ -270,7 +270,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                   name="github_url"
                   defaultValue={initialProfile.github_url || ''}
                   placeholder="https://github.com/username"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/40 text-sm focus:outline-none focus:border-primary/50 transition-all shadow-2xs"
                 />
               </div>
             </div>
@@ -280,11 +280,11 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
         {/* Right Column: Files & Uploads */}
         <div className="space-y-6">
           {/* Logo box */}
-          <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 flex flex-col items-center">
+          <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 space-y-4 flex flex-col items-center">
             <h2 className="text-sm font-bold uppercase tracking-wider text-primary w-full text-left">Website Logo / Favicon</h2>
             
             {/* Square Preview */}
-            <div className="relative group w-32 h-32 rounded-3xl overflow-hidden border border-slate-200/20 dark:border-slate-800/10 bg-slate-200/5 flex items-center justify-center">
+            <div className="relative group w-32 h-32 rounded-3xl overflow-hidden border border-slate-300 dark:border-slate-800/20 bg-white/60 dark:bg-slate-200/5 flex items-center justify-center shadow-2xs">
               {logoPreview ? (
                 <BlurImage
                   src={logoPreview}
@@ -296,7 +296,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
               )}
             </div>
 
-            <label className="w-full py-2.5 px-4 rounded-xl bg-white/5 border border-dashed border-slate-200/20 dark:border-slate-800/20 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2">
+            <label className="w-full py-2.5 px-4 rounded-xl bg-white/60 dark:bg-white/5 border border-dashed border-slate-300 dark:border-slate-800/30 text-xs font-bold text-center cursor-pointer hover:border-primary/50 hover:bg-white dark:hover:bg-white/10 transition-all flex items-center justify-center gap-2 shadow-2xs">
               <UploadCloud className="w-4 h-4 text-muted-foreground" />
               <span>Select Logo Image</span>
               <input
@@ -313,11 +313,11 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
           </div>
 
           {/* Avatar box */}
-          <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 flex flex-col items-center">
+          <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 space-y-4 flex flex-col items-center">
             <h2 className="text-sm font-bold uppercase tracking-wider text-primary w-full text-left">Avatar Picture</h2>
             
             {/* Circle Preview */}
-            <div className="relative group w-32 h-32 rounded-full overflow-hidden border border-slate-200/20 dark:border-slate-800/10 bg-slate-200/5 flex items-center justify-center">
+            <div className="relative group w-32 h-32 rounded-full overflow-hidden border border-slate-300 dark:border-slate-800/20 bg-white/60 dark:bg-slate-200/5 flex items-center justify-center shadow-2xs">
               {avatarPreview ? (
                 <BlurImage
                   src={avatarPreview}
@@ -329,7 +329,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
               )}
             </div>
 
-            <label className="w-full py-2.5 px-4 rounded-xl bg-white/5 border border-dashed border-slate-200/20 dark:border-slate-800/20 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2">
+            <label className="w-full py-2.5 px-4 rounded-xl bg-white/60 dark:bg-white/5 border border-dashed border-slate-300 dark:border-slate-800/30 text-xs font-bold text-center cursor-pointer hover:border-primary/50 hover:bg-white dark:hover:bg-white/10 transition-all flex items-center justify-center gap-2 shadow-2xs">
               <ImageIcon className="w-4 h-4 text-muted-foreground" />
               <span>Select Profile Image</span>
               <input
@@ -346,11 +346,11 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
           </div>
 
           {/* Resume box */}
-          <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4">
+          <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 space-y-4">
             <h2 className="text-sm font-bold uppercase tracking-wider text-primary">Resume Document</h2>
             
             {resumeName ? (
-              <div className="p-3.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 flex items-center gap-3">
+              <div className="p-3.5 rounded-xl bg-white/80 dark:bg-white/5 border border-slate-300 dark:border-slate-800/20 flex items-center gap-3 shadow-2xs">
                 <div className="p-2 rounded-lg bg-red-500/15 text-red-500">
                   <FileText className="w-4 h-4" />
                 </div>
@@ -369,12 +369,12 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                 </div>
               </div>
             ) : (
-              <div className="p-4 rounded-xl border border-dashed border-slate-200/10 dark:border-slate-800/10 text-center text-xs text-muted-foreground">
+              <div className="p-4 rounded-xl border border-dashed border-slate-300 dark:border-slate-800/30 text-center text-xs text-muted-foreground bg-white/40 dark:bg-white/5">
                 No resume document currently uploaded.
               </div>
             )}
 
-            <label className="w-full py-2.5 px-4 rounded-xl bg-white/5 border border-dashed border-slate-200/20 dark:border-slate-800/20 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2">
+            <label className="w-full py-2.5 px-4 rounded-xl bg-white/60 dark:bg-white/5 border border-dashed border-slate-300 dark:border-slate-800/30 text-xs font-bold text-center cursor-pointer hover:border-primary/50 hover:bg-white dark:hover:bg-white/10 transition-all flex items-center justify-center gap-2 shadow-2xs">
               <UploadCloud className="w-4 h-4 text-muted-foreground" />
               <span>Upload PDF Document</span>
               <input

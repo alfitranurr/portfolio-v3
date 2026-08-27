@@ -11,7 +11,7 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="w-full">
+    <div className="w-full admin-container">
       {children}
     </div>
   )
