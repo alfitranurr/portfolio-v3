@@ -1228,7 +1228,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                 />
 
                 {/* View Switcher */}
-                <div className="flex items-center p-1 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-700/50">
+                <div className="flex items-center p-1 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-md border border-slate-300 dark:border-slate-700/60 shadow-2xs">
                   <button
                     onClick={() => setViewMode('grid')}
                     title="Grid View"

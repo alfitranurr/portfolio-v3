@@ -164,8 +164,8 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
               ]}
             />
 
-            <span className="text-xs text-muted-foreground font-semibold shrink-0">
-              Showing {filteredAndSortedCertificates.length} {filteredAndSortedCertificates.length === 1 ? 'entry' : 'entries'}
+            <span className="text-xs text-muted-foreground font-medium shrink-0">
+              Showing <span className="font-bold text-foreground">{filteredAndSortedCertificates.length}</span> {filteredAndSortedCertificates.length === 1 ? 'entry' : 'entries'}
             </span>
           </div>
         </div>

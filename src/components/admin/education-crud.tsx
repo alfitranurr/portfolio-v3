@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { motion } from 'framer-motion'
 import { 
   GraduationCap, 
   PlusCircle, 
@@ -547,7 +548,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                 />
 
                 {/* View Switcher */}
-                <div className="flex items-center p-1 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-700/50">
+                <div className="flex items-center p-1 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-md border border-slate-300 dark:border-slate-700/60 shadow-2xs">
                   <button
                     onClick={() => setViewMode('table')}
                     title="Table View"
@@ -732,8 +733,10 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
             /* ============================================================ */
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {paginatedItems.map((item) => (
-                <div
+                <motion.div
+                  layout
                   key={item.id}
+                  transition={{ layout: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } }}
                   className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 hover:border-primary/30 transition-all flex flex-col justify-between space-y-4 group"
                 >
                   <div className="space-y-3">
@@ -818,7 +821,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
                       <span>Delete</span>
                     </button>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           )}

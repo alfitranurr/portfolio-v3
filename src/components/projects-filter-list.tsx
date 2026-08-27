@@ -243,8 +243,8 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
               ]}
             />
 
-            <span className="text-xs text-muted-foreground font-semibold shrink-0">
-              Showing {filteredAndSortedProjects.length} {filteredAndSortedProjects.length === 1 ? 'entry' : 'entries'}
+            <span className="text-xs text-muted-foreground font-medium shrink-0">
+              Showing <span className="font-bold text-foreground">{filteredAndSortedProjects.length}</span> {filteredAndSortedProjects.length === 1 ? 'entry' : 'entries'}
             </span>
           </div>
         </div>
@@ -337,8 +337,10 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
           >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
               {filteredAndSortedProjects.map((project) => (
-                <div
+                <motion.div
+                  layout
                   key={project.id}
+                  transition={{ layout: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } }}
                   className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-[border-color,box-shadow] duration-300 relative overflow-hidden transform-gpu w-full"
                 >
                   {/* Subtle top indicator bar */}
@@ -406,7 +408,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                       <ArrowUpRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
 
