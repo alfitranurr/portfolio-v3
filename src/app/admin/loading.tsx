@@ -1,13 +1,14 @@
 import * as React from 'react'
-import { HeaderSkeleton, StatCardsSkeleton, AdminTableSkeleton, Skeleton } from '@/components/ui/skeleton'
+import { AdminHeaderSkeleton, StatCardsSkeleton, AdminTableSkeleton, Skeleton } from '@/components/ui/skeleton'
 
 export default function AdminDashboardLoading() {
   return (
     <div className="space-y-8 w-full animate-in fade-in duration-200">
       {/* Admin Title */}
-      <HeaderSkeleton 
+      <AdminHeaderSkeleton 
         titleWidth="w-56 sm:w-72" 
         subtitleWidth="w-72 sm:w-96" 
+        buttonWidth="w-36"
       />
 
       {/* 4 Stat Cards */}

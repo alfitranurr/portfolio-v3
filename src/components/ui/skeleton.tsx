@@ -273,3 +273,85 @@ export function WorkTogetherSkeleton() {
   )
 }
 
+export function AdminHeaderSkeleton({
+  titleWidth = 'w-48 sm:w-64',
+  subtitleWidth = 'w-72 sm:w-96',
+  hasButton = true,
+  buttonWidth = 'w-32',
+}: {
+  titleWidth?: string
+  subtitleWidth?: string
+  hasButton?: boolean
+  buttonWidth?: string
+}) {
+  return (
+    <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm shimmer-card">
+      <div className="space-y-1.5 z-10">
+        <div className="flex items-center gap-2.5">
+          <Skeleton className="w-9 h-9 rounded-xl shrink-0" />
+          <Skeleton className={cn('h-8 sm:h-9', titleWidth)} />
+        </div>
+        <Skeleton className={cn('h-4', subtitleWidth)} />
+      </div>
+      {hasButton && (
+        <Skeleton className={cn('h-10 rounded-xl shrink-0 self-start sm:self-center z-10', buttonWidth)} />
+      )}
+    </div>
+  )
+}
+
+export function AdminControlsSkeleton({
+  hasSearch = true,
+  tabCount = 3,
+  hasSort = true,
+}: {
+  hasSearch?: boolean
+  tabCount?: number
+  hasSort?: boolean
+}) {
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        {hasSearch && (
+          <Skeleton className="h-10 w-full sm:max-w-md rounded-xl" />
+        )}
+        {hasSort && (
+          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+            <Skeleton className="h-9 w-28 rounded-xl" />
+          </div>
+        )}
+      </div>
+      {tabCount > 0 && (
+        <div className="flex flex-wrap gap-2 pt-1">
+          {Array.from({ length: tabCount }).map((_, i) => (
+            <Skeleton key={i} className="h-8 w-20 sm:w-28 rounded-xl" />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+export function AdminPhotosGridSkeleton({ count = 6 }: { count?: number }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      {Array.from({ length: count }).map((_, i) => (
+        <div
+          key={i}
+          className="rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/20 p-4 space-y-3 shimmer-card flex flex-col justify-between"
+        >
+          <Skeleton className="w-full h-48 rounded-2xl" />
+          <div className="space-y-2 pt-1">
+            <Skeleton className="h-4 w-3/4 rounded" />
+            <div className="flex items-center justify-between pt-1">
+              <Skeleton className="h-3.5 w-24 rounded" />
+              <Skeleton className="h-7 w-7 rounded-lg" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+
