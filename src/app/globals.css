@@ -105,6 +105,7 @@
 /* Base custom resets */
 html {
   overflow-x: clip;
+  scrollbar-gutter: stable;
 }
 
 body {
