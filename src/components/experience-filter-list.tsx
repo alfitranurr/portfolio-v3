@@ -176,10 +176,10 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={activeCategory}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
             className="space-y-6 w-full"
           >
             {groupedExperiences.map((group) => {
