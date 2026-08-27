@@ -127,7 +127,7 @@ export function AdminSidebar() {
   return (
     <>
       {/* Mobile Admin Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 z-40 px-4 flex items-center justify-between glass-panel border-b border-slate-200/20 dark:border-slate-800/10">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 z-40 px-4 flex items-center justify-between glass-panel border-b border-slate-300 dark:border-slate-800/20">
         <Link href="/admin" className="flex items-center gap-2 font-bold text-foreground">
           <Terminal className="text-primary w-5 h-5 animate-pulse" />
           <span className="font-extrabold tracking-tight">Admin Portal</span>
@@ -146,9 +146,9 @@ export function AdminSidebar() {
       {/* Sidebar Container */}
       <aside
         className={cn(
-          "fixed top-0 bottom-0 left-0 z-50 w-52 glass-panel border-r border-slate-200/20 dark:border-slate-800/10 p-3.5 flex flex-col justify-between transition-transform duration-300 overflow-y-auto scrollbar-hide",
+          "admin-sidebar fixed top-0 bottom-0 left-0 z-50 w-52 glass-panel border-r border-slate-300 dark:border-slate-800/20 p-3.5 flex flex-col justify-between transition-transform duration-300 overflow-y-auto scrollbar-hide",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
-          "lg:sticky lg:top-4 lg:left-auto lg:bottom-auto lg:h-[calc(100vh-2rem)] lg:rounded-3xl lg:z-30 lg:translate-x-0 lg:self-start"
+          "lg:sticky lg:top-4 lg:left-auto lg:bottom-auto lg:h-[calc(100vh-2rem)] lg:rounded-3xl lg:z-30 lg:translate-x-0 lg:self-start lg:border lg:border-slate-300 dark:lg:border-slate-800/20"
         )}
       >
         <div className="flex flex-col h-full justify-between">
@@ -216,7 +216,7 @@ export function AdminSidebar() {
           </div>
 
           {/* Sidebar Footer */}
-          <div className="mt-auto pt-4 border-t border-slate-200/15 dark:border-slate-800/15 space-y-3">
+          <div className="mt-auto pt-4 border-t border-slate-300/80 dark:border-slate-800/20 space-y-3">
             <div className="space-y-1">
               {/* Theme Selector */}
               {renderThemeButton()}

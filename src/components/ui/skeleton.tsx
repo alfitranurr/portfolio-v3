@@ -285,7 +285,7 @@ export function AdminHeaderSkeleton({
   buttonWidth?: string
 }) {
   return (
-    <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm shimmer-card">
+    <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm shimmer-card">
       <div className="space-y-1.5 z-10">
         <div className="flex items-center gap-2.5">
           <Skeleton className="w-9 h-9 rounded-xl shrink-0" />

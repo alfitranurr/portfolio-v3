@@ -76,7 +76,7 @@ function RealTimeClock() {
   }
 
   return (
-    <div className="py-2.5 px-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex items-center gap-3 shadow-sm text-sm font-bold text-foreground animate-fade-in shrink-0">
+    <div className="py-2.5 px-5 rounded-2xl glass-panel border border-slate-300 dark:border-slate-800/20 flex items-center gap-3 shadow-sm text-sm font-bold text-foreground animate-fade-in shrink-0">
       <Clock className="w-5 h-5 text-primary shrink-0" />
       <div className="flex flex-col items-start leading-tight gap-0.5">
         <span className="text-xs md:text-sm font-black tracking-tight">{time}</span>
@@ -229,7 +229,7 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header Glass Card Container */}
-      <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+      <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
         <div className="absolute -top-12 -right-12 w-44 h-44 bg-primary/10 rounded-full filter blur-3xl pointer-events-none" />
         <div className="space-y-1 z-10">
           <div className="flex items-center gap-2.5">
