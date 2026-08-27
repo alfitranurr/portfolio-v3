@@ -28,7 +28,9 @@ import {
   ChevronRight,
   Eye,
   Copy,
-  X
+  X,
+  Sparkles,
+  Code2
 } from 'lucide-react'
 import { saveProjectAction, deleteProjectAction, uploadAssetAction, updateProjectsOrderAction, updateFeaturedProjectsOrderAction } from '@/app/admin/actions'
 import { cn, getDirectImageUrl } from '@/lib/utils'
@@ -1143,7 +1145,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
           <div className="p-4 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 relative z-30">
             {/* Top row: Main Category Switcher */}
             <div className="flex justify-center">
-              <div className="flex p-1 rounded-2xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 max-w-md w-full">
+              <div className="flex p-1 rounded-2xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 max-w-md w-full relative">
                 <button
                   type="button"
                   onClick={() => {
@@ -1152,13 +1154,20 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                     sessionStorage.setItem('project_admin_active_category', 'data')
                   }}
                   className={cn(
-                    "flex-1 py-2 text-xs font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap",
+                    "flex-1 py-2 text-xs font-extrabold rounded-xl transition-colors duration-200 relative cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap z-10",
                     activeCategory === 'data'
-                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                      ? "text-primary-foreground"
                       : "text-foreground/75 hover:text-foreground"
                   )}
                 >
-                  <Presentation className="w-3.5 h-3.5 shrink-0" />
+                  {activeCategory === 'data' && (
+                    <motion.div
+                      layoutId="activeAdminProjectCategoryTab"
+                      className="absolute inset-0 bg-primary rounded-xl shadow-lg shadow-primary/20 -z-10"
+                      transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                    />
+                  )}
+                  <Sparkles className="w-3.5 h-3.5 shrink-0" />
                   <span>Data Science</span>
                 </button>
                 <button
@@ -1169,13 +1178,20 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
                     sessionStorage.setItem('project_admin_active_category', 'non-data')
                   }}
                   className={cn(
-                    "flex-1 py-2 text-xs font-extrabold rounded-xl transition-all duration-300 relative cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap",
+                    "flex-1 py-2 text-xs font-extrabold rounded-xl transition-colors duration-200 relative cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap z-10",
                     activeCategory === 'non-data'
-                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                      ? "text-primary-foreground"
                       : "text-foreground/75 hover:text-foreground"
                   )}
                 >
-                  <FileCode className="w-3.5 h-3.5 shrink-0" />
+                  {activeCategory === 'non-data' && (
+                    <motion.div
+                      layoutId="activeAdminProjectCategoryTab"
+                      className="absolute inset-0 bg-primary rounded-xl shadow-lg shadow-primary/20 -z-10"
+                      transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                    />
+                  )}
+                  <Code2 className="w-3.5 h-3.5 shrink-0" />
                   <span>General Dev</span>
                 </button>
               </div>
@@ -1259,26 +1275,35 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
 
             {/* Bottom row: Subcategory Pills & Counter */}
             <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200/5 dark:border-slate-800/5">
-              <div className="flex flex-wrap gap-1.5">
-                {availableFilters.map((subCategory) => (
-                  <button
-                    key={subCategory}
-                    type="button"
-                    onClick={() => {
-                      setActiveSubCategory(subCategory)
-                      setCurrentPage(1)
-                    }}
-                    className={cn(
-                      "px-3 py-1.5 rounded-xl text-[10px] font-extrabold uppercase tracking-wider border transition-all duration-200 cursor-pointer",
-                      activeSubCategory === subCategory
-                        ? "bg-primary border-primary text-primary-foreground shadow-sm shadow-primary/10"
-                        : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    {SUBCATEGORY_MAP[subCategory] || subCategory.replace(' Projects', '')}
-                  </button>
-                ))}
-              </div>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={activeCategory}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: 'easeOut' }}
+                  className="flex flex-wrap gap-1.5"
+                >
+                  {availableFilters.map((subCategory) => (
+                    <button
+                      key={subCategory}
+                      type="button"
+                      onClick={() => {
+                        setActiveSubCategory(subCategory)
+                        setCurrentPage(1)
+                      }}
+                      className={cn(
+                        "px-3 py-1.5 rounded-xl text-[10px] font-extrabold uppercase tracking-wider border transition-all duration-200 cursor-pointer",
+                        activeSubCategory === subCategory
+                          ? "bg-primary border-primary text-primary-foreground shadow-sm shadow-primary/10"
+                          : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      {SUBCATEGORY_MAP[subCategory] || subCategory.replace(' Projects', '')}
+                    </button>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
 
               <span className="text-[11px] font-semibold text-muted-foreground shrink-0">
                 Showing {paginatedItems.length} of {totalItems} {totalItems === 1 ? 'project' : 'projects'}
@@ -1287,7 +1312,16 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
           </div>
 
           {/* Views */}
-          {filteredAndSorted.length === 0 ? (
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={activeCategory}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+              className="w-full"
+            >
+              {filteredAndSorted.length === 0 ? (
             <div className="p-12 text-center rounded-3xl border border-dashed border-slate-200/10 dark:border-slate-800/10 glass-panel space-y-3">
               <Coffee className="w-12 h-12 text-muted-foreground/30 mx-auto" />
               <h3 className="font-extrabold text-foreground text-base">No projects found</h3>
@@ -1574,6 +1608,8 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
               </AnimatePresence>
             </motion.div>
           )}
+        </motion.div>
+      </AnimatePresence>
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
