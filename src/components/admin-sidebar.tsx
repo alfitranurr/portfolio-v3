@@ -54,11 +54,11 @@ export function AdminSidebar() {
     {
       title: 'Portfolio Content',
       items: [
-        { name: 'Projects', href: '/admin/projects', icon: Coffee, exact: false },
-        { name: 'Tech Stack', href: '/admin/skills', icon: Terminal, exact: false },
         { name: 'Education', href: '/admin/education', icon: GraduationCap, exact: false },
         { name: 'Experience', href: '/admin/experience', icon: Briefcase, exact: false },
+        { name: 'Projects', href: '/admin/projects', icon: Coffee, exact: false },
         { name: 'Certificates', href: '/admin/certificates', icon: Award, exact: false },
+        { name: 'Tech Stack', href: '/admin/skills', icon: Terminal, exact: false },
       ]
     }
   ]
