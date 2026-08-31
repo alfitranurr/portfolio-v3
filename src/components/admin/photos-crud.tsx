@@ -9,16 +9,17 @@ import {
   Check, 
   Loader2, 
   CheckCircle2, 
-  AlertCircle,
-  ArrowLeft,
-  UploadCloud,
-  Image as ImageIcon,
-  LayoutList,
-  LayoutGrid,
-  ChevronLeft,
-  ChevronRight,
-  X,
-  ExternalLink
+  AlertCircle, 
+  ArrowLeft, 
+  UploadCloud, 
+  Image as ImageIcon, 
+  LayoutList, 
+  LayoutGrid, 
+  ChevronLeft, 
+  ChevronRight, 
+  X, 
+  ExternalLink,
+  Eye
 } from 'lucide-react'
 import { savePhotoAction, deletePhotoAction, uploadAssetAction } from '@/app/admin/actions'
 import { cn, getDirectImageUrl } from '@/lib/utils'
@@ -55,6 +56,7 @@ export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
   const [pageSize, setPageSize] = React.useState(12)
 
   const [editingPhoto, setEditingPhoto] = React.useState<Partial<Photo> | null>(null)
+  const [previewPhoto, setPreviewPhoto] = React.useState<Photo | null>(null)
   const [isPending, setIsPending] = React.useState(false)
   const [isUploading, setIsUploading] = React.useState(false)
   const [notification, setNotification] = React.useState<{ success: boolean; message: string } | null>(null)
@@ -350,8 +352,8 @@ export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
       {!editingPhoto && (
         <div className="space-y-4">
           {/* Controls bar */}
-          <div className="p-4 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="relative w-full sm:max-w-md">
+          <div className="p-4 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col md:flex-row items-center justify-between gap-3 relative z-30">
+            <div className="relative w-full md:max-w-md">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
               <input
                 type="text"
@@ -376,13 +378,13 @@ export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
               )}
             </div>
 
-            <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end shrink-0">
+            <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end shrink-0">
               <span className="text-xs font-semibold text-muted-foreground">
                 Showing {paginatedItems.length} of {totalItems} {totalItems === 1 ? 'photo' : 'photos'}
               </span>
 
               {/* View Switcher */}
-              <div className="flex items-center p-1 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-700/50">
+              <div className="flex items-center p-1 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-md border border-slate-300 dark:border-slate-700/60 shadow-2xs">
                 <button
                   onClick={() => setViewMode('grid')}
                   title="Grid View"
@@ -425,38 +427,51 @@ export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
             /* GRID VIEW */
             /* ============================================================ */
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-              {paginatedItems.map((photo) => (
+              {paginatedItems.map((photo, index) => (
                 <div
                   key={photo.id}
-                  className="p-2 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 hover:border-primary/30 transition-all flex flex-col justify-between space-y-3 group"
+                  className="p-3 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 hover:border-primary/30 transition-all flex flex-col justify-between space-y-3 group shadow-xs"
                 >
-                  <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-slate-950/40 border border-slate-200/10 dark:border-slate-800/10 flex items-center justify-center shrink-0">
+                  <div 
+                    onClick={() => setPreviewPhoto(photo)}
+                    className="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-slate-950/40 border border-slate-200/10 dark:border-slate-800/10 flex items-center justify-center shrink-0 cursor-pointer"
+                  >
                     <BlurImage 
-                      src={getDirectImageUrl(photo.image_url, 400)} 
+                      src={getDirectImageUrl(photo.image_url, 500)} 
                       alt="Moment photo" 
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
+                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Eye className="w-6 h-6 text-white drop-shadow-md" />
+                    </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-1 pt-1 border-t border-slate-200/5 dark:border-slate-800/5">
-                    <span className="text-[10px] font-mono text-muted-foreground/60 truncate max-w-[100px]">
-                      {photo.id.slice(0, 8)}...
+                  <div className="flex items-center justify-between gap-1 pt-2 border-t border-slate-200/5 dark:border-slate-800/5">
+                    <span className="px-2 py-0.5 rounded-md bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-[10px] font-mono font-bold text-muted-foreground">
+                      #{startIndex + index + 1}
                     </span>
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => setPreviewPhoto(photo)}
+                        title="Preview Photo"
+                        className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-cyan-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                      </button>
                       <button
                         onClick={() => handleEdit(photo)}
-                        className="py-1 px-2 rounded-md bg-white/5 hover:bg-white/10 text-foreground font-bold text-[9px] uppercase tracking-wide flex items-center gap-1 cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                        title="Edit Photo"
+                        className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-foreground transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
                       >
-                        <Edit3 className="w-3 h-3" />
-                        <span>Edit</span>
+                        <Edit3 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => handleDelete(photo.id)}
-                        className="py-1 px-2 rounded-md bg-red-500/10 hover:bg-red-500/15 text-red-600 dark:text-red-400 font-bold text-[9px] uppercase tracking-wide flex items-center gap-1 cursor-pointer"
+                        title="Delete Photo"
+                        className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer border border-red-500/10"
                       >
-                        <Trash2 className="w-3 h-3" />
-                        <span>Delete</span>
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
@@ -488,11 +503,14 @@ export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
                           {startIndex + index + 1}
                         </td>
                         <td className="py-3.5 px-4">
-                          <div className="w-12 h-9 rounded-lg overflow-hidden bg-slate-900 border border-slate-700/60 shrink-0 relative p-0.5 shadow-xs">
+                          <div 
+                            onClick={() => setPreviewPhoto(photo)}
+                            className="w-12 h-9 rounded-lg overflow-hidden bg-slate-900 border border-slate-700/60 shrink-0 relative p-0.5 shadow-xs cursor-pointer hover:border-primary transition-colors"
+                          >
                             <BlurImage
                               src={getDirectImageUrl(photo.image_url, 150)}
                               alt="Photo"
-                              className="w-full h-full object-contain"
+                              className="w-full h-full object-cover"
                             />
                           </div>
                         </td>
@@ -506,7 +524,7 @@ export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
                               target="_blank"
                               rel="noreferrer"
                               className="text-primary hover:text-primary/80 transition-colors p-1"
-                              title="Open full image"
+                              title="Open full image in new tab"
                             >
                               <ExternalLink className="w-3.5 h-3.5" />
                             </a>
@@ -514,6 +532,13 @@ export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
                         </td>
                         <td className="py-3.5 px-4 text-right whitespace-nowrap">
                           <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={() => setPreviewPhoto(photo)}
+                              title="View Preview"
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-cyan-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
                             <button
                               onClick={() => handleEdit(photo)}
                               title="Edit Entry"
@@ -598,6 +623,62 @@ export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Photo Preview Modal */}
+      {previewPhoto && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-4 shadow-2xl relative animate-fade-in">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <ImageIcon className="w-5 h-5 text-primary" />
+                <h3 className="font-bold text-foreground text-sm">Photo Preview</h3>
+              </div>
+              <button 
+                onClick={() => setPreviewPhoto(null)} 
+                className="p-2 rounded-xl hover:bg-white/10 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="relative w-full max-h-[60vh] aspect-video rounded-2xl overflow-hidden bg-black/40 border border-slate-800 flex items-center justify-center">
+              <BlurImage
+                src={getDirectImageUrl(previewPhoto.image_url, 1200)}
+                alt="Full Preview"
+                className="w-full h-full object-contain"
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
+              <span className="font-mono text-xs text-muted-foreground truncate max-w-sm">
+                {previewPhoto.image_url}
+              </span>
+              <div className="flex items-center gap-2 self-end sm:self-auto">
+                <a
+                  href={getDirectImageUrl(previewPhoto.image_url)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="py-2 px-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-slate-800 text-xs font-bold text-foreground flex items-center gap-1.5 cursor-pointer transition-colors"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Open Full Image</span>
+                </a>
+                <button
+                  onClick={() => {
+                    const toEdit = previewPhoto
+                    setPreviewPhoto(null)
+                    handleEdit(toEdit)
+                  }}
+                  className="py-2 px-3.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold flex items-center gap-1.5 hover:bg-primary/90 transition-all cursor-pointer shadow-md shadow-primary/20"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Edit</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
