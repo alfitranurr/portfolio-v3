@@ -7,9 +7,5 @@ export const dynamic = 'force-dynamic'
 export default async function AdminPhotosPage() {
   const photos = await getPhotos()
 
-  return (
-    <div className="w-full h-[calc(100vh-12rem)] lg:h-[calc(100vh-8rem)] overflow-hidden overflow-x-hidden flex flex-col">
-      <PhotosCrud initialPhotos={photos} />
-    </div>
-  )
+  return <PhotosCrud initialPhotos={photos} />
 }
