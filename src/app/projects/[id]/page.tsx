@@ -216,7 +216,11 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             blockquote: (props: React.ComponentPropsWithoutRef<'blockquote'> & { node?: unknown }) => (
               <blockquote className="border-l-4 border-slate-300 dark:border-slate-700 pl-4 py-1.5 italic text-muted-foreground my-4" {...cleanProps(props as Record<string, unknown>)} />
             ),
-            table: (props: React.ComponentPropsWithoutRef<'table'> & { node?: unknown }) => <table className="w-full border-collapse border border-slate-200/10 dark:border-slate-800/10 mb-4" {...cleanProps(props as Record<string, unknown>)} />,
+            table: (props: React.ComponentPropsWithoutRef<'table'> & { node?: unknown }) => (
+              <div className="w-full overflow-x-auto mb-4">
+                <table className="w-full min-w-[500px] border-collapse border border-slate-200/10 dark:border-slate-800/10" {...cleanProps(props as Record<string, unknown>)} />
+              </div>
+            ),
             thead: (props: React.ComponentPropsWithoutRef<'thead'> & { node?: unknown }) => <thead className="bg-slate-200/5 dark:bg-slate-800/5" {...cleanProps(props as Record<string, unknown>)} />,
             th: (props: React.ComponentPropsWithoutRef<'th'> & { node?: unknown }) => <th className="border border-slate-200/10 dark:border-slate-800/10 px-4 py-2 text-left font-bold text-sm" {...cleanProps(props as Record<string, unknown>)} />,
             td: (props: React.ComponentPropsWithoutRef<'td'> & { node?: unknown }) => <td className="border border-slate-200/10 dark:border-slate-800/10 px-4 py-2 text-sm text-foreground/80" {...cleanProps(props as Record<string, unknown>)} />,
