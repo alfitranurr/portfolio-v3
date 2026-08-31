@@ -601,15 +601,15 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
             /* TABLE VIEW */
             /* ============================================================ */
             <div className="rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 overflow-hidden shadow-sm relative z-10 w-full">
-              <div className="w-full overflow-hidden">
-                <table className="w-full text-left text-xs table-auto">
+              <div className="w-full overflow-x-auto">
+                <table className="w-full min-w-[700px] text-left text-xs table-auto">
                   <thead className="bg-slate-100/50 dark:bg-slate-900/60 border-b border-slate-200/10 dark:border-slate-800/20 uppercase tracking-wider font-extrabold text-[10px] text-muted-foreground">
                     <tr>
                       <th className="py-2.5 px-3 w-10 text-center">#</th>
-                      <th className="py-2.5 px-3 w-1/3">Institution & Degree</th>
+                      <th className="py-2.5 px-3 min-w-[200px]">Institution & Degree</th>
                       <th className="py-2.5 px-3 whitespace-nowrap text-center">Period</th>
                       <th className="py-2.5 px-3 whitespace-nowrap text-center">GPA</th>
-                      <th className="py-2.5 px-3">Location & Details</th>
+                      <th className="py-2.5 px-3 min-w-[180px]">Location & Details</th>
                       <th className="py-2.5 px-3 text-center whitespace-nowrap w-36">Actions</th>
                     </tr>
                   </thead>

@@ -469,7 +469,7 @@ export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
             /* ============================================================ */
             <div className="rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
+                <table className="w-full min-w-[550px] text-left text-xs">
                   <thead className="bg-slate-100/50 dark:bg-slate-900/60 border-b border-slate-200/10 dark:border-slate-800/20 uppercase tracking-wider font-extrabold text-[10px] text-muted-foreground">
                     <tr>
                       <th className="py-3.5 px-4 w-12 text-center">#</th>
