@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Eye, Edit3, Trash2, Image as ImageIcon } from 'lucide-react'
+import { Eye, Edit3, Trash2 } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
 import { getDirectImageUrl } from '@/lib/utils'
 import { Photo } from '@/lib/types'

@@ -30,17 +30,17 @@ export function ProjectForm({
 }: ProjectFormProps) {
   const [isUploading, setIsUploading] = React.useState(false)
 
-  if (!project) return null
-
-  const currentCategory = project.category || 'data'
-  const subCategoryOptions = currentCategory === 'data' ? DATA_SUBCATEGORIES : NON_DATA_SUBCATEGORIES
-
   const finalOptions = React.useMemo(() => {
+    if (!project) return []
+    const currentCategory = project.category || 'data'
+    const subCategoryOptions = currentCategory === 'data' ? DATA_SUBCATEGORIES : NON_DATA_SUBCATEGORIES
     if (project.sub_category && !subCategoryOptions.includes(project.sub_category)) {
       return [project.sub_category, ...subCategoryOptions]
     }
     return subCategoryOptions
-  }, [project.sub_category, subCategoryOptions])
+  }, [project])
+
+  if (!project) return null
 
   const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

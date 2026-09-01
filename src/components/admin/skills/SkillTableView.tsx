@@ -9,11 +9,10 @@ interface SkillTableViewProps {
   startIndex: number
   onPreview: (skill: Skill) => void
   onEdit: (skill: Skill) => void
-  onDuplicate: (skill: Skill) => void
   onDelete: (id: string) => void
 }
 
-export function SkillTableView({ skills, startIndex, onPreview, onEdit, onDuplicate, onDelete }: SkillTableViewProps) {
+export function SkillTableView({ skills, startIndex, onPreview, onEdit, onDelete }: SkillTableViewProps) {
   return (
     <div className="rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 overflow-hidden shadow-sm relative z-10 w-full">
       <div className="w-full overflow-x-auto">

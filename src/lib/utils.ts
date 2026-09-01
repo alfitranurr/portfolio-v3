@@ -15,7 +15,7 @@ export function getDirectImageUrl(url: string | null | undefined, width: number 
   return url
 }
 
-export function formatDuration(startDateStr: string, endDateStr: string | null, isCurrent: boolean = false) {
+export function formatDuration(startDateStr: string, endDateStr: string | null) {
   const start = new Date(startDateStr)
   const end = endDateStr ? new Date(endDateStr) : new Date()
   

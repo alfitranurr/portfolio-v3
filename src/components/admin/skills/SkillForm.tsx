@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { ArrowLeft, Check, Loader2, Award } from 'lucide-react'
-import { cn, getDirectImageUrl } from '@/lib/utils'
+import { getDirectImageUrl } from '@/lib/utils'
 import { BlurImage } from '@/components/ui/blur-image'
 import { Skill, CATEGORY_MAP } from './types'
 

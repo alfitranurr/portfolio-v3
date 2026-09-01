@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Search, X, LayoutGrid, LayoutList, Sparkles, Building2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { CustomSortDropdown } from '@/components/ui/custom-sort-dropdown'

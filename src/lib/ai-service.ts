@@ -52,7 +52,7 @@ export async function getAISettings(): Promise<AISettings> {
       if (mockSettings) {
         return JSON.parse(mockSettings)
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.warn('Failed to parse mock settings from cookies', e)
     }
     return DEFAULT_AI_SETTINGS
@@ -87,14 +87,14 @@ export async function saveAISettings(settings: AISettings): Promise<{ success: b
       const cookieStore = await cookies()
       cookieStore.set('mock_ai_settings', JSON.stringify(settings), { path: '/' })
       return { success: true }
-    } catch (e: any) {
-      return { success: false, error: e.message }
+    } catch (e: unknown) {
+      return { success: false, error: e instanceof Error ? e.message : String(e) }
     }
   }
 
   try {
     const supabase = await createClient()
-    
+
     // Check if a settings row already exists
     const { data: existing, error: fetchError } = await supabase
       .from('ai_settings')
@@ -132,9 +132,9 @@ export async function saveAISettings(settings: AISettings): Promise<{ success: b
 
     if (error) throw error
     return { success: true }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('saveAISettings error:', err)
-    return { success: false, error: err.message }
+    return { success: false, error: err instanceof Error ? err.message : String(err) }
   }
 }
 
@@ -142,12 +142,12 @@ export async function getAIChatLogs(): Promise<AIChatLog[]> {
   if (!hasSupabaseConfig()) {
     try {
       const content = await fs.readFile(MOCK_LOGS_FILE, 'utf-8')
-      const logs = JSON.parse(content)
+      const logs: AIChatLog[] = JSON.parse(content)
       inMemoryLogs = logs // Sync memory
-      return logs.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    } catch (e) {
+      return logs.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    } catch {
       // Fallback to in-memory logs
-      return [...inMemoryLogs].sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      return [...inMemoryLogs].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     }
   }
 
@@ -179,7 +179,7 @@ export async function logAIChat(logEntry: Omit<AIChatLog, 'id' | 'created_at'>):
       try {
         const content = await fs.readFile(MOCK_LOGS_FILE, 'utf-8')
         logs = JSON.parse(content)
-      } catch (e) {
+      } catch {
         logs = [...inMemoryLogs]
       }
 
@@ -226,8 +226,8 @@ export async function clearAIChatLogs(): Promise<{ success: boolean; error?: str
         console.warn('Could not write empty logs file', err)
       }
       return { success: true }
-    } catch (e: any) {
-      return { success: false, error: e.message }
+    } catch (e: unknown) {
+      return { success: false, error: e instanceof Error ? e.message : String(e) }
     }
   }
 
@@ -240,8 +240,8 @@ export async function clearAIChatLogs(): Promise<{ success: boolean; error?: str
 
     if (error) throw error
     return { success: true }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('clearAIChatLogs error:', err)
-    return { success: false, error: err.message }
+    return { success: false, error: err instanceof Error ? err.message : String(err) }
   }
 }

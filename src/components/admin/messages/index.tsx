@@ -1,13 +1,13 @@
 'use client'
 
 import * as React from 'react'
-import { RefreshCw, Clock, Inbox, AlertCircle, Mail, MailOpen, Search, Trash2, ChevronDown } from 'lucide-react'
+import { RefreshCw, Inbox, AlertCircle, Mail, MailOpen, Search, Trash2, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Message, MessagesListProps, VisitorStatsProps } from './types'
 import { RealTimeClock } from './RealTimeClock'
 import { MonthlyTrafficChart } from '@/components/admin/monthly-traffic-chart'
 import { useRouter } from 'next/navigation'
-import { toggleMessageReadAction, deleteMessageAction, getVisitorStatsAction, resetVisitorAnalyticsAction } from '@/app/admin/actions'
+import { toggleMessageReadAction, deleteMessageAction, getVisitorStatsAction } from '@/app/admin/actions'
 
 function HeaderActions({ onRefresh }: { onRefresh: () => void }) {
   const [isRefreshing, setIsRefreshing] = React.useState(false)
@@ -48,11 +48,11 @@ function VisitorStats({ visitorStats }: VisitorStatsProps) {
       </div>
       <div className="p-6 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-2">
         <div className="text-2xl font-black text-primary">{visitorStats.todayViews.toLocaleString()}</div>
-        <p className="text-xs text-muted-foreground font-semibold">Today's Views</p>
+        <p className="text-xs text-muted-foreground font-semibold">{"Today's Views"}</p>
       </div>
       <div className="p-6 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-2">
         <div className="text-2xl font-black text-primary">{visitorStats.todayUnique.toLocaleString()}</div>
-        <p className="text-xs text-muted-foreground font-semibold">Today's Unique</p>
+        <p className="text-xs text-muted-foreground font-semibold">{"Today's Unique"}</p>
       </div>
     </div>
   )
@@ -137,30 +137,6 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
         console.error(err)
       } finally {
         setIsUpdating(null)
-      }
-    }
-  }
-
-  const handleResetAnalytics = async () => {
-    if (confirm('Are you sure you want to reset all Total Views and Unique Visitors statistics to 0?')) {
-      try {
-        const res = await resetVisitorAnalyticsAction()
-        if (res.success) {
-          setCurrentVisitorStats({
-            totalViews: 0,
-            uniqueVisitors: 0,
-            todayViews: 0,
-            todayUnique: 0,
-            isMissingTable: false
-          })
-          setRefreshTrigger(prev => prev + 1)
-          alert('Analytics statistics have been reset to 0.')
-        } else {
-          alert(`Reset failed: ${res.error || 'Unknown error'}`)
-        }
-      } catch (err) {
-        console.error(err)
-        alert('An unexpected error occurred while resetting analytics.')
       }
     }
   }

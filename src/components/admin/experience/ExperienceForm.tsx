@@ -2,7 +2,7 @@ import * as React from 'react'
 import { ArrowLeft, Check, Loader2, Plus, ChevronUp, ChevronDown, X, UploadCloud, Briefcase } from 'lucide-react'
 import { cn, getDirectImageUrl } from '@/lib/utils'
 import { BlurImage } from '@/components/ui/blur-image'
-import { Experience, DEFAULT_EXPERIENCE } from './types'
+import { Experience } from './types'
 import { uploadAssetAction } from '@/app/admin/actions'
 
 interface ExperienceFormProps {
@@ -274,7 +274,7 @@ export function ExperienceForm({
               <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
                 {descriptionBullets.length === 0 ? (
                   <p className="text-xs text-muted-foreground text-center py-8 border border-dashed border-slate-200/10 dark:border-slate-800/10 rounded-xl">
-                    No responsibilities added yet. Click "Add Bullet" to start.
+                    No responsibilities added yet. Click {"Add Bullet"} to start.
                   </p>
                 ) : (
                   descriptionBullets.map((bullet, idx) => (

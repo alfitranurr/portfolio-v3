@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Eye, Copy, Edit3, Trash2, Calendar, ExternalLink, Award } from 'lucide-react'
+import { Eye, Copy, Edit3, Trash2, ExternalLink, Award } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
 import { getDirectImageUrl } from '@/lib/utils'
 import { Certificate, CATEGORY_MAP } from './types'

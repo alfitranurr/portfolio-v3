@@ -1,7 +1,6 @@
 'use client'
 
 import * as React from 'react'
-import { cn } from '@/lib/utils'
 import { Photo } from '@/lib/types'
 import { BlurImage } from '@/components/ui/blur-image'
 

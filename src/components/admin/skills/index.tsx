@@ -73,15 +73,6 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const handleDuplicate = (item: Skill) => {
-    setEditingItem({ 
-      ...item, 
-      id: undefined, 
-      name: `${item.name} (Copy)`
-    })
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
   const handleCreateNew = () => {
     setEditingItem({ ...DEFAULT_SKILL })
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -242,7 +233,6 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
                   startIndex={startIndex}
                   onPreview={setPreviewItem}
                   onEdit={handleEdit}
-                  onDuplicate={handleDuplicate}
                   onDelete={handleDelete}
                 />
               ) : (
@@ -250,7 +240,6 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
                   skills={paginatedItems}
                   onPreview={setPreviewItem}
                   onEdit={handleEdit}
-                  onDuplicate={handleDuplicate}
                   onDelete={handleDelete}
                 />
               )}
