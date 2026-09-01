@@ -225,7 +225,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                               {singleExp.end_date 
                                 ? new Date(singleExp.end_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
                                 : 'Present'}
-                              {` · ${formatDuration(singleExp.start_date, singleExp.end_date, !!singleExp.is_current)}`}
+                              {` · ${formatDuration(singleExp.start_date, singleExp.end_date)}`}
                             </span>
                           </span>
                           {singleExp.location && (
@@ -312,7 +312,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                                 : group.end_date 
                                   ? new Date(group.end_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
                                   : 'Present'}
-                              {` · ${formatDuration(group.start_date, group.end_date, group.is_current)}`}
+                              {` · ${formatDuration(group.start_date, group.end_date)}`}
                             </span>
                           </span>
                           {group.location && (
@@ -351,7 +351,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                                       {role.end_date 
                                         ? new Date(role.end_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
                                         : 'Present'}
-                                      {` · ${formatDuration(role.start_date, role.end_date, !!role.is_current)}`}
+                                      {` · ${formatDuration(role.start_date, role.end_date)}`}
                                     </span>
                                   </span>
                                 </div>

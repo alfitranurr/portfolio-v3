@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Eye, Copy, Edit3, Trash2, Calendar, MapPin, GraduationCap } from 'lucide-react'
+import { Eye, Copy, Edit3, Trash2, GraduationCap } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
 import { getDirectImageUrl } from '@/lib/utils'
 import { Education } from './types'

@@ -1,6 +1,5 @@
 import * as React from 'react'
-import { ArrowLeft, Check, Loader2, Calendar, ExternalLink } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { ArrowLeft, Check, Loader2 } from 'lucide-react'
 import { Certificate, CATEGORY_MAP } from './types'
 
 interface CertificateFormProps {

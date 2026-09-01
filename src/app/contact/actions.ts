@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 
-export async function submitContactForm(prevState: any, formData: FormData) {
+export async function submitContactForm(prevState: unknown, formData: FormData) {
   const name = formData.get('name') as string
   const email = formData.get('email') as string
   const subject = formData.get('subject') as string
@@ -35,7 +35,7 @@ export async function submitContactForm(prevState: any, formData: FormData) {
     }
 
     return { success: true, message: 'Thank you! Your message has been sent successfully.' }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Contact form network error:', err)
     return { success: false, error: 'Network error occurred. Please try again later.' }
   }

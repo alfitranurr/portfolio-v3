@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 
-export async function loginAction(prevState: any, formData: FormData) {
+export async function loginAction(prevState: unknown, formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
 
@@ -45,12 +45,12 @@ export async function loginAction(prevState: any, formData: FormData) {
     }
 
     return { success: true, redirect: '/admin' }
-  } catch (err: any) {
+  } catch {
     return { success: false, error: 'Connection error during authentication. Please retry.' }
   }
 }
 
-export async function signupAction(prevState: any, formData: FormData) {
+export async function signupAction(prevState: unknown, formData: FormData) {
   const name = formData.get('name') as string
   const headline = formData.get('headline') as string
   const email = formData.get('email') as string
@@ -91,7 +91,7 @@ export async function signupAction(prevState: any, formData: FormData) {
       success: true, 
       message: 'Admin account registration submitted successfully. Please sign in or check your email verification (if SMTP is enabled).' 
     }
-  } catch (err: any) {
+  } catch {
     return { success: false, error: 'Connection error during registration.' }
   }
 }

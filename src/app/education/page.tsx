@@ -61,7 +61,7 @@ export default async function EducationPage() {
                       {edu.end_date 
                         ? new Date(edu.end_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
                         : 'Present'}
-                      {` · ${formatDuration(edu.start_date, edu.end_date, !edu.end_date)}`}
+                      {` · ${formatDuration(edu.start_date, edu.end_date)}`}
                     </span>
                   </span>
                   {edu.location && (

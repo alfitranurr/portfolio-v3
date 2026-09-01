@@ -6,6 +6,18 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
 let publicClient: ReturnType<typeof createSupabaseClient> | null = null
 
+function isDynamicServerError(e: unknown): boolean {
+  if (typeof e !== 'object' || e === null) return false
+  const err = e as { digest?: string; message?: string }
+  return err.digest === 'DYNAMIC_SERVER_USAGE' || (err.message?.includes('Dynamic server usage') ?? false)
+}
+
+function hasPostgresTableMissingError(e: unknown): boolean {
+  if (typeof e !== 'object' || e === null) return false
+  const err = e as { code?: string; message?: string }
+  return err.code === '42883' || err.code === '42P01' || (err.message?.includes('does not exist') ?? false)
+}
+
 function getPublicClient() {
   if (!publicClient) {
     publicClient = createSupabaseClient(
@@ -339,8 +351,8 @@ export async function getProfile(): Promise<Profile> {
       if (mockProfileStr) {
         return JSON.parse(mockProfileStr)
       }
-    } catch (e: any) {
-      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+    } catch (e: unknown) {
+      if (isDynamicServerError(e)) {
         throw e
       }
       console.warn('Failed to parse mock profile from cookies', e)
@@ -409,8 +421,8 @@ export async function getProjects(): Promise<Project[]> {
       } else {
         projects = MOCK_PROJECTS
       }
-    } catch (e: any) {
-      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+    } catch (e: unknown) {
+      if (isDynamicServerError(e)) {
         throw e
       }
       console.warn('Failed to parse mock projects from cookies', e)
@@ -449,8 +461,8 @@ export async function getProjectById(id: string): Promise<Project | null> {
         list = JSON.parse(mockProjectsStr)
       }
       return list.find(p => p.id === id) || null
-    } catch (e: any) {
-      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+    } catch (e: unknown) {
+      if (isDynamicServerError(e)) {
         throw e
       }
       console.warn('Failed to parse mock project details from cookies', e)
@@ -485,8 +497,8 @@ export async function getEducation(): Promise<Education[]> {
       if (mockEduStr) {
         return JSON.parse(mockEduStr)
       }
-    } catch (e: any) {
-      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+    } catch (e: unknown) {
+      if (isDynamicServerError(e)) {
         throw e
       }
       console.warn('Failed to parse mock education from cookies', e)
@@ -520,8 +532,8 @@ export async function getExperience(): Promise<Experience[]> {
       if (mockExpStr) {
         return JSON.parse(mockExpStr)
       }
-    } catch (e: any) {
-      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+    } catch (e: unknown) {
+      if (isDynamicServerError(e)) {
         throw e
       }
       console.warn('Failed to parse mock experience from cookies', e)
@@ -555,8 +567,8 @@ export async function getCertificates(): Promise<Certificate[]> {
       if (mockCertStr) {
         return JSON.parse(mockCertStr)
       }
-    } catch (e: any) {
-      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+    } catch (e: unknown) {
+      if (isDynamicServerError(e)) {
         throw e
       }
       console.warn('Failed to parse mock certificates from cookies', e)
@@ -590,8 +602,8 @@ export async function getSkills(): Promise<Skill[]> {
       if (mockSkillsStr) {
         return JSON.parse(mockSkillsStr)
       }
-    } catch (e: any) {
-      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+    } catch (e: unknown) {
+      if (isDynamicServerError(e)) {
         throw e
       }
       console.warn('Failed to parse mock skills from cookies', e)
@@ -684,7 +696,7 @@ export async function getVisitorStats(): Promise<VisitorStats> {
       todayUnique: Number(stats?.today_unique ?? 0),
       isMissingTable: false
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.warn('Visitor stats connection error or function missing:', err)
     return {
       totalViews: 0,
@@ -709,13 +721,13 @@ export async function getMonthlyVisitorStats(year: number): Promise<{
   isMissingFunction: boolean 
 }> {
   if (!hasSupabaseConfig()) {
-    let mockData = Array.from({ length: 12 }, (_, i) => ({
+    const mockData = Array.from({ length: 12 }, (_, i) => ({
       month: i + 1,
       views: 0,
       visitors: 0
     }))
-    let yearlyViews = 0
-    let yearlyVisitors = 0
+    const yearlyViews = 0
+    const yearlyVisitors = 0
 
     return { stats: mockData, yearlyViews, yearlyVisitors, isMissingFunction: false }
   }
@@ -743,7 +755,7 @@ export async function getMonthlyVisitorStats(year: number): Promise<{
         yearlyViews = Number(data[0].yearly_views ?? 0)
         yearlyVisitors = Number(data[0].yearly_visitors ?? 0)
       }
-      data.forEach((row: any) => {
+      data.forEach((row: { month_num: number; views_count: number; visitors_count: number }) => {
         const m = Number(row.month_num)
         if (m >= 1 && m <= 12) {
           mappedStats[m - 1].views = Number(row.views_count ?? 0)
@@ -753,9 +765,9 @@ export async function getMonthlyVisitorStats(year: number): Promise<{
     }
 
     return { stats: mappedStats, yearlyViews, yearlyVisitors, isMissingFunction: false }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.warn(`Monthly stats connection error or function missing for year ${year}:`, err)
-    const isMissing = err?.code === '42883' || err?.code === '42P01' || err?.message?.includes('does not exist')
+    const isMissing = hasPostgresTableMissingError(err)
     return {
       stats: Array.from({ length: 12 }, (_, i) => ({
         month: i + 1,
@@ -783,7 +795,7 @@ export async function getAvailableYears(): Promise<number[]> {
     }
 
     if (data && Array.isArray(data) && data.length > 0) {
-      return data.map((row: any) => Number(row.year_val)).filter(Boolean)
+      return data.map((row: { year_val: number }) => Number(row.year_val)).filter(Boolean)
     }
 
     return [new Date().getFullYear()]
@@ -851,8 +863,8 @@ export async function getPhotos(): Promise<Photo[]> {
       } else {
         photos = MOCK_PHOTOS
       }
-    } catch (e: any) {
-      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+    } catch (e: unknown) {
+      if (isDynamicServerError(e)) {
         throw e
       }
       console.warn('Failed to parse mock photos from cookies', e)

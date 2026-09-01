@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { Skill } from '@/lib/types'
 import { Terminal } from 'lucide-react'
@@ -27,7 +28,7 @@ import {
 function getSkillIcon(name: string, customPath: string | null, className?: string, logoUrl?: string | null) {
   if (logoUrl) {
     return (
-      <img src={logoUrl} className={className} alt={name} />
+      <Image src={logoUrl} className={className} alt={name} width={24} height={24} unoptimized />
     )
   }
   if (customPath) {

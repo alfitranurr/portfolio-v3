@@ -9,11 +9,10 @@ interface SkillGridViewProps {
   skills: Skill[]
   onPreview: (skill: Skill) => void
   onEdit: (skill: Skill) => void
-  onDuplicate: (skill: Skill) => void
   onDelete: (id: string) => void
 }
 
-export function SkillGridView({ skills, onPreview, onEdit, onDuplicate, onDelete }: SkillGridViewProps) {
+export function SkillGridView({ skills, onPreview, onEdit, onDelete }: SkillGridViewProps) {
   return (
     <motion.div 
       layout
