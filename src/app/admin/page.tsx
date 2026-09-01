@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { MessagesList } from '@/components/admin/messages-list'
+import { MessagesList } from '@/components/admin/messages'
 import { getMessagesAction } from '@/app/admin/actions'
 import { getProjects, getEducation, getExperience, getCertificates, getVisitorStats } from '@/lib/data-service'
 

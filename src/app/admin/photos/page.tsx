@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { PhotosCrud } from '@/components/admin/photos-crud'
+import { PhotosCrud } from '@/components/admin/photos'
 import { getPhotos } from '@/lib/data-service'
 
 export const dynamic = 'force-dynamic'

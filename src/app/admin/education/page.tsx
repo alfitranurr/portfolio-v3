@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { EducationCrud } from '@/components/admin/education-crud'
+import { EducationCrud } from '@/components/admin/education'
 import { getEducation } from '@/lib/data-service'
 
 export const dynamic = 'force-dynamic'

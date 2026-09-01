@@ -1,5 +1,5 @@
 import { getSkills } from '@/lib/data-service'
-import { SkillsCrud } from '@/components/admin/skills-crud'
+import { SkillsCrud } from '@/components/admin/skills'
 
 export const dynamic = 'force-dynamic'
 
