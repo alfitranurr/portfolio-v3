@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { ExperienceCrud } from '@/components/admin/experience-crud'
+import { ExperienceCrud } from '@/components/admin/experience'
 import { getExperience } from '@/lib/data-service'
 
 export const dynamic = 'force-dynamic'

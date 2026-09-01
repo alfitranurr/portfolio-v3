@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { ProjectsCrud } from '@/components/admin/projects-crud'
+import { ProjectsCrud } from '@/components/admin/projects'
 import { getProjects } from '@/lib/data-service'
 
 export const dynamic = 'force-dynamic'
