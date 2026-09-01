@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { CertificatesCrud } from '@/components/admin/certificates-crud'
+import { CertificatesCrud } from '@/components/admin/certificates'
 import { getCertificates } from '@/lib/data-service'
 
 export const dynamic = 'force-dynamic'
