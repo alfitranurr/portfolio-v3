@@ -19,7 +19,6 @@ import {
   ArrowLeft,
   UploadCloud,
   Image as ImageIcon,
-  Presentation,
   ArrowUp,
   ArrowDown,
   LayoutList,
