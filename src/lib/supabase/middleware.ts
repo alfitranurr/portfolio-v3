@@ -6,13 +6,15 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
-  const mockLoggedIn = request.cookies.get('mock_logged_in')?.value === 'true'
-
   const hasConfig = !!(
     process.env.NEXT_PUBLIC_SUPABASE_URL && 
     process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http') &&
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   )
+
+  // Mock cookie only grants access in mock mode (no Supabase configured).
+  // In production, ignore it entirely — Supabase session is the sole authority.
+  const mockLoggedIn = !hasConfig && request.cookies.get('mock_logged_in')?.value === 'true'
 
   let user = null
   if (hasConfig) {

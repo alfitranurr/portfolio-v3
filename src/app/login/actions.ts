@@ -11,25 +11,28 @@ export async function loginAction(prevState: unknown, formData: FormData) {
     return { success: false, error: 'Email and password are required.' }
   }
 
-  const mockEmail = process.env.ADMIN_MOCK_EMAIL || 'admin@portfolio.local'
-  const mockPassword = process.env.ADMIN_MOCK_PASSWORD || 'admin123'
-
-  if (email === mockEmail && password === mockPassword) {
-    const cookieStore = await cookies()
-    cookieStore.set('mock_logged_in', 'true', { path: '/' })
-    return { success: true, redirect: '/admin' }
-  }
-
   const hasConfig = !!(
-    process.env.NEXT_PUBLIC_SUPABASE_URL && 
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
     process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http') &&
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   )
 
+  // Mock login ONLY runs when Supabase is not configured (local/dev mode).
+  // In production (hasConfig === true), this branch is dead — Supabase auth
+  // is the sole authority, preventing a mock-credential backdoor.
   if (!hasConfig) {
-    return { 
-      success: false, 
-      error: 'Invalid email or password.' 
+    const mockEmail = process.env.ADMIN_MOCK_EMAIL || 'admin@portfolio.local'
+    const mockPassword = process.env.ADMIN_MOCK_PASSWORD || 'admin123'
+
+    if (email === mockEmail && password === mockPassword) {
+      const cookieStore = await cookies()
+      cookieStore.set('mock_logged_in', 'true', { path: '/' })
+      return { success: true, redirect: '/admin' }
+    }
+
+    return {
+      success: false,
+      error: 'Invalid email or password.'
     }
   }
 
