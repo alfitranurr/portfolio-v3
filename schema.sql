@@ -1,17 +1,23 @@
 -- ====================================================
 -- DATABASE INITIALIZATION SQL FOR DATA SCIENCE PORTFOLIO
 -- Paste this script into your Supabase SQL Editor and run it.
+-- Idempotent: safe to run multiple times.
 -- ====================================================
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Define Custom Enum Types
-CREATE TYPE project_category AS ENUM ('data', 'non-data');
-CREATE TYPE certificate_category AS ENUM ('competition', 'seminar_workshop', 'license_certification', 'committee_organization');
+-- Define Custom Enum Types (wrapped in DO block for idempotency)
+DO $$ BEGIN
+  CREATE TYPE project_category AS ENUM ('data', 'non-data');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  CREATE TYPE certificate_category AS ENUM ('competition', 'seminar_workshop', 'license_certification', 'committee_organization');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- 1. Profiles Table (For Home / Hero Data)
-CREATE TABLE public.profiles (
+CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   headline VARCHAR(255) NOT NULL DEFAULT 'Data Scientist',
@@ -29,7 +35,7 @@ CREATE TABLE public.profiles (
 );
 
 -- 2. Projects Table
-CREATE TABLE public.projects (
+CREATE TABLE IF NOT EXISTS public.projects (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   description TEXT NOT NULL,
@@ -50,7 +56,7 @@ CREATE TABLE public.projects (
 );
 
 -- 3. Experiences Table
-CREATE TABLE public.experiences (
+CREATE TABLE IF NOT EXISTS public.experiences (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   role VARCHAR(255) NOT NULL,
   company VARCHAR(255) NOT NULL,
@@ -66,7 +72,7 @@ CREATE TABLE public.experiences (
 );
 
 -- 4. Education Table
-CREATE TABLE public.education (
+CREATE TABLE IF NOT EXISTS public.education (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   institution VARCHAR(255) NOT NULL,
   degree VARCHAR(255) NOT NULL,
@@ -82,7 +88,7 @@ CREATE TABLE public.education (
 );
 
 -- 5. Certificates Table
-CREATE TABLE public.certificates (
+CREATE TABLE IF NOT EXISTS public.certificates (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   issuer VARCHAR(255) NOT NULL,
@@ -96,7 +102,7 @@ CREATE TABLE public.certificates (
 );
 
 -- 6. Messages Table (for Contact Form)
-CREATE TABLE public.messages (
+CREATE TABLE IF NOT EXISTS public.messages (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
@@ -114,7 +120,13 @@ ALTER TABLE public.education ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.certificates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
 
--- RLS Policies
+-- RLS Policies (DROP IF EXISTS first for idempotency)
+DROP POLICY IF EXISTS "Allow public select on profiles" ON public.profiles;
+DROP POLICY IF EXISTS "Allow public select on projects" ON public.projects;
+DROP POLICY IF EXISTS "Allow public select on experiences" ON public.experiences;
+DROP POLICY IF EXISTS "Allow public select on education" ON public.education;
+DROP POLICY IF EXISTS "Allow public select on certificates" ON public.certificates;
+
 -- Public read access to portfolio data
 CREATE POLICY "Allow public select on profiles" ON public.profiles FOR SELECT USING (true);
 CREATE POLICY "Allow public select on projects" ON public.projects FOR SELECT USING (true);
@@ -122,12 +134,21 @@ CREATE POLICY "Allow public select on experiences" ON public.experiences FOR SEL
 CREATE POLICY "Allow public select on education" ON public.education FOR SELECT USING (true);
 CREATE POLICY "Allow public select on certificates" ON public.certificates FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Allow admin write on profiles" ON public.profiles;
+DROP POLICY IF EXISTS "Allow admin write on projects" ON public.projects;
+DROP POLICY IF EXISTS "Allow admin write on experiences" ON public.experiences;
+DROP POLICY IF EXISTS "Allow admin write on education" ON public.education;
+DROP POLICY IF EXISTS "Allow admin write on certificates" ON public.certificates;
+
 -- Authenticated write access for admin (all tables except messages)
 CREATE POLICY "Allow admin write on profiles" ON public.profiles FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "Allow admin write on projects" ON public.projects FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "Allow admin write on experiences" ON public.experiences FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "Allow admin write on education" ON public.education FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "Allow admin write on certificates" ON public.certificates FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Allow public insert on messages" ON public.messages;
+DROP POLICY IF EXISTS "Allow admin handle messages" ON public.messages;
 
 -- Messages access: anyone can insert, only admin can select/modify
 CREATE POLICY "Allow public insert on messages" ON public.messages FOR INSERT WITH CHECK (true);
@@ -153,7 +174,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-CREATE OR REPLACE TRIGGER on_auth_user_created
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
@@ -165,6 +187,11 @@ CREATE OR REPLACE TRIGGER on_auth_user_created
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('portfolio-assets', 'portfolio-assets', true)
 ON CONFLICT (id) DO UPDATE SET public = true;
+
+DROP POLICY IF EXISTS "Allow public read access to portfolio-assets" ON storage.objects;
+DROP POLICY IF EXISTS "Allow authenticated upload to portfolio-assets" ON storage.objects;
+DROP POLICY IF EXISTS "Allow authenticated update to portfolio-assets" ON storage.objects;
+DROP POLICY IF EXISTS "Allow authenticated delete from portfolio-assets" ON storage.objects;
 
 -- Policy 1: Allow public read access to the portfolio-assets bucket
 CREATE POLICY "Allow public read access to portfolio-assets"
@@ -198,7 +225,7 @@ USING (bucket_id = 'portfolio-assets');
 -- ====================================================
 -- 8. Skills Table (For Interactive Tech Stack)
 -- ====================================================
-CREATE TABLE public.skills (
+CREATE TABLE IF NOT EXISTS public.skills (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name VARCHAR(255) NOT NULL UNIQUE,
   category VARCHAR(100) NOT NULL, -- e.g., 'Language', 'Database', 'BI / Viz', 'ML / AI', 'Framework', 'Backend', 'DevOps', 'Tool'
@@ -211,6 +238,8 @@ CREATE TABLE public.skills (
 );
 
 ALTER TABLE public.skills ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow public select on skills" ON public.skills;
+DROP POLICY IF EXISTS "Allow admin write on skills" ON public.skills;
 CREATE POLICY "Allow public select on skills" ON public.skills FOR SELECT USING (true);
 CREATE POLICY "Allow admin write on skills" ON public.skills FOR ALL USING (auth.role() = 'authenticated');
 
@@ -227,6 +256,8 @@ CREATE TABLE IF NOT EXISTS public.page_views (
 
 ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow public insert on page_views" ON public.page_views;
+DROP POLICY IF EXISTS "Allow admin select on page_views" ON public.page_views;
 -- Policies
 -- Anyone can log a page view
 CREATE POLICY "Allow public insert on page_views" ON public.page_views FOR INSERT WITH CHECK (true);
@@ -248,6 +279,8 @@ CREATE TABLE IF NOT EXISTS public.ai_settings (
 );
 
 ALTER TABLE public.ai_settings ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow public select on ai_settings" ON public.ai_settings;
+DROP POLICY IF EXISTS "Allow admin write on ai_settings" ON public.ai_settings;
 CREATE POLICY "Allow public select on ai_settings" ON public.ai_settings FOR SELECT USING (true);
 CREATE POLICY "Allow admin write on ai_settings" ON public.ai_settings FOR ALL USING (auth.role() = 'authenticated');
 
@@ -268,6 +301,9 @@ CREATE TABLE IF NOT EXISTS public.ai_chat_logs (
 );
 
 ALTER TABLE public.ai_chat_logs ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow public insert on ai_chat_logs" ON public.ai_chat_logs;
+DROP POLICY IF EXISTS "Allow admin select on ai_chat_logs" ON public.ai_chat_logs;
+DROP POLICY IF EXISTS "Allow admin delete on ai_chat_logs" ON public.ai_chat_logs;
 CREATE POLICY "Allow public insert on ai_chat_logs" ON public.ai_chat_logs FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow admin select on ai_chat_logs" ON public.ai_chat_logs FOR SELECT USING (auth.role() = 'authenticated');
 CREATE POLICY "Allow admin delete on ai_chat_logs" ON public.ai_chat_logs FOR DELETE USING (auth.role() = 'authenticated');
@@ -287,7 +323,10 @@ CREATE TABLE IF NOT EXISTS public.photos (
 );
 
 ALTER TABLE public.photos ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow public select on photos" ON public.photos;
+DROP POLICY IF EXISTS "Allow admin write on photos" ON public.photos;
 CREATE POLICY "Allow public select on photos" ON public.photos FOR SELECT USING (true);
 CREATE POLICY "Allow admin write on photos" ON public.photos FOR ALL USING (auth.role() = 'authenticated');
+
 
 

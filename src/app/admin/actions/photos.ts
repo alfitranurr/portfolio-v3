@@ -1,10 +1,9 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { Photo } from '@/lib/types'
-import { hasSupabaseConfig } from './_shared'
+import { hasSupabaseConfig, requireAdmin } from './_shared'
 
 export async function savePhotoAction(photoData: Partial<Photo>) {
   const title = photoData.title ? photoData.title.trim() : ''
@@ -54,11 +53,11 @@ export async function savePhotoAction(photoData: Partial<Photo>) {
   }
 
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized' }
     }
+    const { supabase } = admin
 
     const isEdit = !!photoData.id && !photoData.id.startsWith('mock-')
 
@@ -149,11 +148,11 @@ export async function deletePhotoAction(id: string) {
   }
 
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized' }
     }
+    const { supabase } = admin
     const { error } = await supabase
       .from('photos')
       .delete()

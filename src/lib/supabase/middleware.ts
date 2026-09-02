@@ -17,9 +17,11 @@ export async function updateSession(request: NextRequest) {
   let user = null
   if (hasConfig) {
     try {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string
+      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string
       const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        supabaseUrl,
+        supabaseAnonKey,
         {
           cookies: {
             getAll() {

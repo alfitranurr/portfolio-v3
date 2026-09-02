@@ -1,9 +1,8 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
-import { hasSupabaseConfig } from './_shared'
+import { hasSupabaseConfig, requireAdmin } from './_shared'
 
 export async function updateProfileAction(prevState: unknown, formData: FormData) {
   const name = formData.get('name') as string
@@ -81,13 +80,11 @@ export async function updateProfileAction(prevState: unknown, formData: FormData
   }
 
   try {
-    const supabase = await createClient()
-
-    // Get current authenticated user
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized admin user' }
     }
+    const { supabase, user } = admin
 
     // Upload Files if provided
     let avatar_url = formData.get('avatar_url') as string || null

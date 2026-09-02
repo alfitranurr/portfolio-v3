@@ -1,7 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
-import { hasSupabaseConfig } from './_shared'
+import { hasSupabaseConfig, requireAdmin } from './_shared'
 
 export async function uploadAssetAction(formData: FormData) {
   const file = formData.get('file') as File | null
@@ -21,11 +20,11 @@ export async function uploadAssetAction(formData: FormData) {
   }
 
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized admin user' }
     }
+    const { supabase } = admin
 
     const prefix = formData.get('prefix') as string || 'edu-logo'
     const ext = file.name.split('.').pop()

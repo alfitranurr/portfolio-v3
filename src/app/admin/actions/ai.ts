@@ -1,6 +1,5 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import {
   getAISettings,
@@ -9,7 +8,7 @@ import {
   clearAIChatLogs,
   AISettings
 } from '@/lib/ai-service'
-import { hasSupabaseConfig } from './_shared'
+import { hasSupabaseConfig, requireAdmin } from './_shared'
 
 export async function getAISettingsAction() {
   return await getAISettings()
@@ -17,9 +16,8 @@ export async function getAISettingsAction() {
 
 export async function saveAISettingsAction(settings: AISettings) {
   if (hasSupabaseConfig()) {
-    const supabase = await createClient()
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized' }
     }
   }
@@ -30,9 +28,8 @@ export async function saveAISettingsAction(settings: AISettings) {
 
 export async function getAIChatLogsAction() {
   if (hasSupabaseConfig()) {
-    const supabase = await createClient()
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       throw new Error('Unauthorized')
     }
   }
@@ -41,9 +38,8 @@ export async function getAIChatLogsAction() {
 
 export async function clearAIChatLogsAction() {
   if (hasSupabaseConfig()) {
-    const supabase = await createClient()
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized' }
     }
   }

@@ -1,10 +1,9 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { Project } from '@/lib/types'
-import { hasSupabaseConfig } from './_shared'
+import { hasSupabaseConfig, requireAdmin } from './_shared'
 
 export async function saveProjectAction(projectData: {
   id?: string;
@@ -106,11 +105,11 @@ export async function saveProjectAction(projectData: {
   }
 
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized' }
     }
+    const { supabase } = admin
 
     const isEdit = !!projectData.id && !projectData.id.startsWith('mock-')
 
@@ -205,11 +204,11 @@ export async function deleteProjectAction(id: string) {
   }
 
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized' }
     }
+    const { supabase } = admin
     const { error } = await supabase
       .from('projects')
       .delete()
@@ -258,11 +257,11 @@ export async function updateProjectsOrderAction(updates: { id: string; pinned_or
   }
 
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized' }
     }
+    const { supabase } = admin
 
     await Promise.all(
       updates.map(async (update) => {
@@ -327,11 +326,11 @@ export async function updateFeaturedProjectsOrderAction(updates: { id: string; f
   }
 
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized' }
     }
+    const { supabase } = admin
 
     await Promise.all(
       updates.map(async (update) => {
