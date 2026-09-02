@@ -1,10 +1,9 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { Experience } from '@/lib/types'
-import { hasSupabaseConfig } from './_shared'
+import { hasSupabaseConfig, requireAdmin } from './_shared'
 
 export async function saveExperienceAction(expData: {
   id?: string;
@@ -72,11 +71,11 @@ export async function saveExperienceAction(expData: {
   }
 
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized' }
     }
+    const { supabase } = admin
 
     const isEdit = !!expData.id && !expData.id.startsWith('mock-')
 
@@ -139,11 +138,11 @@ export async function deleteExperienceAction(id: string) {
   }
 
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized' }
     }
+    const { supabase } = admin
     const { error } = await supabase
       .from('experiences')
       .delete()

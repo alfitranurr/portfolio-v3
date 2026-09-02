@@ -1,10 +1,9 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { Message } from '@/lib/types'
-import { hasSupabaseConfig } from './_shared'
+import { hasSupabaseConfig, requireAdmin } from './_shared'
 
 function getMockMessages(cookieStore: Awaited<ReturnType<typeof cookies>>): Message[] {
   const mockMessages = cookieStore.get('mock_messages')?.value
@@ -40,11 +39,11 @@ export async function getMessagesAction() {
   }
 
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       throw new Error('Unauthorized')
     }
+    const { supabase } = admin
     const { data, error } = await supabase
       .from('messages')
       .select('*')
@@ -68,11 +67,11 @@ export async function toggleMessageReadAction(id: string, isRead: boolean) {
   }
 
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized' }
     }
+    const { supabase } = admin
     const { error } = await supabase
       .from('messages')
       .update({ is_read: isRead })
@@ -97,11 +96,11 @@ export async function deleteMessageAction(id: string) {
   }
 
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized' }
     }
+    const { supabase } = admin
     const { error } = await supabase
       .from('messages')
       .delete()

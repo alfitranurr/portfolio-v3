@@ -43,4 +43,9 @@ next-env.d.ts
 # mock generated data (written by ai-service.ts when running without Supabase)
 src/lib/mock-ai-logs.json
 
+# playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
 .vercel

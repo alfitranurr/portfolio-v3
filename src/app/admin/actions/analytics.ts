@@ -1,7 +1,34 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { hasSupabaseConfig } from './_shared'
+import { headers } from 'next/headers'
+import { hasSupabaseConfig, requireAdmin } from './_shared'
+
+// In-memory throttle for trackPageViewAction: at most 1 insert per
+// (visitor IP, page path) every THROTTLE_MS. Prevents a flood of inserts
+// when a client loops or replays the action. Lost on cold-start, which is
+// acceptable — the client-side sessionStorage guard already dedupes most
+// legitimate per-session traffic; this is a backstop for abuse.
+const PAGE_VIEW_THROTTLE_MS = 60_000
+const PAGE_VIEW_THROTTLE_MAX_ENTRIES = 10_000
+const pageViewThrottle = new Map<string, number>()
+
+function shouldThrottle(key: string): boolean {
+  const now = Date.now()
+  const last = pageViewThrottle.get(key)
+  if (last && now - last < PAGE_VIEW_THROTTLE_MS) {
+    return true
+  }
+  pageViewThrottle.set(key, now)
+
+  // Opportunistic cleanup so the Map cannot grow unbounded.
+  if (pageViewThrottle.size > PAGE_VIEW_THROTTLE_MAX_ENTRIES) {
+    for (const [k, t] of pageViewThrottle) {
+      if (now - t >= PAGE_VIEW_THROTTLE_MS) pageViewThrottle.delete(k)
+    }
+  }
+  return false
+}
 
 export async function trackPageViewAction(pagePath: string, visitorId: string) {
   if (!hasSupabaseConfig()) {
@@ -9,6 +36,15 @@ export async function trackPageViewAction(pagePath: string, visitorId: string) {
   }
 
   try {
+    // Per-IP rate-limit backstop. x-forwarded-for is a comma-separated chain;
+    // the first entry is the originating client IP.
+    const headerList = await headers()
+    const forwardedFor = headerList.get('x-forwarded-for')
+    const ip = (forwardedFor && forwardedFor.split(',')[0].trim()) || '127.0.0.1'
+    if (shouldThrottle(`${ip}:${pagePath}`)) {
+      return { success: true, message: 'Throttled.' }
+    }
+
     const supabase = await createClient()
     const { error } = await supabase
       .from('page_views')
@@ -33,13 +69,8 @@ export async function trackPageViewAction(pagePath: string, visitorId: string) {
 
 export async function getVisitorStatsAction() {
   if (hasSupabaseConfig()) {
-    try {
-      const supabase = await createClient()
-      const { data: { user }, error } = await supabase.auth.getUser()
-      if (error || !user) {
-        return { success: false, error: 'Unauthorized' }
-      }
-    } catch {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized' }
     }
   }
@@ -57,11 +88,11 @@ export async function getVisitorStatsAction() {
 export async function resetVisitorAnalyticsAction() {
   if (hasSupabaseConfig()) {
     try {
-      const supabase = await createClient()
-      const { data: { user }, error: authErr } = await supabase.auth.getUser()
-      if (authErr || !user) {
+      const admin = await requireAdmin()
+      if (!admin) {
         return { success: false, error: 'Unauthorized' }
       }
+      const { supabase } = admin
 
       // 1. Try database RPC reset function first (bypasses RLS issues)
       const { error: rpcErr } = await supabase.rpc('reset_visitor_analytics')
@@ -94,13 +125,8 @@ export async function resetVisitorAnalyticsAction() {
 
 export async function getMonthlyVisitorStatsAction(year: number) {
   if (hasSupabaseConfig()) {
-    try {
-      const supabase = await createClient()
-      const { data: { user }, error } = await supabase.auth.getUser()
-      if (error || !user) {
-        return { success: false, error: 'Unauthorized' }
-      }
-    } catch {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized' }
     }
   }
@@ -117,13 +143,8 @@ export async function getMonthlyVisitorStatsAction(year: number) {
 
 export async function getAvailableYearsAction() {
   if (hasSupabaseConfig()) {
-    try {
-      const supabase = await createClient()
-      const { data: { user }, error } = await supabase.auth.getUser()
-      if (error || !user) {
-        return { success: false, error: 'Unauthorized' }
-      }
-    } catch {
+    const admin = await requireAdmin()
+    if (!admin) {
       return { success: false, error: 'Unauthorized' }
     }
   }

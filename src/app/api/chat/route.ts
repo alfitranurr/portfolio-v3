@@ -8,15 +8,15 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(request: Request) {
   try {
-    const apiKey = process.env.GEMINI_API_KEY
-    if (!apiKey) {
+    let body: unknown
+    try {
+      body = await request.json()
+    } catch {
       return Response.json(
-        { error: 'GEMINI_API_KEY is not configured. Please add it to .env.local' },
-        { status: 500 }
+        { error: 'Request body must be valid JSON.' },
+        { status: 400 }
       )
     }
-
-    const body = await request.json()
     const { messages } = body as {
       messages: Array<{ role: 'user' | 'assistant'; content: string }>
     }
@@ -25,6 +25,14 @@ export async function POST(request: Request) {
       return Response.json(
         { error: 'Messages array is required and must not be empty.' },
         { status: 400 }
+      )
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY
+    if (!apiKey) {
+      return Response.json(
+        { error: 'GEMINI_API_KEY is not configured. Please add it to .env.local' },
+        { status: 500 }
       )
     }
 
@@ -74,7 +82,10 @@ export async function POST(request: Request) {
     })
 
     // Capture requester's IP for audit purposes
-    const ip = request.headers.get('x-forwarded-for') || '127.0.0.1'
+    // x-forwarded-for may be a comma-separated chain; the first entry is the
+    // originating client IP (subsequent entries are downstream proxies).
+    const forwardedFor = request.headers.get('x-forwarded-for')
+    const ip = (forwardedFor && forwardedFor.split(',')[0].trim()) || '127.0.0.1'
 
     // Create a ReadableStream for the response
     const encoder = new TextEncoder()
