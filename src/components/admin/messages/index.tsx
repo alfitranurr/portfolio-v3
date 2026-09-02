@@ -1,16 +1,18 @@
 'use client'
 
 import * as React from 'react'
-import { RefreshCw, Inbox, AlertCircle, Mail, MailOpen, Search, Trash2, ChevronDown } from 'lucide-react'
+import { RefreshCw, Inbox, AlertCircle, Mail, MailOpen, Search, Trash2, ChevronDown, RotateCcw, Trash } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Message, MessagesListProps, VisitorStatsProps } from './types'
 import { RealTimeClock } from './RealTimeClock'
 import { MonthlyTrafficChart } from '@/components/admin/monthly-traffic-chart'
 import { useRouter } from 'next/navigation'
-import { toggleMessageReadAction, deleteMessageAction, getVisitorStatsAction } from '@/app/admin/actions'
+import { toggleMessageReadAction, deleteMessageAction, getVisitorStatsAction, revalidatePublicPagesAction, resetVisitorAnalyticsAction } from '@/app/admin/actions'
 
 function HeaderActions({ onRefresh }: { onRefresh: () => void }) {
   const [isRefreshing, setIsRefreshing] = React.useState(false)
+  const [isResetting, setIsResetting] = React.useState(false)
+  const [resetNotice, setResetNotice] = React.useState<{ success: boolean; message: string } | null>(null)
 
   const handleRefresh = () => {
     setIsRefreshing(true)
@@ -18,8 +20,47 @@ function HeaderActions({ onRefresh }: { onRefresh: () => void }) {
     setTimeout(() => setIsRefreshing(false), 600)
   }
 
+  const handleResetCache = async () => {
+    if (!confirm('Reset public page cache? Visitor view will immediately reflect the latest database data.')) {
+      return
+    }
+    setIsResetting(true)
+    setResetNotice(null)
+    try {
+      const res = await revalidatePublicPagesAction()
+      setResetNotice({ success: res.success, message: res.success ? (res.message || 'Cache reset.') : (res.error || 'Failed to reset cache.') })
+    } catch (err) {
+      console.error(err)
+      setResetNotice({ success: false, message: 'Error resetting cache.' })
+    } finally {
+      setIsResetting(false)
+      setTimeout(() => setResetNotice(null), 4000)
+    }
+  }
+
   return (
     <div className="flex items-center gap-3 shrink-0">
+      {resetNotice && (
+        <span
+          className={cn(
+            "text-[10px] font-bold px-2.5 py-1.5 rounded-lg border",
+            resetNotice.success
+              ? "text-green-600 dark:text-green-400 border-green-500/20 bg-green-500/10"
+              : "text-red-600 dark:text-red-400 border-red-500/20 bg-red-500/10"
+          )}
+        >
+          {resetNotice.message}
+        </span>
+      )}
+      <button
+        onClick={handleResetCache}
+        disabled={isResetting}
+        title="Reset public page cache (force visitor view to refresh)"
+        className="px-3 py-3 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 text-muted-foreground hover:text-primary cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm flex items-center gap-2 disabled:opacity-50"
+      >
+        <RotateCcw className={cn("w-5 h-5", isResetting && "animate-spin")} />
+        <span className="text-xs font-bold hidden sm:inline">Reset Cache</span>
+      </button>
       <button
         onClick={handleRefresh}
         disabled={isRefreshing}
@@ -33,11 +74,23 @@ function HeaderActions({ onRefresh }: { onRefresh: () => void }) {
   )
 }
 
-function VisitorStats({ visitorStats }: VisitorStatsProps) {
+function VisitorStats({ visitorStats, onReset, isResetting }: VisitorStatsProps) {
   if (!visitorStats) return null
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div className="space-y-4">
+      <div className="flex items-center justify-end">
+        <button
+          onClick={onReset}
+          disabled={isResetting}
+          title="Reset visitor analytics (set all stats to 0)"
+          className="px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-600 dark:text-red-400 text-xs font-bold flex items-center gap-2 cursor-pointer transition-all active:scale-95 disabled:opacity-50"
+        >
+          <Trash className={cn("w-3.5 h-3.5", isResetting && "animate-pulse")} />
+          <span>{isResetting ? 'Resetting...' : 'Reset Stats'}</span>
+        </button>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       <div className="p-6 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-2">
         <div className="text-2xl font-black text-primary">{visitorStats.totalViews.toLocaleString()}</div>
         <p className="text-xs text-muted-foreground font-semibold">Total Views</p>
@@ -53,6 +106,7 @@ function VisitorStats({ visitorStats }: VisitorStatsProps) {
       <div className="p-6 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-2">
         <div className="text-2xl font-black text-primary">{visitorStats.todayUnique.toLocaleString()}</div>
         <p className="text-xs text-muted-foreground font-semibold">{"Today's Unique"}</p>
+      </div>
       </div>
     </div>
   )
@@ -77,6 +131,7 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
   const [expandedId, setExpandedId] = React.useState<string | null>(null)
   const [isUpdating, setIsUpdating] = React.useState<string | null>(null)
   const [refreshTrigger, setRefreshTrigger] = React.useState(0)
+  const [isResettingStats, setIsResettingStats] = React.useState(false)
   const router = useRouter()
 
   const handleRefreshData = () => {
@@ -89,6 +144,33 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
     }).catch(err => {
       console.warn('Failed to refresh visitor stats:', err)
     })
+  }
+
+  const handleResetStats = async () => {
+    if (!confirm('Reset ALL visitor analytics? This will permanently delete all page view records and set stats to 0. This cannot be undone.')) {
+      return
+    }
+    setIsResettingStats(true)
+    try {
+      const res = await resetVisitorAnalyticsAction()
+      if (res.success) {
+        setCurrentVisitorStats({
+          totalViews: 0,
+          uniqueVisitors: 0,
+          todayViews: 0,
+          todayUnique: 0,
+          isMissingTable: currentVisitorStats?.isMissingTable
+        })
+        setRefreshTrigger(prev => prev + 1)
+      } else {
+        alert(res.error || 'Failed to reset stats.')
+      }
+    } catch (err) {
+      console.error(err)
+      alert('Error resetting stats.')
+    } finally {
+      setIsResettingStats(false)
+    }
   }
 
   const unreadCount = messages.filter(m => !m.is_read).length
@@ -190,7 +272,7 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
 
       {/* Visitor Stats */}
       {currentVisitorStats && !currentVisitorStats.isMissingTable && (
-        <VisitorStats visitorStats={currentVisitorStats} />
+        <VisitorStats visitorStats={currentVisitorStats} onReset={handleResetStats} isResetting={isResettingStats} />
       )}
 
       {/* Monthly Traffic Chart */}
