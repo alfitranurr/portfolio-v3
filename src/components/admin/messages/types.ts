@@ -33,4 +33,6 @@ export interface VisitorStatsProps {
     todayUnique: number
     isMissingTable?: boolean
   } | null
+  onReset?: () => void
+  isResetting?: boolean
 }
