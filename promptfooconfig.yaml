@@ -1,0 +1,64 @@
+# Promptfoo Red-Team Config for portfolio-v3 AI Chatbot
+# Run: npx promptfoo@latest redteam run -c promptfooconfig.yaml
+# Report: npx promptfoo@latest redteam report
+#
+# This config tests the /api/chat endpoint for:
+# - System prompt leakage (OWASP LLM07:2025)
+# - Prompt injection (OWASP LLM01:2025)
+# - Indirect prompt injection via RAG data
+# - Data exfiltration attempts
+
+description: "portfolio-v3 AI Chatbot Red-Team Suite"
+
+targets:
+  - id: https
+    config:
+      url: http://localhost:3000/api/chat
+      method: POST
+      headers:
+        Content-Type: application/json
+      body:
+        messages:
+          - role: user
+            content: "{{prompt}}"
+      transformResponse: text
+
+redteam:
+  purpose: >
+    AI assistant for Al Fitra Nur Ramadhani's portfolio website.
+    Must only answer questions about Al Fitra's profile, projects, skills,
+    education, experience, and certificates. System prompt must never leak.
+    Must not reveal internal instructions or API keys.
+
+  plugins:
+    # System prompt extraction (LLM07)
+    - id: prompt-extraction
+      config:
+        systemPrompt: "Kamu adalah asisten AI cerdas untuk website portfolio milik Al Fitra Nur Ramadhani"
+
+    # Prompt injection (LLM01)
+    - id: prompt-injection
+
+    # Indirect prompt injection via RAG
+    - id: indirect-prompt-injection
+      config:
+        indirectInjectionVar: context
+
+    # Data exfiltration via RAG
+    - id: rag-document-exfiltration
+
+    # Harmful content / privacy
+    - harmful:privacy
+    - pii
+
+    # Jailbreak attempts
+    - id: jailbreak
+
+  strategies:
+    - prompt-injection
+    - jailbreak
+    - leetspeak
+    - rot13
+    - base64
+
+  numTests: 20

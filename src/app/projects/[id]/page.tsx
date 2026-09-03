@@ -8,6 +8,55 @@ import { BlurImage } from '@/components/ui/blur-image'
 
 export const revalidate = 3600
 
+/**
+ * Sanitize embed_code to only allow safe iframe embeds (Tableau, YouTube, Plotly, etc.)
+ * Strips <script>, <img onerror>, event handlers, and other XSS vectors.
+ * Only allows iframes from trusted domains.
+ */
+const ALLOWED_IFRAME_DOMAINS = [
+  'tableau.com',
+  'public.tableau.com',
+  'www.youtube.com',
+  'www.youtube-nocookie.com',
+  'chart-studio.plotly.com',
+  'plotly.com',
+  'embeddable.surveyjs.org',
+]
+
+function isAllowedIframeSrc(src: string): boolean {
+  try {
+    const url = new URL(src)
+    return ALLOWED_IFRAME_DOMAINS.some(domain => url.hostname === domain || url.hostname.endsWith('.' + domain))
+  } catch {
+    return false
+  }
+}
+
+function sanitizeEmbedCode(html: string): string {
+  // Allow only <iframe> tags with safe attributes; strip everything else
+  const iframeMatch = html.match(/<iframe\b[^>]*>[\s\S]*?<\/iframe>|<iframe\b[^>]*\/?>/gi)
+  if (!iframeMatch) return ''
+  return iframeMatch
+    .map((iframe) => {
+      // Remove event handler attributes (onerror, onload, onclick, etc.)
+      let cleaned = iframe.replace(/\s+on\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+      // Remove javascript: URLs
+      cleaned = cleaned.replace(/(src|href)\s*=\s*["']javascript:[^"']*["']/gi, '$1=""')
+      // Validate iframe src against allowlist
+      const srcMatch = cleaned.match(/src\s*=\s*["']([^"']*)["']/i)
+      if (srcMatch && srcMatch[1] && !isAllowedIframeSrc(srcMatch[1])) {
+        return '' // Block iframe with untrusted src
+      }
+      // Ensure sandbox attribute for defense-in-depth
+      if (!/sandbox\s*=/i.test(cleaned)) {
+        cleaned = cleaned.replace(/<iframe\b/i, '<iframe sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"')
+      }
+      return cleaned
+    })
+    .filter(Boolean)
+    .join('\n')
+}
+
 export async function generateStaticParams() {
   const projects = await getProjects()
   return projects.map((project) => ({
@@ -136,9 +185,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         {project.cover_image ? (
           <>
             {/* Blurred ambient background */}
-            <BlurImage 
-              src={project.cover_image} 
-              alt="" 
+            <BlurImage
+              src={project.cover_image}
+              alt=""
               initialBlur="blur-2xl opacity-0"
               initialScale="scale-105"
               loadedBlur="blur-2xl opacity-30"
@@ -146,9 +195,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
             />
             {/* Contained foreground image */}
-            <BlurImage 
-              src={project.cover_image} 
-              alt={project.title} 
+            <BlurImage
+              src={project.cover_image}
+              alt={project.title}
               className="w-full h-full object-contain relative z-10"
             />
           </>
@@ -166,9 +215,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       {project.embed_code && (
         <section className="space-y-3">
           <h2 className="text-lg font-extrabold text-foreground">Interactive Dashboard</h2>
-          <div 
+          <div
             className="w-full overflow-hidden rounded-2xl border border-slate-200/10 dark:border-slate-800/10 bg-slate-900/50"
-            dangerouslySetInnerHTML={{ __html: project.embed_code }}
+            dangerouslySetInnerHTML={{ __html: sanitizeEmbedCode(project.embed_code) }}
           />
         </section>
       )}

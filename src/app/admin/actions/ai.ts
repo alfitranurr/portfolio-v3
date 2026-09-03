@@ -11,6 +11,17 @@ import {
 import { hasSupabaseConfig, requireAdmin } from './_shared'
 
 export async function getAISettingsAction() {
+  if (hasSupabaseConfig()) {
+    const admin = await requireAdmin()
+    if (!admin) {
+      return {
+        model_name: 'gemini-2.5-flash',
+        search_grounding: true,
+        temperature: 0.7,
+        max_history: 10
+      }
+    }
+  }
   return await getAISettings()
 }
 

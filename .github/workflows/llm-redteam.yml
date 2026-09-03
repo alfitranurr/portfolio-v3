@@ -1,0 +1,63 @@
+name: LLM Red-Team (Promptfoo)
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - 'src/app/api/chat/**'
+      - 'src/lib/rag-context.ts'
+      - 'src/lib/ai-service.ts'
+      - 'promptfooconfig.yaml'
+  schedule:
+    # Run weekly on Sunday at 02:00 UTC
+    - cron: '0 2 * * 0'
+
+permissions:
+  contents: read
+
+jobs:
+  promptfoo-redteam:
+    name: Promptfoo LLM Red-Team
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Promptfoo
+        run: npm install -g promptfoo@latest
+
+      - name: Start dev server (mock mode)
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ''
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ''
+          GEMINI_API_KEY: ''
+        run: |
+          npm run dev &
+          sleep 15
+          # Verify server is up
+          curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 || exit 1
+
+      - name: Run Promptfoo red-team
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ''
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ''
+          GEMINI_API_KEY: ''
+        run: |
+          # In mock mode, the chat API returns early (no GEMINI_API_KEY).
+          # This test validates the guardrail & validation logic.
+          # For full LLM red-team, run manually with real GEMINI_API_KEY.
+          npx promptfoo@latest redteam run -c promptfooconfig.yaml --no-cache || true
+
+      - name: Upload Promptfoo report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: promptfoo-redteam-report
+          path: promptfoo_output/

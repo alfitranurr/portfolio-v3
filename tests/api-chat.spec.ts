@@ -29,7 +29,7 @@ test.describe('/api/chat handler', () => {
     })
     expect(res.status()).toBe(500)
     const body = await res.json()
-    expect(body.error).toMatch(/GEMINI_API_KEY/i)
+    expect(body.error).toMatch(/AI service is not configured/i)
   })
 
   test('returns 400 when payload is not valid JSON object', async ({ request }) => {

@@ -64,8 +64,8 @@ test.describe('hasSupabaseConfig=false fallback', () => {
     })
     expect(res.status()).toBe(500)
     const body = await res.json()
-    // Bukan error Supabase/network, melainkan pesan eksplisit tentang Gemini key
-    expect(body.error).toMatch(/GEMINI_API_KEY/i)
+    // Bukan error Supabase/network, melainkan pesan eksplisit tentang AI service
+    expect(body.error).toMatch(/AI service is not configured/i)
   })
 
   test('visitor stats returns zeros in mock mode (admin reachable after login)', async ({ browser }) => {

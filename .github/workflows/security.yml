@@ -1,0 +1,110 @@
+name: Security Scanning
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+  schedule:
+    # Run weekly on Sunday at 00:00 UTC
+    - cron: '0 0 * * 0'
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  # ============================================
+  # SAST — Semgrep static analysis
+  # ============================================
+  semgrep:
+    name: Semgrep SAST
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Semgrep Scan
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/nextjs
+            p/react
+            p/javascript
+            p/owasp-top-ten
+            p/typescript
+          generateSarif: true
+
+      - name: Upload Semgrep SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
+
+  # ============================================
+  # SCA — Dependency vulnerability scan (npm audit)
+  # ============================================
+  sca-npm-audit:
+    name: npm audit (SCA)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: |
+          npm audit --omit=dev --audit-level=high || true
+          npm audit --json --omit=dev > npm-audit.json || true
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-audit-report
+          path: npm-audit.json
+
+  # ============================================
+  # Secret Scanning — Gitleaks
+  # ============================================
+  gitleaks:
+    name: Gitleaks Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: true
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: true
+
+  # ============================================
+  # Lint — ESLint security rules
+  # ============================================
+  eslint:
+    name: ESLint Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint

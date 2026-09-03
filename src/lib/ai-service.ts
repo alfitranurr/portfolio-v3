@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import * as fs from 'fs/promises'
 import * as path from 'path'
+import * as crypto from 'crypto'
 
 export interface AISettings {
   model_name: string
@@ -31,7 +32,7 @@ export const DEFAULT_AI_SETTINGS: AISettings = {
 
 function hasSupabaseConfig(): boolean {
   return !!(
-    process.env.NEXT_PUBLIC_SUPABASE_URL && 
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
     process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http') &&
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   )
@@ -43,6 +44,31 @@ const MOCK_LOGS_FILE = path.join(MOCK_LOGS_DIR, 'mock-ai-logs.json')
 
 // In-memory fallback if file system operations fail (e.g. in read-only environment)
 let inMemoryLogs: AIChatLog[] = []
+
+/**
+ * Anonymize IP address for GDPR/UU PDP compliance.
+ * IPv4: Keep first 3 octets, zero the last (e.g. 192.168.1.42 -> 192.168.1.0)
+ * IPv6: Keep first 4 hextets, zero the rest
+ * Falls back to SHA-256 hash if parsing fails.
+ */
+export function anonymizeIP(ip: string): string {
+  if (!ip || ip === '127.0.0.1' || ip === '::1') return ip
+
+  // IPv4
+  const ipv4Match = ip.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/)
+  if (ipv4Match) {
+    return `${ipv4Match[1]}.${ipv4Match[2]}.${ipv4Match[3]}.0`
+  }
+
+  // IPv6 (keep first 4 groups)
+  const ipv6Parts = ip.split(':')
+  if (ipv6Parts.length >= 4) {
+    return ipv6Parts.slice(0, 4).join(':') + '::'
+  }
+
+  // Fallback: hash the IP (one-way, non-reversible)
+  return crypto.createHash('sha256').update(ip).digest('hex').slice(0, 16)
+}
 
 export async function getAISettings(): Promise<AISettings> {
   if (!hasSupabaseConfig()) {
@@ -190,7 +216,7 @@ export async function logAIChat(logEntry: Omit<AIChatLog, 'id' | 'created_at'>):
       }
 
       inMemoryLogs = logs // Update memory
-      
+
       try {
         await fs.mkdir(MOCK_LOGS_DIR, { recursive: true })
         await fs.writeFile(MOCK_LOGS_FILE, JSON.stringify(logs, null, 2), 'utf-8')

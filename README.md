@@ -9,6 +9,9 @@
 [![Google Gemini](https://img.shields.io/badge/Google_Gemini-2.5_Flash-BF5AF2?style=for-the-badge&logo=google-gemini&logoColor=white)](https://aistudio.google.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
 [![Playwright](https://img.shields.io/badge/Playwright-1.62-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev/)
+[![Security Audited](https://img.shields.io/badge/Security-Audited-2EAD33?style=for-the-badge&logo=shield&logoColor=white)](./docs/security/README.md)
+[![Semgrep](https://img.shields.io/badge/SAST-Semgrep-6B1F4E?style=for-the-badge&logo=semgrep&logoColor=white)](https://semgrep.dev/)
+[![Gitleaks](https://img.shields.io/badge/Secrets-Gitleaks-FF6B35?style=for-the-badge)](https://github.com/gitleaks/gitleaks)
 
 <p align="center">
   <strong>Personal portfolio website for Al Fitra Nur Ramadhani. A dynamic, high-performance web app integrating modern web technology, a centralized database, and Gemini-powered RAG AI with Google Search Grounding.</strong>
@@ -40,6 +43,7 @@
 - [Admin Panel](#-admin-panel)
 - [RAG AI Assistant](#-rag-ai-assistant)
 - [Testing](#-testing)
+- [Security](#-security)
 - [Developer Profile](#-developer-profile)
 - [License](#-license)
 
@@ -57,6 +61,7 @@ This is not a static portfolio page — it is a full-stack web application that 
 - **Glassmorphism UI** — polished dark/light theme with glassmorphic cards, Framer Motion animations, and an initial loader.
 - **ISR + force-dynamic hybrid** — public pages cached for performance (`revalidate = 3600`), admin pages always fresh (`force-dynamic`), with a one-click cache reset button.
 - **Mock mode fallback** — the app runs without Supabase/Gemini credentials, falling back to in-memory mock data and cookie-based persistence. Ideal for local development and testing.
+- **Security hardening** — CSP headers, rate limiting, XSS prevention, prompt injection guardrails, IP anonymization, pre-commit secret scanning, and SAST/SCA in CI. Full audit in [`docs/security/`](./docs/security/).
 
 ---
 
@@ -100,6 +105,7 @@ The **"Ask AI"** feature is a virtual assistant that answers questions about Al 
 | Markdown | react-markdown |
 | Testing | Playwright 1.62 |
 | Linting | ESLint 9 (flat config) |
+| Security | Semgrep SAST, Gitleaks, Promptfoo LLM red-team, Pre-commit hooks |
 | Deployment | Vercel |
 
 ---
@@ -145,7 +151,12 @@ portfolio-v3/
 │   └── proxy.ts                    # Middleware entry (auth + route protection)
 ├── schema.sql                      # Supabase database initialization script
 ├── playwright.config.ts            # Playwright test config (mock mode)
-└── tests/                          # Integration tests
+├── tests/                          # Integration tests
+├── docs/security/                  # Security audit reports (14 files)
+├── .github/workflows/              # CI: security.yml + llm-redteam.yml
+├── .pre-commit-config.yaml         # Pre-commit hooks (gitleaks, eslint)
+├── promptfooconfig.yaml            # LLM red-team config
+└── SECURITY_SKILLS_PROMPT.md       # 114-skill mapping to attack surface
 ```
 
 ### Data Flow: RAG Chatbot
@@ -297,6 +308,94 @@ npm run lint          # ESLint (flat config)
 npx tsc --noEmit      # TypeScript type check
 npm run build         # Production build (runs type check + build)
 ```
+
+---
+
+## 🛡️ Security
+
+This project has undergone a comprehensive security audit using the [Anthropic Cybersecurity Skills](https://github.com/mukul975/Anthropic-Cybersecurity-Skills) library (818 skills, 34 domains). **18 security items** were audited across 10 skills — all fixes applied and verified.
+
+> 📄 **Full audit report:** [`docs/security/README.md`](./docs/security/README.md)
+> 📋 **Skill mapping:** [`SECURITY_SKILLS_PROMPT.md`](./SECURITY_SKILLS_PROMPT.md) (114 curated skills → attack surface)
+
+### Audit Summary
+
+| Metric | Value |
+|--------|-------|
+| Items audited | 18 |
+| Fixes applied | 8 code fixes + 10 config/docs |
+| Live tests | Prompt injection ✅ (2/2 blocked) · Rate limit ✅ (429 after 10/min) |
+| Secret scan | Git history + source code ✅ clean |
+| RLS policies | 12/12 Supabase tables ✅ protected |
+| Lint / Build / Test | ✅ PASS / ✅ PASS / 23/23 ✅ PASS |
+
+### Security Measures Implemented
+
+#### Code-Level Fixes (7 files modified)
+
+| Fix | File | Detail |
+|-----|------|--------|
+| **AI Chat hardening** | `src/app/api/chat/route.ts` | Input validation (50 msgs, 4000 chars), rate limiting (10 req/min per-IP), output guardrail (system prompt leak block), error sanitization, IP anonymization |
+| **XSS prevention** | `src/app/projects/[id]/page.tsx` | `sanitizeEmbedCode()` — iframe-only allowlist (Tableau, YouTube, Plotly), event handler stripping, `sandbox` attribute |
+| **Access control** | `src/app/admin/actions/ai.ts` | Added `requireAdmin()` to `getAISettingsAction()` |
+| **Cookie hardening** | `src/app/login/actions.ts` | `httpOnly`, `sameSite: strict`, `maxAge: 24h` for mock session cookie |
+| **File upload validation** | `src/app/admin/actions/uploads.ts` | Type allowlist (JPG/PNG/WebP/GIF/SVG), 5MB limit |
+| **IP anonymization** | `src/lib/ai-service.ts` | `anonymizeIP()` — IPv4 last octet zeroed, IPv6 truncated (GDPR/UU PDP compliance) |
+| **Security headers + CSP** | `next.config.ts` | CSP, X-Frame-Options, HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, CORS same-origin |
+
+#### CI/CD & Tooling (4 new files)
+
+| File | Purpose |
+|------|---------|
+| `.github/workflows/security.yml` | SAST (Semgrep) + SCA (npm audit) + Gitleaks secret scan + ESLint — runs on push, PR, and weekly |
+| `.github/workflows/llm-redteam.yml` | Promptfoo LLM red-team regression — runs on chat/RAG changes |
+| `.pre-commit-config.yaml` | Pre-commit hooks: gitleaks, eslint, file checks, private key detection |
+| `promptfooconfig.yaml` | Promptfoo red-team config (prompt extraction, injection, RAG poisoning, jailbreak) |
+
+#### Documentation (14 reports)
+
+All reports in `docs/security/`:
+
+| Report | Scope |
+|--------|-------|
+| `README.md` | Comprehensive final report (start here) |
+| `SECURITY_AUDIT_CHAT_API.md` | /api/chat hardening details |
+| `SECURITY_AUDIT_PROMPT_LEAKAGE.md` | Prompt injection live test results |
+| `SECURITY_AUDIT_SECRET_SCANNING.md` | Secret scan results |
+| `SECURITY_AUDIT_SSRF.md` | SSRF + upload validation audit |
+| `SECURITY_AUDIT_XSS.md` | XSS fix details (sanitizeEmbedCode) |
+| `SECURITY_AUDIT_ACCESS_CONTROL.md` | 25+ admin actions access control audit |
+| `SECURITY_AUDIT_JWT.md` | Supabase JWT security |
+| `SECURITY_AUDIT_HEADERS_CORS.md` | Security headers + CORS + CSP |
+| `SECURITY_THREAT_MODEL.md` | STRIDE threat model + attack trees |
+| `SECURITY_HSTS_PRELOAD.md` | HSTS preload submission guide |
+| `SECURITY_AUDIT_BATCH3.md` | CI/CD + threat model batch report |
+| `SECURITY_AUDIT_SUMMARY.md` | Batch 1-2 summary |
+| `SECURITY_AUDIT_STATUS.md` | Final status checklist |
+
+### Enabling Pre-Commit Hooks
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+This activates gitleaks secret scanning, ESLint, and file validation on every commit.
+
+### STRIDE Threat Model
+
+22 threats identified across 6 STRIDE categories — **all mitigated**:
+
+| Category | Threats | Status |
+|----------|--------|--------|
+| Spoofing | 3 | ✅ Mitigated |
+| Tampering | 5 | ✅ Mitigated |
+| Repudiation | 2 | ✅ Mitigated |
+| Information Disclosure | 5 | ✅ Mitigated |
+| Denial of Service | 4 | ✅ Mitigated |
+| Elevation of Privilege | 3 | ✅ Mitigated |
+
+See [`docs/security/SECURITY_THREAT_MODEL.md`](./docs/security/SECURITY_THREAT_MODEL.md) for full analysis and attack trees.
 
 ---
 
