@@ -8,6 +8,16 @@ export async function uploadAssetAction(formData: FormData) {
     return { success: false, error: 'No file provided' }
   }
 
+  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml']
+  const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg']
+  const ext = (file.name.split('.').pop() || '').toLowerCase()
+  if (!ALLOWED_EXTENSIONS.includes(ext) || !ALLOWED_TYPES.includes(file.type)) {
+    return { success: false, error: 'File type not allowed. Only images (JPG, PNG, WebP, GIF, SVG) are accepted.' }
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    return { success: false, error: 'File too large. Maximum 5MB.' }
+  }
+
   if (!hasSupabaseConfig()) {
     try {
       const buffer = await file.arrayBuffer()

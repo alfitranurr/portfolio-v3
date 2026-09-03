@@ -26,7 +26,12 @@ export async function loginAction(prevState: unknown, formData: FormData) {
 
     if (email === mockEmail && password === mockPassword) {
       const cookieStore = await cookies()
-      cookieStore.set('mock_logged_in', 'true', { path: '/' })
+      cookieStore.set('mock_logged_in', 'true', {
+        path: '/',
+        httpOnly: true,
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 24,
+      })
       return { success: true, redirect: '/admin' }
     }
 
@@ -64,7 +69,7 @@ export async function signupAction(prevState: unknown, formData: FormData) {
   }
 
   const hasConfig = !!(
-    process.env.NEXT_PUBLIC_SUPABASE_URL && 
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
     process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http') &&
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   )
@@ -90,9 +95,9 @@ export async function signupAction(prevState: unknown, formData: FormData) {
       return { success: false, error: error.message }
     }
 
-    return { 
-      success: true, 
-      message: 'Admin account registration submitted successfully. Please sign in or check your email verification (if SMTP is enabled).' 
+    return {
+      success: true,
+      message: 'Admin account registration submitted successfully. Please sign in or check your email verification (if SMTP is enabled).'
     }
   } catch {
     return { success: false, error: 'Connection error during registration.' }
@@ -101,17 +106,17 @@ export async function signupAction(prevState: unknown, formData: FormData) {
 
 export async function signOutAction() {
   const cookieStore = await cookies()
-  
+
   // Clear mock cookie
   cookieStore.delete('mock_logged_in')
-  
+
   // Clear Supabase session if config exists
   const hasConfig = !!(
-    process.env.NEXT_PUBLIC_SUPABASE_URL && 
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
     process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http') &&
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   )
-  
+
   if (hasConfig) {
     try {
       const supabase = await createClient()
@@ -120,6 +125,6 @@ export async function signOutAction() {
       console.error('Error signing out of Supabase:', err)
     }
   }
-  
+
   return { success: true }
 }
