@@ -1,8 +1,9 @@
 import * as React from 'react'
-import { ArrowLeft, Check, Loader2, Award } from 'lucide-react'
-import { getDirectImageUrl } from '@/lib/utils'
+import { ArrowLeft, Check, Loader2, Award, UploadCloud } from 'lucide-react'
+import { cn, getDirectImageUrl } from '@/lib/utils'
 import { BlurImage } from '@/components/ui/blur-image'
 import { Skill } from './types'
+import { uploadAssetAction } from '@/app/admin/actions'
 
 interface SkillFormProps {
   skill: Partial<Skill> | null
@@ -19,7 +20,36 @@ export function SkillForm({
   onUpdateSkill,
   isPending
 }: SkillFormProps) {
+  const [isUploading, setIsUploading] = React.useState(false)
+
   if (!skill) return null
+
+  const handleIconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('prefix', 'skill-icon')
+      const res = await uploadAssetAction(formData)
+      if (res.success && res.url) {
+        onUpdateSkill(prev => ({ ...prev, logo_url: res.url }))
+      } else {
+        console.error(res.error || 'Failed to upload icon.')
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  const handleRemoveIcon = () => {
+    onUpdateSkill(prev => ({ ...prev, logo_url: null }))
+  }
 
   return (
     <div className="rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 p-6 md:p-8 space-y-6 relative overflow-hidden">
@@ -88,37 +118,73 @@ export function SkillForm({
             </div>
           </div>
 
-          {/* Right: Icon Preview */}
+          {/* Right: Icon Upload */}
           <div className="space-y-4">
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                Skill Icon URL (logo_url)
+                Skill Icon
               </label>
-              <input
-                type="url"
-                value={skill.logo_url || ''}
-                onChange={e => onUpdateSkill(prev => ({ ...prev, logo_url: e.target.value }))}
-                placeholder="https://example.com/icon.svg"
-                className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
-              />
-              <p className="text-[10px] text-muted-foreground leading-normal">
-                Optional: URL to skill icon (SVG recommended)
-              </p>
-            </div>
 
-            {/* Preview */}
-            <div className="flex justify-center pt-4">
-              <div className="relative w-24 h-24 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center">
-                {skill.logo_url ? (
-                  <BlurImage
-                    src={getDirectImageUrl(skill.logo_url, 100)}
-                    alt={skill.name || 'Skill icon'}
-                    className="w-16 h-16 object-contain"
+              <div className="flex items-center gap-4">
+                <div className="relative group w-20 h-20 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center shrink-0">
+                  {skill.logo_url ? (
+                    <>
+                      <BlurImage
+                        src={getDirectImageUrl(skill.logo_url, 200)}
+                        alt="Icon preview"
+                        className="w-full h-full object-contain p-1"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleRemoveIcon}
+                        className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    </>
+                  ) : (
+                    <Award className="w-8 h-8 text-muted-foreground/30" />
+                  )}
+                </div>
+
+                <div className="flex-1 space-y-2">
+                  <label className={cn(
+                    "w-full py-2.5 px-4 rounded-xl bg-white dark:bg-white/5 border border-dashed border-slate-300 dark:border-slate-700/50 text-xs font-bold text-center cursor-pointer hover:border-primary/50 transition-all flex items-center justify-center gap-2",
+                    isUploading && "opacity-50 pointer-events-none"
+                  )}>
+                    {isUploading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                        <span>Uploading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <UploadCloud className="w-4 h-4 text-muted-foreground" />
+                        <span>{skill.logo_url ? 'Change Icon' : 'Upload Icon'}</span>
+                      </>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleIconUpload}
+                      className="hidden"
+                      disabled={isUploading}
+                    />
+                  </label>
+
+                  <input
+                    type="url"
+                    value={skill.logo_url || ''}
+                    onChange={e => onUpdateSkill(prev => ({ ...prev, logo_url: e.target.value }))}
+                    placeholder="Or paste icon URL"
+                    className="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
                   />
-                ) : (
-                  <Award className="w-8 h-8 text-muted-foreground/30" />
-                )}
+                </div>
               </div>
+
+              <p className="text-[10px] text-muted-foreground leading-normal">
+                Upload icon file or paste URL (SVG/PNG recommended)
+              </p>
             </div>
           </div>
         </div>
