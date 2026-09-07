@@ -4,7 +4,7 @@ import * as React from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowUpRight, Sparkles, Code2, Search, SlidersHorizontal, Check, X } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, getSubCategoryColor } from '@/lib/utils'
 import { Project } from '@/lib/types'
 import { BlurImage } from '@/components/ui/blur-image'
 import { CustomSortDropdown } from '@/components/ui/custom-sort-dropdown'
@@ -103,8 +103,8 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
         return normalizedProjSub === normalizedSelectedSub
       })
 
-      const searchMatch = searchQuery.trim() === '' || 
-        project.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      const searchMatch = searchQuery.trim() === '' ||
+        project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         project.description.toLowerCase().includes(searchQuery.toLowerCase())
       return categoryMatch && subCategoryMatch && searchMatch
     })
@@ -193,7 +193,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                 placeholder="Search projects..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-8 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/10 text-foreground placeholder:text-muted-foreground/45 text-xs focus:outline-none focus:border-primary/50 transition-all"
+                className="w-full pl-9 pr-8 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-white/25 text-foreground placeholder:text-muted-foreground/45 text-xs focus:outline-none focus:border-primary/50 transition-all"
               />
               {searchQuery && (
                 <button
@@ -207,7 +207,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                 </button>
               )}
             </div>
-            
+
             {/* Filter Toggle Button */}
             <button
               type="button"
@@ -314,7 +314,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                 <button
                   type="button"
                   onClick={() => handleToggleSubCategory(sub)}
-                  className="hover:text-red-500 transition-colors cursor-pointer text-muted-foreground/60"
+                  className="hover:text-foreground transition-colors cursor-pointer text-muted-foreground/60"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -345,16 +345,16 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                 >
                   {/* Subtle top indicator bar */}
                   <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-                  
+
                   <div className="space-y-4">
                     {/* Thumbnail container */}
                     <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-slate-200/10 to-slate-200/5 dark:from-slate-800/10 dark:to-slate-800/5 border border-slate-200/10 dark:border-slate-800/10 flex items-center justify-center">
                       {project.cover_image ? (
                         <>
                           {/* Ambient blur background */}
-                          <BlurImage 
-                            src={project.cover_image} 
-                            alt="" 
+                          <BlurImage
+                            src={project.cover_image}
+                            alt=""
                             initialBlur="blur-xl opacity-0"
                             initialScale="scale-110"
                             loadedBlur="blur-xl opacity-30"
@@ -362,14 +362,14 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                             className="absolute inset-0 w-full h-full object-cover group-hover:scale-115 transition-transform duration-500 select-none pointer-events-none"
                           />
                           {/* Contained foreground image */}
-                          <BlurImage 
-                            src={project.cover_image} 
-                            alt={project.title} 
+                          <BlurImage
+                            src={project.cover_image}
+                            alt={project.title}
                             className="w-full h-full object-contain relative z-10 group-hover:scale-103 transition-transform duration-500"
                           />
                         </>
                       ) : (
-                        <div className="w-full h-full bg-gradient-to-tr from-cyan-500/10 to-violet-500/10 flex flex-col items-center justify-center p-4">
+                        <div className="w-full h-full bg-gradient-to-tr from-neutral-300/10 to-neutral-500/10 flex flex-col items-center justify-center p-4">
                           <span className="text-primary/25 group-hover:text-primary/50 group-hover:scale-110 transition-all font-black uppercase tracking-widest text-[9px] text-center leading-normal">
                             {getSubCategoryLabel(project.sub_category)}
                           </span>
@@ -380,11 +380,11 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                     {/* Details */}
                     <div className="space-y-1">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="text-[9px] font-extrabold text-primary uppercase tracking-wider bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded-md">
+                        <span className={cn("text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-md", getSubCategoryColor(project.sub_category).badge)}>
                           {getSubCategoryLabel(project.sub_category)}
                         </span>
                         {project.is_on_progress && (
-                          <span className="text-[9px] font-extrabold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse shrink-0">
+                          <span className="text-[9px] font-extrabold text-orange-500 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse shrink-0">
                             On Progress
                           </span>
                         )}

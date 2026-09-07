@@ -4,6 +4,7 @@ import { getProfile, getProjects, getSkills, getPhotos, sortFeaturedProjects } f
 import { SkillsMarquee } from '@/components/skills-marquee'
 import { JourneyMarquee } from '@/components/journey-marquee'
 import { BlurImage } from '@/components/ui/blur-image'
+import { getSubCategoryColor, cn } from '@/lib/utils'
 
 export const revalidate = 3600 // Revalidate cache every hour (ISR)
 
@@ -25,7 +26,7 @@ export default async function HomePage() {
             About Me
           </h1>
           <div className="shrink-0">
-            <span className="inline-block text-primary text-xs uppercase font-extrabold tracking-widest bg-primary/10 border border-primary/20 px-3 py-1 rounded-full animate-pulse">
+            <span className="inline-block text-emerald-600 dark:text-emerald-400 text-xs uppercase font-extrabold tracking-widest bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full animate-pulse">
               Available for Opportunities
             </span>
           </div>
@@ -38,7 +39,7 @@ export default async function HomePage() {
               {profile.headline}
             </p>
 
-            <p className="text-sm md:text-base text-foreground/80 leading-relaxed text-justify">
+            <p className="text-sm md:text-base text-foreground leading-relaxed text-justify">
               {profile.about_me}
             </p>
 
@@ -73,16 +74,16 @@ export default async function HomePage() {
           </div>
           <Link
             href="/projects"
-            className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+            className="group flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl bg-foreground/5 dark:bg-white/5 border border-foreground/10 dark:border-white/10 text-foreground hover:bg-foreground/10 dark:hover:bg-white/10 hover:border-foreground/20 dark:hover:border-white/20 transition-all cursor-pointer"
           >
             <span>View all projects</span>
-            <ArrowUpRight className="w-4 h-4" />
+            <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredProjects.map((project) => (
-            <div 
+            <div
               key={project.id}
               className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-all duration-300 relative overflow-hidden"
             >
@@ -95,9 +96,9 @@ export default async function HomePage() {
                   {project.cover_image ? (
                     <>
                       {/* Ambient blur background */}
-                      <BlurImage 
-                        src={project.cover_image} 
-                        alt="" 
+                      <BlurImage
+                        src={project.cover_image}
+                        alt=""
                         initialBlur="blur-xl opacity-0"
                         initialScale="scale-110"
                         loadedBlur="blur-xl opacity-30"
@@ -105,14 +106,14 @@ export default async function HomePage() {
                         className="absolute inset-0 w-full h-full object-cover group-hover:scale-115 transition-transform duration-500 select-none pointer-events-none"
                       />
                       {/* Contained foreground image */}
-                      <BlurImage 
-                        src={project.cover_image} 
-                        alt={project.title} 
+                      <BlurImage
+                        src={project.cover_image}
+                        alt={project.title}
                         className="w-full h-full object-contain relative z-10 group-hover:scale-103 transition-transform duration-500"
                       />
                     </>
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-tr from-cyan-500/10 to-violet-500/10 flex flex-col items-center justify-center p-4">
+                    <div className="w-full h-full bg-gradient-to-tr from-neutral-300/10 to-neutral-500/10 flex flex-col items-center justify-center p-4">
                       <span className="text-primary/25 group-hover:text-primary/50 group-hover:scale-110 transition-all font-black uppercase tracking-widest text-[9px] text-center leading-normal">
                         {project.sub_category}
                       </span>
@@ -123,11 +124,11 @@ export default async function HomePage() {
                 {/* Details */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[9px] font-extrabold text-primary uppercase tracking-wider">
+                    <span className={cn("text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-md", getSubCategoryColor(project.sub_category).badge)}>
                       {project.sub_category}
                     </span>
                     {project.is_on_progress && (
-                      <span className="text-[9px] font-extrabold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse shrink-0">
+                      <span className="text-[9px] font-extrabold text-orange-500 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse shrink-0">
                         On Progress
                       </span>
                     )}

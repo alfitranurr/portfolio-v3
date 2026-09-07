@@ -5,6 +5,7 @@ import { ArrowLeft, ExternalLink, Calendar, Sparkles, Presentation } from 'lucid
 import { Github, PythonIcon } from '@/components/icons'
 import { getProjectById, getProjects } from '@/lib/data-service'
 import { BlurImage } from '@/components/ui/blur-image'
+import { getSubCategoryColor, cn } from '@/lib/utils'
 
 export const revalidate = 3600
 
@@ -107,11 +108,11 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       <div className="space-y-4">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[10px] font-extrabold text-primary uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full">
+            <span className={cn("text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full", getSubCategoryColor(project.sub_category).badge)}>
               {project.sub_category}
             </span>
             {project.is_on_progress && (
-              <span className="text-[10px] font-extrabold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full uppercase tracking-widest animate-pulse shrink-0">
+              <span className="text-[10px] font-extrabold text-orange-500 bg-orange-500/10 border border-orange-500/20 px-3 py-1 rounded-full uppercase tracking-widest animate-pulse shrink-0">
                 On Progress
               </span>
             )}
@@ -160,7 +161,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               href={project.notebook_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500/15 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400 font-semibold hover:bg-cyan-500/25 transition-all text-xs cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-neutral-500/15 border border-neutral-500/20 text-neutral-700 dark:text-neutral-300 font-semibold hover:bg-neutral-500/25 transition-all text-xs cursor-pointer"
             >
               <PythonIcon className="w-4 h-4" />
               <span>Open Notebook</span>
@@ -171,7 +172,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               href={project.slide_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500/15 border border-amber-500/20 text-amber-600 dark:text-amber-400 font-semibold hover:bg-amber-500/25 transition-all text-xs cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-neutral-600/15 border border-neutral-600/20 text-neutral-700 dark:text-neutral-300 font-semibold hover:bg-neutral-600/25 transition-all text-xs cursor-pointer"
             >
               <Presentation className="w-4 h-4" />
               <span>View Reporting Presentation</span>
@@ -202,7 +203,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             />
           </>
         ) : (
-          <div className="w-full h-full bg-gradient-to-tr from-cyan-500/5 to-violet-500/5 flex flex-col items-center justify-center p-6">
+          <div className="w-full h-full bg-gradient-to-tr from-neutral-300/5 to-neutral-500/5 flex flex-col items-center justify-center p-6">
             <Sparkles className="text-primary/20 w-12 h-12 mb-2" />
             <span className="text-muted-foreground/30 font-bold uppercase tracking-wider text-xs text-center">
               {project.title} Case Study

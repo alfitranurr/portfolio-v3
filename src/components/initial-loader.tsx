@@ -31,23 +31,23 @@ export function InitialLoader() {
         <motion.div
           key="loader"
           initial={{ opacity: 1 }}
-          exit={{ 
+          exit={{
             opacity: 0,
             scale: 1.03,
             filter: "blur(16px)",
-            transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] } 
+            transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] }
           }}
           className="fixed inset-0 bg-slate-950 z-[9999] flex flex-col items-center justify-center select-none overflow-hidden"
         >
           {/* Ambient center backlight */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: [0.3, 0.6, 0.3], scale: [0.9, 1.1, 0.9] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute w-[320px] h-[320px] md:w-[550px] md:h-[550px] rounded-full bg-gradient-to-tr from-cyan-500/15 via-primary/20 to-purple-500/15 filter blur-[90px] md:blur-[140px] pointer-events-none" 
+            className="absolute w-[320px] h-[320px] md:w-[550px] md:h-[550px] rounded-full bg-gradient-to-tr from-neutral-400/15 via-primary/20 to-neutral-500/15 filter blur-[90px] md:blur-[140px] pointer-events-none"
           />
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -59,26 +59,26 @@ export function InitialLoader() {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1.6, repeat: Infinity, ease: "linear" }}
-                className="w-full h-full rounded-full border-[3.5px] border-slate-800/60 border-t-cyan-400 border-r-purple-500 shadow-[0_0_35px_rgba(34,211,238,0.3)]"
+                className="w-full h-full rounded-full border-[3.5px] border-neutral-700/60 border-t-neutral-300 border-r-neutral-400 shadow-[0_0_35px_rgba(163,163,163,0.25)]"
               />
 
               {/* Inner Reverse Ring */}
               <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: 2.2, repeat: Infinity, ease: "linear" }}
-                className="absolute w-3/4 h-3/4 rounded-full border-[2.5px] border-transparent border-b-cyan-300/80 border-l-primary/80"
+                className="absolute w-3/4 h-3/4 rounded-full border-[2.5px] border-transparent border-b-neutral-300/80 border-l-primary/80"
               />
 
               {/* Soft Pulsing Core Glow */}
-              <motion.div 
+              <motion.div
                 animate={{ scale: [0.85, 1.15, 0.85], opacity: [0.4, 0.8, 0.4] }}
                 transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute w-2/5 h-2/5 rounded-full bg-gradient-to-tr from-cyan-400/40 to-purple-500/40 filter blur-xs" 
+                className="absolute w-2/5 h-2/5 rounded-full bg-gradient-to-tr from-neutral-300/40 to-neutral-500/40 filter blur-xs"
               />
             </div>
 
             {/* Title & Subtitle */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}

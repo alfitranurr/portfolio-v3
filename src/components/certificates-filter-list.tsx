@@ -116,7 +116,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                 placeholder="Search certificates..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-8 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
+                className="w-full pl-9 pr-8 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-white/25 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
               />
               {search && (
                 <button
@@ -130,7 +130,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                 </button>
               )}
             </div>
-            
+
             {/* Filter Toggle Button */}
             <button
               type="button"
@@ -235,7 +235,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                 <button
                   type="button"
                   onClick={() => handleToggleCategory(cat)}
-                  className="hover:text-red-500 transition-colors cursor-pointer text-muted-foreground/60"
+                  className="hover:text-foreground transition-colors cursor-pointer text-muted-foreground/60"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -246,7 +246,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
       </div>
 
       {/* Certificates Grid */}
-      <motion.div 
+      <motion.div
         layout
         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -295,9 +295,9 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                   {cert.image_url && (
                     <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-100/90 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-800/60 shadow-xs flex items-center justify-center">
                       {/* Ambient blur background */}
-                      <BlurImage 
-                        src={getDirectImageUrl(cert.image_url)} 
-                        alt="" 
+                      <BlurImage
+                        src={getDirectImageUrl(cert.image_url)}
+                        alt=""
                         initialBlur="blur-xl opacity-0"
                         initialScale="scale-110"
                         loadedBlur="blur-xl opacity-30"
@@ -306,9 +306,9 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                         className="absolute inset-0 w-full h-full object-cover group-hover:scale-115 transition-transform duration-500 select-none pointer-events-none"
                       />
                       {/* Contained foreground image */}
-                      <BlurImage 
-                        src={getDirectImageUrl(cert.image_url)} 
-                        alt={cert.title} 
+                      <BlurImage
+                        src={getDirectImageUrl(cert.image_url)}
+                        alt={cert.title}
                         referrerPolicy="no-referrer"
                         className="w-full h-full object-contain relative z-10 group-hover:scale-103 transition-transform duration-500"
                       />
@@ -320,7 +320,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                     <h3 className="font-bold text-xs sm:text-[13px] leading-snug text-foreground group-hover:text-primary transition-colors text-justify">
                       {cert.title}
                     </h3>
-                    
+
                     {/* Divider and Metadata layout aligned with left margin */}
                     <div className="border-t border-slate-200/10 dark:border-slate-800/20 pt-2.5 space-y-2">
                       <div className="flex flex-col">
@@ -345,7 +345,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                       {new Date(cert.issue_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
                     </span>
                   </span>
-                  
+
                   {cert.image_url && (
                     <a
                       href={cert.image_url}

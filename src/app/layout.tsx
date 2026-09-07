@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Sidebar } from "@/components/sidebar";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { VisitorTracker } from "@/components/visitor-tracker";
-import NextTopLoader from 'nextjs-toploader';
+import { TopLoader } from "@/components/top-loader";
 import { InitialLoader } from "@/components/initial-loader";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { MainLayoutContainer } from "@/components/main-layout-container";
@@ -76,28 +76,18 @@ export default async function RootLayout({
           <InitialLoader />
           <ScrollToTop />
           <VisitorTracker />
-          <NextTopLoader
-            color="#38bdf8"
-            initialPosition={0.05}
-            crawlSpeed={150}
-            height={2.5}
-            crawl={true}
-            showSpinner={false}
-            easing="cubic-bezier(0.16, 1, 0.3, 1)"
-            speed={300}
-            shadow="0 0 12px #38bdf8, 0 0 4px #38bdf8"
-          />
+          <TopLoader />
           {/* Background Ambient Glows */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-            <div className="absolute top-[10%] left-[5%] ambient-glow bg-cyan-500/20 dark:bg-cyan-500/10" />
-            <div className="absolute bottom-[15%] right-[5%] ambient-glow bg-violet-500/20 dark:bg-violet-500/10" />
+            <div className="absolute top-[10%] left-[5%] ambient-glow bg-neutral-400/20 dark:bg-neutral-400/10" />
+            <div className="absolute bottom-[15%] right-[5%] ambient-glow bg-neutral-500/20 dark:bg-neutral-500/10" />
           </div>
-          
+
           {/* Main Layout Container */}
           <MainLayoutContainer>
             {/* Persistent Sidebar */}
             <Sidebar profile={profile} />
-            
+
             {/* Admin Sidebar */}
             <AdminSidebar />
 

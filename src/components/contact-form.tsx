@@ -21,7 +21,7 @@ export function ContactForm() {
     <form ref={formRef} action={formAction} className="space-y-4">
       {/* Success Notification */}
       {state?.success && (
-        <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 text-xs font-semibold flex items-center gap-2.5">
+        <div className="p-4 rounded-xl bg-neutral-500/10 border border-neutral-500/20 text-neutral-700 dark:text-neutral-300 text-xs font-semibold flex items-center gap-2.5">
           <CheckCircle2 className="w-4 h-4 shrink-0" />
           <span>{state.message}</span>
         </div>
@@ -29,7 +29,7 @@ export function ContactForm() {
 
       {/* Error Notification */}
       {state?.success === false && (
-        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs font-semibold flex items-center gap-2.5">
+        <div className="p-4 rounded-xl bg-neutral-600/10 border border-neutral-600/20 text-neutral-700 dark:text-neutral-300 text-xs font-semibold flex items-center gap-2.5">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{state.error}</span>
         </div>
@@ -47,7 +47,7 @@ export function ContactForm() {
             id="name"
             required
             placeholder="Khansa Tabina"
-            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 text-sm transition-all"
+            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-slate-300 dark:border-white/25 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 text-sm transition-all"
           />
         </div>
 
@@ -61,7 +61,7 @@ export function ContactForm() {
             id="email"
             required
             placeholder="khansatabina@example.com"
-            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 text-sm transition-all"
+            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-slate-300 dark:border-white/25 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 text-sm transition-all"
           />
         </div>
       </div>
@@ -91,7 +91,7 @@ export function ContactForm() {
           required
           rows={5}
           placeholder="Hi Al Fitra, I would love to discuss a project..."
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 text-sm transition-all resize-none"
+          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-slate-300 dark:border-white/25 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 text-sm transition-all resize-none"
         />
       </div>
 

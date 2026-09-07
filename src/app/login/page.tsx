@@ -73,12 +73,12 @@ export default function LoginPage() {
 
         {/* Status Messages */}
         {message && (
-          <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 text-xs font-semibold">
+          <div className="p-4 rounded-xl bg-neutral-500/10 border border-neutral-500/20 text-neutral-700 dark:text-neutral-300 text-xs font-semibold">
             {message}
           </div>
         )}
         {error && (
-          <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs font-semibold font-mono">
+          <div className="p-4 rounded-xl bg-neutral-600/10 border border-neutral-600/20 text-neutral-700 dark:text-neutral-300 text-xs font-semibold font-mono">
             {error}
           </div>
         )}

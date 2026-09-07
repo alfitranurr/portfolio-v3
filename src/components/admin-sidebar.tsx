@@ -3,15 +3,15 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { 
+import {
   LayoutDashboard,
-  UserCog, 
-  GraduationCap, 
-  Briefcase, 
-  Coffee, 
-  Award, 
+  UserCog,
+  GraduationCap,
+  Briefcase,
+  Coffee,
+  Award,
   LogOut,
-  Menu, 
+  Menu,
   X,
   ExternalLink,
   Terminal,
@@ -143,15 +143,15 @@ export function AdminSidebar() {
       >
         <div className="flex items-center gap-2.5">
           {isDark ? (
-            <Moon className="w-4 h-4 text-sky-400 transition-transform duration-200 group-hover:scale-110" />
+            <Moon className="w-4 h-4 text-neutral-300 transition-transform duration-200 group-hover:scale-110" />
           ) : (
-            <Sun className="w-4 h-4 text-amber-500 transition-transform duration-200 group-hover:scale-110" />
+            <Sun className="w-4 h-4 text-neutral-700 transition-transform duration-200 group-hover:scale-110" />
           )}
           <span className={cn(isCollapsed && "lg:hidden")}>{isDark ? 'Dark Theme' : 'Light Theme'}</span>
         </div>
 
         {/* Animated Toggle Switch */}
-        <div 
+        <div
           className={cn(
             "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-200 ease-in-out shadow-inner",
             isDark ? "bg-primary" : "bg-slate-300 dark:bg-slate-700",
@@ -167,7 +167,7 @@ export function AdminSidebar() {
             {isDark ? (
               <Moon className="w-2.5 h-2.5 text-slate-900" />
             ) : (
-              <Sun className="w-2.5 h-2.5 text-amber-500" />
+              <Sun className="w-2.5 h-2.5 text-neutral-700" />
             )}
           </span>
         </div>
@@ -254,8 +254,8 @@ export function AdminSidebar() {
                   <nav className="space-y-1">
                     {category.items.map((item) => {
                       const Icon = item.icon
-                      const isActive = item.exact 
-                        ? pathname === item.href 
+                      const isActive = item.exact
+                        ? pathname === item.href
                         : pathname.startsWith(item.href)
                       return (
                         <Link
@@ -266,14 +266,14 @@ export function AdminSidebar() {
                           className={cn(
                             "flex items-center justify-between px-2.5 py-2 rounded-xl transition-all duration-200 text-xs font-semibold group border",
                             isCollapsed && "lg:justify-center lg:px-0",
-                            isActive 
-                              ? "bg-primary/10 text-primary border-primary/20 shadow-sm shadow-primary/5 scale-[1.01]" 
+                            isActive
+                              ? "bg-primary/10 text-primary border-primary/20 shadow-sm shadow-primary/5 scale-[1.01]"
                               : "text-muted-foreground border-transparent hover:bg-slate-200/50 dark:hover:bg-white/5 hover:text-foreground hover:translate-x-0.5"
                           )}
                         >
                           <div className="flex items-center gap-2.5">
                             <Icon className={cn(
-                              "w-4 h-4 transition-transform duration-200 group-hover:scale-105", 
+                              "w-4 h-4 transition-transform duration-200 group-hover:scale-105",
                               isActive ? "text-primary scale-105" : "text-muted-foreground group-hover:text-foreground/80"
                             )} />
                             <span className={cn(isCollapsed && "lg:hidden")}>{item.name}</span>

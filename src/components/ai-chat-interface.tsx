@@ -278,13 +278,13 @@ export function AIChatInterface() {
   const isEmptyState = messages.length === 0
 
   return (
-    <div className="flex flex-col h-full w-full border border-slate-200/80 dark:border-slate-800/80 rounded-2xl sm:rounded-3xl bg-card/30 dark:bg-slate-900/40 backdrop-blur-sm p-2.5 sm:p-4 shadow-sm overflow-hidden">
+    <div className="flex flex-col h-full w-full border border-slate-200/80 dark:border-white/25 rounded-2xl sm:rounded-3xl bg-card/30 dark:bg-slate-900/40 backdrop-blur-sm p-2.5 sm:p-4 shadow-sm overflow-hidden">
       {/* Chat Room Header Toolbar */}
-      <div className="flex items-center justify-between pb-2 border-b border-slate-200/60 dark:border-slate-800/60 mb-2 shrink-0">
+      <div className="flex items-center justify-between pb-2 border-b border-slate-200/60 dark:border-white/20 mb-2 shrink-0">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
           </span>
           <span className="text-[10px] sm:text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
             AI Chat Session Active
@@ -458,9 +458,9 @@ export function AIChatInterface() {
       </div>
 
       {/* Input Area */}
-      <div className="pt-2 sm:pt-3 border-t border-slate-200/60 dark:border-slate-800/60 mt-1 shrink-0">
+      <div className="pt-2 sm:pt-3 border-t border-slate-200/60 dark:border-white/20 mt-1 shrink-0">
         <form onSubmit={handleSubmit} className="relative">
-          <div className="flex items-end gap-1.5 p-1.5 sm:p-2 rounded-xl sm:rounded-2xl glass-panel border border-slate-200/70 dark:border-slate-700/50 focus-within:border-primary/50 focus-within:shadow-md focus-within:shadow-primary/5 transition-all">
+          <div className="flex items-end gap-1.5 p-1.5 sm:p-2 rounded-xl sm:rounded-2xl glass-panel border border-slate-200/70 dark:border-white/25 focus-within:border-primary/50 focus-within:shadow-md focus-within:shadow-primary/5 transition-all">
             <textarea
               ref={inputRef}
               value={input}

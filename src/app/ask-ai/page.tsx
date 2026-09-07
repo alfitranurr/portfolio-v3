@@ -24,14 +24,14 @@ export default function AskAIPage() {
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center shadow-xs">
               <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
             </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 border-2 border-background" />
+            <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-neutral-400 border-2 border-background" />
           </div>
           <div>
             <h2 className="font-bold text-foreground text-xs sm:text-sm leading-tight">
               Al Fitra AI
             </h2>
             <p className="text-[10px] sm:text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5 leading-none">
-              <Globe className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-cyan-500 shrink-0" />
+              <Globe className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-neutral-500 shrink-0" />
               <span>Gemini + Search</span>
             </p>
           </div>

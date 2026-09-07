@@ -3,14 +3,14 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { 
-  Home, 
-  GraduationCap, 
-  Briefcase, 
-  Coffee, 
-  Award, 
-  Mail, 
-  Menu, 
+import {
+  Home,
+  GraduationCap,
+  Briefcase,
+  Coffee,
+  Award,
+  Mail,
+  Menu,
   X,
   Terminal,
   MessageSquareText,
@@ -85,10 +85,10 @@ export function Sidebar({ profile }: { profile: Profile }) {
     return null
   }
 
-  const handle = profile.github_url 
-    ? `@${profile.github_url.split('/').pop()}` 
-    : (profile.instagram_url 
-        ? `@${profile.instagram_url.split('/').pop()}` 
+  const handle = profile.github_url
+    ? `@${profile.github_url.split('/').pop()}`
+    : (profile.instagram_url
+        ? `@${profile.instagram_url.split('/').pop()}`
         : `@${profile.name.toLowerCase().replace(/\s+/g, '')}`)
 
   const navItems = [
@@ -102,30 +102,30 @@ export function Sidebar({ profile }: { profile: Profile }) {
   ]
 
   const socials = [
-    { 
-      icon: Instagram, 
-      href: 'https://www.instagram.com/rmdhani_ii', 
+    {
+      icon: Instagram,
+      href: 'https://www.instagram.com/rmdhani_ii',
       label: 'Instagram',
-      hoverClasses: 'hover:text-[#E4405F] hover:border-[#E4405F]/50 hover:bg-[#E4405F]/10 hover:shadow-sm hover:shadow-[#E4405F]/20' 
+      hoverClasses: 'hover:text-neutral-900 dark:hover:text-white hover:border-neutral-400 dark:hover:border-neutral-500 hover:bg-neutral-400/15 hover:shadow-sm hover:shadow-neutral-400/20'
     },
-    { 
-      icon: Linkedin, 
-      href: 'https://www.linkedin.com/in/al-fitra-nur-ramadhani/', 
+    {
+      icon: Linkedin,
+      href: 'https://www.linkedin.com/in/al-fitra-nur-ramadhani/',
       label: 'LinkedIn',
-      hoverClasses: 'hover:text-[#0A66C2] hover:border-[#0A66C2]/50 hover:bg-[#0A66C2]/10 hover:shadow-sm hover:shadow-[#0A66C2]/20' 
+      hoverClasses: 'hover:text-neutral-900 dark:hover:text-white hover:border-neutral-400 dark:hover:border-neutral-500 hover:bg-neutral-400/15 hover:shadow-sm hover:shadow-neutral-400/20'
     },
-    { 
-      icon: Github, 
-      href: 'https://github.com/alfitranurr', 
+    {
+      icon: Github,
+      href: 'https://github.com/alfitranurr',
       label: 'GitHub',
-      hoverClasses: 'hover:text-slate-900 dark:hover:text-white hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-500/15 hover:shadow-sm' 
+      hoverClasses: 'hover:text-neutral-900 dark:hover:text-white hover:border-neutral-400 dark:hover:border-neutral-500 hover:bg-neutral-400/15 hover:shadow-sm'
     },
   ]
 
   return (
     <>
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 z-40 px-4 flex items-center justify-between glass-panel border-b border-slate-200/20 dark:border-slate-800/10">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 z-40 px-4 flex items-center justify-between glass-panel border-b border-slate-300 dark:border-white/20">
         <Link href="/" className="flex items-center gap-2 font-bold text-foreground">
           {profile.logo_url ? (
             <div className="w-6 h-6 relative shrink-0 overflow-hidden rounded-md">
@@ -154,7 +154,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
       {/* Sidebar Container */}
       <aside
         className={cn(
-          "fixed top-0 bottom-0 left-0 z-50 glass-panel border-r border-slate-200/20 dark:border-slate-800/10 flex flex-col justify-between transition-all duration-300 ease-in-out overflow-y-auto scrollbar-hide",
+          "fixed top-0 bottom-0 left-0 z-50 glass-panel border-r border-slate-300 dark:border-white/20 flex flex-col justify-between transition-all duration-300 ease-in-out overflow-y-auto scrollbar-hide",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
           "lg:sticky lg:top-4 lg:left-auto lg:bottom-auto lg:h-[calc(100vh-2rem)] lg:rounded-3xl lg:z-30 lg:translate-x-0 lg:self-start",
           isCollapsed ? "w-56 lg:w-20 p-3" : "w-56 p-4"
@@ -168,8 +168,8 @@ export function Sidebar({ profile }: { profile: Profile }) {
               onClick={toggleCollapse}
               className={cn(
                 "hidden lg:flex items-center justify-center rounded-xl glass-card text-muted-foreground hover:text-foreground hover:scale-105 hover:border-primary/30 transition-all cursor-pointer z-10",
-                isCollapsed 
-                  ? "w-10 h-10 mx-auto mb-4" 
+                isCollapsed
+                  ? "w-10 h-10 mx-auto mb-4"
                   : "absolute top-0 right-0 w-8 h-8"
               )}
               title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
@@ -198,13 +198,13 @@ export function Sidebar({ profile }: { profile: Profile }) {
                 isCollapsed ? "w-10 h-10" : "w-28 h-28"
               )}>
                 {profile.avatar_url ? (
-                  <BlurImage 
-                    src={profile.avatar_url} 
-                    alt={profile.name} 
+                  <BlurImage
+                    src={profile.avatar_url}
+                    alt={profile.name}
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-tr from-cyan-500/20 to-violet-500/20 flex items-center justify-center text-foreground font-black text-xs animate-pulse">
+                  <div className="w-full h-full bg-gradient-to-tr from-neutral-300/30 to-neutral-500/30 flex items-center justify-center text-foreground font-black text-xs animate-pulse">
                     <span>{profile.name.split(' ').map(n => n[0]).join('')}</span>
                   </div>
                 )}
@@ -234,8 +234,8 @@ export function Sidebar({ profile }: { profile: Profile }) {
           <nav className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon
-              const isActive = item.href === '/' 
-                ? pathname === '/' 
+              const isActive = item.href === '/'
+                ? pathname === '/'
                 : pathname.startsWith(item.href)
               return (
                 <Link
@@ -246,14 +246,14 @@ export function Sidebar({ profile }: { profile: Profile }) {
                   className={cn(
                     "flex items-center rounded-xl transition-all duration-200 text-xs font-semibold group border",
                     isCollapsed ? "justify-center p-2.5" : "justify-between px-3.5 py-2.5",
-                    isActive 
-                      ? "bg-primary/10 text-primary border-primary/20 shadow-sm shadow-primary/5 scale-[1.01]" 
+                    isActive
+                      ? "bg-primary/10 text-primary border-primary/20 shadow-sm shadow-primary/5 scale-[1.01]"
                       : "text-muted-foreground border-transparent hover:bg-slate-200/50 dark:hover:bg-white/5 hover:text-foreground hover:translate-x-0.5"
                   )}
                 >
                   <div className={cn("flex items-center", isCollapsed ? "justify-center" : "gap-2.5")}>
                     <Icon className={cn(
-                      "w-4 h-4 transition-transform duration-200 group-hover:scale-110", 
+                      "w-4 h-4 transition-transform duration-200 group-hover:scale-110",
                       isActive ? "text-primary scale-105" : "text-muted-foreground group-hover:text-foreground/80"
                     )} />
                     {!isCollapsed && <span>{item.name}</span>}
@@ -268,7 +268,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
         {/* Sidebar Footer */}
         <div className="space-y-4">
           {/* Theming Section */}
-          <div className={cn("pt-3 border-t border-slate-200/20 dark:border-slate-800/10 space-y-2", isCollapsed ? "px-1" : "px-3.5")}>
+          <div className={cn("pt-3 border-t border-slate-300 dark:border-white/20 space-y-2", isCollapsed ? "px-1" : "px-3.5")}>
             {!isCollapsed && (
               <span className="text-[9px] font-extrabold uppercase tracking-wider text-muted-foreground/60 block">Theming</span>
             )}
@@ -279,13 +279,13 @@ export function Sidebar({ profile }: { profile: Profile }) {
                     {!mounted ? (
                       <div className="w-4 h-4 rounded-md bg-slate-200/30 dark:bg-slate-800/30 animate-pulse" />
                     ) : theme === 'dark' ? (
-                      <Moon className="w-4 h-4 text-sky-400" />
+                      <Moon className="w-4 h-4 text-neutral-300" />
                     ) : (
-                      <Sun className="w-4 h-4 text-amber-500" />
+                      <Sun className="w-4 h-4 text-neutral-700" />
                     )}
                     <span className="text-xs font-semibold">Dark Mode</span>
                   </div>
-                  
+
                   {!mounted ? (
                     <div className="w-10 h-5.5 rounded-full bg-slate-200/30 dark:bg-slate-800/30 animate-pulse" />
                   ) : (
@@ -316,9 +316,9 @@ export function Sidebar({ profile }: { profile: Profile }) {
                   {!mounted ? (
                     <div className="w-4 h-4 rounded-md bg-slate-200/30 dark:bg-slate-800/30 animate-pulse" />
                   ) : theme === 'dark' ? (
-                    <Moon className="w-4 h-4 text-sky-400" />
+                    <Moon className="w-4 h-4 text-neutral-300" />
                   ) : (
-                    <Sun className="w-4 h-4 text-amber-500" />
+                    <Sun className="w-4 h-4 text-neutral-700" />
                   )}
                 </button>
               )}
@@ -326,7 +326,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
           </div>
 
           {/* Social Networks Section */}
-          <div className={cn("pt-3 border-t border-slate-200/20 dark:border-slate-800/10 space-y-2", isCollapsed ? "px-1" : "px-3.5")}>
+          <div className={cn("pt-3 border-t border-slate-300 dark:border-white/20 space-y-2", isCollapsed ? "px-1" : "px-3.5")}>
             {!isCollapsed && (
               <span className="text-[9px] font-extrabold uppercase tracking-wider text-muted-foreground/60 block">Social Networks</span>
             )}
@@ -354,12 +354,12 @@ export function Sidebar({ profile }: { profile: Profile }) {
           </div>
 
           {/* Footer Metadata */}
-          <div className="border-t border-slate-200/20 dark:border-slate-800/20 pt-3 text-center text-[10px] text-muted-foreground/80">
+          <div className="border-t border-slate-300 dark:border-white/20 pt-3 text-center text-[10px] text-muted-foreground/80">
             <span>{isCollapsed ? "© '26" : "© 2026 Al Fitra Nur Ramadhani"}</span>
           </div>
         </div>
       </aside>
-      
+
       {/* Mobile Overlay Background */}
       {isOpen && (
         <div
@@ -370,4 +370,3 @@ export function Sidebar({ profile }: { profile: Profile }) {
     </>
   )
 }
-
