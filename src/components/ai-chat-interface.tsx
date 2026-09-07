@@ -278,7 +278,7 @@ export function AIChatInterface() {
   const isEmptyState = messages.length === 0
 
   return (
-    <div className="flex flex-col h-[calc(100vh-13rem)] sm:h-[calc(100vh-15rem)] lg:h-[calc(100vh-12rem)] w-full border border-slate-200/80 dark:border-white/25 rounded-2xl sm:rounded-3xl bg-card/30 dark:bg-slate-900/40 backdrop-blur-sm p-2.5 sm:p-4 shadow-sm overflow-hidden">
+    <div className="flex flex-col flex-1 min-h-0 w-full border border-slate-200/80 dark:border-white/25 rounded-2xl sm:rounded-3xl bg-card/30 dark:bg-slate-900/40 backdrop-blur-sm p-2.5 sm:p-4 shadow-sm overflow-hidden">
       {/* Chat Room Header Toolbar */}
       <div className="flex items-center justify-between pb-2 border-b border-slate-200/60 dark:border-white/20 mb-2 shrink-0">
         <div className="flex items-center gap-2">
