@@ -1,15 +1,12 @@
 import * as React from 'react'
-import { motion } from 'framer-motion'
-import { Search, X, LayoutGrid, LayoutList, Award } from 'lucide-react'
+import { Search, X, LayoutGrid, LayoutList } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { CustomSortDropdown } from '@/components/ui/custom-sort-dropdown'
-import { CATEGORY_MAP, SortField } from './types'
+import { SortField } from './types'
 
 interface SkillsControlsProps {
   search: string
   onSearchChange: (search: string) => void
-  activeCategory: string
-  onCategoryChange: (category: string) => void
   viewMode: 'grid' | 'table'
   onViewModeChange: (mode: 'grid' | 'table') => void
   sortField: SortField
@@ -21,8 +18,6 @@ interface SkillsControlsProps {
 export function SkillsControls({
   search,
   onSearchChange,
-  activeCategory,
-  onCategoryChange,
   viewMode,
   onViewModeChange,
   sortField,
@@ -32,36 +27,7 @@ export function SkillsControls({
 }: SkillsControlsProps) {
   return (
     <div className="p-4 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 relative z-30">
-      {/* Top row: Category Switcher */}
-      <div className="flex justify-center">
-        <div className="flex flex-wrap p-1 rounded-2xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 max-w-2xl w-full relative gap-1">
-          {['All', ...Object.keys(CATEGORY_MAP)].map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => onCategoryChange(cat)}
-              className={cn(
-                "flex-1 min-w-[120px] py-2 px-3 text-xs font-extrabold rounded-xl transition-colors duration-200 relative cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap z-10",
-                activeCategory === cat
-                  ? "text-primary-foreground"
-                  : "text-foreground/75 hover:text-foreground"
-              )}
-            >
-              {activeCategory === cat && (
-                <motion.div
-                  layoutId="activeSkillsCategoryTab"
-                  className="absolute inset-0 bg-primary rounded-xl shadow-lg shadow-primary/20 -z-10"
-                  transition={{ type: 'spring', stiffness: 450, damping: 35 }}
-                />
-              )}
-              <Award className="w-3.5 h-3.5 shrink-0" />
-              <span className="truncate">{CATEGORY_MAP[cat] || 'All Skills'}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Middle row: Search, Sort, View Switcher */}
+      {/* Top row: Search, Sort, View Switcher */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />

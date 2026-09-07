@@ -25,7 +25,6 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
   }
 
   const [search, setSearch] = React.useState('')
-  const [activeCategory, setActiveCategory] = React.useState<string>('All')
   const [viewMode, setViewMode] = React.useState<ViewMode>('table')
   const [sortField, setSortField] = React.useState<SortField>('newest')
   const [pageSize, setPageSize] = React.useState(10)
@@ -64,7 +63,7 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
     }
   }, [notification])
 
-  const filteredAndSorted = useSkillsFilters(skills, search, activeCategory, sortField)
+  const filteredAndSorted = useSkillsFilters(skills, search, 'All', sortField)
   const { currentPage, setCurrentPage, totalPages, startIndex } = usePagination(filteredAndSorted.length, pageSize)
   const paginatedItems = filteredAndSorted.slice(startIndex, startIndex + pageSize)
 
@@ -165,8 +164,8 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
       {notification && (
         <div className={cn(
           "p-4 rounded-xl text-xs font-semibold flex items-center gap-2.5",
-          notification.success 
-            ? "bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400" 
+          notification.success
+            ? "bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400"
             : "bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400"
         )}>
           {notification.success ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
@@ -192,11 +191,6 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
             search={search}
             onSearchChange={(val) => {
               setSearch(val)
-              setCurrentPage(1)
-            }}
-            activeCategory={activeCategory}
-            onCategoryChange={(val) => {
-              setActiveCategory(val)
               setCurrentPage(1)
             }}
             viewMode={viewMode}

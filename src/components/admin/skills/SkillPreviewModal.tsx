@@ -1,8 +1,9 @@
 import * as React from 'react'
+import { createPortal } from 'react-dom'
 import { X, Edit3, Award } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
 import { getDirectImageUrl } from '@/lib/utils'
-import { Skill, CATEGORY_MAP } from './types'
+import { Skill } from './types'
 
 interface SkillPreviewModalProps {
   skill: Skill | null
@@ -11,11 +12,23 @@ interface SkillPreviewModalProps {
 }
 
 export function SkillPreviewModal({ skill, onClose, onEdit }: SkillPreviewModalProps) {
-  if (!skill) return null
+  const mounted = React.useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
 
-  return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl relative animate-fade-in">
+  if (!skill || !mounted) return null
+
+  return createPortal(
+    <div
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white border border-slate-200 rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl relative animate-fade-in"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3 flex-1">
             <div className="w-16 h-16 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 overflow-hidden">
@@ -26,34 +39,30 @@ export function SkillPreviewModal({ skill, onClose, onEdit }: SkillPreviewModalP
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-bold text-foreground leading-snug">{skill.name}</h3>
-              <p className="text-sm font-semibold text-sky-400">{CATEGORY_MAP[skill.category]}</p>
+              <h3 className="text-lg font-bold text-slate-900 leading-snug">{skill.name}</h3>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl hover:bg-white/10 text-muted-foreground hover:text-foreground cursor-pointer shrink-0">
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-900 cursor-pointer transition-colors shrink-0">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground border-y border-slate-800 py-3">
-          <span className="px-2.5 py-1 rounded-md bg-white/5 font-bold text-foreground">
-            Category: {CATEGORY_MAP[skill.category]}
-          </span>
-          {skill.proficiency !== null && skill.proficiency !== undefined && (
-            <span className="px-2.5 py-1 rounded-md bg-white/5 font-bold text-foreground">
+        {skill.proficiency !== null && skill.proficiency !== undefined && (
+          <div className="flex flex-wrap gap-2 text-xs text-slate-500 border-y border-slate-200 py-3">
+            <span className="px-2.5 py-1 rounded-md bg-slate-100 font-bold text-slate-900">
               Proficiency: {skill.proficiency}%
             </span>
-          )}
-        </div>
+          </div>
+        )}
 
         {skill.description && (
-          <div className="space-y-2 max-h-48 overflow-y-auto pr-2 text-xs text-slate-300">
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Description</span>
+          <div className="space-y-2 max-h-48 overflow-y-auto pr-2 text-xs text-slate-600">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Description</span>
             <p className="leading-relaxed">{skill.description}</p>
           </div>
         )}
 
-        <div className="flex items-center justify-end pt-2 border-t border-slate-800">
+        <div className="flex items-center justify-end pt-2 border-t border-slate-200">
           <button
             onClick={() => {
               onClose()
@@ -66,6 +75,7 @@ export function SkillPreviewModal({ skill, onClose, onEdit }: SkillPreviewModalP
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

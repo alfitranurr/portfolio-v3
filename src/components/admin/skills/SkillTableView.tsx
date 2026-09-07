@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Eye, Edit3, Trash2, Award } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
 import { getDirectImageUrl } from '@/lib/utils'
-import { Skill, CATEGORY_MAP } from './types'
+import { Skill } from './types'
 
 interface SkillTableViewProps {
   skills: Skill[]
@@ -21,14 +21,14 @@ export function SkillTableView({ skills, startIndex, onPreview, onEdit, onDelete
             <tr>
               <th className="py-2.5 px-3 w-10 text-center">#</th>
               <th className="py-2.5 px-3 min-w-[200px]">Skill Name</th>
-              <th className="py-2.5 px-3 whitespace-nowrap text-center">Category</th>
               <th className="py-2.5 px-3 whitespace-nowrap text-center">Proficiency</th>
+              <th className="py-2.5 px-3 min-w-[250px]">Description</th>
               <th className="py-2.5 px-3 text-center whitespace-nowrap w-36">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200/5 dark:divide-slate-800/10 font-medium">
             {skills.map((skill, index) => (
-              <tr 
+              <tr
                 key={skill.id}
                 className="hover:bg-slate-500/5 transition-colors group"
               >
@@ -60,16 +60,10 @@ export function SkillTableView({ skills, startIndex, onPreview, onEdit, onDelete
                 </td>
 
                 <td className="py-2.5 px-3 whitespace-nowrap text-center">
-                  <span className="px-2 py-0.5 rounded-md bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-[10px] font-bold text-muted-foreground">
-                    {CATEGORY_MAP[skill.category]}
-                  </span>
-                </td>
-
-                <td className="py-2.5 px-3 whitespace-nowrap text-center">
                   {skill.proficiency !== null && skill.proficiency !== undefined ? (
                     <div className="flex items-center gap-2 justify-center">
                       <div className="w-12 h-2 bg-slate-700/50 rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-primary rounded-full"
                           style={{ width: `${Math.min(skill.proficiency, 100)}%` }}
                         />
@@ -79,6 +73,12 @@ export function SkillTableView({ skills, startIndex, onPreview, onEdit, onDelete
                   ) : (
                     <span className="text-muted-foreground/40 text-[10px]">-</span>
                   )}
+                </td>
+
+                <td className="py-2.5 px-3">
+                  <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2 max-w-[250px]" title={skill.description || ''}>
+                    {skill.description || <span className="text-muted-foreground/40 italic">No description</span>}
+                  </p>
                 </td>
 
                 <td className="py-2.5 px-3 text-center whitespace-nowrap">

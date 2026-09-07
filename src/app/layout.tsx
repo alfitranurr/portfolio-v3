@@ -69,7 +69,7 @@ export default async function RootLayout({
       <body className="min-h-screen bg-background text-foreground font-sans relative flex">
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

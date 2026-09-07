@@ -2,7 +2,7 @@ import * as React from 'react'
 import { ArrowLeft, Check, Loader2, Award } from 'lucide-react'
 import { getDirectImageUrl } from '@/lib/utils'
 import { BlurImage } from '@/components/ui/blur-image'
-import { Skill, CATEGORY_MAP } from './types'
+import { Skill } from './types'
 
 interface SkillFormProps {
   skill: Partial<Skill> | null
@@ -24,7 +24,7 @@ export function SkillForm({
   return (
     <div className="rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 p-6 md:p-8 space-y-6 relative overflow-hidden">
       <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full filter blur-2xl pointer-events-none" />
-      
+
       <div className="flex items-center justify-between pb-4 border-b border-slate-200/10 dark:border-slate-800/10">
         <button
           onClick={onCancel}
@@ -55,24 +55,6 @@ export function SkillForm({
                 placeholder="e.g. Machine Learning, Python, Project Management"
                 className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
               />
-            </div>
-
-            {/* Category */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                Category
-              </label>
-              <select
-                value={skill.category || 'technical'}
-                onChange={e => onUpdateSkill(prev => ({ ...prev, category: e.target.value as Skill['category'] }))}
-                className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/50 text-foreground text-sm focus:outline-none focus:border-primary/50"
-              >
-                {Object.values(CATEGORY_MAP).map((cat, idx) => (
-                  <option key={idx} value={Object.keys(CATEGORY_MAP)[idx]}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
             </div>
 
             {/* Proficiency */}
