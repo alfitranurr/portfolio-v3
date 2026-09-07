@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function AskAIPage() {
   return (
-    <div className="flex-1 min-h-0 flex flex-col space-y-3 sm:space-y-4 w-full">
+    <div className="space-y-4 sm:space-y-6 w-full">
       {/* Page Header */}
       <div className="flex items-center justify-between gap-3 shrink-0">
         <div className="space-y-0.5 sm:space-y-1">
@@ -22,7 +22,7 @@ export default function AskAIPage() {
         <div className="flex items-center gap-2 sm:gap-2.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl glass-card border border-slate-200/80 dark:border-slate-800/80 shadow-xs shrink-0">
           <div className="relative shrink-0">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center shadow-xs">
-              <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+              <Bot className="w-3.5 h-3.5 sm:w-4 h-4 text-white" />
             </div>
             <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-neutral-400 border-2 border-background" />
           </div>
@@ -31,7 +31,7 @@ export default function AskAIPage() {
               Al Fitra AI
             </h2>
             <p className="text-[10px] sm:text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5 leading-none">
-              <Globe className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-neutral-500 shrink-0" />
+              <Globe className="w-2.5 h-2.5 sm:w-3 h-3 text-neutral-500 shrink-0" />
               <span>Gemini + Search</span>
             </p>
           </div>
@@ -39,7 +39,7 @@ export default function AskAIPage() {
       </div>
 
       {/* Chat Interface Container */}
-      <div className="flex-1 min-h-0 w-full flex flex-col">
+      <div className="w-full flex flex-col">
         <AIChatInterface />
       </div>
     </div>
