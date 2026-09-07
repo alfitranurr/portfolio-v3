@@ -5,13 +5,13 @@ export default function ProjectsLoading() {
   return (
     <div className="space-y-8 animate-in fade-in duration-200">
       {/* Header */}
-      <HeaderSkeleton 
-        titleWidth="w-56 sm:w-80" 
-        subtitleWidth="w-full max-w-md" 
+      <HeaderSkeleton
+        titleWidth="w-56 sm:w-80"
+        subtitleWidth="w-full max-w-md"
       />
 
       {/* Main Categories Switcher (Data / Non-Data) */}
-      <div className="flex p-1.5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 max-w-md gap-2">
+      <div className="flex p-1.5 rounded-2xl glass-panel border border-slate-200/10 dark:border-white/15 max-w-md gap-2">
         <Skeleton className="h-10 flex-1 rounded-xl" />
         <Skeleton className="h-10 flex-1 rounded-xl" />
       </div>

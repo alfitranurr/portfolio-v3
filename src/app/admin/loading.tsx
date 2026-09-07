@@ -5,9 +5,9 @@ export default function AdminDashboardLoading() {
   return (
     <div className="space-y-8 w-full animate-in fade-in duration-200">
       {/* Admin Title */}
-      <AdminHeaderSkeleton 
-        titleWidth="w-56 sm:w-72" 
-        subtitleWidth="w-72 sm:w-96" 
+      <AdminHeaderSkeleton
+        titleWidth="w-56 sm:w-72"
+        subtitleWidth="w-72 sm:w-96"
         buttonWidth="w-36"
       />
 
@@ -15,7 +15,7 @@ export default function AdminDashboardLoading() {
       <StatCardsSkeleton />
 
       {/* Traffic Analytics Chart Skeleton */}
-      <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 shimmer-card">
+      <div className="p-6 rounded-3xl glass-panel border border-slate-200/10 dark:border-white/15 space-y-4 shimmer-card">
         <div className="flex items-center justify-between">
           <div className="space-y-1.5">
             <Skeleton className="h-5 w-36 rounded-md" />

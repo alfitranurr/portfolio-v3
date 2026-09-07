@@ -26,7 +26,7 @@ export default async function HomePage() {
             About Me
           </h1>
           <div className="shrink-0">
-            <span className="inline-block text-emerald-600 dark:text-emerald-400 text-xs uppercase font-extrabold tracking-widest bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full animate-pulse">
+            <span className="inline-block text-foreground text-xs uppercase font-extrabold tracking-widest bg-foreground/10 border border-foreground/20 px-3 py-1 rounded-full animate-pulse">
               Available for Opportunities
             </span>
           </div>

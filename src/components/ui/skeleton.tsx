@@ -40,11 +40,11 @@ export function FilterTabsSkeleton({ count = 4 }: { count?: number }) {
 
 export function ProjectCardSkeleton() {
   return (
-    <div className="rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/20 p-5 space-y-4 shimmer-card flex flex-col justify-between h-[390px]">
+    <div className="rounded-3xl glass-panel border border-slate-200/10 dark:border-white/20 p-5 space-y-4 shimmer-card flex flex-col justify-between h-[390px]">
       <div className="space-y-4">
         {/* Cover image placeholder */}
         <Skeleton className="w-full h-44 rounded-2xl" />
-        
+
         {/* Category badge & date */}
         <div className="flex items-center justify-between gap-2">
           <Skeleton className="h-5 w-24 rounded-lg" />
@@ -62,7 +62,7 @@ export function ProjectCardSkeleton() {
       </div>
 
       {/* Footer buttons / links */}
-      <div className="flex items-center justify-between pt-2 border-t border-slate-200/10 dark:border-slate-800/10">
+      <div className="flex items-center justify-between pt-2 border-t border-slate-200/10 dark:border-white/15">
         <Skeleton className="h-8 w-20 rounded-xl" />
         <Skeleton className="h-8 w-8 rounded-xl" />
       </div>
@@ -72,7 +72,7 @@ export function ProjectCardSkeleton() {
 
 export function ExperienceCardSkeleton() {
   return (
-    <div className="p-6 md:p-8 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/20 space-y-4 shimmer-card">
+    <div className="p-6 md:p-8 rounded-3xl glass-panel border border-slate-200/10 dark:border-white/20 space-y-4 shimmer-card">
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div className="flex gap-4 items-start">
           <Skeleton className="w-12 h-12 rounded-2xl shrink-0" />
@@ -86,7 +86,7 @@ export function ExperienceCardSkeleton() {
           <Skeleton className="h-4 w-28 rounded" />
         </div>
       </div>
-      <div className="space-y-2 pt-2 border-t border-slate-200/10 dark:border-slate-800/10">
+      <div className="space-y-2 pt-2 border-t border-slate-200/10 dark:border-white/15">
         <Skeleton className="h-3.5 w-full rounded" />
         <Skeleton className="h-3.5 w-11/12 rounded" />
         <Skeleton className="h-3.5 w-4/5 rounded" />
@@ -97,7 +97,7 @@ export function ExperienceCardSkeleton() {
 
 export function EducationCardSkeleton() {
   return (
-    <div className="p-6 md:p-8 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/20 space-y-4 shimmer-card">
+    <div className="p-6 md:p-8 rounded-3xl glass-panel border border-slate-200/10 dark:border-white/20 space-y-4 shimmer-card">
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div className="flex gap-4 items-start">
           <Skeleton className="w-12 h-12 rounded-2xl shrink-0" />
@@ -123,11 +123,11 @@ export function EducationCardSkeleton() {
 
 export function CertificateCardSkeleton() {
   return (
-    <div className="rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/20 p-5 space-y-4 shimmer-card flex flex-col justify-between h-[360px]">
+    <div className="rounded-3xl glass-panel border border-slate-200/10 dark:border-white/20 p-5 space-y-4 shimmer-card flex flex-col justify-between h-[360px]">
       <div className="space-y-3.5">
         {/* Certificate preview */}
         <Skeleton className="w-full h-40 rounded-2xl" />
-        
+
         {/* Category icon & badge */}
         <div className="flex items-center justify-between">
           <Skeleton className="w-7 h-7 rounded-lg" />
@@ -136,13 +136,13 @@ export function CertificateCardSkeleton() {
 
         {/* Title */}
         <Skeleton className="h-5 w-5/6 rounded-md" />
-        
+
         {/* Issuer */}
         <Skeleton className="h-4 w-1/2 rounded" />
       </div>
 
       {/* Credential link */}
-      <div className="pt-2 border-t border-slate-200/10 dark:border-slate-800/10 flex items-center justify-between">
+      <div className="pt-2 border-t border-slate-200/10 dark:border-white/15 flex items-center justify-between">
         <Skeleton className="h-4 w-32 rounded" />
         <Skeleton className="h-7 w-20 rounded-xl" />
       </div>
@@ -156,7 +156,7 @@ export function StatCardsSkeleton() {
       {Array.from({ length: 4 }).map((_, i) => (
         <div
           key={i}
-          className="p-5 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/20 space-y-3 shimmer-card"
+          className="p-5 rounded-3xl glass-panel border border-slate-200/10 dark:border-white/20 space-y-3 shimmer-card"
         >
           <div className="flex items-center justify-between">
             <Skeleton className="h-4 w-20 rounded" />
@@ -171,8 +171,8 @@ export function StatCardsSkeleton() {
 
 export function AdminTableSkeleton({ rowCount = 5 }: { rowCount?: number }) {
   return (
-    <div className="rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/20 p-6 space-y-4 shimmer-card">
-      <div className="flex items-center justify-between pb-4 border-b border-slate-200/10 dark:border-slate-800/10">
+    <div className="rounded-3xl glass-panel border border-slate-200/10 dark:border-white/20 p-6 space-y-4 shimmer-card">
+      <div className="flex items-center justify-between pb-4 border-b border-slate-200/10 dark:border-white/15">
         <Skeleton className="h-6 w-40 rounded-md" />
         <Skeleton className="h-9 w-28 rounded-xl" />
       </div>
@@ -180,7 +180,7 @@ export function AdminTableSkeleton({ rowCount = 5 }: { rowCount?: number }) {
         {Array.from({ length: rowCount }).map((_, i) => (
           <div
             key={i}
-            className="flex items-center justify-between p-4 rounded-2xl glass-card border border-slate-200/10 dark:border-slate-800/10"
+            className="flex items-center justify-between p-4 rounded-2xl glass-card border border-slate-200/10 dark:border-white/15"
           >
             <div className="flex items-center gap-3">
               <Skeleton className="w-10 h-10 rounded-xl shrink-0" />
@@ -208,7 +208,7 @@ export function HeroAboutSkeleton() {
         <Skeleton className="h-7 w-48 rounded-full" />
       </div>
 
-      <div className="p-6 md:p-10 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/20 space-y-4 shimmer-card">
+      <div className="p-6 md:p-10 rounded-3xl glass-panel border border-slate-200/10 dark:border-white/20 space-y-4 shimmer-card">
         <Skeleton className="h-5 w-52 rounded-md" />
         <div className="space-y-2 pt-1">
           <Skeleton className="h-4 w-full rounded" />
@@ -229,7 +229,7 @@ export function MarqueeSkeleton({ count = 8 }: { count?: number }) {
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="flex items-center gap-3 px-5 py-3 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 shrink-0 shimmer-card"
+          className="flex items-center gap-3 px-5 py-3 rounded-2xl glass-panel border border-slate-200/10 dark:border-white/15 shrink-0 shimmer-card"
         >
           <Skeleton className="w-6 h-6 rounded-lg" />
           <Skeleton className="h-4 w-20 rounded" />
@@ -245,7 +245,7 @@ export function PhotosMarqueeSkeleton({ count = 5 }: { count?: number }) {
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="w-52 sm:w-64 h-64 sm:h-72 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 p-3 space-y-3 shrink-0 shimmer-card flex flex-col justify-between"
+          className="w-52 sm:w-64 h-64 sm:h-72 rounded-3xl glass-panel border border-slate-200/10 dark:border-white/15 p-3 space-y-3 shrink-0 shimmer-card flex flex-col justify-between"
         >
           <Skeleton className="w-full h-44 rounded-2xl" />
           <div className="space-y-1 px-1">
@@ -260,7 +260,7 @@ export function PhotosMarqueeSkeleton({ count = 5 }: { count?: number }) {
 
 export function WorkTogetherSkeleton() {
   return (
-    <section className="p-6 md:p-10 rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/20 space-y-4 shimmer-card">
+    <section className="p-6 md:p-10 rounded-3xl glass-panel border border-slate-200/10 dark:border-white/20 space-y-4 shimmer-card">
       <div className="flex items-center gap-3">
         <Skeleton className="w-7 h-7 rounded-lg shrink-0" />
         <Skeleton className="h-7 w-56 rounded-md" />
@@ -285,7 +285,7 @@ export function AdminHeaderSkeleton({
   buttonWidth?: string
 }) {
   return (
-    <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm shimmer-card">
+    <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-white/20 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm shimmer-card">
       <div className="space-y-1.5 z-10">
         <div className="flex items-center gap-2.5">
           <Skeleton className="w-9 h-9 rounded-xl shrink-0" />
@@ -338,7 +338,7 @@ export function AdminPhotosGridSkeleton({ count = 6 }: { count?: number }) {
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/20 p-4 space-y-3 shimmer-card flex flex-col justify-between"
+          className="rounded-3xl glass-panel border border-slate-200/10 dark:border-white/20 p-4 space-y-3 shimmer-card flex flex-col justify-between"
         >
           <Skeleton className="w-full h-48 rounded-2xl" />
           <div className="space-y-2 pt-1">
@@ -353,5 +353,3 @@ export function AdminPhotosGridSkeleton({ count = 6 }: { count?: number }) {
     </div>
   )
 }
-
-

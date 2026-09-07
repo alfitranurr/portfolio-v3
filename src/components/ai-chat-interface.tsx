@@ -354,14 +354,14 @@ export function AIChatInterface() {
                         key={i}
                         variants={itemVariants}
                         onClick={() => sendMessage(item.prompt)}
-                        className="w-full p-2.5 rounded-2xl glass-card border border-slate-200/70 dark:border-slate-800/70 hover:border-primary/40 bg-white/5 dark:bg-slate-800/30 text-left transition-all group cursor-pointer active:scale-[0.98] flex items-center justify-between gap-3 shadow-2xs hover:shadow-md hover:shadow-primary/5 transform-gpu"
+                        className="w-full p-2.5 rounded-2xl glass-card border border-slate-200/70 dark:border-white/25 hover:border-foreground/30 dark:hover:border-white/40 bg-white/5 dark:bg-slate-800/30 text-left transition-all group cursor-pointer active:scale-[0.98] flex items-center justify-between gap-3 shadow-2xs hover:shadow-md transform-gpu"
                       >
                         <div className="flex items-center gap-2.5 min-w-0 flex-1">
                           <span className="text-sm shrink-0 p-1.5 rounded-xl bg-white/5 dark:bg-slate-700/30 border border-slate-200/10 dark:border-slate-700/20">
                             {item.icon}
                           </span>
                           <div className="space-y-0.5 min-w-0 flex-1">
-                            <h4 className="font-bold text-xs text-foreground group-hover:text-primary transition-colors leading-tight">
+                            <h4 className="font-bold text-xs text-foreground group-hover:text-foreground transition-colors leading-tight">
                               {item.title}
                             </h4>
                             <p className="text-[10px] text-muted-foreground/80 truncate leading-snug">
@@ -369,7 +369,7 @@ export function AIChatInterface() {
                             </p>
                           </div>
                         </div>
-                        <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                        <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-foreground group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
                       </motion.button>
                     ))}
                   </motion.div>
@@ -386,7 +386,7 @@ export function AIChatInterface() {
                         key={i}
                         variants={itemVariants}
                         onClick={() => sendMessage(q)}
-                        className="px-4 py-2 text-xs font-medium rounded-xl bg-slate-200/40 dark:bg-slate-800/40 backdrop-blur-md border border-slate-200/60 dark:border-slate-700/50 text-foreground/85 hover:text-primary hover:border-primary/40 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:shadow-md hover:shadow-primary/10 active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer transform-gpu"
+                        className="px-4 py-2 text-xs font-medium rounded-xl bg-slate-200/40 dark:bg-slate-800/40 backdrop-blur-md border border-slate-200/60 dark:border-white/25 text-foreground/85 hover:text-foreground hover:border-foreground/30 dark:hover:border-white/40 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:shadow-md active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer transform-gpu"
                       >
                         {q}
                       </motion.button>
