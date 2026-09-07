@@ -58,12 +58,12 @@ const SUB_CATEGORY_COLOR_MAP: Record<string, { text: string; badge: string }> = 
     badge: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20',
   },
   'Automation Projects': {
-    text: 'text-amber-500 dark:text-amber-400',
-    badge: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20',
+    text: 'text-teal-500 dark:text-teal-400',
+    badge: 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20',
   },
   'Data Automation Projects': {
-    text: 'text-amber-500 dark:text-amber-400',
-    badge: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20',
+    text: 'text-teal-500 dark:text-teal-400',
+    badge: 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20',
   },
   'Data Modeling and Simulation Projects': {
     text: 'text-emerald-500 dark:text-emerald-400',
