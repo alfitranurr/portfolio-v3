@@ -217,30 +217,31 @@ export function SkillsMarquee({ skills }: SkillsMarqueeProps) {
   const row2 = getRepeatedItems(r2)
   const row3 = getRepeatedItems(r3)
 
-  const renderRow = (rowSkills: Skill[], isDuplicate: boolean) => {
+  const renderRow = (rowSkills: Skill[], isDuplicate: boolean, rowIndex: number) => {
     return rowSkills.map((skill, index) => {
       const uniqueKey = `${skill.id || skill.name}-${isDuplicate ? 'dup' : 'orig'}-${index}`
       const iconColorClass = getSkillColor(skill.name)
+      const itemDelay = (index * 0.03) + (rowIndex * 0.1)
       return (
-        <div
+        <motion.div
           key={uniqueKey}
+          initial={{ opacity: 0, scale: 0.5, y: 20 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ duration: 0.35, delay: itemDelay, ease: [0.16, 1, 0.3, 1] }}
           className="flex items-center gap-2.5 px-5 py-2.5 rounded-full glass-card text-xs font-semibold text-foreground/90 shrink-0 hover:scale-105 hover:bg-white/10 dark:hover:bg-white/10 hover:border-primary/20 dark:hover:border-primary/30 transition-all duration-300 shadow-sm"
         >
           <div className={cn("w-4.5 h-4.5 flex items-center justify-center shrink-0", iconColorClass)}>
             {getSkillIcon(skill.name, skill.svg_path, "w-4.5 h-4.5", skill.logo_url)}
           </div>
           <span>{skill.name}</span>
-        </div>
+        </motion.div>
       )
     })
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+    <div
       className="flex flex-col gap-3 py-4 overflow-hidden relative w-full"
     >
       {/* Row 1: Right to Left */}
@@ -251,10 +252,10 @@ export function SkillsMarquee({ skills }: SkillsMarqueeProps) {
             style={{ '--marquee-duration': '80s' } as React.CSSProperties}
           >
             <div className="flex gap-4 shrink-0">
-              {renderRow(row1, false)}
+              {renderRow(row1, false, 0)}
             </div>
             <div className="flex gap-4 shrink-0" aria-hidden="true">
-              {renderRow(row1, true)}
+              {renderRow(row1, true, 0)}
             </div>
           </div>
         </div>
@@ -268,10 +269,10 @@ export function SkillsMarquee({ skills }: SkillsMarqueeProps) {
             style={{ '--marquee-duration': '95s' } as React.CSSProperties}
           >
             <div className="flex gap-4 shrink-0">
-              {renderRow(row2, false)}
+              {renderRow(row2, false, 1)}
             </div>
             <div className="flex gap-4 shrink-0" aria-hidden="true">
-              {renderRow(row2, true)}
+              {renderRow(row2, true, 1)}
             </div>
           </div>
         </div>
@@ -285,14 +286,14 @@ export function SkillsMarquee({ skills }: SkillsMarqueeProps) {
             style={{ '--marquee-duration': '88s' } as React.CSSProperties}
           >
             <div className="flex gap-4 shrink-0">
-              {renderRow(row3, false)}
+              {renderRow(row3, false, 2)}
             </div>
             <div className="flex gap-4 shrink-0" aria-hidden="true">
-              {renderRow(row3, true)}
+              {renderRow(row3, true, 2)}
             </div>
           </div>
         </div>
       )}
-    </motion.div>
+    </div>
   )
 }
