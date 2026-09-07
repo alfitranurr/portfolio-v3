@@ -16,7 +16,7 @@ export function InitialLoader() {
     const timer = setTimeout(() => {
       sessionStorage.setItem('has_loaded_intro', 'true')
       setLoading(false)
-    }, 1500)
+    }, 2200)
 
     return () => clearTimeout(timer)
   }, [])
