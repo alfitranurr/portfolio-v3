@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import Image from 'next/image'
+import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { Skill } from '@/lib/types'
 import { Terminal } from 'lucide-react'
@@ -163,17 +164,43 @@ function getSkillColor(name: string) {
   }
 }
 
+function shuffle<T>(array: T[]): T[] {
+  const arr = [...array]
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]]
+  }
+  return arr
+}
+
 interface SkillsMarqueeProps {
   skills: Skill[]
 }
 
 export function SkillsMarquee({ skills }: SkillsMarqueeProps) {
-  if (!skills || skills.length === 0) return null
+  const mounted = React.useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
+
+  const [shuffled, setShuffled] = React.useState<Skill[]>([])
+
+  React.useEffect(() => {
+    if (mounted) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setShuffled(shuffle(skills))
+    }
+  }, [mounted, skills])
+
+  const displaySkills = shuffled.length > 0 ? shuffled : skills
+
+  if (!displaySkills || displaySkills.length === 0) return null
 
   // Split skills into 3 rows
-  const r1 = skills.filter((_, idx) => idx % 3 === 0)
-  const r2 = skills.filter((_, idx) => idx % 3 === 1)
-  const r3 = skills.filter((_, idx) => idx % 3 === 2)
+  const r1 = displaySkills.filter((_, idx) => idx % 3 === 0)
+  const r2 = displaySkills.filter((_, idx) => idx % 3 === 1)
+  const r3 = displaySkills.filter((_, idx) => idx % 3 === 2)
 
   // Duplication logic to ensure there are enough items to fill the viewport width and prevent gaps
   const getRepeatedItems = (items: Skill[]) => {
@@ -209,12 +236,18 @@ export function SkillsMarquee({ skills }: SkillsMarqueeProps) {
   }
 
   return (
-    <div className="flex flex-col gap-3 py-4 overflow-hidden relative w-full">
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      className="flex flex-col gap-3 py-4 overflow-hidden relative w-full"
+    >
       {/* Row 1: Right to Left */}
       {row1.length > 0 && (
         <div className="marquee-container w-full">
-          <div 
-            className="flex gap-4 animate-marquee-left" 
+          <div
+            className="flex gap-4 animate-marquee-left"
             style={{ '--marquee-duration': '80s' } as React.CSSProperties}
           >
             <div className="flex gap-4 shrink-0">
@@ -230,8 +263,8 @@ export function SkillsMarquee({ skills }: SkillsMarqueeProps) {
       {/* Row 2: Left to Right */}
       {row2.length > 0 && (
         <div className="marquee-container w-full">
-          <div 
-            className="flex gap-4 animate-marquee-right" 
+          <div
+            className="flex gap-4 animate-marquee-right"
             style={{ '--marquee-duration': '95s' } as React.CSSProperties}
           >
             <div className="flex gap-4 shrink-0">
@@ -247,8 +280,8 @@ export function SkillsMarquee({ skills }: SkillsMarqueeProps) {
       {/* Row 3: Right to Left */}
       {row3.length > 0 && (
         <div className="marquee-container w-full">
-          <div 
-            className="flex gap-4 animate-marquee-left" 
+          <div
+            className="flex gap-4 animate-marquee-left"
             style={{ '--marquee-duration': '88s' } as React.CSSProperties}
           >
             <div className="flex gap-4 shrink-0">
@@ -260,6 +293,6 @@ export function SkillsMarquee({ skills }: SkillsMarqueeProps) {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }

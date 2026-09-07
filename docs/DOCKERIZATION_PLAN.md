@@ -1,3 +1,4 @@
+<!-- cspell:disable -->
 # Rencana Containerisasi Docker — Portfolio v3
 
 > **Tanggal audit:** 7 September 2026
