@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { motion } from 'framer-motion'
 import { Photo } from '@/lib/types'
 import { BlurImage } from '@/components/ui/blur-image'
 
@@ -35,10 +36,15 @@ export function JourneyMarquee({ initialPhotos }: JourneyMarqueeProps) {
   const column2 = getRepeatedItems(col2)
   const column3 = getRepeatedItems(col3)
 
-  const renderCard = (item: Photo, index: number, colPrefix: string) => {
+  const renderCard = (item: Photo, index: number, colPrefix: string, colIndex: number) => {
+    const itemDelay = (index * 0.02) + (colIndex * 0.06)
     return (
-      <div
+      <motion.div
         key={`${colPrefix}-${index}`}
+        initial={{ opacity: 0, filter: "blur(16px)" }}
+        whileInView={{ opacity: 1, filter: "blur(0px)" }}
+        viewport={{ once: true, amount: 0.05 }}
+        transition={{ duration: 0.9, delay: itemDelay, ease: [0.25, 0.1, 0.25, 1] }}
         className="mb-6 h-[240px] w-full rounded-3xl glass-panel relative overflow-hidden group hover:border-primary/20 hover:scale-[1.03] transition-all duration-300"
       >
         <BlurImage
@@ -46,7 +52,7 @@ export function JourneyMarquee({ initialPhotos }: JourneyMarqueeProps) {
           alt={item.title || 'Recap image'}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-      </div>
+      </motion.div>
     )
   }
 
@@ -59,14 +65,14 @@ export function JourneyMarquee({ initialPhotos }: JourneyMarqueeProps) {
   }
 
   return (
-    <div 
+    <div
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative overflow-hidden py-2 marquee-vertical-container"
       style={{ height: '600px' }}
     >
       {/* Top and Bottom Gradient Overlays for 100% seamless fade-out */}
       <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-background to-transparent pointer-events-none z-20" />
       <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent pointer-events-none z-20" />
-      
+
       {/* Column 1: Upward */}
       <div className="overflow-hidden relative marquee-column" style={{ height: '100%' }}>
         <div
@@ -74,10 +80,10 @@ export function JourneyMarquee({ initialPhotos }: JourneyMarqueeProps) {
           style={{ '--marquee-duration': '110s' } as React.CSSProperties}
         >
           <div className="flex flex-col shrink-0">
-            {column1.map((item, idx) => renderCard(item, idx, 'col1-orig'))}
+            {column1.map((item, idx) => renderCard(item, idx, 'col1-orig', 0))}
           </div>
           <div className="flex flex-col shrink-0" aria-hidden="true">
-            {column1.map((item, idx) => renderCard(item, idx, 'col1-dup'))}
+            {column1.map((item, idx) => renderCard(item, idx, 'col1-dup', 0))}
           </div>
         </div>
       </div>
@@ -89,10 +95,10 @@ export function JourneyMarquee({ initialPhotos }: JourneyMarqueeProps) {
           style={{ '--marquee-duration': '120s' } as React.CSSProperties}
         >
           <div className="flex flex-col shrink-0">
-            {column2.map((item, idx) => renderCard(item, idx, 'col2-orig'))}
+            {column2.map((item, idx) => renderCard(item, idx, 'col2-orig', 1))}
           </div>
           <div className="flex flex-col shrink-0" aria-hidden="true">
-            {column2.map((item, idx) => renderCard(item, idx, 'col2-dup'))}
+            {column2.map((item, idx) => renderCard(item, idx, 'col2-dup', 1))}
           </div>
         </div>
       </div>
@@ -104,10 +110,10 @@ export function JourneyMarquee({ initialPhotos }: JourneyMarqueeProps) {
           style={{ '--marquee-duration': '100s' } as React.CSSProperties}
         >
           <div className="flex flex-col shrink-0">
-            {column3.map((item, idx) => renderCard(item, idx, 'col3-orig'))}
+            {column3.map((item, idx) => renderCard(item, idx, 'col3-orig', 2))}
           </div>
           <div className="flex flex-col shrink-0" aria-hidden="true">
-            {column3.map((item, idx) => renderCard(item, idx, 'col3-dup'))}
+            {column3.map((item, idx) => renderCard(item, idx, 'col3-dup', 2))}
           </div>
         </div>
       </div>
