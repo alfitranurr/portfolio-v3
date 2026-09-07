@@ -221,14 +221,14 @@ export function SkillsMarquee({ skills }: SkillsMarqueeProps) {
     return rowSkills.map((skill, index) => {
       const uniqueKey = `${skill.id || skill.name}-${isDuplicate ? 'dup' : 'orig'}-${index}`
       const iconColorClass = getSkillColor(skill.name)
-      const itemDelay = (index * 0.025) + (rowIndex * 0.08)
+      const itemDelay = (index * 0.02) + (rowIndex * 0.06)
       return (
         <motion.div
           key={uniqueKey}
-          initial={{ opacity: 0, y: 15, filter: "blur(12px)" }}
+          initial={{ opacity: 0, y: 10, filter: "blur(16px)" }}
           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          viewport={{ once: true, amount: 0.1 }}
-          transition={{ duration: 0.7, delay: itemDelay, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: true, amount: 0.05 }}
+          transition={{ duration: 0.9, delay: itemDelay, ease: [0.25, 0.1, 0.25, 1] }}
           className="flex items-center gap-2.5 px-5 py-2.5 rounded-full glass-card text-xs font-semibold text-foreground/90 shrink-0 hover:scale-105 hover:bg-white/10 dark:hover:bg-white/10 hover:border-primary/20 dark:hover:border-primary/30 transition-all duration-300 shadow-sm"
         >
           <div className={cn("w-4.5 h-4.5 flex items-center justify-center shrink-0", iconColorClass)}>
