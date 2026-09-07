@@ -278,7 +278,7 @@ export function AIChatInterface() {
   const isEmptyState = messages.length === 0
 
   return (
-    <div className="flex flex-col h-full w-full border border-slate-200/80 dark:border-white/25 rounded-2xl sm:rounded-3xl bg-card/30 dark:bg-slate-900/40 backdrop-blur-sm p-2.5 sm:p-4 shadow-sm overflow-hidden">
+    <div className="flex flex-col h-[calc(100vh-13rem)] sm:h-[calc(100vh-15rem)] lg:h-[calc(100vh-12rem)] w-full border border-slate-200/80 dark:border-white/25 rounded-2xl sm:rounded-3xl bg-card/30 dark:bg-slate-900/40 backdrop-blur-sm p-2.5 sm:p-4 shadow-sm overflow-hidden">
       {/* Chat Room Header Toolbar */}
       <div className="flex items-center justify-between pb-2 border-b border-slate-200/60 dark:border-white/20 mb-2 shrink-0">
         <div className="flex items-center gap-2">
@@ -305,22 +305,22 @@ export function AIChatInterface() {
       {/* Messages Area */}
       <div
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto overscroll-contain pr-1 sm:pr-2 space-y-3 sm:space-y-4 scroll-smooth min-h-0"
+        className="flex-1 overflow-y-auto overscroll-contain pr-1 sm:pr-2 scroll-smooth min-h-0 relative"
       >
         {!isHistoryLoaded ? (
           <div className="flex flex-col h-full items-center justify-center min-h-[200px]">
             <RefreshCw className="w-5 h-5 animate-spin text-primary/50" />
           </div>
         ) : (
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             {isEmptyState ? (
               <motion.div
                 key="empty-state"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, transition: { duration: 0.15 } }}
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col items-center justify-center min-h-full py-2 sm:py-4 text-center px-1 sm:px-4 transform-gpu"
+                className="absolute inset-0 flex flex-col items-center justify-center text-center px-1 sm:px-4 transform-gpu"
               >
                 <div className="my-auto flex flex-col items-center w-full max-w-xl">
                   {/* Animated AI Sparkles icon */}
@@ -395,7 +395,7 @@ export function AIChatInterface() {
                 </div>
               </motion.div>
             ) : (
-              <div key="messages-list" className="space-y-3 sm:space-y-4">
+              <div key="messages-list" className="space-y-3 sm:space-y-4 min-h-full">
                 {messages.map((message) => (
                   <motion.div
                     key={message.id}
