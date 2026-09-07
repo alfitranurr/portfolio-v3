@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, X, LayoutGrid, LayoutList, Sparkles, Code2 } from 'lucide-react'
+import { Search, X, LayoutGrid, LayoutList, BarChart3, Code2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { CustomSortDropdown } from '@/components/ui/custom-sort-dropdown'
 import { SUBCATEGORY_MAP } from './types'
@@ -61,7 +61,7 @@ export function ProjectControls({
                 transition={{ type: 'spring', stiffness: 450, damping: 35 }}
               />
             )}
-            <Sparkles className="w-3.5 h-3.5 shrink-0" />
+            <BarChart3 className="w-3.5 h-3.5 shrink-0" />
             <span>Data Science</span>
           </button>
           <button

@@ -3,7 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUpRight, Sparkles, Code2, Search, SlidersHorizontal, Check, X } from 'lucide-react'
+import { ArrowUpRight, BarChart3, Code2, Search, SlidersHorizontal, Check, X } from 'lucide-react'
 import { cn, getSubCategoryColor } from '@/lib/utils'
 import { Project } from '@/lib/types'
 import { BlurImage } from '@/components/ui/blur-image'
@@ -156,7 +156,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                 transition={{ type: 'spring', stiffness: 450, damping: 35 }}
               />
             )}
-            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+            <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
             <span>Data Science</span>
           </button>
           <button
