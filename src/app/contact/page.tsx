@@ -11,8 +11,8 @@ export default function ContactPage() {
   const socialCards = [
     {
       name: 'Email',
-      username: 'REDACTED_EMAIL',
-      href: 'mailto:REDACTED_EMAIL',
+      username: 'alfitranurr@gmail.com',
+      href: 'mailto:alfitranurr@gmail.com',
       icon: Mail,
       colorClass: 'text-primary',
     },
@@ -94,7 +94,7 @@ export default function ContactPage() {
               </h2>
               <p className="text-xs text-muted-foreground">Fill in the details below and I will get back to you as soon as possible</p>
             </div>
-            
+
             {/* Action form */}
             <ContactForm />
           </div>
