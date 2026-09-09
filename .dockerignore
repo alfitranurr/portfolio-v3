@@ -1,0 +1,45 @@
+# Dependencies
+node_modules
+
+# Next.js build output
+.next
+out
+
+# Git
+.git
+.gitignore
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Testing
+test-results
+playwright-report
+tests
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docs (tidak perlu di image production)
+docs
+*.md
+SECURITY_SKILLS_PROMPT.md
+implementation_plan.md
+PROGRESS.md
+
+# Vercel
+.vercel
+
+# Misc
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+tsconfig.tsbuildinfo

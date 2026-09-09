@@ -24,12 +24,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         viewport: { width: 1280, height: 800 },
         storageState: { cookies: [], origins: [] },
-        // Fallback: pakai chromium-1234 (headed build) karena headless_shell-1234
-        // belum ter-install (playwright install timeout koneksi lambat).
-        launchOptions: {
-          executablePath:
-            'C:\\Users\\HYPE-R FLIP\\AppData\\Local\\ms-playwright\\chromium-1234\\chrome-win64\\chrome.exe',
-        },
+        launchOptions: {},
       },
     },
   ],

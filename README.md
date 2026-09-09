@@ -43,6 +43,7 @@
 - [Admin Panel](#-admin-panel)
 - [RAG AI Assistant](#-rag-ai-assistant)
 - [Testing](#-testing)
+- [Docker](#-docker)
 - [Security](#-security)
 - [Developer Profile](#-developer-profile)
 - [License](#-license)
@@ -308,6 +309,46 @@ npm run lint          # ESLint (flat config)
 npx tsc --noEmit      # TypeScript type check
 npm run build         # Production build (runs type check + build)
 ```
+
+---
+
+## 🐳 Docker
+
+This project is fully containerized with a multi-stage Dockerfile (Alpine-based, ~150MB image) and Docker Compose for both production and development.
+
+### Production
+
+```bash
+# Copy env template and fill in real values
+cp .env.example .env
+# Edit .env with your actual Supabase/Gemini credentials
+
+# Build & run in detached mode
+docker compose -f docker-compose.yml up -d
+```
+
+### Development (hot reload)
+
+```bash
+# docker-compose.override.yml auto-merges with docker-compose.yml
+docker compose up
+```
+
+### Access
+
+- **Web:** http://localhost:3000
+- **Health check:** http://localhost:3000/api/health
+
+### Details
+
+| Feature | Detail |
+|---------|--------|
+| Base image | `node:20-alpine` |
+| Build | Multi-stage (base → deps → builder → runner) |
+| Image size | ~150MB (standalone output) |
+| User | Non-root (`nextjs:nodejs`) |
+| Health check | `/api/health` every 30s |
+| Port | 3000 (host:container) |
 
 ---
 
