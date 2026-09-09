@@ -2,7 +2,8 @@
 # Audit Docker — Portfolio v3
 
 > **Tanggal audit:** 9 September 2026
-> **Status containerization:** Berfungsi (bisa build & run), tapi belum production-grade
+> **Tanggal eksekusi:** 9 September 2026
+> **Status containerization:** ✅ Production-grade (build pass, container healthy, CI aktif)
 > **Deployment saat ini:** Vercel (production) + Docker (self-host/backup)
 
 ---
@@ -10,11 +11,12 @@
 ## Daftar Isi
 
 - [Bagian 1 — Yang Sudah Dilakukan](#bagian-1--yang-sudah-dilakukan)
-- [Bagian 2 — Potensi Bug & Masalah](#bagian-2--potensi-bug--masalah)
+- [Bagian 2 — Bug yang Ditemukan & Diperbaiki](#bagian-2--bug-yang-ditemukan--diperbaiki)
 - [Bagian 3 — Yang Kurang untuk Standar Profesional](#bagian-3--yang-kurang-untuk-standar-profesional)
-- [Bagian 4 — Rencana Eksekusi Next Day](#bagian-4--rencana-eksekusi-next-day)
+- [Bagian 4 — Cara Pakai Docker](#bagian-4--cara-pakai-docker)
 - [Bagian 5 — File Inventory](#bagian-5--file-inventory-final-state)
-- [Bagian 6 — Cara Pakai Docker](#bagian-6--cara-pakai-docker)
+- [Bagian 6 — CI/CD Pipeline](#bagian-6--cicd-pipeline)
+- [Bagian 7 — Next Steps (Opsional)](#bagian-7--next-steps-opsional)
 
 ---
 
@@ -35,7 +37,7 @@
 |---|---|---|
 | `Dockerfile` | Dibuat | Multi-stage: base → deps → builder → runner |
 | `.dockerignore` | Dibuat | Eksklusi node_modules, .next, .env, .git, tests, docs |
-| `docker-compose.yml` | Dibuat | Service web, port 3000, env_file, build args |
+| `docker-compose.yml` | Dibuat | Service web, port 3000, env_file, build args, resource limits, log rotation |
 | `.env` | Dibuat | Template dari `.env.example` (perlu diisi nilai asli) |
 
 ### Tahap 3: Dev Mode (Selesai)
@@ -48,16 +50,19 @@
 
 | File | Aksi | Detail |
 |---|---|---|
-| `.github/workflows/docker-build.yml` | Dibuat | GitHub Actions: build + GHA cache |
+| `.github/workflows/docker-build.yml` | Dibuat | GitHub Actions: build + push ke GHCR + Trivy scan |
 | `README.md` | Diedit | Tambah section Docker (prod + dev instructions) |
 
-### Bug Fix Selama Eksekusi (Selesai)
+### Production Hardening (Selesai)
 
-| Bug | Dampak | Fix |
+| Fitur | Lokasi | Detail |
 |---|---|---|
-| `.dockerignore` exclude `package-lock.json` | `npm ci` gagal | Hapus `package-lock.json` dari `.dockerignore` |
-| Dockerfile `deps` pakai `--omit=dev` | Build gagal (typescript, tailwind di devDeps) | Ubah ke `npm ci` tanpa `--omit=dev` |
-| `NEXT_PUBLIC_*` tidak di-pass sebagai build ARG | Supabase client tidak jalan di image | Tambah `ARG` + `ENV` di builder, `args` di compose |
+| Resource limits | `docker-compose.yml` | 512M memory, 0.5 CPU, 256M reservation |
+| Log rotation | `docker-compose.yml` | json-file, max 10m x 3 files |
+| npm install hardening | `Dockerfile` | `--ignore-scripts` (supply chain protection) |
+| CI push ke GHCR | `docker-build.yml` | `latest` + git SHA tags |
+| Trivy security scan | `docker-build.yml` | CRITICAL,HIGH, exit-code 1 |
+| GHA cache | `docker-build.yml` | `cache-from/cache-to: type=gha` |
 
 ### Git History Cleanup (Selesai)
 
@@ -67,175 +72,45 @@
 - Force push ke GitHub berhasil
 - Final scan: **CLEAN** — tidak ada secrets di seluruh git history
 
----
+### Hasil Test Build & Run (Selesai)
 
-## Bagian 2 — Potensi Bug & Masalah
-
-### BUG #1: `wget` BusyBox Tidak Kompatibel (KRITIS)
-
-**Lokasi:** `Dockerfile:49` + `docker-compose.yml:19`
-
-**Kode saat ini:**
-```dockerfile
-CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
-```
-
-**Masalah:** `node:20-alpine` pakai BusyBox `wget`, bukan GNU wget. Flag `--no-verbose` adalah GNU wget saja — BusyBox tidak mengenalnya. BusyBox wget pakai `-q` untuk quiet.
-
-**Dampak:** HEALTHCHECK akan fail → Docker menandai container "unhealthy" → jika ada orchestrator (Swarm/K8s), container akan terus di-restart. Untuk `docker compose` standalone, container tetap jalan tapi status "unhealthy".
-
-**Solusi:** Ganti dengan BusyBox-compatible command:
-
-```dockerfile
-# Opsi A: wget busybox-compatible (Recommended — paling simple)
-CMD wget --spider -q http://localhost:3000/api/health || exit 1
-
-# Opsi B: pakai node (paling portabel, node sudah ada di image)
-CMD node -e "fetch('http://localhost:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
-```
-
-**File yang diedit:**
-- `Dockerfile` line 49
-- `docker-compose.yml` line 19 (healthcheck test command)
+| Metric | Hasil |
+|---|---|
+| Docker build | ✅ Sukses |
+| Image size | 279MB |
+| Container status | `Up (healthy)` |
+| Health endpoint | `{"status":"ok"}` |
+| Healthcheck pass | Setelah ~40s (start-period 15s + interval 30s) |
 
 ---
 
-### BUG #2: Healthcheck Duplikat (RINGAN)
+## Bagian 2 — Bug yang Ditemukan & Diperbaiki
 
-**Lokasi:** `Dockerfile:48-49` + `docker-compose.yml:18-23`
+### Bug Awal (Ditemukan Sebelum Eksekusi)
 
-**Masalah:** HEALTHCHECK didefinisikan di Dockerfile DAN di docker-compose.yml. Compose override Dockerfile. Tidak error, tapi redundan.
+| Bug | Dampak | Fix |
+|---|---|---|
+| `.dockerignore` exclude `package-lock.json` | `npm ci` gagal | Hapus `package-lock.json` dari `.dockerignore` |
+| Dockerfile `deps` pakai `--omit=dev` | Build gagal (typescript, tailwind di devDeps) | Ubah ke `npm ci` tanpa `--omit=dev` |
+| `NEXT_PUBLIC_*` tidak di-pass sebagai build ARG | Supabase client tidak jalan di image | Tambah `ARG` + `ENV` di builder, `args` di compose |
+| `wget --no-verbose` (GNU wget flag) | HEALTHCHECK fail di BusyBox Alpine | Ganti ke `wget --spider -q` |
+| Healthcheck duplikat (Dockerfile + compose) | Redundan | Hapus dari Dockerfile, simpan di compose |
 
-**Solusi:** Hapus healthcheck di salah satu. Rekomendasi: simpan di `docker-compose.yml` (lebih fleksibel, bisa di-override per environment), hapus dari Dockerfile.
+### Bug Tambahan (Ditemukan Saat Test Build & Run)
 
----
-
-### BUG #3: `.env` Placeholder Build Args (PITFALL)
-
-**Lokasi:** `docker-compose.yml:9-10`
-
-**Masalah:** Build args baca dari `${NEXT_PUBLIC_SUPABASE_URL}` yang di-read dari `.env`. Jika `.env` masih berisi placeholder (`your-project-id`), image akan di-build dengan placeholder ter-inlined. Supabase client tidak akan jalan.
-
-**Solusi:** Selalu isi `.env` dengan nilai asli SEBELUM `docker compose build`. Atau tambahkan validasi di CI yang fail build jika detect placeholder.
-
-**Cek sebelum build:**
-```bash
-# Pastikan .env berisi nilai asli, bukan placeholder
-grep -v "your-" .env | grep -v "^#" | grep -v "^$"
-```
+| Bug | Penyebab | Fix |
+|---|---|---|
+| `npm ci` gagal: Missing `@emnapi/runtime`, `@emnapi/core` | Lockfile di-generate di Windows, tidak include Linux optional deps (`@tailwindcss/oxide-wasm32-wasi`, `@img/sharp-wasm32`) | Ganti `npm ci` → `npm install` (resolve platform-specific optional deps) |
+| Healthcheck "Connection refused" | Alpine `localhost` resolve ke IPv6 `::1`, tapi server listen di IPv4 `0.0.0.0` | Ganti `localhost` → `127.0.0.1` di healthcheck command |
+| `npm@latest` (v12) butuh Node 22+ | `npm install -g npm@latest` di `node:20-alpine` fail (EBADENGINE) | Tidak perlu upgrade npm — `npm install` (tanpa ci) sudah handle cross-platform |
 
 ---
 
 ## Bagian 3 — Yang Kurang untuk Standar Profesional
 
-### Prioritas Tinggi (Wajib Sebelum Production)
-
-#### 3.1 Resource Limits
-
-**Gunanya:** Mencegah container makan semua RAM/CPU server.
-
-**Lokasi:** `docker-compose.yml`
-
-```yaml
-services:
-  web:
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: '0.5'
-        reservations:
-          memory: 256M
-```
-
-#### 3.2 Log Rotation
-
-**Gunanya:** Mencegah log Docker memenuhi disk server.
-
-**Lokasi:** `docker-compose.yml`
-
-```yaml
-services:
-  web:
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-```
-
-#### 3.3 npm install Hardening
-
-**Gunanya:** Mencegah malicious npm package jalan install scripts (supply chain attack).
-
-**Lokasi:** `Dockerfile` deps stage (line 9)
-
-```dockerfile
-RUN npm ci --ignore-scripts
-```
-
-**Catatan:** Cek dulu apakah ada dependency yang butuh install script (esbuild, sharp, dll). Jika ada yang butuh, skip flag ini atau allow per-package.
-
----
-
 ### Prioritas Sedang (Production Enhancement)
 
-#### 3.4 CI Push ke Container Registry
-
-**Gunanya:** CI build image → push ke GHCR (GitHub Container Registry) → server pull image → run. Tidak perlu build di server (lebih cepat, server tidak butuh source code).
-
-**Lokasi:** `.github/workflows/docker-build.yml`
-
-```yaml
-- name: Login to GHCR
-  uses: docker/login-action@v3
-  with:
-    registry: ghcr.io
-    username: ${{ github.actor }}
-    password: ${{ secrets.GITHUB_TOKEN }}
-
-- name: Build & Push
-  uses: docker/build-push-action@v5
-  with:
-    context: .
-    file: ./Dockerfile
-    push: true
-    tags: |
-      ghcr.io/${{ github.repository }}:latest
-      ghcr.io/${{ github.repository }}:${{ github.sha }}
-    cache-from: type=gha
-    cache-to: type=gha,mode=max
-```
-
-**Setup sekali di GitHub:**
-- `GITHUB_TOKEN` otomatis tersedia di Actions (tidak perlu manual)
-- Pastikan repo settings → Actions → General → Workflow permissions = "Read and write"
-
-#### 3.5 Tag Strategi (git SHA + latest)
-
-**Gunanya:** Setiap build punya tag unik (git SHA) untuk rollback & traceability. `latest` untuk pointer ke versi terbaru.
-
-**Format tag:**
-```
-ghcr.io/alfitranurr/portfolio-v3:latest          # pointer ke versi terbaru
-ghcr.io/alfitranurr/portfolio-v3:abc1234         # git SHA (immutable, untuk rollback)
-ghcr.io/alfitranurr/portfolio-v3:v1.0.0          # semver (opsional, untuk release)
-```
-
-#### 3.6 Trivy Security Scan di CI
-
-**Gunanya:** Scan image untuk CVE (vulnerability di Node.js, Alpine, npm packages) setelah build, sebelum push. Block deploy jika ada critical CVE.
-
-```yaml
-- name: Trivy scan
-  uses: aquasecurity/trivy-action@master
-  with:
-    image-ref: ghcr.io/${{ github.repository }}:${{ github.sha }}
-    severity: CRITICAL,HIGH
-    exit-code: 1
-```
-
-#### 3.7 Reverse Proxy + HTTPS
+#### 3.1 Reverse Proxy + HTTPS
 
 **Gunanya:** Container jalan di port 3000, production butuh 443 + SSL certificate. Reverse proxy (Caddy paling mudah — auto HTTPS) terima 443, forward ke 3000.
 
@@ -270,7 +145,7 @@ volumes:
 
 ### Prioritas Rendah (Nice-to-Have)
 
-#### 3.8 Image Label
+#### 3.2 Image Label
 
 **Gunanya:** Metadata image untuk traceability.
 
@@ -280,7 +155,7 @@ LABEL org.opencontainers.image.title="Portfolio v3" \
       org.opencontainers.image.licenses="proprietary"
 ```
 
-#### 3.9 Digest Pinning
+#### 3.3 Digest Pinning
 
 **Gunanya:** Reproducibility, mencegah supply chain surprise (base image berubah tanpa sepengetahuan).
 
@@ -290,10 +165,10 @@ FROM node:20-alpine@sha256:<digest> AS base
 
 **Cara dapat digest:**
 ```bash
-docker build --pull imagetools inspect node:20-alpine --format "{{.Manifest.Digest}}"
+docker buildx imagetools inspect node:20-alpine --format "{{.Manifest.Digest}}"
 ```
 
-#### 3.10 Multi-Arch Build
+#### 3.4 Multi-Arch Build
 
 **Gunanya:** Support ARM server (AWS Graviton, Raspberry Pi) selain x86.
 
@@ -303,203 +178,7 @@ platforms: linux/amd64,linux/arm64
 
 ---
 
-## Bagian 4 — Rencana Eksekusi Next Day
-
-### Urutan Eksekusi (Step by Step)
-
-```
-Step 1: Fix Bug #1 (wget BusyBox)           → Dockerfile:49 + docker-compose.yml:19
-Step 2: Fix Bug #2 (healthcheck duplikat)   → Hapus HEALTHCHECK dari Dockerfile
-Step 3: Tambah Resource Limits              → docker-compose.yml
-Step 4: Tambah Log Rotation                 → docker-compose.yml
-Step 5: Tambah npm --ignore-scripts         → Dockerfile:9 (test dulu build lulus)
-Step 6: CI Push ke GHCR                     → docker-build.yml
-Step 7: Tambah Trivy Scan                   → docker-build.yml
-Step 8: Test build & run                    → docker compose build && docker compose up
-Step 9: Commit & push                        → git add, commit, push
-```
-
-### Detail Setiap Step
-
-#### Step 1: Fix Bug #1 (wget BusyBox)
-
-Edit `Dockerfile` line 49:
-```dockerfile
-# Sebelum:
-CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
-
-# Sesudah:
-CMD wget --spider -q http://localhost:3000/api/health || exit 1
-```
-
-Edit `docker-compose.yml` line 19:
-```yaml
-# Sebelum:
-test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
-
-# Sesudah:
-test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
-```
-
-#### Step 2: Fix Bug #2 (healthcheck duplikat)
-
-Hapus `HEALTHCHECK` dari `Dockerfile` (line 48-49). Simpan di `docker-compose.yml` saja.
-
-```dockerfile
-# Hapus baris ini dari Dockerfile:
-HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
-```
-
-#### Step 3: Tambah Resource Limits di `docker-compose.yml`
-
-```yaml
-services:
-  web:
-    # ... existing config ...
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: '0.5'
-        reservations:
-          memory: 256M
-```
-
-#### Step 4: Tambah Log Rotation di `docker-compose.yml`
-
-```yaml
-services:
-  web:
-    # ... existing config ...
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-```
-
-#### Step 5: Tambah `--ignore-scripts` di Dockerfile
-
-Edit `Dockerfile` line 9:
-```dockerfile
-# Sebelum:
-RUN npm ci
-
-# Sesudah:
-RUN npm ci --ignore-scripts
-```
-
-**Test dulu:** Setelah edit, jalankan `docker compose build`. Jika build gagal (ada package yang butuh install script), revert dan skip step ini.
-
-#### Step 6: CI Push ke GHCR
-
-Edit `.github/workflows/docker-build.yml` — tambahkan login + push:
-
-```yaml
-- name: Login to GHCR
-  uses: docker/login-action@v3
-  with:
-    registry: ghcr.io
-    username: ${{ github.actor }}
-    password: ${{ secrets.GITHUB_TOKEN }}
-
-- name: Build & Push
-  uses: docker/build-push-action@v5
-  with:
-    context: .
-    file: ./Dockerfile
-    push: true
-    tags: |
-      ghcr.io/${{ github.repository }}:latest
-      ghcr.io/${{ github.repository }}:${{ github.sha }}
-    cache-from: type=gha
-    cache-to: type=gha,mode=max
-```
-
-#### Step 7: Tambah Trivy Scan di CI
-
-Tambahkan step setelah build:
-
-```yaml
-- name: Trivy scan
-  uses: aquasecurity/trivy-action@master
-  with:
-    image-ref: ghcr.io/${{ github.repository }}:${{ github.sha }}
-    severity: CRITICAL,HIGH
-    exit-code: 1
-```
-
-#### Step 8: Test Build & Run
-
-```bash
-# Build image
-docker compose -f docker-compose.yml build
-
-# Run container
-docker compose -f docker-compose.yml up -d
-
-# Cek health status (harus "healthy" setelah ~30s)
-docker inspect --format='{{.State.Health.Status}}' portfolio-v3-web-1
-
-# Test health endpoint
-curl http://localhost:3000/api/health
-
-# Cek logs (pastikan log rotation aktif)
-docker compose logs web
-```
-
-#### Step 9: Commit & Push
-
-```bash
-git add Dockerfile docker-compose.yml .github/workflows/docker-build.yml
-git commit -m "fix(docker): busybox wget, resource limits, log rotation, CI push to GHCR"
-git push origin master
-```
-
-### Verifikasi Setelah Eksekusi
-
-```bash
-# 1. Build image
-docker compose -f docker-compose.yml build
-
-# 2. Run container
-docker compose -f docker-compose.yml up -d
-
-# 3. Cek health status (harus "healthy" setelah ~30s)
-docker inspect --format='{{.State.Health.Status}}' portfolio-v3-web-1
-
-# 4. Test health endpoint
-curl http://localhost:3000/api/health
-
-# 5. Cek logs (pastikan log rotation aktif)
-docker compose logs web | Select-Object -Last 10
-
-# 6. Cek resource limits aktif
-docker inspect --format='{{.HostConfig.Memory}}' portfolio-v3-web-1
-```
-
----
-
-## Bagian 5 — File Inventory (Final State)
-
-| File | Status | Perlu Diedit? |
-|---|---|---|
-| `.nvmrc` | Selesai | Tidak |
-| `next.config.ts` | Selesai | Tidak |
-| `src/app/api/health/route.ts` | Selesai | Tidak |
-| `playwright.config.ts` | Selesai | Tidak |
-| `.dockerignore` | Selesai | Tidak |
-| `.env` | Perlu diisi nilai asli | Ya (isi sebelum build) |
-| `Dockerfile` | Bug #1 (wget) | Ya (Step 1-2) |
-| `docker-compose.yml` | Bug #1, kurang limits/logs | Ya (Step 1, 3-4) |
-| `docker-compose.override.yml` | Selesai | Tidak |
-| `.github/workflows/docker-build.yml` | push: false, no scan | Ya (Step 6-7) |
-| `README.md` | Selesai | Tidak |
-
----
-
-## Bagian 6 — Cara Pakai Docker
+## Bagian 4 — Cara Pakai Docker
 
 ### Prasyarat
 
@@ -519,6 +198,9 @@ docker compose -f docker-compose.yml up -d
 
 # Cek status
 docker compose ps
+
+# Cek health status (harus "healthy" setelah ~40s)
+docker inspect --format='{{.State.Health.Status}}' portfolio-v3-web-1
 
 # Lihat logs
 docker compose logs -f web
@@ -550,13 +232,125 @@ docker compose up
 |---|---|
 | Base image | `node:20-alpine` |
 | Build | Multi-stage (base → deps → builder → runner) |
-| Image size | ~150MB (standalone output) |
+| Image size | ~279MB (standalone output) |
 | User | Non-root (`nextjs:nodejs`, uid 1001) |
-| Health check | `/api/health` setiap 30s |
+| Health check | `/api/health` setiap 30s via `127.0.0.1` |
 | Port | 3000 (host:container) |
+| Resource limits | 512M memory, 0.5 CPU |
+| Log rotation | json-file, max 10m x 3 files |
 
 ### Kompatibilitas Vercel
 
 - Dockerfile tidak mengganggu deploy Vercel — Vercel tetap bisa build dari `package.json` seperti biasa
 - `output: 'standalone'` tidak berefek ke Vercel (Vercel punya build system sendiri)
 - Keduanya bisa berjalan paralel: Vercel untuk production, Docker untuk self-hosting/testing
+
+---
+
+## Bagian 5 — File Inventory (Final State)
+
+| File | Status | Perlu Diedit? |
+|---|---|---|
+| `.nvmrc` | ✅ Selesai | Tidak |
+| `next.config.ts` | ✅ Selesai | Tidak |
+| `src/app/api/health/route.ts` | ✅ Selesai | Tidak |
+| `playwright.config.ts` | ✅ Selesai | Tidak |
+| `.dockerignore` | ✅ Selesai | Tidak |
+| `.env` | ⚠️ Perlu diisi nilai asli | Ya (isi sebelum build) |
+| `Dockerfile` | ✅ Selesai (multi-stage, non-root, --ignore-scripts) | Tidak |
+| `docker-compose.yml` | ✅ Selesai (limits, log rotation, healthcheck) | Tidak |
+| `docker-compose.override.yml` | ✅ Selesai | Tidak |
+| `.github/workflows/docker-build.yml` | ✅ Selesai (push GHCR + Trivy) | Tidak |
+| `README.md` | ✅ Selesai | Tidak |
+
+---
+
+## Bagian 6 — CI/CD Pipeline
+
+### Workflow: Build & Push Docker Image
+
+**Trigger:** Push atau PR ke `master` branch
+
+**Steps:**
+1. Checkout code
+2. Setup Docker Buildx
+3. Login ke GHCR (hanya saat push, bukan PR)
+4. Build & push image dengan tags:
+   - `ghcr.io/alfitranurr/portfolio-v3:latest` (pointer ke versi terbaru)
+   - `ghcr.io/alfitranurr/portfolio-v3:{git-sha}` (immutable, untuk rollback)
+5. Trivy security scan (hanya saat push) — fail jika ada CRITICAL/HIGH CVE
+
+**Permissions yang dibutuhkan:**
+- `contents: read` — untuk checkout
+- `packages: write` — untuk push ke GHCR
+
+**Setup GitHub (sekali):**
+- Repo Settings → Actions → General → Workflow permissions = "Read and write permissions"
+- `GITHUB_TOKEN` otomatis tersedia (tidak perlu buat secret manual)
+
+### Registry: GHCR (GitHub Container Registry)
+
+**URL:** `ghcr.io/alfitranurr/portfolio-v3`
+
+**Tag strategi:**
+```
+ghcr.io/alfitranurr/portfolio-v3:latest          # pointer ke versi terbaru
+ghcr.io/alfitranurr/portfolio-v3:abc1234         # git SHA (immutable, untuk rollback)
+```
+
+**Pull image dari server:**
+```bash
+docker pull ghcr.io/alfitranurr/portfolio-v3:latest
+docker run -d -p 3000:3000 --env-file .env ghcr.io/alfitranurr/portfolio-v3:latest
+```
+
+---
+
+## Bagian 7 — Next Steps (Opsional)
+
+### Step 1: Deploy ke VPS dengan Docker (Prioritas Sedang)
+
+Jika mau deploy ke VPS (selain Vercel):
+
+1. **Setup VPS:**
+   ```bash
+   # Di VPS
+   apt install docker.io docker-compose
+   docker login ghcr.io -u USERNAME -p GITHUB_PAT
+   ```
+
+2. **Pull & run:**
+   ```bash
+   docker pull ghcr.io/alfitranurr/portfolio-v3:latest
+   docker run -d -p 3000:3000 --env-file .env --name portfolio ghcr.io/alfitranurr/portfolio-v3:latest
+   ```
+
+3. **Cek health:**
+   ```bash
+   docker inspect --format='{{.State.Health.Status}}' portfolio
+   ```
+
+### Step 2: Reverse Proxy + HTTPS (Prioritas Sedang)
+
+Tambah Caddy sebagai reverse proxy untuk HTTPS otomatis (Let's Encrypt). Lihat Bagian 3.1 untuk konfigurasi.
+
+### Step 3: Auto-update dengan Watchtower (Prioritas Rendah)
+
+Watchtower auto-pull image baru dari GHCR dan restart container:
+```yaml
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=3600
+```
+
+### Step 4: Image Label & Digest Pinning (Prioritas Rendah)
+
+Lihat Bagian 3.2 dan 3.3.
+
+### Step 5: Multi-Arch Build (Prioritas Rendah)
+
+Support ARM server (AWS Graviton, Raspberry Pi). Lihat Bagian 3.4.
