@@ -272,7 +272,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
         <AnimatePresence mode="sync">
-          {visibleCertificates.map((cert) => {
+          {visibleCertificates.map((cert, index) => {
             const Icon = ICON_MAP[cert.category as keyof typeof ICON_MAP] || Award
             const colors = CATEGORY_COLOR_MAP[cert.category] || {
               badge: 'bg-primary/15 text-primary border-primary/30',
@@ -285,9 +285,9 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: -8 }}
                 transition={{
-                  opacity: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
-                  scale: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
-                  y: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }
+                  opacity: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+                  scale: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+                  y: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }
                 }}
                 className="group p-6 rounded-3xl glass-panel border border-slate-300/80 dark:border-slate-800/30 hover:border-primary/40 shadow-xs hover:shadow-md flex flex-col justify-between transition-[border-color,box-shadow] duration-300 relative overflow-hidden transform-gpu"
               >
@@ -328,6 +328,8 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                       src={getDirectImageUrl(cert.image_url)}
                       alt={cert.title}
                       referrerPolicy="no-referrer"
+                      priority={index < 3}
+                      loading={index >= 3 ? "eager" : undefined}
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="w-full h-full object-contain relative z-10 group-hover:scale-103 transition-transform duration-500"
                     />

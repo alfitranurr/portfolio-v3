@@ -349,16 +349,16 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
             className="w-full"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-              {visibleProjects.map((project) => (
+              {visibleProjects.map((project, index) => (
                 <motion.div
                   key={project.id}
                   initial={{ opacity: 0, scale: 0.95, y: 8 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -8 }}
                   transition={{
-                    opacity: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
-                    scale: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
-                    y: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }
+                    opacity: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+                    scale: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+                    y: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }
                   }}
                   className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-[border-color,box-shadow] duration-300 relative overflow-hidden transform-gpu w-full"
                 >
@@ -385,6 +385,8 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                       <BlurImage
                         src={project.cover_image}
                         alt={project.title}
+                        priority={index < 3}
+                        loading={index >= 3 ? "eager" : undefined}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="w-full h-full object-contain relative z-10 group-hover:scale-103 transition-transform duration-500"
                       />
