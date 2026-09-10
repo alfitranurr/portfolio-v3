@@ -76,9 +76,9 @@ export function CustomSortDropdown<T extends string = string>({
         onClick={() => setOpen(!open)}
         className={cn(
           "group flex items-center gap-1.5 px-3.5 py-2 rounded-2xl text-xs font-semibold transition-all duration-200 cursor-pointer shadow-2xs whitespace-nowrap active:scale-[0.98]",
-          "bg-white/90 dark:bg-slate-900/80 backdrop-blur-md",
+          "bg-white/90 dark:bg-black/80 backdrop-blur-md",
           "border border-slate-300 dark:border-slate-700/60",
-          "hover:bg-white dark:hover:bg-slate-800/80 hover:border-slate-400 dark:hover:border-slate-600 hover:shadow-xs",
+          "hover:bg-white dark:hover:bg-black/90 hover:border-slate-400 dark:hover:border-slate-600 hover:shadow-xs",
           open
             ? "border-slate-500 dark:border-slate-400 text-foreground ring-2 ring-slate-500/15 shadow-xs"
             : "text-foreground"
