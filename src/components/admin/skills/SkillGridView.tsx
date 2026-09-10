@@ -27,23 +27,23 @@ export function SkillGridView({ skills, onPreview, onEdit, onDelete }: SkillGrid
               scale: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
               y: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }
             }}
-            className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 hover:border-primary/30 transition-[border-color,box-shadow] duration-300 flex flex-col items-center text-center group transform-gpu"
+            className="p-4 rounded-2xl glass-panel border border-slate-200/60 dark:border-slate-800/60 space-y-3 hover:border-primary/40 hover:shadow-md transition-all duration-300 flex flex-col items-center text-center group transform-gpu"
           >
-            <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden shrink-0 relative">
               {skill.logo_url ? (
                 <BlurImage
                   src={getDirectImageUrl(skill.logo_url, 100)}
                   alt={skill.name}
                   lowQuality
                   sizes="64px"
-                  className="w-16 h-16 object-contain"
+                  className="w-12 h-12 object-contain"
                 />
               ) : (
-                <Award className="w-10 h-10 text-muted-foreground/30" />
+                <Award className="w-8 h-8 text-muted-foreground/30" />
               )}
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5 w-full">
               <h3 className="font-black text-sm text-foreground group-hover:text-primary transition-colors">
                 {skill.name}
               </h3>
@@ -51,7 +51,7 @@ export function SkillGridView({ skills, onPreview, onEdit, onDelete }: SkillGrid
                 {CATEGORY_MAP[skill.category]}
               </p>
               {skill.proficiency !== null && skill.proficiency !== undefined && (
-                <div className="w-16 h-2 bg-slate-700/50 rounded-full overflow-hidden">
+                <div className="w-full max-w-[120px] h-2 bg-slate-200 dark:bg-slate-800/60 rounded-full overflow-hidden mx-auto">
                   <div
                     className="h-full bg-primary rounded-full transition-all"
                     style={{ width: `${Math.min(skill.proficiency, 100)}%` }}
@@ -60,27 +60,15 @@ export function SkillGridView({ skills, onPreview, onEdit, onDelete }: SkillGrid
               )}
             </div>
 
-            <div className="flex items-center justify-center gap-1.5 pt-2 border-t border-slate-200/5 dark:border-slate-800/5 w-full">
-              <button
-                onClick={() => onPreview(skill)}
-                title="View Details"
-                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-cyan-400 transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
-              >
-                <Eye className="w-3.5 h-3.5" />
+            <div className="flex items-center justify-center gap-1 pt-2 border-t border-slate-200/60 dark:border-slate-800/60 w-full mt-auto">
+              <button onClick={() => onPreview(skill)} title="View Details" className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-cyan-500/10 text-muted-foreground hover:text-cyan-500 dark:hover:text-cyan-400 transition-all cursor-pointer">
+                <Eye className="w-4 h-4" />
               </button>
-              <button
-                onClick={() => onEdit(skill)}
-                title="Edit Skill"
-                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-foreground transition-colors cursor-pointer border border-slate-200/10 dark:border-slate-800/10"
-              >
-                <Edit3 className="w-3.5 h-3.5" />
+              <button onClick={() => onEdit(skill)} title="Edit Skill" className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all cursor-pointer">
+                <Edit3 className="w-4 h-4" />
               </button>
-              <button
-                onClick={() => onDelete(skill.id)}
-                title="Delete Skill"
-                className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer border border-red-500/10"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
+              <button onClick={() => onDelete(skill.id)} title="Delete Skill" className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-all cursor-pointer">
+                <Trash2 className="w-4 h-4" />
               </button>
             </div>
           </motion.div>

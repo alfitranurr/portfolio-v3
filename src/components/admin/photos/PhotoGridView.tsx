@@ -27,7 +27,7 @@ export function PhotoGridView({ photos, onPreview, onEdit, onDelete }: PhotoGrid
               scale: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
               y: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }
             }}
-            className="rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 overflow-hidden hover:border-primary/30 transition-[border-color,box-shadow] duration-300 group transform-gpu"
+            className="rounded-2xl glass-panel border border-slate-200/60 dark:border-slate-800/60 overflow-hidden hover:border-primary/40 hover:shadow-md transition-all duration-300 group transform-gpu"
           >
             <div className="aspect-video w-full relative">
               <BlurImage
@@ -39,25 +39,13 @@ export function PhotoGridView({ photos, onPreview, onEdit, onDelete }: PhotoGrid
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
-                <button
-                  onClick={() => onPreview(photo)}
-                  title="View Details"
-                  className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-cyan-400 transition-colors cursor-pointer"
-                >
+                <button onClick={() => onPreview(photo)} title="View Details" className="p-2.5 rounded-lg bg-white/15 hover:bg-white/25 text-cyan-400 transition-all cursor-pointer">
                   <Eye className="w-4 h-4" />
                 </button>
-                <button
-                  onClick={() => onEdit(photo)}
-                  title="Edit Photo"
-                  className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-foreground transition-colors cursor-pointer"
-                >
+                <button onClick={() => onEdit(photo)} title="Edit Photo" className="p-2.5 rounded-lg bg-white/15 hover:bg-white/25 text-white transition-all cursor-pointer">
                   <Edit3 className="w-4 h-4" />
                 </button>
-                <button
-                  onClick={() => onDelete(photo.id)}
-                  title="Delete Photo"
-                  className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer"
-                >
+                <button onClick={() => onDelete(photo.id)} title="Delete Photo" className="p-2.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 transition-all cursor-pointer">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
@@ -68,7 +56,7 @@ export function PhotoGridView({ photos, onPreview, onEdit, onDelete }: PhotoGrid
                 {photo.title || 'Untitled'}
               </h3>
               {photo.year && (
-                <p className="text-[10px] text-muted-foreground">{photo.year}</p>
+                <p className="text-[10px] text-muted-foreground font-semibold">{photo.year}</p>
               )}
             </div>
           </motion.div>
