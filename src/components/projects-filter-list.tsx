@@ -345,11 +345,14 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
               {visibleProjects.map((project, index) => (
                 <motion.div
                   key={project.id}
-                  initial={{ opacity: 0, filter: "blur(16px)" }}
-                  whileInView={{ opacity: 1, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, filter: "blur(16px)" }}
-                  viewport={{ once: true, amount: 0.15 }}
-                  transition={{ duration: 0.9, delay: index * 0.02, ease: [0.25, 0.1, 0.25, 1] }}
+                  initial={{ opacity: 0, scale: 0.95, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -8 }}
+                  transition={{
+                    opacity: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+                    scale: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+                    y: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }
+                  }}
                   className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-[border-color,box-shadow] duration-300 relative overflow-hidden transform-gpu w-full"
                 >
                   {/* Subtle top indicator bar */}
