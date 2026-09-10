@@ -132,6 +132,8 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
   const [isUpdating, setIsUpdating] = React.useState<string | null>(null)
   const [refreshTrigger, setRefreshTrigger] = React.useState(0)
   const [isResettingStats, setIsResettingStats] = React.useState(false)
+  const [currentPage, setCurrentPage] = React.useState(1)
+  const pageSize = 12
   const router = useRouter()
 
   const handleRefreshData = () => {
@@ -173,7 +175,7 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
     }
   }
 
-  const unreadCount = messages.filter(m => !m.is_read).length
+  const unreadCount = React.useMemo(() => messages.filter(m => !m.is_read).length, [messages])
 
   const filteredMessages = React.useMemo(() => {
     const term = search.toLowerCase()
@@ -186,6 +188,16 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
       )
     })
   }, [messages, search])
+
+  const totalPages = Math.max(1, Math.ceil(filteredMessages.length / pageSize))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
+  const startIndex = (safeCurrentPage - 1) * pageSize
+  const paginatedMessages = filteredMessages.slice(startIndex, startIndex + pageSize)
+
+  const handleSearchChange = (val: string) => {
+    setSearch(val)
+    setCurrentPage(1)
+  }
 
   const handleToggleRead = async (id: string, currentStatus: boolean) => {
     setIsUpdating(id)
@@ -224,9 +236,9 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
@@ -325,14 +337,14 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
               type="text"
               placeholder="Search messages..."
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={e => handleSearchChange(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
             />
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
           </div>
         </div>
 
-        {filteredMessages.length === 0 ? (
+        {paginatedMessages.length === 0 ? (
           <div className="p-12 text-center rounded-3xl border border-dashed border-slate-200/10 dark:border-slate-800/10 glass-panel space-y-3">
             <MailOpen className="w-12 h-12 text-muted-foreground/30 mx-auto" />
             <h3 className="font-extrabold text-foreground text-base">No messages found</h3>
@@ -342,7 +354,7 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
           </div>
         ) : (
           <div className="space-y-2">
-            {filteredMessages.map((msg) => (
+            {paginatedMessages.map((msg) => (
               <div
                 key={msg.id}
                 className={cn(
@@ -419,6 +431,44 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between pt-4">
+            <span className="text-xs text-muted-foreground">
+              Page {safeCurrentPage} of {totalPages} ({filteredMessages.length} messages)
+            </span>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={safeCurrentPage === 1}
+                className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-foreground text-xs font-bold border border-slate-200/10 dark:border-slate-800/10 disabled:opacity-30 disabled:pointer-events-none cursor-pointer transition-all"
+              >
+                Prev
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={cn(
+                    "w-8 h-8 rounded-lg text-xs font-bold transition-all cursor-pointer",
+                    page === safeCurrentPage
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-white/5 hover:bg-white/10 text-muted-foreground hover:text-foreground border border-slate-200/10 dark:border-slate-800/10"
+                  )}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={safeCurrentPage === totalPages}
+                className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-foreground text-xs font-bold border border-slate-200/10 dark:border-slate-800/10 disabled:opacity-30 disabled:pointer-events-none cursor-pointer transition-all"
+              >
+                Next
+              </button>
+            </div>
           </div>
         )}
       </div>

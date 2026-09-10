@@ -46,6 +46,14 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
   const [resumeName, setResumeName] = React.useState<string | null>(
     initialProfile.resume_url ? 'Current Resume Document' : null
   )
+  const objectUrlsRef = React.useRef<string[]>([])
+
+  React.useEffect(() => {
+    const urls = objectUrlsRef.current
+    return () => {
+      urls.forEach(url => URL.revokeObjectURL(url))
+    }
+  }, [])
 
   React.useEffect(() => {
     if (state) {
@@ -65,22 +73,18 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+      const url = URL.createObjectURL(file)
+      objectUrlsRef.current.push(url)
+      setAvatarPreview(url)
     }
   }
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setLogoPreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+      const url = URL.createObjectURL(file)
+      objectUrlsRef.current.push(url)
+      setLogoPreview(url)
     }
   }
 

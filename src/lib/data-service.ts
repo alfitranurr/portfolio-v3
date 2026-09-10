@@ -412,7 +412,7 @@ export function sortFeaturedProjects(list: Project[]): Project[] {
 }
 
 // PROJECTS SERVICE
-export async function getProjects(): Promise<Project[]> {
+async function getProjectsImpl(): Promise<Project[]> {
   let projects: Project[] = []
 
   if (!hasSupabaseConfig()) {
@@ -454,6 +454,8 @@ export async function getProjects(): Promise<Project[]> {
   return sortProjects(projects)
 }
 
+export const getProjects = cache(getProjectsImpl)
+
 export async function getProjectById(id: string): Promise<Project | null> {
   if (!hasSupabaseConfig() || id.startsWith('mock-')) {
     try {
@@ -492,7 +494,7 @@ export async function getProjectById(id: string): Promise<Project | null> {
 }
 
 // EDUCATION SERVICE
-export async function getEducation(): Promise<Education[]> {
+async function getEducationImpl(): Promise<Education[]> {
   if (!hasSupabaseConfig()) {
     try {
       const cookieStore = await cookies()
@@ -526,8 +528,10 @@ export async function getEducation(): Promise<Education[]> {
   }
 }
 
+export const getEducation = cache(getEducationImpl)
+
 // EXPERIENCE SERVICE
-export async function getExperience(): Promise<Experience[]> {
+async function getExperienceImpl(): Promise<Experience[]> {
   if (!hasSupabaseConfig()) {
     try {
       const cookieStore = await cookies()
@@ -561,8 +565,10 @@ export async function getExperience(): Promise<Experience[]> {
   }
 }
 
+export const getExperience = cache(getExperienceImpl)
+
 // CERTIFICATES SERVICE
-export async function getCertificates(): Promise<Certificate[]> {
+async function getCertificatesImpl(): Promise<Certificate[]> {
   if (!hasSupabaseConfig()) {
     try {
       const cookieStore = await cookies()
@@ -596,8 +602,10 @@ export async function getCertificates(): Promise<Certificate[]> {
   }
 }
 
+export const getCertificates = cache(getCertificatesImpl)
+
 // 8. SKILLS SERVICE
-export async function getSkills(): Promise<Skill[]> {
+async function getSkillsImpl(): Promise<Skill[]> {
   if (!hasSupabaseConfig()) {
     try {
       const cookieStore = await cookies()
@@ -657,6 +665,8 @@ export async function getSkills(): Promise<Skill[]> {
   }
 }
 
+export const getSkills = cache(getSkillsImpl)
+
 export interface VisitorStats {
   totalViews: number
   uniqueVisitors: number
@@ -665,7 +675,7 @@ export interface VisitorStats {
   isMissingTable?: boolean
 }
 
-export async function getVisitorStats(): Promise<VisitorStats> {
+export async function getVisitorStatsImpl(): Promise<VisitorStats> {
   if (!hasSupabaseConfig()) {
     return {
       totalViews: 0,
@@ -708,6 +718,23 @@ export async function getVisitorStats(): Promise<VisitorStats> {
       todayUnique: 0,
       isMissingTable: true
     }
+  }
+}
+
+export const getVisitorStats = cache(getVisitorStatsImpl)
+
+export async function getCounts() {
+  const [projects, education, experience, certificates] = await Promise.all([
+    getProjects(),
+    getEducation(),
+    getExperience(),
+    getCertificates(),
+  ])
+  return {
+    projects: projects.length,
+    education: education.length,
+    experience: experience.length,
+    certificates: certificates.length,
   }
 }
 
