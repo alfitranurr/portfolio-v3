@@ -60,7 +60,7 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
 
   const filteredAndSorted = useCertificateFilters(certificates, search, activeCategory, sortField)
   const { currentPage, setCurrentPage, totalPages, startIndex } = usePagination(filteredAndSorted.length, pageSize)
-  const paginatedItems = filteredAndSorted.slice(startIndex, startIndex + pageSize)
+  const paginatedItems = React.useMemo(() => filteredAndSorted.slice(startIndex, startIndex + pageSize), [filteredAndSorted, startIndex, pageSize])
 
   const handleEdit = (item: Certificate) => {
     const issue_date = item.issue_date ? item.issue_date.split('T')[0] : ''
@@ -70,9 +70,9 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
 
   const handleDuplicate = (item: Certificate) => {
     const issue_date = item.issue_date ? item.issue_date.split('T')[0] : ''
-    setEditingItem({ 
-      ...item, 
-      id: undefined, 
+    setEditingItem({
+      ...item,
+      id: undefined,
       title: `${item.title} (Copy)`,
       issue_date
     })
@@ -171,8 +171,8 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
       {notification && (
         <div className={cn(
           "p-4 rounded-xl text-xs font-semibold flex items-center gap-2.5",
-          notification.success 
-            ? "bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400" 
+          notification.success
+            ? "bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400"
             : "bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400"
         )}>
           {notification.success ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}

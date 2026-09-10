@@ -31,6 +31,14 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
   const [pageSize, setPageSize] = React.useState(10)
   const [editingItem, setEditingItem] = React.useState<Partial<Experience> | null>(null)
   const [descriptionBullets, setDescriptionBullets] = React.useState<string[]>([])
+  const [bulletIds, setBulletIds] = React.useState<string[]>([])
+  const bulletIdCounter = React.useRef(0)
+
+  const generateBulletId = () => `bullet-${bulletIdCounter.current++}`
+
+  const syncBulletIds = (bullets: string[]) => {
+    setBulletIds(bullets.map(() => generateBulletId()))
+  }
   const [isPending, setIsPending] = React.useState(false)
   const [notification, setNotification] = React.useState<{ success: boolean; message: string } | null>(null)
   const [previewItem, setPreviewItem] = React.useState<Experience | null>(null)
@@ -68,28 +76,32 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
     const end_date = item.end_date ? item.end_date.split('T')[0] : ''
     setEditingItem({ ...item, start_date, end_date, category: item.category || 'professional', logo_url: item.logo_url || '' })
     setDescriptionBullets(item.description || [])
+    syncBulletIds(item.description || [])
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const handleDuplicate = (item: Experience) => {
     const start_date = item.start_date ? item.start_date.split('T')[0] : ''
     const end_date = item.end_date ? item.end_date.split('T')[0] : ''
-    setEditingItem({ 
-      ...item, 
-      id: undefined, 
+    setEditingItem({
+      ...item,
+      id: undefined,
       role: `${item.role} (Copy)`,
-      start_date, 
-      end_date, 
-      category: item.category || 'professional', 
-      logo_url: item.logo_url || '' 
+      start_date,
+      end_date,
+      category: item.category || 'professional',
+      logo_url: item.logo_url || ''
     })
-    setDescriptionBullets(item.description ? [...item.description] : [])
+    const dupDesc = item.description ? [...item.description] : []
+    setDescriptionBullets(dupDesc)
+    syncBulletIds(dupDesc)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const handleCreateNew = () => {
     setEditingItem({ ...DEFAULT_EXPERIENCE })
     setDescriptionBullets([])
+    setBulletIds([])
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -115,10 +127,12 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
 
   const handleAddBullet = () => {
     setDescriptionBullets(prev => [...prev, ''])
+    setBulletIds(prev => [...prev, generateBulletId()])
   }
 
   const handleRemoveBullet = (index: number) => {
     setDescriptionBullets(prev => prev.filter((_, i) => i !== index))
+    setBulletIds(prev => prev.filter((_, i) => i !== index))
   }
 
   const handleBulletChange = (index: number, value: string) => {
@@ -133,6 +147,13 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
     if ((direction === 'up' && index === 0) || (direction === 'down' && index === descriptionBullets.length - 1)) return
     const targetIdx = direction === 'up' ? index - 1 : index + 1
     setDescriptionBullets(prev => {
+      const copy = [...prev]
+      const temp = copy[index]
+      copy[index] = copy[targetIdx]
+      copy[targetIdx] = temp
+      return copy
+    })
+    setBulletIds(prev => {
       const copy = [...prev]
       const temp = copy[index]
       copy[index] = copy[targetIdx]
@@ -172,6 +193,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
         }
         setEditingItem(null)
         setDescriptionBullets([])
+        setBulletIds([])
         setNotification({ success: true, message: res.message || 'Saved successfully.' })
       } else {
         setNotification({ success: false, message: res.error || 'Failed to save experience.' })
@@ -218,8 +240,8 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
       {notification && (
         <div className={cn(
           "p-4 rounded-xl text-xs font-semibold flex items-center gap-2.5",
-          notification.success 
-            ? "bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400" 
+          notification.success
+            ? "bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400"
             : "bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400"
         )}>
           {notification.success ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
@@ -231,13 +253,15 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
       {editingItem && (
         <ExperienceForm
           experience={editingItem}
-          descriptionBullets={descriptionBullets}
           onCancel={() => {
             setEditingItem(null)
             setDescriptionBullets([])
+            setBulletIds([])
           }}
           onSave={handleSave}
           onUpdateExperience={setEditingItem}
+          descriptionBullets={descriptionBullets}
+          bulletIds={bulletIds}
           onAddBullet={handleAddBullet}
           onRemoveBullet={handleRemoveBullet}
           onBulletChange={handleBulletChange}

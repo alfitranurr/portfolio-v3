@@ -8,6 +8,7 @@ import { uploadAssetAction } from '@/app/admin/actions'
 interface ExperienceFormProps {
   experience: Partial<Experience> | null
   descriptionBullets: string[]
+  bulletIds: string[]
   onCancel: () => void
   onSave: (e: React.FormEvent<HTMLFormElement>) => void
   onUpdateExperience: (updater: (prev: Partial<Experience> | null) => Partial<Experience> | null) => void
@@ -22,6 +23,7 @@ interface ExperienceFormProps {
 export function ExperienceForm({
   experience,
   descriptionBullets,
+  bulletIds,
   onCancel,
   onSave,
   onUpdateExperience,
@@ -280,7 +282,7 @@ export function ExperienceForm({
                   </p>
                 ) : (
                   descriptionBullets.map((bullet, idx) => (
-                    <div key={idx} className="flex items-start gap-2 p-3 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10">
+                    <div key={bulletIds[idx] || idx} className="flex items-start gap-2 p-3 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10">
                       <div className="flex flex-col gap-1 shrink-0 pt-1">
                         <button
                           type="button"

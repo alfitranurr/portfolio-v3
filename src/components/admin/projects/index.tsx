@@ -95,8 +95,8 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
         if (proj.pinned_order !== expectedOrder) {
           allUpdates.push({ id: proj.id, pinned_order: expectedOrder })
           hasChanges = true
-          
-          updatedProjectsList = updatedProjectsList.map(p => 
+
+          updatedProjectsList = updatedProjectsList.map(p =>
             p.id === proj.id ? { ...p, pinned_order: expectedOrder } : p
           )
         }
@@ -117,19 +117,19 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
   React.useEffect(() => {
     if (isOrderModalOpen && editingProject) {
       const categoryProjects = [...projects.filter(p => p.category === editingProject.category)]
-      
+
       const pinned = categoryProjects.filter(p => p.pinned_order !== null && p.pinned_order !== undefined && p.pinned_order > 0)
       pinned.sort((a, b) => (a.pinned_order || 0) - (b.pinned_order || 0))
-      
+
       const unpinned = categoryProjects.filter(p => p.pinned_order === null || p.pinned_order === undefined || p.pinned_order === 0)
       unpinned.sort((a, b) => {
         const aTime = a.created_at ? new Date(a.created_at).getTime() : 0
         const bTime = b.created_at ? new Date(b.created_at).getTime() : 0
         return bTime - aTime
       })
-      
+
       let combined = [...pinned, ...unpinned]
-      
+
       const isEditingInList = combined.some(p => p.id === editingProject.id)
       if (!isEditingInList) {
         const currentProjTemp: Project = {
@@ -154,12 +154,12 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
       } else {
         combined = combined.map(p => p.id === editingProject.id ? { ...p, title: editingProject.title || p.title } : p)
       }
-      
+
       const listWithOrders = combined.map((p, idx) => ({
         ...p,
         pinned_order: idx + 1
       }))
-      
+
       setTimeout(() => setOrderModalList(listWithOrders), 0)
     }
   }, [isOrderModalOpen, editingProject, projects])
@@ -169,10 +169,10 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
     if (isFeaturedOrderModalOpen && editingProject) {
       const featured = projects.filter(p => p.is_featured)
       featured.sort((a, b) => (a.featured_order || 0) - (b.featured_order || 0))
-      
+
       const isEditingFeatured = featured.some(p => p.id === editingProject.id)
       let initialList = [...featured]
-      
+
       if (!isEditingFeatured && editingProject.is_featured) {
         const currentProjTemp: Project = {
           id: editingProject.id || 'temp-current-id',
@@ -196,7 +196,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
       } else {
         initialList = initialList.map(p => p.id === editingProject.id ? { ...p, title: editingProject.title || p.title } : p)
       }
-      
+
       setTimeout(() => setFeaturedOrderList(initialList), 0)
     }
   }, [isFeaturedOrderModalOpen, editingProject, projects])
@@ -236,7 +236,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
 
   const availableFilters = React.useMemo(() => {
     const categoryProjects = projects.filter(p => p.category === activeCategory)
-    const uniqueInDb = Array.from(new Set(categoryProjects.map(p => 
+    const uniqueInDb = Array.from(new Set(categoryProjects.map(p =>
       p.sub_category === 'Data Automation Projects' ? 'Automation Projects' : p.sub_category
     ))).filter(Boolean)
     const baseSubcategories = activeCategory === 'data' ? DATA_SUBCATEGORIES : NON_DATA_SUBCATEGORIES
@@ -251,7 +251,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
 
   const filteredAndSorted = useProjectFilters(projects, activeCategory, search, activeSubCategory, sortField)
   const { currentPage, setCurrentPage, totalPages, startIndex } = usePagination(filteredAndSorted.length, pageSize)
-  const paginatedItems = filteredAndSorted.slice(startIndex, startIndex + pageSize)
+  const paginatedItems = React.useMemo(() => filteredAndSorted.slice(startIndex, startIndex + pageSize), [filteredAndSorted, startIndex, pageSize])
 
   const handleEdit = (project: Project) => {
     setEditingProject(project)
@@ -275,7 +275,7 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
     const categoryProjects = projects.filter(p => p.category === activeCategory)
     const maxPin = categoryProjects.reduce((max, p) => Math.max(max, p.pinned_order || 0), 0)
 
-    setEditingProject({ 
+    setEditingProject({
       ...DEFAULT_PROJECT,
       category: activeCategory,
       sub_category: activeCategory === 'data' ? 'Data Analytics Projects' : 'Web Development Projects',
@@ -319,9 +319,9 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
     }
 
     if (editingProject.pinned_order && editingProject.pinned_order > 0) {
-      const isDuplicate = projects.some(p => 
-        p.id !== editingProject.id && 
-        p.category === editingProject.category && 
+      const isDuplicate = projects.some(p =>
+        p.id !== editingProject.id &&
+        p.category === editingProject.category &&
         p.pinned_order === editingProject.pinned_order
       )
       if (isDuplicate) {
@@ -364,11 +364,11 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
 
       orderModalList.forEach((proj, idx) => {
         const newIdx = idx + 1
-        
+
         if (proj.id === (editingProject?.id || 'temp-current-id')) {
           newEditingProjectPinnedOrder = newIdx
         }
-        
+
         if (proj.id && proj.id !== 'temp-current-id') {
           updatesToDb.push({ id: proj.id, pinned_order: newIdx })
         }
@@ -408,19 +408,19 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
       let newEditingProjectIsFeatured = !!editingProject?.is_featured
 
       const originalFeatured = projects.filter(p => p.is_featured)
-      const removedProjects = originalFeatured.filter(op => 
-        op.id !== editingProject?.id && 
+      const removedProjects = originalFeatured.filter(op =>
+        op.id !== editingProject?.id &&
         !featuredOrderList.some(f => f.id === op.id)
       )
 
       featuredOrderList.forEach((proj, idx) => {
         const newIdx = idx + 1
-        
+
         if (proj.id === (editingProject?.id || 'temp-current-id')) {
           newEditingProjectFeaturedOrder = newIdx
           newEditingProjectIsFeatured = true
         }
-        
+
         if (proj.id && proj.id !== 'temp-current-id') {
           updatesToDb.push({ id: proj.id, featured_order: newIdx, is_featured: true })
         }
@@ -440,10 +440,10 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
       setProjects(prev => prev.map(p => {
         const update = updatesToDb.find(u => u.id === p.id)
         if (update) {
-          return { 
-            ...p, 
+          return {
+            ...p,
             featured_order: update.featured_order,
-            is_featured: update.is_featured !== undefined ? update.is_featured : p.is_featured 
+            is_featured: update.is_featured !== undefined ? update.is_featured : p.is_featured
           }
         }
         return p
@@ -455,10 +455,10 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
         newEditingProjectIsFeatured = false
       }
 
-      setEditingProject(prev => prev ? { 
-        ...prev, 
-        featured_order: newEditingProjectFeaturedOrder, 
-        is_featured: newEditingProjectIsFeatured 
+      setEditingProject(prev => prev ? {
+        ...prev,
+        featured_order: newEditingProjectFeaturedOrder,
+        is_featured: newEditingProjectIsFeatured
       } : null)
 
       setNotification({ success: true, message: 'Featured projects reordered successfully.' })
@@ -509,8 +509,8 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
       {notification && (
         <div className={cn(
           "p-4 rounded-xl text-xs font-semibold flex items-center gap-2.5",
-          notification.success 
-            ? "bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400" 
+          notification.success
+            ? "bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400"
             : "bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400"
         )}>
           {notification.success ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}

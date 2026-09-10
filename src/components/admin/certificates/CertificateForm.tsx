@@ -1,5 +1,7 @@
 import * as React from 'react'
-import { ArrowLeft, Check, Loader2 } from 'lucide-react'
+import { ArrowLeft, Check, Loader2, Award } from 'lucide-react'
+import { BlurImage } from '@/components/ui/blur-image'
+import { getDirectImageUrl } from '@/lib/utils'
 import { Certificate, CATEGORY_MAP } from './types'
 
 interface CertificateFormProps {
@@ -22,7 +24,7 @@ export function CertificateForm({
   return (
     <div className="rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 p-6 md:p-8 space-y-6 relative overflow-hidden">
       <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full filter blur-2xl pointer-events-none" />
-      
+
       <div className="flex items-center justify-between pb-4 border-b border-slate-200/10 dark:border-slate-800/10">
         <button
           onClick={onCancel}
@@ -136,16 +138,35 @@ export function CertificateForm({
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 Certificate Image URL
               </label>
-              <input
-                type="url"
-                value={certificate.image_url || ''}
-                onChange={e => onUpdateCertificate(prev => ({ ...prev, image_url: e.target.value }))}
-                placeholder="https://example.com/certificate.jpg"
-                className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
-              />
-              <p className="text-[10px] text-muted-foreground leading-normal">
-                Optional: URL to certificate image or badge
-              </p>
+              <div className="flex items-center gap-4">
+                {/* Preview box */}
+                <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center shrink-0">
+                  {certificate.image_url ? (
+                    <BlurImage
+                      src={getDirectImageUrl(certificate.image_url, 200)}
+                      alt="Certificate preview"
+                      lowQuality
+                      sizes="56px"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Award className="w-6 h-6 text-muted-foreground/40" />
+                  )}
+                </div>
+
+                <div className="flex-1 space-y-2">
+                  <input
+                    type="url"
+                    value={certificate.image_url || ''}
+                    onChange={e => onUpdateCertificate(prev => ({ ...prev, image_url: e.target.value }))}
+                    placeholder="https://example.com/certificate.jpg"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                  />
+                  <p className="text-[10px] text-muted-foreground leading-normal">
+                    Optional: URL to certificate image or badge
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

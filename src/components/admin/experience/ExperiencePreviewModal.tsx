@@ -19,11 +19,11 @@ export function ExperiencePreviewModal({ experience, onClose, onEdit }: Experien
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl relative animate-fade-in">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl relative animate-fade-in">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             {experience.logo_url ? (
-              <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shrink-0 relative p-2">
+              <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shrink-0 relative p-2">
                 <BlurImage src={getDirectImageUrl(experience.logo_url, 200)} alt={experience.company} sizes="64px" className="w-full h-full object-contain" />
               </div>
             ) : (
@@ -33,20 +33,20 @@ export function ExperiencePreviewModal({ experience, onClose, onEdit }: Experien
             )}
             <div>
               <h3 className="text-lg font-bold text-foreground leading-snug">{experience.role}</h3>
-              <p className="text-sm font-semibold text-sky-400">{experience.company}</p>
+              <p className="text-sm font-semibold text-muted-foreground">{experience.company}</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl hover:bg-white/10 text-muted-foreground hover:text-foreground cursor-pointer">
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 text-muted-foreground hover:text-foreground cursor-pointer transition-colors shrink-0">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground border-y border-slate-800 py-3">
-          <span className="px-2.5 py-1 rounded-md bg-white/5 font-bold text-foreground">
+        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground border-y border-slate-200 dark:border-slate-800 py-3">
+          <span className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-white/5 font-bold text-foreground">
             {CATEGORY_MAP[experience.category || 'professional']}
           </span>
           {experience.is_current && (
-            <span className="px-2.5 py-1 rounded-md bg-green-500/10 text-green-400 border border-green-500/20 font-bold uppercase">
+            <span className="px-2.5 py-1 rounded-md bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 font-bold uppercase">
               Current
             </span>
           )}
@@ -68,8 +68,8 @@ export function ExperiencePreviewModal({ experience, onClose, onEdit }: Experien
         </div>
 
         {experience.description && experience.description.length > 0 && (
-          <div className="space-y-2 max-h-48 overflow-y-auto pr-2 text-xs text-slate-300">
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Job Responsibilities</span>
+          <div className="space-y-2 max-h-48 overflow-y-auto pr-2 text-xs text-muted-foreground">
+            <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider block">Job Responsibilities</span>
             <ul className="list-disc list-inside space-y-1.5">
               {experience.description.map((desc, idx) => (
                 <li key={idx} className="leading-relaxed">{desc}</li>
@@ -78,7 +78,7 @@ export function ExperiencePreviewModal({ experience, onClose, onEdit }: Experien
           </div>
         )}
 
-        <div className="flex items-center justify-end pt-2 border-t border-slate-800">
+        <div className="flex items-center justify-end pt-2 border-t border-slate-200 dark:border-slate-800">
           <button
             onClick={() => {
               onClose()

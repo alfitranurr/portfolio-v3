@@ -26,7 +26,7 @@ export function SkillPreviewModal({ skill, onClose, onEdit }: SkillPreviewModalP
       onClick={onClose}
     >
       <div
-        className="bg-white border border-slate-200 rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl relative animate-fade-in"
+        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl relative animate-fade-in"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between">
@@ -39,30 +39,30 @@ export function SkillPreviewModal({ skill, onClose, onEdit }: SkillPreviewModalP
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-bold text-slate-900 leading-snug">{skill.name}</h3>
+              <h3 className="text-lg font-bold text-foreground leading-snug">{skill.name}</h3>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-900 cursor-pointer transition-colors shrink-0">
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 text-muted-foreground hover:text-foreground cursor-pointer transition-colors shrink-0">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {skill.proficiency !== null && skill.proficiency !== undefined && (
-          <div className="flex flex-wrap gap-2 text-xs text-slate-500 border-y border-slate-200 py-3">
-            <span className="px-2.5 py-1 rounded-md bg-slate-100 font-bold text-slate-900">
+          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground border-y border-slate-200 dark:border-slate-800 py-3">
+            <span className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-white/5 font-bold text-foreground">
               Proficiency: {skill.proficiency}%
             </span>
           </div>
         )}
 
         {skill.description && (
-          <div className="space-y-2 max-h-48 overflow-y-auto pr-2 text-xs text-slate-600">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Description</span>
+          <div className="space-y-2 max-h-48 overflow-y-auto pr-2 text-xs text-muted-foreground">
+            <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider block">Description</span>
             <p className="leading-relaxed">{skill.description}</p>
           </div>
         )}
 
-        <div className="flex items-center justify-end pt-2 border-t border-slate-200">
+        <div className="flex items-center justify-end pt-2 border-t border-slate-200 dark:border-slate-800">
           <button
             onClick={() => {
               onClose()

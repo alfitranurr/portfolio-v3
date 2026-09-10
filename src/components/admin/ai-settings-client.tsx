@@ -1,16 +1,16 @@
 'use client'
 
 import * as React from 'react'
-import { 
-  Bot, 
-  Settings, 
-  Trash2, 
-  Clock, 
-  Search, 
-  Cpu, 
-  Sliders, 
-  Coins, 
-  Activity, 
+import {
+  Bot,
+  Settings,
+  Trash2,
+  Clock,
+  Search,
+  Cpu,
+  Sliders,
+  Coins,
+  Activity,
   Database,
   CheckCircle,
   AlertTriangle,
@@ -32,32 +32,35 @@ interface AISettingsClientProps {
 export function AISettingsClient({ initialSettings, initialLogs }: AISettingsClientProps) {
   const [, setSettings] = React.useState<AISettings>(initialSettings)
   const [logs, setLogs] = React.useState<AIChatLog[]>(initialLogs)
-  
+
   // Form states
   const [modelName, setModelName] = React.useState(initialSettings.model_name)
   const [searchGrounding, setSearchGrounding] = React.useState(initialSettings.search_grounding)
   const [temperature, setTemperature] = React.useState(initialSettings.temperature)
   const [maxHistory, setMaxHistory] = React.useState(initialSettings.max_history)
-  
+
   // UI states
   const [isSaving, setIsSaving] = React.useState(false)
   const [isClearing, setIsClearing] = React.useState(false)
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null)
-  
+
   // Search & pagination states
   const [searchQuery, setSearchQuery] = React.useState('')
   const [currentPage, setCurrentPage] = React.useState(1)
   const [expandedLogId, setExpandedLogId] = React.useState<string | null>(null)
-  
+
   const logsPerPage = 10
 
   // Calculate statistics
-  const totalQueries = logs.length
-  const totalPromptTokens = logs.reduce((sum, l) => sum + (l.prompt_tokens || 0), 0)
-  const totalCompletionTokens = logs.reduce((sum, l) => sum + (l.completion_tokens || 0), 0)
-  const totalTokens = totalPromptTokens + totalCompletionTokens
-  const groundingCount = logs.filter(l => l.search_grounding).length
-  const groundingPercentage = totalQueries > 0 ? Math.round((groundingCount / totalQueries) * 100) : 0
+  const { totalQueries, totalPromptTokens, totalCompletionTokens, totalTokens, groundingCount, groundingPercentage } = React.useMemo(() => {
+    const totalQueries = logs.length
+    const totalPromptTokens = logs.reduce((sum, l) => sum + (l.prompt_tokens || 0), 0)
+    const totalCompletionTokens = logs.reduce((sum, l) => sum + (l.completion_tokens || 0), 0)
+    const totalTokens = totalPromptTokens + totalCompletionTokens
+    const groundingCount = logs.filter(l => l.search_grounding).length
+    const groundingPercentage = totalQueries > 0 ? Math.round((groundingCount / totalQueries) * 100) : 0
+    return { totalQueries, totalPromptTokens, totalCompletionTokens, totalTokens, groundingCount, groundingPercentage }
+  }, [logs])
 
   // Standard pricing calculation based on Gemini's pricing rates
   const estimatedCost = React.useMemo(() => {
@@ -67,10 +70,10 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
       // Gemini 2.5 Pro: Input $1.25 / 1M, Output $5.00 / 1M
       const inputRate = isPro ? 1.25 : 0.075
       const outputRate = isPro ? 5.00 : 0.30
-      
+
       const inputCost = ((log.prompt_tokens || 0) / 1_000_000) * inputRate
       const outputCost = ((log.completion_tokens || 0) / 1_000_000) * outputRate
-      
+
       return total + inputCost + outputCost
     }, 0)
   }, [logs])
@@ -79,7 +82,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
   const filteredLogs = React.useMemo(() => {
     if (!searchQuery.trim()) return logs
     const term = searchQuery.toLowerCase()
-    return logs.filter(l => 
+    return logs.filter(l =>
       l.prompt_preview.toLowerCase().includes(term) ||
       l.model_name.toLowerCase().includes(term) ||
       l.user_ip.toLowerCase().includes(term)
@@ -106,7 +109,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
     e.preventDefault()
     setIsSaving(true)
     setFeedback(null)
-    
+
     try {
       const updatedSettings: AISettings = {
         model_name: modelName,
@@ -114,7 +117,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
         temperature: Number(temperature),
         max_history: Number(maxHistory)
       }
-      
+
       const res = await saveAISettingsAction(updatedSettings)
       if (res.success) {
         setSettings(updatedSettings)
@@ -184,8 +187,8 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
       {feedback && (
         <div className={cn(
           "p-4 rounded-xl border flex items-center gap-3 animate-slide-up text-xs font-semibold",
-          feedback.type === 'success' 
-            ? "bg-green-500/10 border-green-500/25 text-green-600 dark:text-green-400" 
+          feedback.type === 'success'
+            ? "bg-green-500/10 border-green-500/25 text-green-600 dark:text-green-400"
             : "bg-red-500/10 border-red-500/25 text-red-600 dark:text-red-400"
         )}>
           {feedback.type === 'success' ? <CheckCircle className="w-4 h-4 shrink-0" /> : <AlertTriangle className="w-4 h-4 shrink-0" />}
@@ -260,7 +263,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
 
       {/* Main Grid: Config Form & Logs */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* Left Side: Settings Panel */}
         <div className="lg:col-span-1 space-y-6">
           <div className="p-6 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-6">
@@ -270,7 +273,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
             </h2>
 
             <form onSubmit={handleSaveSettings} className="space-y-5">
-              
+
               {/* Model selection */}
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
@@ -419,7 +422,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
               {paginatedLogs.map((log) => {
                 const isExpanded = expandedLogId === log.id
                 const isPro = log.model_name.includes('pro')
-                
+
                 return (
                   <div
                     key={log.id}
@@ -441,7 +444,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                           )}>
                             {log.model_name}
                           </span>
-                          
+
                           {log.search_grounding && (
                             <span className="px-2 py-0.5 rounded-md text-[9px] font-bold tracking-wide uppercase bg-sky-500/15 text-sky-400 border border-sky-500/10 flex items-center gap-1">
                               <Globe className="w-2.5 h-2.5" />
@@ -464,7 +467,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                           <Clock className="w-3.5 h-3.5 text-muted-foreground/60" />
                           <span>{new Date(log.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                         </span>
-                        
+
                         {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
                       </div>
                     </div>
@@ -472,7 +475,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                     {/* Detailed Expanded Row */}
                     {isExpanded && (
                       <div className="px-4 pb-4 pt-1 border-t border-slate-200/10 dark:border-slate-800/10 space-y-3.5 animate-slide-up text-xs">
-                        
+
                         {/* Full Prompt Preview */}
                         <div className="space-y-1">
                           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Prompt Excerpt</span>
@@ -518,7 +521,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                   <span className="text-xs text-muted-foreground">
                     Page {currentPage} of {totalPages} ({filteredLogs.length} total logs)
                   </span>
-                  
+
                   <div className="flex gap-2">
                     <button
                       onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
