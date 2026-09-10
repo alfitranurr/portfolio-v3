@@ -82,7 +82,7 @@ export default async function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredProjects.map((project) => (
+          {featuredProjects.map((project, index) => (
             <div
               key={project.id}
               className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-all duration-300 relative overflow-hidden"
@@ -99,6 +99,7 @@ export default async function HomePage() {
                       <BlurImage
                         src={project.cover_image}
                         alt=""
+                        lowQuality
                         initialBlur="blur-xl opacity-0"
                         initialScale="scale-110"
                         loadedBlur="blur-xl opacity-30"
@@ -109,6 +110,8 @@ export default async function HomePage() {
                       <BlurImage
                         src={project.cover_image}
                         alt={project.title}
+                        priority={index === 0}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="w-full h-full object-contain relative z-10 group-hover:scale-103 transition-transform duration-500"
                       />
                     </>

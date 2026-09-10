@@ -11,23 +11,21 @@ interface ExperienceFilterListProps {
   initialExperience: Experience[]
 }
 
-function getInitialExperienceCategory(): 'professional' | 'committee_organization' {
-  if (typeof window !== 'undefined') {
+export function ExperienceFilterList({ initialExperience }: ExperienceFilterListProps) {
+  const [activeCategory, setActiveCategory] = React.useState<'professional' | 'committee_organization'>('professional')
+  const [expandedRoles, setExpandedRoles] = React.useState<Record<string, boolean>>({})
+
+  React.useEffect(() => {
     try {
       const stored = sessionStorage.getItem('experience_public_active_category') || localStorage.getItem('experience_public_active_category')
       if (stored === 'professional' || stored === 'committee_organization') {
-        return stored
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setActiveCategory(stored)
       }
     } catch {
-      // fallback
+      // ignore
     }
-  }
-  return 'professional'
-}
-
-export function ExperienceFilterList({ initialExperience }: ExperienceFilterListProps) {
-  const [activeCategory, setActiveCategory] = React.useState<'professional' | 'committee_organization'>(getInitialExperienceCategory)
-  const [expandedRoles, setExpandedRoles] = React.useState<Record<string, boolean>>({})
+  }, [])
 
   const handleCategoryChange = (cat: 'professional' | 'committee_organization') => {
     setActiveCategory(cat)
@@ -43,29 +41,27 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
     setExpandedRoles(prev => ({ ...prev, [id]: !prev[id] }))
   }
 
-  const filteredExperience = initialExperience.filter((exp) => {
-    if (activeCategory === 'professional') {
-      return exp.category === 'professional' || !exp.category
+  const groupedExperiences = React.useMemo(() => {
+    const filtered = initialExperience.filter((exp) => {
+      if (activeCategory === 'professional') {
+        return exp.category === 'professional' || !exp.category
+      }
+      return exp.category === 'committee_organization'
+    })
+
+    interface GroupedExperience {
+      company: string
+      logo_url?: string | null
+      location?: string | null
+      start_date: string
+      end_date: string | null
+      is_current: boolean
+      roles: Experience[]
     }
-    return exp.category === 'committee_organization'
-  })
 
-  interface GroupedExperience {
-    company: string
-    logo_url?: string | null
-    location?: string | null
-    start_date: string
-    end_date: string | null
-    is_current: boolean
-    roles: Experience[]
-  }
-
-
-  // Group experiences by company name
-  const groupExperiences = (exps: Experience[]): GroupedExperience[] => {
     const groups: { [key: string]: GroupedExperience } = {}
-    
-    for (const exp of exps) {
+
+    for (const exp of filtered) {
       const key = exp.company.trim()
       if (!groups[key]) {
         groups[key] = {
@@ -78,14 +74,14 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
           roles: []
         }
       }
-      
+
       const group = groups[key]
       group.roles.push(exp)
-      
+
       if (new Date(exp.start_date) < new Date(group.start_date)) {
         group.start_date = exp.start_date
       }
-      
+
       if (group.is_current || exp.is_current) {
         group.is_current = true
         group.end_date = null
@@ -98,7 +94,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
           group.end_date = exp.end_date
         }
       }
-      
+
       if (!group.logo_url && exp.logo_url) {
         group.logo_url = exp.logo_url
       }
@@ -106,7 +102,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
         group.location = exp.location
       }
     }
-    
+
     return Object.values(groups).map(g => {
       g.roles.sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime())
       return g
@@ -115,9 +111,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
       const latestB = new Date(b.roles[0].start_date).getTime()
       return latestB - latestA
     })
-  }
-
-  const groupedExperiences = groupExperiences(filteredExperience)
+  }, [initialExperience, activeCategory])
 
   const Icon = activeCategory === 'professional' ? Briefcase : Users
 
@@ -222,7 +216,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                             <span>
                               {new Date(singleExp.start_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
                               {' - '}
-                              {singleExp.end_date 
+                              {singleExp.end_date
                                 ? new Date(singleExp.end_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
                                 : 'Present'}
                               {` · ${formatDuration(singleExp.start_date, singleExp.end_date)}`}
@@ -256,23 +250,22 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                         <AnimatePresence initial={false}>
                           {!!expandedRoles[singleExp.id] && (
                             <motion.div
-                              initial={{ height: 0, opacity: 0, y: -10 }}
-                              animate={{ height: 'auto', opacity: 1, y: 0 }}
-                              exit={{ height: 0, opacity: 0, y: -10 }}
-                              transition={{ 
-                                height: { duration: 0.35, ease: [0.04, 0.62, 0.23, 0.98] },
-                                opacity: { duration: 0.25 },
-                                y: { duration: 0.25 }
-                              }}
-                              className="overflow-hidden"
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              transition={{ duration: 0.25 }}
+                              className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+                              style={{ gridTemplateRows: !!expandedRoles[singleExp.id] ? '1fr' : '0fr' }}
                             >
-                              <ul className="space-y-2 pt-3 border-t border-slate-200/10 dark:border-slate-800/10 text-sm text-foreground/85 list-disc list-inside">
+                              <div className="overflow-hidden">
+                                <ul className="space-y-2 pt-3 border-t border-slate-200/10 dark:border-slate-800/10 text-sm text-foreground/85 list-disc list-inside">
                                 {singleExp.description.map((bullet, index) => (
                                   <li key={index} className="leading-relaxed pl-1">
                                     <span className="ml-1.5">{bullet}</span>
                                   </li>
                                 ))}
                               </ul>
+                              </div>
                             </motion.div>
                           )}
                         </AnimatePresence>
@@ -283,7 +276,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                     <div className="w-full p-6 md:p-8 rounded-3xl glass-panel hover:border-primary/20 transition-[border-color,background-color,box-shadow] duration-300 space-y-6 relative overflow-hidden">
                       {/* Subtle left indicator bar */}
                       <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-primary/40 to-transparent scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-center" />
-                      
+
                       {/* Company Header matching Single Role right-side metadata */}
                       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 pb-4 border-b border-slate-200/10 dark:border-slate-800/10">
                         <div className="flex gap-4 items-start min-w-0 flex-1">
@@ -307,9 +300,9 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                             <span>
                               {new Date(group.start_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
                               {' - '}
-                              {group.is_current 
-                                ? 'Present' 
-                                : group.end_date 
+                              {group.is_current
+                                ? 'Present'
+                                : group.end_date
                                   ? new Date(group.end_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
                                   : 'Present'}
                               {` · ${formatDuration(group.start_date, group.end_date)}`}
@@ -336,7 +329,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                                     <span className="break-words">{role.role}</span>
                                   </h3>
                                 </div>
-                                
+
                                 <div className="flex flex-col md:items-end gap-1 text-xs text-muted-foreground self-start md:self-auto shrink-0 md:text-right font-medium md:min-w-[210px]">
                                   {role.is_current && (
                                     <span className="bg-primary/10 border border-primary/20 text-primary px-2 py-0.5 rounded-md text-[10px] font-extrabold animate-pulse md:mb-0.5 self-start md:self-auto">
@@ -348,7 +341,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                                     <span>
                                       {new Date(role.start_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
                                       {' - '}
-                                      {role.end_date 
+                                      {role.end_date
                                         ? new Date(role.end_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
                                         : 'Present'}
                                       {` · ${formatDuration(role.start_date, role.end_date)}`}
@@ -376,23 +369,22 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                                 <AnimatePresence initial={false}>
                                   {!!expandedRoles[role.id] && (
                                     <motion.div
-                                      initial={{ height: 0, opacity: 0, y: -10 }}
-                                      animate={{ height: 'auto', opacity: 1, y: 0 }}
-                                      exit={{ height: 0, opacity: 0, y: -10 }}
-                                      transition={{ 
-                                        height: { duration: 0.35, ease: [0.04, 0.62, 0.23, 0.98] },
-                                        opacity: { duration: 0.25 },
-                                        y: { duration: 0.25 }
-                                      }}
-                                      className="overflow-hidden"
+                                      initial={{ opacity: 0, y: -10 }}
+                                      animate={{ opacity: 1, y: 0 }}
+                                      exit={{ opacity: 0, y: -10 }}
+                                      transition={{ duration: 0.25 }}
+                                      className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+                                      style={{ gridTemplateRows: !!expandedRoles[role.id] ? '1fr' : '0fr' }}
                                     >
-                                      <ul className="space-y-1.5 text-xs md:text-sm text-foreground/80 list-disc list-inside pl-1 pt-2">
+                                      <div className="overflow-hidden">
+                                        <ul className="space-y-1.5 text-xs md:text-sm text-foreground/80 list-disc list-inside pl-1 pt-2">
                                         {role.description.map((bullet, index) => (
                                           <li key={index} className="leading-relaxed">
                                             <span className="ml-1">{bullet}</span>
                                           </li>
                                         ))}
                                       </ul>
+                                      </div>
                                     </motion.div>
                                   )}
                                 </AnimatePresence>

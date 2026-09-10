@@ -60,9 +60,11 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>([])
   const [isFilterOpen, setIsFilterOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
+  const deferredSearch = React.useDeferredValue(search)
 
   type SortField = 'newest' | 'oldest' | 'title' | 'issuer'
   const [sortField, setSortField] = React.useState<SortField>('newest')
+  const [visibleCount, setVisibleCount] = React.useState(9)
 
   const categories = ['All', 'competition', 'seminar_workshop', 'license_certification', 'committee_organization']
 
@@ -72,13 +74,30 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
         ? prev.filter(item => item !== cat)
         : [...prev, cat]
     )
+    setVisibleCount(9)
+  }
+
+  const handleSearchChange = (val: string) => {
+    setSearch(val)
+    setVisibleCount(9)
+  }
+
+  const handleSortChange = (val: SortField) => {
+    setSortField(val)
+    setVisibleCount(9)
+  }
+
+  const handleClearCategories = () => {
+    setSelectedCategories([])
+    setVisibleCount(9)
   }
 
   const filteredAndSortedCertificates = React.useMemo(() => {
+    const q = deferredSearch.toLowerCase()
     const result = initialCertificates.filter(c => {
       const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(c.category)
-      const q = search.toLowerCase()
-      const matchesSearch = c.title.toLowerCase().includes(q) ||
+      const matchesSearch = q === '' ||
+        c.title.toLowerCase().includes(q) ||
         c.issuer.toLowerCase().includes(q) ||
         (c.credential_id && c.credential_id.toLowerCase().includes(q))
       return matchesCategory && matchesSearch
@@ -101,7 +120,10 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
     })
 
     return result
-  }, [initialCertificates, selectedCategories, search, sortField])
+  }, [initialCertificates, selectedCategories, deferredSearch, sortField])
+
+  const visibleCertificates = filteredAndSortedCertificates.slice(0, visibleCount)
+  const hasMore = filteredAndSortedCertificates.length > visibleCount
 
   return (
     <div className="space-y-6">
@@ -115,13 +137,13 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                 type="text"
                 placeholder="Search certificates..."
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-full pl-9 pr-8 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-white/25 text-foreground placeholder:text-muted-foreground/40 text-xs focus:outline-none focus:border-primary/50 transition-all"
               />
               {search && (
                 <button
                   type="button"
-                  onClick={() => setSearch('')}
+                  onClick={() => handleSearchChange('')}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-muted-foreground/60 hover:text-foreground hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition-all cursor-pointer"
                   title="Clear search"
                   aria-label="Clear search"
@@ -155,7 +177,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
           <div className="flex items-center justify-between md:justify-end gap-3 shrink-0">
             <CustomSortDropdown
               value={sortField}
-              onChange={setSortField}
+              onChange={handleSortChange}
               options={[
                 { label: 'Newest First', value: 'newest' },
                 { label: 'Oldest First', value: 'oldest' },
@@ -187,7 +209,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                 {selectedCategories.length > 0 && (
                   <button
                     type="button"
-                    onClick={() => setSelectedCategories([])}
+                    onClick={handleClearCategories}
                     className="text-[10px] font-bold text-primary hover:underline cursor-pointer"
                   >
                     Clear All
@@ -246,13 +268,11 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
       </div>
 
       {/* Certificates Grid */}
-      <motion.div
-        layout
-        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      <div
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
-        <AnimatePresence mode="popLayout">
-          {filteredAndSortedCertificates.map((cert) => {
+        <AnimatePresence mode="sync">
+          {visibleCertificates.map((cert) => {
             const Icon = ICON_MAP[cert.category as keyof typeof ICON_MAP] || Award
             const colors = CATEGORY_COLOR_MAP[cert.category] || {
               badge: 'bg-primary/15 text-primary border-primary/30',
@@ -260,19 +280,16 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
             }
             return (
               <motion.div
-                layout
                 key={cert.id}
                 initial={{ opacity: 0, scale: 0.95, y: 8 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: -8 }}
                 transition={{
-                  layout: { type: 'spring', stiffness: 220, damping: 24, mass: 0.8 },
                   opacity: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
                   scale: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
                   y: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }
                 }}
                 className="group p-6 rounded-3xl glass-panel border border-slate-300/80 dark:border-slate-800/30 hover:border-primary/40 shadow-xs hover:shadow-md flex flex-col justify-between transition-[border-color,box-shadow] duration-300 relative overflow-hidden transform-gpu"
-                style={{ willChange: 'transform, opacity' }}
               >
                 {/* Subtle top indicator bar */}
                 <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
@@ -294,24 +311,26 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                   {/* Image container */}
                   {cert.image_url && (
                     <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-100/90 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-800/60 shadow-xs flex items-center justify-center">
-                      {/* Ambient blur background */}
-                      <BlurImage
-                        src={getDirectImageUrl(cert.image_url)}
-                        alt=""
-                        initialBlur="blur-xl opacity-0"
-                        initialScale="scale-110"
-                        loadedBlur="blur-xl opacity-30"
-                        loadedScale="scale-110"
-                        referrerPolicy="no-referrer"
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-115 transition-transform duration-500 select-none pointer-events-none"
-                      />
-                      {/* Contained foreground image */}
-                      <BlurImage
-                        src={getDirectImageUrl(cert.image_url)}
-                        alt={cert.title}
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-contain relative z-10 group-hover:scale-103 transition-transform duration-500"
-                      />
+                    {/* Ambient blur background */}
+                    <BlurImage
+                      src={getDirectImageUrl(cert.image_url)}
+                      alt=""
+                      lowQuality
+                      initialBlur="blur-xl opacity-0"
+                      initialScale="scale-110"
+                      loadedBlur="blur-xl opacity-30"
+                      loadedScale="scale-110"
+                      referrerPolicy="no-referrer"
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-115 transition-transform duration-500 select-none pointer-events-none"
+                    />
+                    {/* Contained foreground image */}
+                    <BlurImage
+                      src={getDirectImageUrl(cert.image_url)}
+                      alt={cert.title}
+                      referrerPolicy="no-referrer"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="w-full h-full object-contain relative z-10 group-hover:scale-103 transition-transform duration-500"
+                    />
                     </div>
                   )}
 
@@ -368,7 +387,20 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
             No credentials found in this category yet.
           </div>
         )}
-      </motion.div>
+      </div>
+
+      {/* Load More Button */}
+      {hasMore && (
+        <div className="flex justify-center pt-2">
+          <button
+            type="button"
+            onClick={() => setVisibleCount(prev => prev + 9)}
+            className="px-6 py-3 rounded-xl bg-foreground/5 dark:bg-white/5 border border-foreground/10 dark:border-white/10 text-foreground hover:bg-foreground/10 dark:hover:bg-white/10 hover:border-foreground/20 dark:hover:border-white/20 text-xs font-bold transition-all cursor-pointer"
+          >
+            Load More ({filteredAndSortedCertificates.length - visibleCount} remaining)
+          </button>
+        </div>
+      )}
     </div>
   )
 }

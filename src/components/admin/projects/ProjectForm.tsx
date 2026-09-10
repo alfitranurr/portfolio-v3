@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { ArrowLeft, Check, Loader2, Layers, UploadCloud, Image as ImageIcon } from 'lucide-react'
+import { ArrowLeft, Check, Loader2, Layers, UploadCloud, Image as ImageIcon, AlertTriangle } from 'lucide-react'
 import { cn, getDirectImageUrl } from '@/lib/utils'
 import { BlurImage } from '@/components/ui/blur-image'
 import { Project, DATA_SUBCATEGORIES, NON_DATA_SUBCATEGORIES, SUBCATEGORY_MAP } from './types'
@@ -29,6 +29,7 @@ export function ProjectForm({
   setNotification
 }: ProjectFormProps) {
   const [isUploading, setIsUploading] = React.useState(false)
+  const [coverImageWarning, setCoverImageWarning] = React.useState<string | null>(null)
 
   const finalOptions = React.useMemo(() => {
     if (!project) return []
@@ -45,6 +46,22 @@ export function ProjectForm({
   const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+
+    setCoverImageWarning(null)
+
+    const checkDimensions = new Promise<void>((resolve) => {
+      const img = new Image()
+      img.onload = () => {
+        URL.revokeObjectURL(img.src)
+        if (img.naturalWidth < 1200) {
+          setCoverImageWarning(`Image is only ${img.naturalWidth}x${img.naturalHeight}px. Recommended minimum: 1200px wide for HD display.`)
+        }
+        resolve()
+      }
+      img.onerror = () => resolve()
+      img.src = URL.createObjectURL(file)
+    })
+    await checkDimensions
 
     setIsUploading(true)
     setNotification(null)
@@ -75,7 +92,7 @@ export function ProjectForm({
   return (
     <div className="rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 p-6 md:p-8 space-y-6 relative overflow-hidden">
       <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full filter blur-2xl pointer-events-none" />
-      
+
       <div className="flex items-center justify-between pb-4 border-b border-slate-200/10 dark:border-slate-800/10">
         <button
           onClick={onCancel}
@@ -134,7 +151,7 @@ export function ProjectForm({
                   onChange={e => {
                     const newCat = e.target.value as 'data' | 'non-data'
                     const defaultSub = newCat === 'data' ? 'Data Analytics Projects' : 'Web Development Projects'
-                    
+
                     const categoryProjects = projects.filter(p => p.category === newCat)
                     const maxPin = categoryProjects.reduce((max, p) => Math.max(max, p.pinned_order || 0), 0)
 
@@ -354,7 +371,7 @@ export function ProjectForm({
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 Cover Image
               </label>
-              
+
               <div className="flex items-center gap-4">
                 {/* Preview box */}
                 <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center shrink-0">
@@ -402,7 +419,7 @@ export function ProjectForm({
                       disabled={isUploading}
                     />
                   </label>
-                  
+
                   <input
                     type="text"
                     value={project.cover_image || ''}
@@ -410,6 +427,12 @@ export function ProjectForm({
                     placeholder="Or paste Cover Image URL"
                     className="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
                   />
+                  {coverImageWarning && (
+                    <div className="flex items-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-semibold leading-tight">
+                      <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                      <span>{coverImageWarning}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

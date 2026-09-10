@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
+import { cache } from 'react'
 import { Profile, Project, Education, Experience, Certificate, Skill, Photo } from '@/lib/types'
 import { TECH_STACK } from '@/lib/constants'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
@@ -336,14 +337,14 @@ export const MOCK_CERTIFICATES: Certificate[] = [
 // Helper checks if env variables exist
 function hasSupabaseConfig(): boolean {
   return !!(
-    process.env.NEXT_PUBLIC_SUPABASE_URL && 
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
     process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http') &&
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   )
 }
 
 // PROFILE SERVICE
-export async function getProfile(): Promise<Profile> {
+async function getProfileImpl(): Promise<Profile> {
   if (!hasSupabaseConfig()) {
     try {
       const cookieStore = await cookies()
@@ -378,6 +379,8 @@ export async function getProfile(): Promise<Profile> {
   }
 }
 
+export const getProfile = cache(getProfileImpl)
+
 function sortProjects(list: Project[]): Project[] {
   return [...list].sort((a, b) => {
     const aPin = a.pinned_order !== null && a.pinned_order !== undefined && a.pinned_order > 0 ? a.pinned_order : Infinity
@@ -411,7 +414,7 @@ export function sortFeaturedProjects(list: Project[]): Project[] {
 // PROJECTS SERVICE
 export async function getProjects(): Promise<Project[]> {
   let projects: Project[] = []
-  
+
   if (!hasSupabaseConfig()) {
     try {
       const cookieStore = await cookies()
@@ -714,11 +717,11 @@ export interface MonthlyVisitorStats {
   visitors: number
 }
 
-export async function getMonthlyVisitorStats(year: number): Promise<{ 
-  stats: MonthlyVisitorStats[], 
+export async function getMonthlyVisitorStats(year: number): Promise<{
+  stats: MonthlyVisitorStats[],
   yearlyViews: number,
   yearlyVisitors: number,
-  isMissingFunction: boolean 
+  isMissingFunction: boolean
 }> {
   if (!hasSupabaseConfig()) {
     const mockData = Array.from({ length: 12 }, (_, i) => ({
@@ -895,7 +898,3 @@ export async function getPhotos(): Promise<Photo[]> {
 
   return photos
 }
-
-
-
-

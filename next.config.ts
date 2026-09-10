@@ -8,7 +8,9 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    qualities: [75, 85],
+    formats: ['image/avif', 'image/webp'],
+    qualities: [75, 85, 90],
+    minimumCacheTTL: 86400,
     remotePatterns: [
       {
         protocol: 'https',

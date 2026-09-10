@@ -27,13 +27,16 @@ export function CollapsibleEducationDescription({ description }: CollapsibleEduc
 
       <div
         className={cn(
-          "transition-all duration-300 ease-in-out overflow-hidden",
-          isOpen ? "max-h-[500px] opacity-100 mt-2" : "max-h-0 opacity-0"
+          "grid transition-[grid-template-rows] duration-300 ease-in-out",
+          isOpen ? "mt-2" : ""
         )}
+        style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
       >
-        <p className="text-sm text-foreground/80 leading-relaxed text-justify">
-          {description}
-        </p>
+        <div className="overflow-hidden">
+          <p className="text-sm text-foreground/80 leading-relaxed text-justify">
+            {description}
+          </p>
+        </div>
       </div>
     </div>
   )

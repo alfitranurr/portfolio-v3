@@ -31,9 +31,13 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
   const [activeCategory, setActiveCategory] = React.useState<'data' | 'non-data'>(getInitialProjectCategory)
   const [selectedSubCategories, setSelectedSubCategories] = React.useState<string[]>([])
   const [isFilterOpen, setIsFilterOpen] = React.useState(false)
+  const [visibleCount, setVisibleCount] = React.useState(9)
 
   const handleCategoryChange = (cat: 'data' | 'non-data') => {
     setActiveCategory(cat)
+    setSelectedSubCategories([])
+    setSearchQuery('')
+    setVisibleCount(9)
     try {
       sessionStorage.setItem('project_public_active_category', cat)
       localStorage.setItem('project_public_active_category', cat)
@@ -69,18 +73,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
   }
 
   const [searchQuery, setSearchQuery] = React.useState('')
-
-  // Reset subcategory and search when category switches
-  const isFirstMount = React.useRef(true)
-  React.useEffect(() => {
-    if (isFirstMount.current) {
-      isFirstMount.current = false
-      return
-    }
-    setSelectedSubCategories([])
-    setSearchQuery('')
-  }, [activeCategory])
-
+  const deferredSearchQuery = React.useDeferredValue(searchQuery)
 
   const handleToggleSubCategory = (sub: string) => {
     setSelectedSubCategories(prev =>
@@ -88,12 +81,14 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
         ? prev.filter(item => item !== sub)
         : [...prev, sub]
     )
+    setVisibleCount(9)
   }
 
   type SortField = 'pinned' | 'featured' | 'newest' | 'oldest' | 'title'
   const [sortField, setSortField] = React.useState<SortField>('pinned')
 
   const filteredAndSortedProjects = React.useMemo(() => {
+    const q = deferredSearchQuery.trim().toLowerCase()
     const result = initialProjects.filter((project) => {
       const categoryMatch = project.category === activeCategory
       const normalizedProjSub = project.sub_category === 'Data Automation Projects' ? 'Automation Projects' : project.sub_category
@@ -103,9 +98,9 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
         return normalizedProjSub === normalizedSelectedSub
       })
 
-      const searchMatch = searchQuery.trim() === '' ||
-        project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        project.description.toLowerCase().includes(searchQuery.toLowerCase())
+      const searchMatch = q === '' ||
+        project.title.toLowerCase().includes(q) ||
+        project.description.toLowerCase().includes(q)
       return categoryMatch && subCategoryMatch && searchMatch
     })
 
@@ -132,7 +127,25 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
     })
 
     return result
-  }, [initialProjects, activeCategory, selectedSubCategories, searchQuery, sortField])
+  }, [initialProjects, activeCategory, selectedSubCategories, deferredSearchQuery, sortField])
+
+  const visibleProjects = filteredAndSortedProjects.slice(0, visibleCount)
+  const hasMore = filteredAndSortedProjects.length > visibleCount
+
+  const handleSearchChange = (val: string) => {
+    setSearchQuery(val)
+    setVisibleCount(9)
+  }
+
+  const handleSortChange = (val: SortField) => {
+    setSortField(val)
+    setVisibleCount(9)
+  }
+
+  const handleClearSubCategories = () => {
+    setSelectedSubCategories([])
+    setVisibleCount(9)
+  }
 
   return (
     <div className="space-y-8">
@@ -192,13 +205,13 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                 type="text"
                 placeholder="Search projects..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-full pl-9 pr-8 py-2 rounded-xl bg-white/5 border border-slate-300 dark:border-white/25 text-foreground placeholder:text-muted-foreground/45 text-xs focus:outline-none focus:border-primary/50 transition-all"
               />
               {searchQuery && (
                 <button
                   type="button"
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => handleSearchChange('')}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-muted-foreground/60 hover:text-foreground hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition-all cursor-pointer"
                   title="Clear search"
                   aria-label="Clear search"
@@ -233,7 +246,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
           <div className="flex items-center justify-between md:justify-end gap-3 shrink-0">
             <CustomSortDropdown
               value={sortField}
-              onChange={setSortField}
+              onChange={handleSortChange}
               options={[
                 { label: 'Pinned Order', value: 'pinned' },
                 { label: 'Featured First', value: 'featured' },
@@ -266,7 +279,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                 {selectedSubCategories.length > 0 && (
                   <button
                     type="button"
-                    onClick={() => setSelectedSubCategories([])}
+                    onClick={handleClearSubCategories}
                     className="text-[10px] font-bold text-primary hover:underline cursor-pointer"
                   >
                     Clear All
@@ -336,11 +349,17 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
             className="w-full"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-              {filteredAndSortedProjects.map((project) => (
+              {visibleProjects.map((project) => (
                 <motion.div
-                  layout
                   key={project.id}
-                  transition={{ layout: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } }}
+                  initial={{ opacity: 0, scale: 0.95, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -8 }}
+                  transition={{
+                    opacity: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
+                    scale: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
+                    y: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }
+                  }}
                   className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-[border-color,box-shadow] duration-300 relative overflow-hidden transform-gpu w-full"
                 >
                   {/* Subtle top indicator bar */}
@@ -351,22 +370,24 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                     <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-slate-200/10 to-slate-200/5 dark:from-slate-800/10 dark:to-slate-800/5 border border-slate-200/10 dark:border-slate-800/10 flex items-center justify-center">
                       {project.cover_image ? (
                         <>
-                          {/* Ambient blur background */}
-                          <BlurImage
-                            src={project.cover_image}
-                            alt=""
-                            initialBlur="blur-xl opacity-0"
-                            initialScale="scale-110"
-                            loadedBlur="blur-xl opacity-30"
-                            loadedScale="scale-110"
-                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-115 transition-transform duration-500 select-none pointer-events-none"
-                          />
-                          {/* Contained foreground image */}
-                          <BlurImage
-                            src={project.cover_image}
-                            alt={project.title}
-                            className="w-full h-full object-contain relative z-10 group-hover:scale-103 transition-transform duration-500"
-                          />
+                      {/* Ambient blur background */}
+                      <BlurImage
+                        src={project.cover_image}
+                        alt=""
+                        lowQuality
+                        initialBlur="blur-xl opacity-0"
+                        initialScale="scale-110"
+                        loadedBlur="blur-xl opacity-30"
+                        loadedScale="scale-110"
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-115 transition-transform duration-500 select-none pointer-events-none"
+                      />
+                      {/* Contained foreground image */}
+                      <BlurImage
+                        src={project.cover_image}
+                        alt={project.title}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="w-full h-full object-contain relative z-10 group-hover:scale-103 transition-transform duration-500"
+                      />
                         </>
                       ) : (
                         <div className="w-full h-full bg-gradient-to-tr from-neutral-300/10 to-neutral-500/10 flex flex-col items-center justify-center p-4">
@@ -420,6 +441,19 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {/* Load More Button */}
+      {hasMore && (
+        <div className="flex justify-center pt-2 !-mt-2">
+          <button
+            type="button"
+            onClick={() => setVisibleCount(prev => prev + 9)}
+            className="px-6 py-3 rounded-xl bg-foreground/5 dark:bg-white/5 border border-foreground/10 dark:border-white/10 text-foreground hover:bg-foreground/10 dark:hover:bg-white/10 hover:border-foreground/20 dark:hover:border-white/20 text-xs font-bold transition-all cursor-pointer"
+          >
+            Load More ({filteredAndSortedProjects.length - visibleCount} remaining)
+          </button>
+        </div>
+      )}
     </div>
   )
 }

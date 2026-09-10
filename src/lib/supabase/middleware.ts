@@ -6,8 +6,16 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
+  const pathname = request.nextUrl.pathname
+
+  // Skip Supabase auth check entirely for public paths — saves 50-300ms per request
+  // Only /admin and /login need session validation/refresh
+  if (!pathname.startsWith('/admin') && !pathname.startsWith('/login')) {
+    return supabaseResponse
+  }
+
   const hasConfig = !!(
-    process.env.NEXT_PUBLIC_SUPABASE_URL && 
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
     process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http') &&
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   )

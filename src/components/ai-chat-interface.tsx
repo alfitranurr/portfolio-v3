@@ -92,6 +92,64 @@ function getCurrentTimestamp(): Date {
   return new Date()
 }
 
+const ChatMessageRow = React.memo(function ChatMessageRow({ message }: { message: ChatMessage }) {
+  return (
+    <motion.div
+      key={message.id}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25 }}
+      className={cn(
+        'flex gap-2 sm:gap-3',
+        message.role === 'user' ? 'justify-end' : 'justify-start'
+      )}
+    >
+      {/* AI Avatar */}
+      {message.role === 'assistant' && (
+        <div className="shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center shadow-xs mt-0.5">
+          <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+        </div>
+      )}
+
+      {/* Message Bubble */}
+      <div
+        className={cn(
+          'max-w-[88%] sm:max-w-[78%] rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm leading-relaxed shadow-2xs',
+          message.role === 'user'
+            ? 'bg-primary text-primary-foreground rounded-br-xs shadow-primary/10'
+            : 'glass-panel rounded-bl-xs border border-slate-200/70 dark:border-slate-800/70'
+        )}
+      >
+        {message.role === 'assistant' ? (
+          message.content ? (
+            <div className="chat-markdown prose prose-sm dark:prose-invert max-w-none text-xs sm:text-sm leading-relaxed">
+              <ReactMarkdown>{message.content}</ReactMarkdown>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 py-1">
+              <div className="typing-indicator">
+                <span />
+                <span />
+                <span />
+              </div>
+              <span className="text-xs text-muted-foreground">Mengetik jawaban...</span>
+            </div>
+          )
+        ) : (
+          <p className="whitespace-pre-wrap">{message.content}</p>
+        )}
+      </div>
+
+      {/* User Avatar */}
+      {message.role === 'user' && (
+        <div className="shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-slate-700 dark:bg-slate-600 flex items-center justify-center shadow-xs mt-0.5">
+          <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+        </div>
+      )}
+    </motion.div>
+  )
+})
+
 export function AIChatInterface() {
   const [messages, setMessages] = React.useState<ChatMessage[]>([])
   const [input, setInput] = React.useState('')
@@ -125,11 +183,18 @@ export function AIChatInterface() {
     }
   }, [])
 
-  // Save chat history to localStorage when messages change
+  // Save chat history to localStorage (debounced — avoids per-token serialization)
   React.useEffect(() => {
-    if (typeof window !== 'undefined' && isHistoryLoaded) {
-      localStorage.setItem('alfitra_ai_chat_history', JSON.stringify(messages))
-    }
+    if (typeof window === 'undefined' || !isHistoryLoaded) return
+    const timeoutId = setTimeout(() => {
+      try {
+        const capped = messages.slice(-30)
+        localStorage.setItem('alfitra_ai_chat_history', JSON.stringify(capped))
+      } catch (e) {
+        console.warn('Failed to save chat history:', e)
+      }
+    }, 500)
+    return () => clearTimeout(timeoutId)
   }, [messages, isHistoryLoaded])
 
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
@@ -397,59 +462,7 @@ export function AIChatInterface() {
             ) : (
               <div key="messages-list" className="space-y-3 sm:space-y-4 min-h-full">
                 {messages.map((message) => (
-                  <motion.div
-                    key={message.id}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.25 }}
-                    className={cn(
-                      'flex gap-2 sm:gap-3',
-                      message.role === 'user' ? 'justify-end' : 'justify-start'
-                    )}
-                  >
-                    {/* AI Avatar */}
-                    {message.role === 'assistant' && (
-                      <div className="shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center shadow-xs mt-0.5">
-                        <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                      </div>
-                    )}
-
-                    {/* Message Bubble */}
-                    <div
-                      className={cn(
-                        'max-w-[88%] sm:max-w-[78%] rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm leading-relaxed shadow-2xs',
-                        message.role === 'user'
-                          ? 'bg-primary text-primary-foreground rounded-br-xs shadow-primary/10'
-                          : 'glass-panel rounded-bl-xs border border-slate-200/70 dark:border-slate-800/70'
-                      )}
-                    >
-                      {message.role === 'assistant' ? (
-                        message.content ? (
-                          <div className="chat-markdown prose prose-sm dark:prose-invert max-w-none text-xs sm:text-sm leading-relaxed">
-                            <ReactMarkdown>{message.content}</ReactMarkdown>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2 py-1">
-                            <div className="typing-indicator">
-                              <span />
-                              <span />
-                              <span />
-                            </div>
-                            <span className="text-xs text-muted-foreground">Mengetik jawaban...</span>
-                          </div>
-                        )
-                      ) : (
-                        <p className="whitespace-pre-wrap">{message.content}</p>
-                      )}
-                    </div>
-
-                    {/* User Avatar */}
-                    {message.role === 'user' && (
-                      <div className="shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-slate-700 dark:bg-slate-600 flex items-center justify-center shadow-xs mt-0.5">
-                        <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                      </div>
-                    )}
-                  </motion.div>
+                  <ChatMessageRow key={message.id} message={message} />
                 ))}
               </div>
             )}

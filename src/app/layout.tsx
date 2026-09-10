@@ -1,20 +1,26 @@
 import type { Metadata, Viewport } from "next";
+import dynamic from "next/dynamic";
 import { Poppins, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Sidebar } from "@/components/sidebar";
-import { AdminSidebar } from "@/components/admin-sidebar";
 import { VisitorTracker } from "@/components/visitor-tracker";
 import { TopLoader } from "@/components/top-loader";
-import { InitialLoader } from "@/components/initial-loader";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { MainLayoutContainer } from "@/components/main-layout-container";
 import { getProfile } from "@/lib/data-service";
 
+const InitialLoader = dynamic(() =>
+  import("@/components/initial-loader").then((m) => m.InitialLoader)
+);
+const AdminSidebar = dynamic(() =>
+  import("@/components/admin-sidebar").then((m) => m.AdminSidebar)
+);
+
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
 const geistMono = Geist_Mono({
@@ -87,7 +93,7 @@ export default async function RootLayout({
             {/* Persistent Sidebar */}
             <Sidebar profile={profile} />
 
-            {/* Admin Sidebar */}
+            {/* Admin Sidebar (code-split, only loads on /admin routes) */}
             <AdminSidebar />
 
             {/* Content Wrapper */}

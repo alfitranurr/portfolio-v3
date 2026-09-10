@@ -189,6 +189,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             <BlurImage
               src={project.cover_image}
               alt=""
+              lowQuality
               initialBlur="blur-2xl opacity-0"
               initialScale="scale-105"
               loadedBlur="blur-2xl opacity-30"
@@ -199,6 +200,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             <BlurImage
               src={project.cover_image}
               alt={project.title}
+              priority
+              sizes="(max-width: 768px) 100vw, 1200px"
               className="w-full h-full object-contain relative z-10"
             />
           </>
@@ -274,7 +277,23 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             thead: (props: React.ComponentPropsWithoutRef<'thead'> & { node?: unknown }) => <thead className="bg-slate-200/5 dark:bg-slate-800/5" {...cleanProps(props as Record<string, unknown>)} />,
             th: (props: React.ComponentPropsWithoutRef<'th'> & { node?: unknown }) => <th className="border border-slate-200/10 dark:border-slate-800/10 px-4 py-2 text-left font-bold text-sm" {...cleanProps(props as Record<string, unknown>)} />,
             td: (props: React.ComponentPropsWithoutRef<'td'> & { node?: unknown }) => <td className="border border-slate-200/10 dark:border-slate-800/10 px-4 py-2 text-sm text-foreground/80" {...cleanProps(props as Record<string, unknown>)} />,
-            a: (props: React.ComponentPropsWithoutRef<'a'> & { node?: unknown }) => <a className="text-primary hover:text-primary/80 underline decoration-primary/30 hover:decoration-primary/60 transition-colors font-semibold" target="_blank" rel="noopener noreferrer" {...cleanProps(props as Record<string, unknown>)} />
+            a: (props: React.ComponentPropsWithoutRef<'a'> & { node?: unknown }) => <a className="text-primary hover:text-primary/80 underline decoration-primary/30 hover:decoration-primary/60 transition-colors font-semibold" target="_blank" rel="noopener noreferrer" {...cleanProps(props as Record<string, unknown>)} />,
+            img: (props: React.ComponentPropsWithoutRef<'img'> & { node?: unknown }) => {
+              const { src, alt, width: w, height: h, ...rest } = cleanProps(props as Record<string, unknown>)
+              void w; void h
+              return (
+                <span className="relative block w-full max-w-[800px] min-h-[300px] rounded-2xl overflow-hidden border border-slate-200/10 dark:border-slate-800/10 my-6">
+                  <BlurImage
+                    src={src as string}
+                    alt={alt as string}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 800px"
+                    className="object-contain w-full h-full"
+                    {...rest}
+                  />
+                </span>
+              )
+            }
           }}
         >
           {project.content || '*No case study documentation provided yet.*'}

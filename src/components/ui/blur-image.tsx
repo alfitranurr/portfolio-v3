@@ -11,6 +11,8 @@ export interface BlurImageProps extends Omit<ImageProps, 'src'> {
   loadedBlur?: string
   loadedScale?: string
   transitionDuration?: string
+  lowQuality?: boolean
+  showSkeleton?: boolean
 }
 
 // Check if image domain is local, Supabase, or Google Drive (Google User Content)
@@ -37,6 +39,8 @@ export const BlurImage = React.forwardRef<HTMLImageElement, BlurImageProps>(
       height,
       fill,
       quality = 85,
+      lowQuality = false,
+      showSkeleton = true,
       ...props
     },
     ref
@@ -44,7 +48,6 @@ export const BlurImage = React.forwardRef<HTMLImageElement, BlurImageProps>(
     const [isLoaded, setIsLoaded] = React.useState(false)
     const localRef = React.useRef<HTMLImageElement>(null)
 
-    // Forward ref to localRef
     React.useImperativeHandle(ref, () => localRef.current!)
 
     React.useEffect(() => {
@@ -63,30 +66,41 @@ export const BlurImage = React.forwardRef<HTMLImageElement, BlurImageProps>(
     const hasDimensions = width !== undefined && height !== undefined
     const useFill = fill ?? !hasDimensions
     const optimizable = isOptimizable(src)
-    
-    // Fallback to transparent 1x1 pixel image to prevent network errors/crashes
+    const effectiveQuality = lowQuality ? 30 : quality
+    const effectiveSizes = lowQuality
+      ? (props.sizes ?? "50px")
+      : (props.sizes ?? (useFill ? "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" : undefined))
+
     const imageSrc = src || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
 
     return (
-      <Image
-        ref={localRef}
-        src={imageSrc}
-        alt={alt || ''}
-        width={!useFill ? Number(width) : undefined}
-        height={!useFill ? Number(height) : undefined}
-        fill={useFill}
-        sizes={useFill ? (props.sizes ?? "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw") : undefined}
-        quality={quality}
-        unoptimized={!optimizable}
-        className={cn(
-          "transition-all ease-out",
-          transitionDuration,
-          !isLoaded ? `${initialBlur} ${initialScale}` : `${loadedBlur} ${loadedScale}`,
-          className
+      <>
+        {showSkeleton && !isLoaded && (
+          <span
+            className="absolute inset-0 z-0 rounded-[inherit] bg-gradient-to-br from-slate-200/40 via-slate-100/30 to-slate-200/40 dark:from-slate-800/40 dark:via-slate-700/30 dark:to-slate-800/40 animate-pulse pointer-events-none"
+            aria-hidden="true"
+          />
         )}
-        onLoad={handleLoad}
-        {...props}
-      />
+        <Image
+          ref={localRef}
+          src={imageSrc}
+          alt={alt || ''}
+          width={!useFill ? Number(width) : undefined}
+          height={!useFill ? Number(height) : undefined}
+          fill={useFill}
+          sizes={effectiveSizes}
+          quality={effectiveQuality}
+          unoptimized={!optimizable}
+          className={cn(
+            "transition-all ease-out",
+            transitionDuration,
+            !isLoaded ? `${initialBlur} ${initialScale} opacity-0` : `${loadedBlur} ${loadedScale} opacity-100`,
+            className
+          )}
+          onLoad={handleLoad}
+          {...props}
+        />
+      </>
     )
   }
 )

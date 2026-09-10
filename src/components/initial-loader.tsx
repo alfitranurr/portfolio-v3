@@ -16,7 +16,7 @@ export function InitialLoader() {
     const timer = setTimeout(() => {
       sessionStorage.setItem('has_loaded_intro', 'true')
       setLoading(false)
-    }, 2200)
+    }, 1900)
 
     return () => clearTimeout(timer)
   }, [])
@@ -31,7 +31,7 @@ export function InitialLoader() {
             opacity: 0,
             scale: 1.04,
             filter: "blur(20px)",
-            transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] }
+            transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] }
           }}
           className="fixed inset-0 bg-white z-[9999] flex flex-col items-center justify-center select-none overflow-hidden"
         >
@@ -77,7 +77,7 @@ export function InitialLoader() {
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
               className="space-y-4 px-4 max-w-4xl"
             >
               <h1 className="text-base sm:text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-[0.12em] sm:tracking-[0.18em] text-neutral-900 font-mono whitespace-nowrap">
