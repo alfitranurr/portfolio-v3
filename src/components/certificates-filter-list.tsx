@@ -262,29 +262,36 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
       </div>
 
       {/* Certificates Grid */}
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      >
-        <AnimatePresence mode="sync">
-          {visibleCertificates.map((cert, index) => {
-            const Icon = ICON_MAP[cert.category as keyof typeof ICON_MAP] || Award
-            const colors = CATEGORY_COLOR_MAP[cert.category] || {
-              badge: 'bg-primary/15 text-primary border-primary/30',
-              icon: 'bg-primary/15 text-primary border border-primary/20'
-            }
-            return (
-              <motion.div
-                key={cert.id}
-                initial={{ opacity: 0, scale: 0.95, y: 8 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: -8 }}
-                transition={{
-                  opacity: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
-                  scale: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
-                  y: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }
-                }}
-                className="group p-6 rounded-3xl glass-panel border border-slate-300/80 dark:border-slate-800/30 hover:border-primary/40 shadow-xs hover:shadow-md flex flex-col justify-between transition-[border-color,box-shadow] duration-300 relative overflow-hidden transform-gpu"
-              >
+      <div className="w-full">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key="certificates-grid"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className="w-full"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+              {visibleCertificates.map((cert, index) => {
+                const Icon = ICON_MAP[cert.category as keyof typeof ICON_MAP] || Award
+                const colors = CATEGORY_COLOR_MAP[cert.category] || {
+                  badge: 'bg-primary/15 text-primary border-primary/30',
+                  icon: 'bg-primary/15 text-primary border border-primary/20'
+                }
+                return (
+                  <motion.div
+                    key={cert.id}
+                    initial={{ opacity: 0, scale: 0.95, y: 8 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -8 }}
+                    transition={{
+                      opacity: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+                      scale: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+                      y: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }
+                    }}
+                    className="group p-6 rounded-3xl glass-panel border border-slate-300/80 dark:border-slate-800/30 hover:border-primary/40 shadow-xs hover:shadow-md flex flex-col justify-between transition-[border-color,box-shadow] duration-300 relative overflow-hidden transform-gpu w-full"
+                  >
                 {/* Subtle top indicator bar */}
                 <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
 
@@ -374,15 +381,17 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                   )}
                 </div>
               </motion.div>
-            )
-          })}
-        </AnimatePresence>
+                )
+              })}
+            </div>
 
-        {filteredAndSortedCertificates.length === 0 && (
-          <div className="col-span-full py-16 text-center text-muted-foreground text-sm font-semibold">
-            No credentials found in this category yet.
-          </div>
-        )}
+            {filteredAndSortedCertificates.length === 0 && (
+              <div className="col-span-full py-16 text-center text-muted-foreground text-sm font-semibold">
+                No credentials found in this category yet.
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   )
