@@ -30,7 +30,7 @@ export function ProjectTableView({ projects, startIndex, onPreview, onEdit, onDu
           </thead>
           <tbody className="divide-y divide-slate-200/5 dark:divide-slate-800/10 font-medium">
             {projects.map((proj, index) => (
-              <tr 
+              <tr
                 key={proj.id}
                 className="hover:bg-slate-500/5 transition-colors group"
               >
@@ -45,6 +45,8 @@ export function ProjectTableView({ projects, startIndex, onPreview, onEdit, onDu
                         <BlurImage
                           src={getDirectImageUrl(proj.cover_image, 150)}
                           alt={proj.title}
+                          lowQuality
+                          sizes="40px"
                           className="w-full h-full object-cover rounded-md"
                         />
                       ) : (

@@ -33,7 +33,7 @@ export function SkillPreviewModal({ skill, onClose, onEdit }: SkillPreviewModalP
           <div className="flex items-center gap-3 flex-1">
             <div className="w-16 h-16 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 overflow-hidden">
               {skill.logo_url ? (
-                <BlurImage src={getDirectImageUrl(skill.logo_url, 100)} alt={skill.name} className="w-12 h-12 object-contain" />
+                <BlurImage src={getDirectImageUrl(skill.logo_url, 100)} alt={skill.name} lowQuality sizes="64px" className="w-12 h-12 object-contain" />
               ) : (
                 <Award className="w-8 h-8 text-muted-foreground/30" />
               )}

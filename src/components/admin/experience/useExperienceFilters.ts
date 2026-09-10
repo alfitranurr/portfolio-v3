@@ -7,15 +7,16 @@ export function useExperienceFilters(
   activeCategory: string,
   sortField: SortField
 ) {
+  const deferredSearch = React.useDeferredValue(search)
   const filteredAndSorted = React.useMemo(() => {
     const result = experienceList.filter(exp => {
       const matchesCategory = activeCategory === 'All' || exp.category === activeCategory
-      const q = search.toLowerCase()
-      const matchesSearch = 
+      const q = deferredSearch.toLowerCase()
+      const matchesSearch =
         exp.role.toLowerCase().includes(q) ||
         exp.company.toLowerCase().includes(q) ||
         (exp.location && exp.location.toLowerCase().includes(q))
-      
+
       return matchesCategory && matchesSearch
     })
 
@@ -36,7 +37,7 @@ export function useExperienceFilters(
     })
 
     return result
-  }, [experienceList, search, activeCategory, sortField])
+  }, [experienceList, deferredSearch, activeCategory, sortField])
 
   return filteredAndSorted
 }

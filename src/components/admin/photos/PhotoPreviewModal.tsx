@@ -54,6 +54,8 @@ export function PhotoPreviewModal({ photo, onClose, onEdit }: PhotoPreviewModalP
           <BlurImage
             src={getDirectImageUrl(photo.image_url, 1000)}
             alt={photo.title || 'Photo'}
+            priority
+            sizes="(max-width: 768px) 100vw, 768px"
             className="w-full h-full object-contain"
           />
         </div>

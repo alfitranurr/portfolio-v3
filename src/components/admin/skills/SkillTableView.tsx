@@ -43,6 +43,8 @@ export function SkillTableView({ skills, startIndex, onPreview, onEdit, onDelete
                         <BlurImage
                           src={getDirectImageUrl(skill.logo_url, 150)}
                           alt={skill.name}
+                          lowQuality
+                          sizes="40px"
                           className="w-full h-full object-contain rounded-md"
                         />
                       ) : (

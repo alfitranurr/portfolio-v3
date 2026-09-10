@@ -34,7 +34,7 @@ export function CertificateTableView({ certificates, startIndex, onPreview, onEd
           </thead>
           <tbody className="divide-y divide-slate-200/5 dark:divide-slate-800/10 font-medium">
             {certificates.map((cert, index) => (
-              <tr 
+              <tr
                 key={cert.id}
                 className="hover:bg-slate-500/5 transition-colors group"
               >
@@ -49,6 +49,8 @@ export function CertificateTableView({ certificates, startIndex, onPreview, onEd
                         <BlurImage
                           src={getDirectImageUrl(cert.image_url, 150)}
                           alt={cert.title}
+                          lowQuality
+                          sizes="40px"
                           className="w-full h-full object-cover"
                         />
                       ) : (

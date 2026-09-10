@@ -132,6 +132,8 @@ export function SkillForm({
                       <BlurImage
                         src={getDirectImageUrl(skill.logo_url, 200)}
                         alt="Icon preview"
+                        lowQuality
+                        sizes="80px"
                         className="w-full h-full object-contain p-1"
                       />
                       <button

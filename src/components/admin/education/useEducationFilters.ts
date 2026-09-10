@@ -6,15 +6,16 @@ export function useEducationFilters(
   search: string,
   sortField: SortField
 ) {
+  const deferredSearch = React.useDeferredValue(search)
   const filteredAndSorted = React.useMemo(() => {
     const result = educationList.filter(edu => {
-      const q = search.toLowerCase()
-      const matchesSearch = 
+      const q = deferredSearch.toLowerCase()
+      const matchesSearch =
         edu.institution.toLowerCase().includes(q) ||
         edu.degree.toLowerCase().includes(q) ||
         (edu.field_of_study && edu.field_of_study.toLowerCase().includes(q)) ||
         (edu.location && edu.location.toLowerCase().includes(q))
-      
+
       return matchesSearch
     })
 
@@ -35,7 +36,7 @@ export function useEducationFilters(
     })
 
     return result
-  }, [educationList, search, sortField])
+  }, [educationList, deferredSearch, sortField])
 
   return filteredAndSorted
 }

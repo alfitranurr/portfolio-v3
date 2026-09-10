@@ -28,7 +28,7 @@ export function PhotoTableView({ photos, startIndex, onPreview, onEdit, onDelete
           </thead>
           <tbody className="divide-y divide-slate-200/5 dark:divide-slate-800/10 font-medium">
             {photos.map((photo, index) => (
-              <tr 
+              <tr
                 key={photo.id}
                 className="hover:bg-slate-500/5 transition-colors group"
               >
@@ -41,6 +41,8 @@ export function PhotoTableView({ photos, startIndex, onPreview, onEdit, onDelete
                     <BlurImage
                       src={getDirectImageUrl(photo.image_url, 150)}
                       alt={photo.title || 'Photo'}
+                      lowQuality
+                      sizes="64px"
                       className="w-full h-full object-cover"
                     />
                   </div>

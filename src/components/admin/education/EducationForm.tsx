@@ -59,7 +59,7 @@ export function EducationForm({
   return (
     <div className="rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 p-6 md:p-8 space-y-6 relative overflow-hidden">
       <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full filter blur-2xl pointer-events-none" />
-      
+
       <div className="flex items-center justify-between pb-4 border-b border-slate-200/10 dark:border-slate-800/10">
         <button
           onClick={onCancel}
@@ -191,7 +191,7 @@ export function EducationForm({
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 Institution Logo
               </label>
-              
+
               <div className="flex items-center gap-4">
                 <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center shrink-0">
                   {education.logo_url ? (
@@ -199,6 +199,8 @@ export function EducationForm({
                       <BlurImage
                         src={getDirectImageUrl(education.logo_url, 200)}
                         alt="Logo preview"
+                        lowQuality
+                        sizes="56px"
                         className="w-full h-full object-cover"
                       />
                       <button
@@ -238,7 +240,7 @@ export function EducationForm({
                       disabled={isUploading}
                     />
                   </label>
-                  
+
                   <input
                     type="text"
                     value={education.logo_url || ''}

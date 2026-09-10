@@ -24,7 +24,7 @@ export function CertificatePreviewModal({ certificate, onClose, onEdit }: Certif
           <div className="flex items-center gap-3 flex-1">
             {certificate.image_url ? (
               <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shrink-0 relative">
-                <BlurImage src={getDirectImageUrl(certificate.image_url, 200)} alt={certificate.title} className="w-full h-full object-cover" />
+                <BlurImage src={getDirectImageUrl(certificate.image_url, 200)} alt={certificate.title} sizes="64px" className="w-full h-full object-cover" />
               </div>
             ) : (
               <div className="w-16 h-16 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">

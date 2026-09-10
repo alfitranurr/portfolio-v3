@@ -69,7 +69,7 @@ export function ExperienceForm({
   return (
     <div className="rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 p-6 md:p-8 space-y-6 relative overflow-hidden">
       <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full filter blur-2xl pointer-events-none" />
-      
+
       <div className="flex items-center justify-between pb-4 border-b border-slate-200/10 dark:border-slate-800/10">
         <button
           onClick={onCancel}
@@ -194,7 +194,7 @@ export function ExperienceForm({
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 Company Logo
               </label>
-              
+
               <div className="flex items-center gap-4">
                 <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center shrink-0">
                   {experience.logo_url ? (
@@ -202,6 +202,8 @@ export function ExperienceForm({
                       <BlurImage
                         src={getDirectImageUrl(experience.logo_url, 200)}
                         alt="Logo preview"
+                        lowQuality
+                        sizes="56px"
                         className="w-full h-full object-cover"
                       />
                       <button
@@ -241,7 +243,7 @@ export function ExperienceForm({
                       disabled={isUploading}
                     />
                   </label>
-                  
+
                   <input
                     type="text"
                     value={experience.logo_url || ''}
@@ -270,7 +272,7 @@ export function ExperienceForm({
                   <span>Add Bullet</span>
                 </button>
               </div>
-              
+
               <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
                 {descriptionBullets.length === 0 ? (
                   <p className="text-xs text-muted-foreground text-center py-8 border border-dashed border-slate-200/10 dark:border-slate-800/10 rounded-xl">
@@ -299,7 +301,7 @@ export function ExperienceForm({
                           <ChevronDown className="w-3.5 h-3.5" />
                         </button>
                       </div>
-                      
+
                       <textarea
                         value={bullet}
                         onChange={e => onBulletChange(idx, e.target.value)}
@@ -307,7 +309,7 @@ export function ExperienceForm({
                         rows={2}
                         className="flex-1 px-3 py-2 rounded-lg bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-xs focus:outline-none focus:border-primary/50 transition-all resize-y"
                       />
-                      
+
                       <button
                         type="button"
                         onClick={() => onRemoveBullet(idx)}

@@ -13,40 +13,49 @@ interface CertificateGridViewProps {
   onDelete: (id: string) => void
 }
 
-export function CertificateGridView({ certificates, onPreview, onEdit, onDuplicate, onDelete }: CertificateGridViewProps) {
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-  }
+function formatDate(date: string) {
+  return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+}
 
+export function CertificateGridView({ certificates, onPreview, onEdit, onDuplicate, onDelete }: CertificateGridViewProps) {
   return (
-    <motion.div 
-      layout
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-    >
-      <AnimatePresence mode="popLayout">
-        {certificates.map((cert) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <AnimatePresence mode="sync">
+        {certificates.map((cert, index) => (
           <motion.div
-            layout
             key={cert.id}
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -8 }}
             transition={{
-              layout: { type: 'spring', stiffness: 220, damping: 24, mass: 0.8 },
-              opacity: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
-              scale: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
-              y: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }
+              opacity: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+              scale: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+              y: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }
             }}
             className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 hover:border-primary/30 transition-[border-color,box-shadow] duration-300 flex flex-col justify-between group transform-gpu"
-            style={{ willChange: 'transform, opacity' }}
           >
             <div className="space-y-3">
               {cert.image_url ? (
-                <div className="aspect-video w-full rounded-xl overflow-hidden bg-slate-950/40 border border-slate-200/10 dark:border-slate-800/10">
+                <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-slate-950/40 border border-slate-200/10 dark:border-slate-800/10">
+                  <BlurImage
+                    src={getDirectImageUrl(cert.image_url, 400)}
+                    alt=""
+                    lowQuality
+                    initialBlur="blur-xl opacity-0"
+                    initialScale="scale-110"
+                    loadedBlur="blur-xl opacity-30"
+                    loadedScale="scale-110"
+                    referrerPolicy="no-referrer"
+                    className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
+                  />
                   <BlurImage
                     src={getDirectImageUrl(cert.image_url, 400)}
                     alt={cert.title}
-                    className="w-full h-full object-cover"
+                    priority={index < 3}
+                    loading={index >= 3 ? "eager" : undefined}
+                    referrerPolicy="no-referrer"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="w-full h-full object-contain relative z-10"
                   />
                 </div>
               ) : (
@@ -130,6 +139,6 @@ export function CertificateGridView({ certificates, onPreview, onEdit, onDuplica
           </motion.div>
         ))}
       </AnimatePresence>
-    </motion.div>
+    </div>
   )
 }

@@ -24,7 +24,7 @@ export function ExperiencePreviewModal({ experience, onClose, onEdit }: Experien
           <div className="flex items-center gap-3">
             {experience.logo_url ? (
               <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shrink-0 relative p-2">
-                <BlurImage src={getDirectImageUrl(experience.logo_url, 200)} alt={experience.company} className="w-full h-full object-contain" />
+                <BlurImage src={getDirectImageUrl(experience.logo_url, 200)} alt={experience.company} sizes="64px" className="w-full h-full object-contain" />
               </div>
             ) : (
               <div className="w-16 h-16 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">

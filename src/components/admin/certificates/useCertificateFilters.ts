@@ -7,14 +7,15 @@ export function useCertificateFilters(
   activeCategory: string,
   sortField: SortField
 ) {
+  const deferredSearch = React.useDeferredValue(search)
   const filteredAndSorted = React.useMemo(() => {
     const result = certificates.filter(cert => {
       const matchesCategory = activeCategory === 'All' || cert.category === activeCategory
-      const q = search.toLowerCase()
-      const matchesSearch = 
+      const q = deferredSearch.toLowerCase()
+      const matchesSearch =
         cert.title.toLowerCase().includes(q) ||
         cert.issuer.toLowerCase().includes(q)
-      
+
       return matchesCategory && matchesSearch
     })
 
@@ -35,7 +36,7 @@ export function useCertificateFilters(
     })
 
     return result
-  }, [certificates, search, activeCategory, sortField])
+  }, [certificates, deferredSearch, activeCategory, sortField])
 
   return filteredAndSorted
 }

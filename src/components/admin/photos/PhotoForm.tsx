@@ -55,7 +55,7 @@ export function PhotoForm({
   return (
     <div className="rounded-3xl glass-panel border border-slate-200/10 dark:border-slate-800/10 p-6 md:p-8 space-y-6 relative overflow-hidden">
       <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full filter blur-2xl pointer-events-none" />
-      
+
       <div className="flex items-center justify-between pb-4 border-b border-slate-200/10 dark:border-slate-800/10">
         <button
           onClick={onCancel}
@@ -166,6 +166,8 @@ export function PhotoForm({
                   <BlurImage
                     src={getDirectImageUrl(photo.image_url, 100)}
                     alt={photo.title || 'Photo preview'}
+                    lowQuality
+                    sizes="96px"
                     className="w-20 h-20 object-cover"
                   />
                 ) : (

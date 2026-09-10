@@ -380,6 +380,8 @@ export function ProjectForm({
                       <BlurImage
                         src={getDirectImageUrl(project.cover_image, 200)}
                         alt="Cover preview"
+                        lowQuality
+                        sizes="56px"
                         className="w-full h-full object-cover"
                       />
                       <button

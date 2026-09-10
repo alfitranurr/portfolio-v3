@@ -13,32 +13,26 @@ interface EducationGridViewProps {
   onDelete: (id: string) => void
 }
 
-export function EducationGridView({ educations, onPreview, onEdit, onDuplicate, onDelete }: EducationGridViewProps) {
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-  }
+function formatDate(date: string) {
+  return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+}
 
+export function EducationGridView({ educations, onPreview, onEdit, onDuplicate, onDelete }: EducationGridViewProps) {
   return (
-    <motion.div 
-      layout
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-    >
-      <AnimatePresence mode="popLayout">
-        {educations.map((edu) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <AnimatePresence mode="sync">
+        {educations.map((edu, index) => (
           <motion.div
-            layout
             key={edu.id}
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -8 }}
             transition={{
-              layout: { type: 'spring', stiffness: 220, damping: 24, mass: 0.8 },
-              opacity: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
-              scale: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
-              y: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }
+              opacity: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+              scale: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+              y: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }
             }}
             className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 hover:border-primary/30 transition-[border-color,box-shadow] duration-300 flex flex-col justify-between group transform-gpu"
-            style={{ willChange: 'transform, opacity' }}
           >
             <div className="space-y-3">
               <div className="flex items-start gap-3">
@@ -47,6 +41,8 @@ export function EducationGridView({ educations, onPreview, onEdit, onDuplicate, 
                     <BlurImage
                       src={getDirectImageUrl(edu.logo_url, 150)}
                       alt={edu.institution}
+                      lowQuality
+                      sizes="48px"
                       className="w-full h-full object-contain rounded-lg"
                     />
                   </div>
@@ -55,7 +51,7 @@ export function EducationGridView({ educations, onPreview, onEdit, onDuplicate, 
                     <GraduationCap className="w-6 h-6" />
                   </div>
                 )}
-                
+
                 <div className="flex-1 min-w-0">
                   <h3 className="font-black text-sm leading-tight text-foreground line-clamp-2 group-hover:text-primary transition-colors">
                     {edu.degree}
@@ -127,6 +123,6 @@ export function EducationGridView({ educations, onPreview, onEdit, onDuplicate, 
           </motion.div>
         ))}
       </AnimatePresence>
-    </motion.div>
+    </div>
   )
 }

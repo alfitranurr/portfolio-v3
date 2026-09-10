@@ -7,12 +7,13 @@ export function useSkillsFilters(
   activeCategory: string,
   sortField: SortField
 ) {
+  const deferredSearch = React.useDeferredValue(search)
   return React.useMemo(() => {
     const result = skills.filter(skill => {
       const matchesCategory = activeCategory === 'All' || skill.category === activeCategory
-      const q = search.toLowerCase()
+      const q = deferredSearch.toLowerCase()
       const matchesSearch = skill.name.toLowerCase().includes(q)
-      
+
       return matchesCategory && matchesSearch
     })
 
@@ -33,5 +34,5 @@ export function useSkillsFilters(
     })
 
     return result
-  }, [skills, search, activeCategory, sortField])
+  }, [skills, deferredSearch, activeCategory, sortField])
 }

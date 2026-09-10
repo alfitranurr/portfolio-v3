@@ -8,15 +8,16 @@ export function useProjectFilters(
   activeSubCategory: string,
   sortField: 'pinned' | 'featured' | 'newest' | 'oldest' | 'title'
 ) {
+  const deferredSearch = React.useDeferredValue(search)
   const filteredAndSorted = React.useMemo(() => {
     const result = projects.filter(p => {
       const matchesCategory = p.category === activeCategory
-      const q = search.toLowerCase()
-      const matchesSearch = 
+      const q = deferredSearch.toLowerCase()
+      const matchesSearch =
         p.title.toLowerCase().includes(q) ||
         p.sub_category.toLowerCase().includes(q) ||
         p.description.toLowerCase().includes(q)
-      
+
       const normalizedProjSub = p.sub_category === 'Data Automation Projects' ? 'Automation Projects' : p.sub_category
       const normalizedActiveSub = activeSubCategory === 'Data Automation Projects' ? 'Automation Projects' : activeSubCategory
 
@@ -47,7 +48,7 @@ export function useProjectFilters(
     })
 
     return result
-  }, [projects, activeCategory, search, activeSubCategory, sortField])
+  }, [projects, activeCategory, deferredSearch, activeSubCategory, sortField])
 
   return filteredAndSorted
 }

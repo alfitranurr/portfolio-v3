@@ -14,32 +14,28 @@ interface SkillGridViewProps {
 
 export function SkillGridView({ skills, onPreview, onEdit, onDelete }: SkillGridViewProps) {
   return (
-    <motion.div 
-      layout
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-    >
-      <AnimatePresence mode="popLayout">
-        {skills.map((skill) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <AnimatePresence mode="sync">
+        {skills.map((skill, index) => (
           <motion.div
-            layout
             key={skill.id}
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -8 }}
             transition={{
-              layout: { type: 'spring', stiffness: 220, damping: 24, mass: 0.8 },
-              opacity: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
-              scale: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
-              y: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }
+              opacity: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+              scale: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+              y: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }
             }}
             className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 hover:border-primary/30 transition-[border-color,box-shadow] duration-300 flex flex-col items-center text-center group transform-gpu"
-            style={{ willChange: 'transform, opacity' }}
           >
             <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden shrink-0">
               {skill.logo_url ? (
                 <BlurImage
                   src={getDirectImageUrl(skill.logo_url, 100)}
                   alt={skill.name}
+                  lowQuality
+                  sizes="64px"
                   className="w-16 h-16 object-contain"
                 />
               ) : (
@@ -56,7 +52,7 @@ export function SkillGridView({ skills, onPreview, onEdit, onDelete }: SkillGrid
               </p>
               {skill.proficiency !== null && skill.proficiency !== undefined && (
                 <div className="w-16 h-2 bg-slate-700/50 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-primary rounded-full transition-all"
                     style={{ width: `${Math.min(skill.proficiency, 100)}%` }}
                   />
@@ -90,6 +86,6 @@ export function SkillGridView({ skills, onPreview, onEdit, onDelete }: SkillGrid
           </motion.div>
         ))}
       </AnimatePresence>
-    </motion.div>
+    </div>
   )
 }

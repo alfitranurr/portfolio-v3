@@ -34,7 +34,7 @@ export function EducationTableView({ educations, startIndex, onPreview, onEdit, 
           </thead>
           <tbody className="divide-y divide-slate-200/5 dark:divide-slate-800/10 font-medium">
             {educations.map((edu, index) => (
-              <tr 
+              <tr
                 key={edu.id}
                 className="hover:bg-slate-500/5 transition-colors group"
               >
@@ -49,6 +49,8 @@ export function EducationTableView({ educations, startIndex, onPreview, onEdit, 
                         <BlurImage
                           src={getDirectImageUrl(edu.logo_url, 150)}
                           alt={edu.institution}
+                          lowQuality
+                          sizes="40px"
                           className="w-full h-full object-contain rounded-md"
                         />
                       ) : (

@@ -14,31 +14,28 @@ interface PhotoGridViewProps {
 
 export function PhotoGridView({ photos, onPreview, onEdit, onDelete }: PhotoGridViewProps) {
   return (
-    <motion.div 
-      layout
-      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-    >
-      <AnimatePresence mode="popLayout">
-        {photos.map((photo) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <AnimatePresence mode="sync">
+        {photos.map((photo, index) => (
           <motion.div
-            layout
             key={photo.id}
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -8 }}
             transition={{
-              layout: { type: 'spring', stiffness: 220, damping: 24, mass: 0.8 },
-              opacity: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
-              scale: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
-              y: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }
+              opacity: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+              scale: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+              y: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }
             }}
             className="rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 overflow-hidden hover:border-primary/30 transition-[border-color,box-shadow] duration-300 group transform-gpu"
-            style={{ willChange: 'transform, opacity' }}
           >
             <div className="aspect-video w-full relative">
               <BlurImage
                 src={getDirectImageUrl(photo.image_url, 400)}
                 alt={photo.title || 'Photo'}
+                priority={index < 4}
+                loading={index >= 4 ? "eager" : undefined}
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
@@ -65,7 +62,7 @@ export function PhotoGridView({ photos, onPreview, onEdit, onDelete }: PhotoGrid
                 </button>
               </div>
             </div>
-            
+
             <div className="p-3 space-y-1">
               <h3 className="font-bold text-sm text-foreground line-clamp-1 group-hover:text-primary transition-colors">
                 {photo.title || 'Untitled'}
@@ -77,6 +74,6 @@ export function PhotoGridView({ photos, onPreview, onEdit, onDelete }: PhotoGrid
           </motion.div>
         ))}
       </AnimatePresence>
-    </motion.div>
+    </div>
   )
 }

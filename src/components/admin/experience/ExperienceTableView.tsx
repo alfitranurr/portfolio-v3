@@ -34,7 +34,7 @@ export function ExperienceTableView({ experiences, startIndex, onPreview, onEdit
           </thead>
           <tbody className="divide-y divide-slate-200/5 dark:divide-slate-800/10 font-medium">
             {experiences.map((exp, index) => (
-              <tr 
+              <tr
                 key={exp.id}
                 className="hover:bg-slate-500/5 transition-colors group"
               >
@@ -49,6 +49,8 @@ export function ExperienceTableView({ experiences, startIndex, onPreview, onEdit
                         <BlurImage
                           src={getDirectImageUrl(exp.logo_url, 150)}
                           alt={exp.company}
+                          lowQuality
+                          sizes="40px"
                           className="w-full h-full object-contain rounded-md"
                         />
                       ) : (

@@ -3,13 +3,13 @@
 import * as React from 'react'
 import { useActionState } from 'react'
 import { updateProfileAction } from '@/app/admin/actions'
-import { 
-  User, 
-  Terminal, 
-  BookOpen, 
-  UploadCloud, 
-  CheckCircle2, 
-  AlertCircle, 
+import {
+  User,
+  Terminal,
+  BookOpen,
+  UploadCloud,
+  CheckCircle2,
+  AlertCircle,
   Loader2,
   FileText,
   Image as ImageIcon,
@@ -138,8 +138,8 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
             transition={{ duration: 0.3 }}
             className={cn(
               "p-4 rounded-xl text-xs font-semibold flex items-center gap-2.5 border",
-              state.success 
-                ? "bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400" 
+              state.success
+                ? "bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400"
                 : "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400"
             )}
           >
@@ -166,7 +166,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
           {/* Main Info Box */}
           <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 space-y-4">
             <h2 className="text-sm font-bold uppercase tracking-wider text-primary mb-2">Identity Details</h2>
-            
+
             {/* Full Name */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
@@ -223,7 +223,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
           {/* Social Presence Box */}
           <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 space-y-4">
             <h2 className="text-sm font-bold uppercase tracking-wider text-primary mb-2">Social Networks</h2>
-            
+
             {/* Instagram */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
@@ -282,13 +282,14 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
           {/* Logo box */}
           <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 space-y-4 flex flex-col items-center">
             <h2 className="text-sm font-bold uppercase tracking-wider text-primary w-full text-left">Website Logo / Favicon</h2>
-            
+
             {/* Square Preview */}
             <div className="relative group w-32 h-32 rounded-3xl overflow-hidden border border-slate-300 dark:border-slate-800/20 bg-white/60 dark:bg-slate-200/5 flex items-center justify-center shadow-2xs">
               {logoPreview ? (
                 <BlurImage
                   src={logoPreview}
                   alt="Logo preview"
+                  sizes="128px"
                   className="w-full h-full object-contain p-3"
                 />
               ) : (
@@ -315,13 +316,14 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
           {/* Avatar box */}
           <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 space-y-4 flex flex-col items-center">
             <h2 className="text-sm font-bold uppercase tracking-wider text-primary w-full text-left">Avatar Picture</h2>
-            
+
             {/* Circle Preview */}
             <div className="relative group w-32 h-32 rounded-full overflow-hidden border border-slate-300 dark:border-slate-800/20 bg-white/60 dark:bg-slate-200/5 flex items-center justify-center shadow-2xs">
               {avatarPreview ? (
                 <BlurImage
                   src={avatarPreview}
                   alt="Avatar preview"
+                  sizes="128px"
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -348,7 +350,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
           {/* Resume box */}
           <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 space-y-4">
             <h2 className="text-sm font-bold uppercase tracking-wider text-primary">Resume Document</h2>
-            
+
             {resumeName ? (
               <div className="p-3.5 rounded-xl bg-white/80 dark:bg-white/5 border border-slate-300 dark:border-slate-800/20 flex items-center gap-3 shadow-2xs">
                 <div className="p-2 rounded-lg bg-red-500/15 text-red-500">

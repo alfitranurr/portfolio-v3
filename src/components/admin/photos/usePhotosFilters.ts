@@ -6,10 +6,11 @@ export function usePhotosFilters(
   search: string,
   sortField: SortField
 ) {
+  const deferredSearch = React.useDeferredValue(search)
   return React.useMemo(() => {
+    const q = deferredSearch.toLowerCase()
     const result = photos.filter(photo => {
-      const q = search.toLowerCase()
-      const matchesSearch = 
+      const matchesSearch =
         photo.title?.toLowerCase().includes(q) ||
         photo.description?.toLowerCase().includes(q) ||
         photo.year?.toLowerCase().includes(q)
@@ -33,5 +34,5 @@ export function usePhotosFilters(
     })
 
     return result
-  }, [photos, search, sortField])
+  }, [photos, deferredSearch, sortField])
 }

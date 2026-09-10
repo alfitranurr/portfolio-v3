@@ -24,7 +24,7 @@ export function EducationPreviewModal({ education, onClose, onEdit }: EducationP
           <div className="flex items-center gap-3 flex-1">
             {education.logo_url ? (
               <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shrink-0 relative p-1">
-                <BlurImage src={getDirectImageUrl(education.logo_url, 200)} alt={education.institution} className="w-full h-full object-contain" />
+                <BlurImage src={getDirectImageUrl(education.logo_url, 200)} alt={education.institution} sizes="64px" className="w-full h-full object-contain" />
               </div>
             ) : (
               <div className="w-16 h-16 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">

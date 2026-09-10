@@ -16,26 +16,20 @@ interface ProjectGridViewProps {
 
 export function ProjectGridView({ projects, onPreview, onEdit, onDuplicate, onDelete }: ProjectGridViewProps) {
   return (
-    <motion.div 
-      layout
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-    >
-      <AnimatePresence mode="popLayout">
-        {projects.map((proj) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <AnimatePresence mode="sync">
+        {projects.map((proj, index) => (
           <motion.div
-            layout
             key={proj.id}
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -8 }}
             transition={{
-              layout: { type: 'spring', stiffness: 220, damping: 24, mass: 0.8 },
-              opacity: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
-              scale: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
-              y: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }
+              opacity: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+              scale: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
+              y: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }
             }}
             className="p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-4 hover:border-primary/30 transition-[border-color,box-shadow] duration-300 flex flex-col justify-between group transform-gpu"
-            style={{ willChange: 'transform, opacity' }}
           >
             <div className="space-y-2">
               <div className="flex justify-between items-start gap-2">
@@ -48,7 +42,7 @@ export function ProjectGridView({ projects, onPreview, onEdit, onDuplicate, onDe
                   </span>
                 )}
               </div>
-              
+
               <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
                 <span className="px-2 py-0.5 rounded-md bg-white/5 text-muted-foreground text-[10px] font-bold">
                   {proj.category === 'data' ? 'Data Science' : 'General Dev'}
@@ -71,19 +65,24 @@ export function ProjectGridView({ projects, onPreview, onEdit, onDuplicate, onDe
               <div className="relative aspect-video w-full max-h-[140px] rounded-xl overflow-hidden bg-slate-950/40 border border-slate-200/10 dark:border-slate-800/10 mt-2 flex items-center justify-center shrink-0">
                 {proj.cover_image ? (
                   <>
-                    <BlurImage 
-                      src={getDirectImageUrl(proj.cover_image, 400)} 
-                      alt="" 
+                    <BlurImage
+                      src={getDirectImageUrl(proj.cover_image, 400)}
+                      alt=""
+                      lowQuality
                       initialBlur="blur-xl opacity-0"
                       initialScale="scale-110"
                       loadedBlur="blur-xl opacity-30"
                       loadedScale="scale-110"
+                      referrerPolicy="no-referrer"
                       className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
                     />
-                    <BlurImage 
-                      src={getDirectImageUrl(proj.cover_image, 400)} 
-                      alt={proj.title} 
+                    <BlurImage
+                      src={getDirectImageUrl(proj.cover_image, 400)}
+                      alt={proj.title}
+                      priority={index < 3}
+                      loading={index >= 3 ? "eager" : undefined}
                       referrerPolicy="no-referrer"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="max-w-full max-h-full object-contain relative z-10"
                     />
                   </>
@@ -162,6 +161,6 @@ export function ProjectGridView({ projects, onPreview, onEdit, onDuplicate, onDe
           </motion.div>
         ))}
       </AnimatePresence>
-    </motion.div>
+    </div>
   )
 }
