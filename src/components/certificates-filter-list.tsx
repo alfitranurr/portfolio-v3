@@ -64,7 +64,6 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
 
   type SortField = 'newest' | 'oldest' | 'title' | 'issuer'
   const [sortField, setSortField] = React.useState<SortField>('newest')
-  const [visibleCount, setVisibleCount] = React.useState(9)
 
   const categories = ['All', 'competition', 'seminar_workshop', 'license_certification', 'committee_organization']
 
@@ -74,22 +73,18 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
         ? prev.filter(item => item !== cat)
         : [...prev, cat]
     )
-    setVisibleCount(9)
   }
 
   const handleSearchChange = (val: string) => {
     setSearch(val)
-    setVisibleCount(9)
   }
 
   const handleSortChange = (val: SortField) => {
     setSortField(val)
-    setVisibleCount(9)
   }
 
   const handleClearCategories = () => {
     setSelectedCategories([])
-    setVisibleCount(9)
   }
 
   const filteredAndSortedCertificates = React.useMemo(() => {
@@ -122,8 +117,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
     return result
   }, [initialCertificates, selectedCategories, deferredSearch, sortField])
 
-  const visibleCertificates = filteredAndSortedCertificates.slice(0, visibleCount)
-  const hasMore = filteredAndSortedCertificates.length > visibleCount
+  const visibleCertificates = filteredAndSortedCertificates
 
   return (
     <div className="space-y-6">
@@ -281,14 +275,11 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
             return (
               <motion.div
                 key={cert.id}
-                initial={{ opacity: 0, scale: 0.95, y: 8 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: -8 }}
-                transition={{
-                  opacity: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
-                  scale: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
-                  y: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }
-                }}
+                initial={{ opacity: 0, filter: "blur(16px)" }}
+                whileInView={{ opacity: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, filter: "blur(16px)" }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ duration: 0.9, delay: index * 0.02, ease: [0.25, 0.1, 0.25, 1] }}
                 className="group p-6 rounded-3xl glass-panel border border-slate-300/80 dark:border-slate-800/30 hover:border-primary/40 shadow-xs hover:shadow-md flex flex-col justify-between transition-[border-color,box-shadow] duration-300 relative overflow-hidden transform-gpu"
               >
                 {/* Subtle top indicator bar */}
@@ -390,19 +381,6 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
           </div>
         )}
       </div>
-
-      {/* Load More Button */}
-      {hasMore && (
-        <div className="flex justify-center pt-2">
-          <button
-            type="button"
-            onClick={() => setVisibleCount(prev => prev + 9)}
-            className="px-6 py-3 rounded-xl bg-foreground/5 dark:bg-white/5 border border-foreground/10 dark:border-white/10 text-foreground hover:bg-foreground/10 dark:hover:bg-white/10 hover:border-foreground/20 dark:hover:border-white/20 text-xs font-bold transition-all cursor-pointer"
-          >
-            Load More ({filteredAndSortedCertificates.length - visibleCount} remaining)
-          </button>
-        </div>
-      )}
     </div>
   )
 }

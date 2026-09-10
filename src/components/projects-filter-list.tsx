@@ -31,13 +31,11 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
   const [activeCategory, setActiveCategory] = React.useState<'data' | 'non-data'>(getInitialProjectCategory)
   const [selectedSubCategories, setSelectedSubCategories] = React.useState<string[]>([])
   const [isFilterOpen, setIsFilterOpen] = React.useState(false)
-  const [visibleCount, setVisibleCount] = React.useState(9)
 
   const handleCategoryChange = (cat: 'data' | 'non-data') => {
     setActiveCategory(cat)
     setSelectedSubCategories([])
     setSearchQuery('')
-    setVisibleCount(9)
     try {
       sessionStorage.setItem('project_public_active_category', cat)
       localStorage.setItem('project_public_active_category', cat)
@@ -81,7 +79,6 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
         ? prev.filter(item => item !== sub)
         : [...prev, sub]
     )
-    setVisibleCount(9)
   }
 
   type SortField = 'pinned' | 'featured' | 'newest' | 'oldest' | 'title'
@@ -129,22 +126,18 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
     return result
   }, [initialProjects, activeCategory, selectedSubCategories, deferredSearchQuery, sortField])
 
-  const visibleProjects = filteredAndSortedProjects.slice(0, visibleCount)
-  const hasMore = filteredAndSortedProjects.length > visibleCount
+  const visibleProjects = filteredAndSortedProjects
 
   const handleSearchChange = (val: string) => {
     setSearchQuery(val)
-    setVisibleCount(9)
   }
 
   const handleSortChange = (val: SortField) => {
     setSortField(val)
-    setVisibleCount(9)
   }
 
   const handleClearSubCategories = () => {
     setSelectedSubCategories([])
-    setVisibleCount(9)
   }
 
   return (
@@ -352,14 +345,11 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
               {visibleProjects.map((project, index) => (
                 <motion.div
                   key={project.id}
-                  initial={{ opacity: 0, scale: 0.95, y: 8 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: -8 }}
-                  transition={{
-                    opacity: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
-                    scale: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
-                    y: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }
-                  }}
+                  initial={{ opacity: 0, filter: "blur(16px)" }}
+                  whileInView={{ opacity: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, filter: "blur(16px)" }}
+                  viewport={{ once: true, amount: 0.15 }}
+                  transition={{ duration: 0.9, delay: index * 0.02, ease: [0.25, 0.1, 0.25, 1] }}
                   className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-[border-color,box-shadow] duration-300 relative overflow-hidden transform-gpu w-full"
                 >
                   {/* Subtle top indicator bar */}
@@ -443,19 +433,6 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
           </motion.div>
         </AnimatePresence>
       </div>
-
-      {/* Load More Button */}
-      {hasMore && (
-        <div className="flex justify-center pt-2 !-mt-2">
-          <button
-            type="button"
-            onClick={() => setVisibleCount(prev => prev + 9)}
-            className="px-6 py-3 rounded-xl bg-foreground/5 dark:bg-white/5 border border-foreground/10 dark:border-white/10 text-foreground hover:bg-foreground/10 dark:hover:bg-white/10 hover:border-foreground/20 dark:hover:border-white/20 text-xs font-bold transition-all cursor-pointer"
-          >
-            Load More ({filteredAndSortedProjects.length - visibleCount} remaining)
-          </button>
-        </div>
-      )}
     </div>
   )
 }
