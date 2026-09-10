@@ -77,9 +77,9 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
   const handleDuplicate = (item: Education) => {
     const start_date = item.start_date ? item.start_date.split('T')[0] : ''
     const end_date = item.end_date ? item.end_date.split('T')[0] : ''
-    setEditingItem({ 
-      ...item, 
-      id: undefined, 
+    setEditingItem({
+      ...item,
+      id: undefined,
       degree: `${item.degree} (Copy)`,
       start_date,
       end_date,
@@ -180,8 +180,8 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
       {notification && (
         <div className={cn(
           "p-4 rounded-xl text-xs font-semibold flex items-center gap-2.5",
-          notification.success 
-            ? "bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400" 
+          notification.success
+            ? "bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400"
             : "bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400"
         )}>
           {notification.success ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
@@ -221,13 +221,13 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
             displayedItems={paginatedItems.length}
           />
 
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="sync" initial={false}>
             <motion.div
-              key="content"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
+              key={`page-${currentPage}`}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
               className="w-full"
             >
               {filteredAndSorted.length === 0 ? (

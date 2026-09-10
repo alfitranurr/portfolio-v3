@@ -216,13 +216,13 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
             displayedItems={paginatedItems.length}
           />
 
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="sync" initial={false}>
             <motion.div
-              key={activeCategory}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
+              key={`${activeCategory}-${currentPage}`}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
               className="w-full"
             >
               {filteredAndSorted.length === 0 ? (
