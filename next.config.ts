@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
+    // Vercel image optimization quota exhausted -> /_next/image returns 402
+    // (OPTIMIZED_IMAGE_REQUEST_PAYMENT_REQUIRED), hiding all logos (SafeLogo
+    // onError). Serve raw images from Supabase CDN instead.
+    unoptimized: true,
     formats: ['image/avif', 'image/webp'],
     qualities: [75, 85, 90],
     minimumCacheTTL: 86400,
