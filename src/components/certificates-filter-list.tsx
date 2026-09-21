@@ -265,11 +265,11 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
       <div className="w-full">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
-            key="certificates-grid"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
+            key={`${sortField}:${selectedCategories.join('+')}`}
+            initial={{ opacity: 0, y: 8, filter: 'blur(8px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, filter: 'blur(8px)' }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
             className="w-full"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
@@ -286,9 +286,9 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: -8 }}
                     transition={{
-                      opacity: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
-                      scale: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] },
-                      y: { duration: 0.28, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }
+                      opacity: { duration: 0.28, delay: Math.min(index * 0.04, 0.32), ease: [0.16, 1, 0.3, 1] },
+                      scale: { duration: 0.28, delay: Math.min(index * 0.04, 0.32), ease: [0.16, 1, 0.3, 1] },
+                      y: { duration: 0.28, delay: Math.min(index * 0.04, 0.32), ease: [0.16, 1, 0.3, 1] }
                     }}
                     className="group p-6 rounded-3xl glass-panel border border-slate-300/80 dark:border-slate-800/30 hover:border-primary/40 shadow-xs hover:shadow-md flex flex-col justify-between transition-[border-color,box-shadow] duration-300 relative overflow-hidden transform-gpu w-full"
                   >
