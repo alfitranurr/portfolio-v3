@@ -11,16 +11,19 @@ interface ExperienceFilterListProps {
   initialExperience: Experience[]
 }
 
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? React.useLayoutEffect : React.useEffect
+
 export function ExperienceFilterList({ initialExperience }: ExperienceFilterListProps) {
   const [activeCategory, setActiveCategory] = React.useState<'professional' | 'committee_organization'>('professional')
   const [expandedRoles, setExpandedRoles] = React.useState<Record<string, boolean>>({})
+  const [listKey, setListKey] = React.useState(0)
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     try {
       const stored = sessionStorage.getItem('experience_public_active_category') || localStorage.getItem('experience_public_active_category')
-      if (stored === 'professional' || stored === 'committee_organization') {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (stored === 'committee_organization') {
         setActiveCategory(stored)
+        setListKey(k => k + 1)
       }
     } catch {
       // ignore
@@ -167,7 +170,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
 
       {/* Timeline Section */}
       <div className="w-full py-2">
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence key={listKey} mode="wait" initial={false}>
           <motion.div
             key={activeCategory}
             initial={{ opacity: 0 }}
