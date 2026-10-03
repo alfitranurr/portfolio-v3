@@ -1,4 +1,5 @@
 import type { SupabaseClient, User } from '@supabase/supabase-js'
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
 
 /**
@@ -26,8 +27,11 @@ export function hasSupabaseConfig(): boolean {
  *
  * Only call this from the Supabase branch (i.e. after `hasSupabaseConfig()` is
  * true) — the mock branch never needs server-side auth.
+ *
+ * Wrapped in React `cache()` so a server render that calls several admin actions
+ * (e.g. /admin/ai-settings) verifies the session with Supabase Auth only once.
  */
-export async function requireAdmin(): Promise<{ supabase: SupabaseClient; user: User } | null> {
+export const requireAdmin = cache(async (): Promise<{ supabase: SupabaseClient; user: User } | null> => {
   try {
     const supabase = await createClient()
     const { data: { user }, error } = await supabase.auth.getUser()
@@ -36,4 +40,4 @@ export async function requireAdmin(): Promise<{ supabase: SupabaseClient; user: 
   } catch {
     return null
   }
-}
+})
