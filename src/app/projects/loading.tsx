@@ -3,7 +3,7 @@ import { HeaderSkeleton, ProjectCardSkeleton, Skeleton } from '@/components/ui/s
 
 export default function ProjectsLoading() {
   return (
-    <div className="space-y-8 animate-in fade-in duration-200">
+    <div className="space-y-8">
       {/* Header */}
       <HeaderSkeleton
         titleWidth="w-56 sm:w-80"

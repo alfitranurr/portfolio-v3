@@ -2,7 +2,8 @@
 
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
-import { hasSupabaseConfig, requireAdmin } from './_shared'
+import { hasSupabaseConfig, requireAdmin, STORAGE_CACHE_CONTROL } from './_shared'
+import { scheduleFileCleanup } from './_storage'
 
 export async function updateProfileAction(prevState: unknown, formData: FormData) {
   const name = formData.get('name') as string
@@ -19,6 +20,11 @@ export async function updateProfileAction(prevState: unknown, formData: FormData
 
   if (!name || !headline) {
     return { success: false, error: 'Name and Headline are required.' }
+  }
+  if (resumeFile && resumeFile.size > 0) {
+    const isPdf = resumeFile.type === 'application/pdf' && resumeFile.name.toLowerCase().endsWith('.pdf')
+    if (!isPdf) return { success: false, error: 'Resume must be a PDF file.' }
+    if (resumeFile.size > 4 * 1024 * 1024) return { success: false, error: 'Resume too large. Maximum 4MB.' }
   }
 
   const cookieStore = await cookies()
@@ -86,6 +92,13 @@ export async function updateProfileAction(prevState: unknown, formData: FormData
     }
     const { supabase, user } = admin
 
+    // File lama (untuk cleanup storage setelah diganti)
+    const { data: previous } = await supabase
+      .from('profiles')
+      .select('avatar_url, resume_url, logo_url')
+      .eq('id', user.id)
+      .maybeSingle()
+
     // Upload Files if provided
     let avatar_url = formData.get('avatar_url') as string || null
     let resume_url = formData.get('resume_url') as string || null
@@ -96,7 +109,7 @@ export async function updateProfileAction(prevState: unknown, formData: FormData
       const fileName = `avatar-${user.id}-${Date.now()}.${ext}`
       const { error: uploadError } = await supabase.storage
         .from('portfolio-assets')
-        .upload(fileName, avatarFile, { upsert: true, contentType: avatarFile.type })
+        .upload(fileName, avatarFile, { upsert: true, contentType: avatarFile.type, cacheControl: STORAGE_CACHE_CONTROL })
 
       if (uploadError) throw uploadError
       const { data: { publicUrl } } = supabase.storage
@@ -110,7 +123,7 @@ export async function updateProfileAction(prevState: unknown, formData: FormData
       const fileName = `resume-${user.id}-${Date.now()}.${ext}`
       const { error: uploadError } = await supabase.storage
         .from('portfolio-assets')
-        .upload(fileName, resumeFile, { upsert: true, contentType: resumeFile.type })
+        .upload(fileName, resumeFile, { upsert: true, contentType: resumeFile.type, cacheControl: STORAGE_CACHE_CONTROL })
 
       if (uploadError) throw uploadError
       const { data: { publicUrl } } = supabase.storage
@@ -124,7 +137,7 @@ export async function updateProfileAction(prevState: unknown, formData: FormData
       const fileName = `logo-${user.id}-${Date.now()}.${ext}`
       const { error: uploadError } = await supabase.storage
         .from('portfolio-assets')
-        .upload(fileName, logoFile, { upsert: true, contentType: logoFile.type })
+        .upload(fileName, logoFile, { upsert: true, contentType: logoFile.type, cacheControl: STORAGE_CACHE_CONTROL })
 
       if (uploadError) throw uploadError
       const { data: { publicUrl } } = supabase.storage
@@ -153,6 +166,10 @@ export async function updateProfileAction(prevState: unknown, formData: FormData
       })
 
     if (error) throw error
+
+    scheduleFileCleanup(supabase, previous?.avatar_url, avatar_url)
+    scheduleFileCleanup(supabase, previous?.logo_url, logo_url)
+    scheduleFileCleanup(supabase, previous?.resume_url, resume_url)
 
     revalidatePath('/', 'layout')
     return { success: true, message: 'Profile updated successfully.' }

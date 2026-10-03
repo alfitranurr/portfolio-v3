@@ -2,7 +2,6 @@ import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, Copy, Edit3, Trash2, Calendar, MapPin, Briefcase } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
 import { Experience, CATEGORY_MAP } from './types'
 
 interface ExperienceGridViewProps {
@@ -39,7 +38,7 @@ export function ExperienceGridView({ experiences, onPreview, onEdit, onDuplicate
               {exp.logo_url ? (
                 <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800/60 shrink-0 relative p-1 shadow-xs">
                   <BlurImage
-                    src={getDirectImageUrl(exp.logo_url, 150)}
+                    src={exp.logo_url}
                     alt={exp.company}
                     lowQuality
                     sizes="48px"

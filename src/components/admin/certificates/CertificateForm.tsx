@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { ArrowLeft, Check, Loader2, Award } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
 import { Certificate, CATEGORY_MAP } from './types'
 
 interface CertificateFormProps {
@@ -143,7 +142,7 @@ export function CertificateForm({
                 <div className="relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center shrink-0">
                   {certificate.image_url ? (
                     <BlurImage
-                      src={getDirectImageUrl(certificate.image_url, 200)}
+                      src={certificate.image_url}
                       alt="Certificate preview"
                       lowQuality
                       sizes="56px"

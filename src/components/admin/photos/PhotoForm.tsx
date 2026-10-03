@@ -1,9 +1,10 @@
 import * as React from 'react'
 import { ArrowLeft, Check, Loader2, UploadCloud, Image as ImageIcon } from 'lucide-react'
-import { cn, getDirectImageUrl } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { BlurImage } from '@/components/ui/blur-image'
 import { Photo } from '@/lib/types'
-import { uploadAssetAction } from '@/app/admin/actions'
+import { uploadImage } from '@/lib/upload-image'
+import { useUploadSession } from '../useUploadSession'
 
 interface PhotoFormProps {
   photo: Partial<Photo> | null
@@ -23,6 +24,7 @@ export function PhotoForm({
   setNotification
 }: PhotoFormProps) {
   const [isUploading, setIsUploading] = React.useState(false)
+  const trackUpload = useUploadSession()
 
   if (!photo) return null
 
@@ -34,11 +36,9 @@ export function PhotoForm({
     setNotification(null)
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('prefix', 'photo-gallery')
-      const res = await uploadAssetAction(formData)
+      const res = await uploadImage(file, 'photo-gallery')
       if (res.success && res.url) {
+        trackUpload(res.url)
         onUpdatePhoto(prev => ({ ...prev, image_url: res.url }))
         setNotification({ success: true, message: 'Image uploaded successfully.' })
       } else {
@@ -164,7 +164,7 @@ export function PhotoForm({
               <div className="relative w-24 h-24 rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700/50 bg-slate-200/5 flex items-center justify-center">
                 {photo.image_url ? (
                   <BlurImage
-                    src={getDirectImageUrl(photo.image_url, 100)}
+                    src={photo.image_url}
                     alt={photo.title || 'Photo preview'}
                     lowQuality
                     sizes="96px"

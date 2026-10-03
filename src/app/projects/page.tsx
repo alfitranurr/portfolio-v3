@@ -1,4 +1,4 @@
-import { getProjects } from '@/lib/data-service'
+import { getProjectSummaries } from '@/lib/data-service'
 import { ProjectsFilterList } from '@/components/projects-filter-list'
 
 export const metadata = {
@@ -9,7 +9,7 @@ export const metadata = {
 export const revalidate = 3600
 
 export default async function ProjectsPage() {
-  const projects = await getProjects()
+  const projects = await getProjectSummaries()
 
   return (
     <div className="space-y-8">

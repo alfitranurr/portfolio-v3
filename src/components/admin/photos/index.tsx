@@ -1,21 +1,23 @@
 'use client'
 
 import * as React from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ImageIcon, PlusCircle, CheckCircle2, AlertCircle } from 'lucide-react'
 import { savePhotoAction, deletePhotoAction } from '@/app/admin/actions'
 import { cn } from '@/lib/utils'
 import { Photo, PhotosCrudProps, DEFAULT_PHOTO, SortField, ViewMode } from './types'
 import { usePhotosFilters } from './usePhotosFilters'
-import { usePagination } from './usePagination'
+import { usePagination } from '../shared/usePagination'
 import { PhotosControls } from './PhotosControls'
 import { PhotoGridView } from './PhotoGridView'
 import { PhotoTableView } from './PhotoTableView'
 import { PhotoForm } from './PhotoForm'
 import { PhotoPreviewModal } from './PhotoPreviewModal'
-import { PaginationControls } from './PaginationControls'
+import { PaginationControls } from '../shared/PaginationControls'
 
 export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
+  const router = useRouter()
   const [photos, setPhotos] = React.useState<Photo[]>(initialPhotos)
   const [prevInitialPhotos, setPrevInitialPhotos] = React.useState(initialPhotos)
 
@@ -113,9 +115,8 @@ export function PhotosCrud({ initialPhotos }: PhotosCrudProps) {
         if (editingPhoto.id) {
           setPhotos(prev => prev.map(item => item.id === editingPhoto.id ? ((res.message || '').includes('Mock') ? { ...item, ...editingPhoto } as Photo : editingPhoto as Photo) : item))
         } else {
-          sessionStorage.setItem('photos_admin_notification', JSON.stringify({ success: true, message: res.message || 'Saved successfully.' }))
-          window.location.reload()
-          return
+          // Item baru: ambil ulang daftar dari server tanpa reload penuh halaman
+          router.refresh()
         }
         setEditingPhoto(null)
         setNotification({ success: true, message: res.message || 'Saved successfully.' })

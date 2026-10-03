@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { Education } from '@/lib/types'
 import { hasSupabaseConfig, requireAdmin } from './_shared'
+import { readFileUrl, scheduleFileCleanup } from './_storage'
 
 export async function saveEducationAction(eduData: Partial<Education>) {
   const cookieStore = await cookies()
@@ -42,6 +43,7 @@ export async function saveEducationAction(eduData: Partial<Education>) {
     const { supabase } = admin
 
     const isEdit = !!eduData.id && !eduData.id.startsWith('mock-')
+    const previousFile = isEdit ? await readFileUrl(supabase, 'education', 'logo_url', eduData.id!) : null
 
     const dbPayload = {
       institution: eduData.institution || '',
@@ -74,6 +76,7 @@ export async function saveEducationAction(eduData: Partial<Education>) {
 
     revalidatePath('/education')
     revalidatePath('/admin/education')
+    scheduleFileCleanup(supabase, previousFile, dbPayload.logo_url)
     return { success: true, message: 'Education history saved successfully.' }
   } catch (err) {
     console.error('saveEducationAction error:', err)
@@ -105,6 +108,7 @@ export async function deleteEducationAction(id: string) {
       return { success: false, error: 'Unauthorized' }
     }
     const { supabase } = admin
+    const previousFile = await readFileUrl(supabase, 'education', 'logo_url', id)
     const { error } = await supabase
       .from('education')
       .delete()
@@ -112,6 +116,7 @@ export async function deleteEducationAction(id: string) {
     if (error) throw error
     revalidatePath('/education')
     revalidatePath('/admin/education')
+    scheduleFileCleanup(supabase, previousFile)
     return { success: true }
   } catch (err) {
     console.error('deleteEducationAction error:', err)

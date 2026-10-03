@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { Photo } from '@/lib/types'
 import { hasSupabaseConfig, requireAdmin } from './_shared'
+import { readFileUrl, scheduleFileCleanup } from './_storage'
 
 export async function savePhotoAction(photoData: Partial<Photo>) {
   const title = photoData.title ? photoData.title.trim() : ''
@@ -60,6 +61,7 @@ export async function savePhotoAction(photoData: Partial<Photo>) {
     const { supabase } = admin
 
     const isEdit = !!photoData.id && !photoData.id.startsWith('mock-')
+    const previousFile = isEdit ? await readFileUrl(supabase, 'photos', 'image_url', photoData.id!) : null
 
     const dbPayload = {
       title: title || null,
@@ -114,6 +116,7 @@ export async function savePhotoAction(photoData: Partial<Photo>) {
 
     revalidatePath('/')
     revalidatePath('/admin/photos')
+    scheduleFileCleanup(supabase, previousFile, dbPayload.image_url)
     return { success: true, message: 'Photo saved successfully.' }
   } catch (err) {
     console.error('savePhotoAction error:', err)
@@ -153,6 +156,7 @@ export async function deletePhotoAction(id: string) {
       return { success: false, error: 'Unauthorized' }
     }
     const { supabase } = admin
+    const previousFile = await readFileUrl(supabase, 'photos', 'image_url', id)
     const { error } = await supabase
       .from('photos')
       .delete()
@@ -179,6 +183,7 @@ export async function deletePhotoAction(id: string) {
     }
     revalidatePath('/')
     revalidatePath('/admin/photos')
+    scheduleFileCleanup(supabase, previousFile)
     return { success: true }
   } catch (err) {
     console.error('deletePhotoAction error:', err)

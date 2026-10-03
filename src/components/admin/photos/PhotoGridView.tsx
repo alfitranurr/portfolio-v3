@@ -2,7 +2,7 @@ import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, Edit3, Trash2 } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
+import { IMAGE_SIZES } from '@/lib/image-variants'
 import { Photo } from '@/lib/types'
 
 interface PhotoGridViewProps {
@@ -31,11 +31,11 @@ export function PhotoGridView({ photos, onPreview, onEdit, onDelete }: PhotoGrid
           >
             <div className="aspect-video w-full relative">
               <BlurImage
-                src={getDirectImageUrl(photo.image_url, 400)}
+                src={photo.image_url}
                 alt={photo.title || 'Photo'}
-                priority={index < 4}
-                loading={index >= 4 ? "eager" : undefined}
-                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                loading={index < 4 ? "eager" : "lazy"}
+                fetchPriority={index < 4 ? "high" : "auto"}
+                sizes={IMAGE_SIZES.card}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, Copy, Edit3, Trash2, ExternalLink, Image as ImageIcon } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
+import { IMAGE_SIZES } from '@/lib/image-variants'
 import { Github } from '@/components/icons'
 import { Project, SUBCATEGORY_MAP } from './types'
 
@@ -63,23 +63,23 @@ export function ProjectGridView({ projects, onPreview, onEdit, onDuplicate, onDe
               {proj.cover_image ? (
                 <>
                   <BlurImage
-                    src={getDirectImageUrl(proj.cover_image, 400)}
+                    src={proj.cover_image}
                     alt=""
                     lowQuality
+                    loading="lazy"
+                    fetchPriority="low"
                     initialBlur="blur-xl opacity-0"
                     initialScale="scale-110"
                     loadedBlur="blur-xl opacity-30"
                     loadedScale="scale-110"
-                    referrerPolicy="no-referrer"
                     className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
                   />
                   <BlurImage
-                    src={getDirectImageUrl(proj.cover_image, 400)}
+                    src={proj.cover_image}
                     alt={proj.title}
-                    priority={index < 3}
-                    loading={index >= 3 ? "eager" : undefined}
-                    referrerPolicy="no-referrer"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    loading={index < 3 ? "eager" : "lazy"}
+                    fetchPriority={index < 3 ? "high" : "auto"}
+                    sizes={IMAGE_SIZES.card}
                     className="max-w-full max-h-full object-contain relative z-10"
                   />
                 </>

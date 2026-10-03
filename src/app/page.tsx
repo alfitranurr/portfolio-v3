@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowUpRight, Download, Rocket } from 'lucide-react'
-import { getProfile, getProjects, getSkills, getPhotos, sortFeaturedProjects } from '@/lib/data-service'
+import { getProfile, getProjectSummaries, getSkills, getPhotos, sortFeaturedProjects } from '@/lib/data-service'
 import { SkillsMarquee } from '@/components/skills-marquee'
 import { JourneyMarquee } from '@/components/journey-marquee'
 import { FeaturedProjectCard } from '@/components/featured-project-card'
@@ -10,7 +10,7 @@ export const revalidate = 3600 // Revalidate cache every hour (ISR)
 export default async function HomePage() {
   const [profile, projects, skills, photos] = await Promise.all([
     getProfile(),
-    getProjects(),
+    getProjectSummaries(),
     getSkills(),
     getPhotos()
   ])

@@ -4,7 +4,7 @@ import * as React from 'react'
 import { motion } from 'framer-motion'
 import { Photo } from '@/lib/types'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
+import { IMAGE_SIZES } from '@/lib/image-variants'
 
 interface JourneyMarqueeProps {
   initialPhotos: Photo[]
@@ -49,10 +49,10 @@ export function JourneyMarquee({ initialPhotos }: JourneyMarqueeProps) {
         className="mb-6 h-[240px] w-full rounded-3xl glass-panel relative overflow-hidden group hover:border-primary/20 hover:scale-[1.03] transition-all duration-300"
       >
         <BlurImage
-          src={getDirectImageUrl(item.image_url, 600)}
+          src={item.image_url}
           alt={item.title || 'Recap image'}
-          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          sizes={IMAGE_SIZES.card}
+          className="w-full h-full object-cover group-hover:scale-105"
         />
       </motion.div>
     )

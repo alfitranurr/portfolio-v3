@@ -1,21 +1,23 @@
 'use client'
 
 import * as React from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GraduationCap, PlusCircle, CheckCircle2, AlertCircle } from 'lucide-react'
 import { saveEducationAction, deleteEducationAction } from '@/app/admin/actions'
 import { cn } from '@/lib/utils'
 import { Education, EducationCrudProps, DEFAULT_EDUCATION, SortField, ViewMode } from './types'
 import { useEducationFilters } from './useEducationFilters'
-import { usePagination } from './usePagination'
+import { usePagination } from '../shared/usePagination'
 import { EducationControls } from './EducationControls'
 import { EducationGridView } from './EducationGridView'
 import { EducationTableView } from './EducationTableView'
 import { EducationForm } from './EducationForm'
 import { EducationPreviewModal } from './EducationPreviewModal'
-import { PaginationControls } from './PaginationControls'
+import { PaginationControls } from '../shared/PaginationControls'
 
 export function EducationCrud({ initialEducation }: EducationCrudProps) {
+  const router = useRouter()
   const [educationList, setEducationList] = React.useState<Education[]>(initialEducation)
   const [prevInitialEducation, setPrevInitialEducation] = React.useState(initialEducation)
 
@@ -129,9 +131,8 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
         if (editingItem.id) {
           setEducationList(prev => prev.map(item => item.id === editingItem.id ? ((res.message || '').includes('Mock') ? { ...item, ...editingItem } as Education : editingItem as Education) : item))
         } else {
-          sessionStorage.setItem('education_admin_notification', JSON.stringify({ success: true, message: res.message || 'Saved successfully.' }))
-          window.location.reload()
-          return
+          // Item baru: ambil ulang daftar dari server tanpa reload penuh halaman
+          router.refresh()
         }
         setEditingItem(null)
         setNotification({ success: true, message: res.message || 'Saved successfully.' })
@@ -267,6 +268,7 @@ export function EducationCrud({ initialEducation }: EducationCrudProps) {
             startIndex={startIndex}
             onPageChange={setCurrentPage}
             onPageSizeChange={setPageSize}
+            pageSizeOptions={[10, 20, 50]}
           />
         </div>
       )}

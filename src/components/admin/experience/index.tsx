@@ -1,21 +1,23 @@
 'use client'
 
 import * as React from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Briefcase, PlusCircle, CheckCircle2, AlertCircle } from 'lucide-react'
 import { saveExperienceAction, deleteExperienceAction } from '@/app/admin/actions'
 import { cn } from '@/lib/utils'
 import { Experience, ExperienceCrudProps, DEFAULT_EXPERIENCE, SortField, ViewMode } from './types'
 import { useExperienceFilters } from './useExperienceFilters'
-import { usePagination } from './usePagination'
+import { usePagination } from '../shared/usePagination'
 import { ExperienceControls } from './ExperienceControls'
 import { ExperienceGridView } from './ExperienceGridView'
 import { ExperienceTableView } from './ExperienceTableView'
 import { ExperienceForm } from './ExperienceForm'
 import { ExperiencePreviewModal } from './ExperiencePreviewModal'
-import { PaginationControls } from './PaginationControls'
+import { PaginationControls } from '../shared/PaginationControls'
 
 export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
+  const router = useRouter()
   const [experienceList, setExperienceList] = React.useState<Experience[]>(initialExperience)
   const [prevInitialExperience, setPrevInitialExperience] = React.useState(initialExperience)
 
@@ -187,9 +189,8 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
         if (editingItem.id) {
           setExperienceList(prev => prev.map(item => item.id === editingItem.id ? ((res.message || '').includes('Mock') ? { ...item, ...payload } as Experience : payload as Experience) : item))
         } else {
-          sessionStorage.setItem('experience_admin_notification', JSON.stringify({ success: true, message: res.message || 'Saved successfully.' }))
-          window.location.reload()
-          return
+          // Item baru: ambil ulang daftar dari server tanpa reload penuh halaman
+          router.refresh()
         }
         setEditingItem(null)
         setDescriptionBullets([])
@@ -342,6 +343,7 @@ export function ExperienceCrud({ initialExperience }: ExperienceCrudProps) {
             startIndex={startIndex}
             onPageChange={setCurrentPage}
             onPageSizeChange={setPageSize}
+            pageSizeOptions={[10, 20, 50]}
           />
         </div>
       )}

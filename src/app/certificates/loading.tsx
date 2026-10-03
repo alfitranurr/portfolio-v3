@@ -3,11 +3,11 @@ import { HeaderSkeleton, FilterTabsSkeleton, CertificateCardSkeleton, Skeleton }
 
 export default function CertificatesLoading() {
   return (
-    <div className="space-y-8 animate-in fade-in duration-200">
+    <div className="space-y-8">
       {/* Header */}
-      <HeaderSkeleton 
-        titleWidth="w-64 sm:w-96" 
-        subtitleWidth="w-full max-w-md" 
+      <HeaderSkeleton
+        titleWidth="w-64 sm:w-96"
+        subtitleWidth="w-full max-w-md"
       />
 
       {/* Filter Tabs */}

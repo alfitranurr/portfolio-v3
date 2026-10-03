@@ -1,9 +1,10 @@
 import * as React from 'react'
 import { ArrowLeft, Check, Loader2, Award, UploadCloud } from 'lucide-react'
-import { cn, getDirectImageUrl } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { BlurImage } from '@/components/ui/blur-image'
 import { Skill } from './types'
-import { uploadAssetAction } from '@/app/admin/actions'
+import { uploadImage } from '@/lib/upload-image'
+import { useUploadSession } from '../useUploadSession'
 
 interface SkillFormProps {
   skill: Partial<Skill> | null
@@ -21,6 +22,8 @@ export function SkillForm({
   isPending
 }: SkillFormProps) {
   const [isUploading, setIsUploading] = React.useState(false)
+  const trackUpload = useUploadSession()
+  const [uploadError, setUploadError] = React.useState<string | null>(null)
 
   if (!skill) return null
 
@@ -29,19 +32,19 @@ export function SkillForm({
     if (!file) return
 
     setIsUploading(true)
+    setUploadError(null)
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('prefix', 'skill-icon')
-      const res = await uploadAssetAction(formData)
+      const res = await uploadImage(file, 'skill-icon')
       if (res.success && res.url) {
+        trackUpload(res.url)
         onUpdateSkill(prev => ({ ...prev, logo_url: res.url }))
       } else {
-        console.error(res.error || 'Failed to upload icon.')
+        setUploadError(res.error || 'Failed to upload icon.')
       }
     } catch (err) {
       console.error(err)
+      setUploadError('Error uploading icon.')
     } finally {
       setIsUploading(false)
     }
@@ -130,7 +133,7 @@ export function SkillForm({
                   {skill.logo_url ? (
                     <>
                       <BlurImage
-                        src={getDirectImageUrl(skill.logo_url, 200)}
+                        src={skill.logo_url}
                         alt="Icon preview"
                         lowQuality
                         sizes="80px"
@@ -173,6 +176,9 @@ export function SkillForm({
                       disabled={isUploading}
                     />
                   </label>
+                  {uploadError && (
+                    <p className="text-[10px] font-semibold text-red-500">{uploadError}</p>
+                  )}
 
                   <input
                     type="url"

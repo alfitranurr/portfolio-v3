@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { Eye, Copy, Edit3, Trash2, Image as ImageIcon } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
 import { Project, SUBCATEGORY_MAP } from './types'
 
 interface ProjectTableViewProps {
@@ -43,7 +42,7 @@ export function ProjectTableView({ projects, startIndex, onPreview, onEdit, onDu
                     <div className="w-10 h-7 rounded-lg overflow-hidden bg-slate-900 border border-slate-700/60 shrink-0 relative p-0.5 shadow-xs">
                       {proj.cover_image ? (
                         <BlurImage
-                          src={getDirectImageUrl(proj.cover_image, 150)}
+                          src={proj.cover_image}
                           alt={proj.title}
                           lowQuality
                           sizes="40px"

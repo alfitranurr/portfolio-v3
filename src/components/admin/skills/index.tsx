@@ -1,21 +1,23 @@
 'use client'
 
 import * as React from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Award, PlusCircle, CheckCircle2, AlertCircle } from 'lucide-react'
 import { saveSkillAction, deleteSkillAction } from '@/app/admin/actions'
 import { cn } from '@/lib/utils'
 import { Skill, SkillsCrudProps, DEFAULT_SKILL, SortField, ViewMode } from './types'
 import { useSkillsFilters } from './useSkillsFilters'
-import { usePagination } from './usePagination'
+import { usePagination } from '../shared/usePagination'
 import { SkillsControls } from './SkillsControls'
 import { SkillGridView } from './SkillGridView'
 import { SkillTableView } from './SkillTableView'
 import { SkillForm } from './SkillForm'
 import { SkillPreviewModal } from './SkillPreviewModal'
-import { PaginationControls } from './PaginationControls'
+import { PaginationControls } from '../shared/PaginationControls'
 
 export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
+  const router = useRouter()
   const [skills, setSkills] = React.useState<Skill[]>(initialSkills)
   const [prevInitialSkills, setPrevInitialSkills] = React.useState(initialSkills)
 
@@ -113,9 +115,8 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
         if (editingItem.id) {
           setSkills(prev => prev.map(item => item.id === editingItem.id ? ((res.message || '').includes('Mock') ? { ...item, ...editingItem } as Skill : editingItem as Skill) : item))
         } else {
-          sessionStorage.setItem('skill_admin_notification', JSON.stringify({ success: true, message: res.message || 'Saved successfully.' }))
-          window.location.reload()
-          return
+          // Item baru: ambil ulang daftar dari server tanpa reload penuh halaman
+          router.refresh()
         }
         setEditingItem(null)
         setNotification({ success: true, message: res.message || 'Saved successfully.' })
@@ -248,6 +249,7 @@ export function SkillsCrud({ initialSkills }: SkillsCrudProps) {
             startIndex={startIndex}
             onPageChange={setCurrentPage}
             onPageSizeChange={setPageSize}
+            pageSizeOptions={[10, 20, 50]}
           />
         </div>
       )}

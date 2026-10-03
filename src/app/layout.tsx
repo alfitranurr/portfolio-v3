@@ -8,13 +8,12 @@ import { VisitorTracker } from "@/components/visitor-tracker";
 import { TopLoader } from "@/components/top-loader";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { MainLayoutContainer } from "@/components/main-layout-container";
+import { AdminSidebarSlot } from "@/components/admin-sidebar-slot";
 import { getProfile } from "@/lib/data-service";
+import { variantUrl } from "@/lib/image-variants";
 
 const InitialLoader = dynamic(() =>
   import("@/components/initial-loader").then((m) => m.InitialLoader)
-);
-const AdminSidebar = dynamic(() =>
-  import("@/components/admin-sidebar").then((m) => m.AdminSidebar)
 );
 
 const poppins = Poppins({
@@ -32,6 +31,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const profile = await getProfile();
   const name = profile?.name || "Al Fitra Nur Ramadhani";
   const logoUrl = profile?.logo_url || "/favicon.ico";
+  // Varian kecil untuk favicon/apple-icon (URL non-varian dikembalikan apa adanya)
+  const iconUrl = variantUrl(logoUrl, 128);
+  const appleIconUrl = variantUrl(logoUrl, 256);
 
   return {
     title: {
@@ -42,13 +44,13 @@ export async function generateMetadata(): Promise<Metadata> {
     keywords: ["Data Science", "Data Analyst", "Machine Learning", "Python", "SQL", "Tableau", "PowerBI", "Portfolio"],
     icons: {
       icon: [
-        { url: logoUrl },
-        { url: logoUrl, sizes: "32x32" },
-        { url: logoUrl, sizes: "16x16" }
+        { url: iconUrl },
+        { url: iconUrl, sizes: "32x32" },
+        { url: iconUrl, sizes: "16x16" }
       ],
-      shortcut: logoUrl,
+      shortcut: iconUrl,
       apple: [
-        { url: logoUrl, sizes: "180x180" }
+        { url: appleIconUrl, sizes: "180x180" }
       ]
     }
   };
@@ -93,8 +95,8 @@ export default async function RootLayout({
             {/* Persistent Sidebar */}
             <Sidebar profile={profile} />
 
-            {/* Admin Sidebar (code-split, only loads on /admin routes) */}
-            <AdminSidebar />
+            {/* Admin Sidebar (code-split, chunk only loads on /admin routes) */}
+            <AdminSidebarSlot />
 
             {/* Content Wrapper */}
             <div className="flex-1 w-full min-w-0 flex flex-col min-h-screen">

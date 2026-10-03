@@ -2,7 +2,6 @@ import * as React from 'react'
 import { createPortal } from 'react-dom'
 import { X, Award, Calendar, ExternalLink } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
 import { Certificate, CATEGORY_MAP } from './types'
 
 interface CertificatePreviewModalProps {
@@ -37,7 +36,7 @@ export function CertificatePreviewModal({ certificate, onClose, onEdit }: Certif
           <div className="flex items-center gap-3 flex-1">
             {certificate.image_url ? (
               <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 relative">
-                <BlurImage src={getDirectImageUrl(certificate.image_url, 200)} alt={certificate.title} sizes="64px" className="w-full h-full object-cover" />
+                <BlurImage src={certificate.image_url} alt={certificate.title} sizes="64px" className="w-full h-full object-cover" />
               </div>
             ) : (
               <div className="w-16 h-16 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">

@@ -1,17 +1,18 @@
 'use client'
 
 import * as React from 'react'
-import { RefreshCw, Inbox, AlertCircle, Mail, MailOpen, Search, Trash2, ChevronDown, RotateCcw, Trash } from 'lucide-react'
+import { RefreshCw, Inbox, AlertCircle, Mail, MailOpen, Search, Trash2, ChevronDown, RotateCcw, Trash, Eraser } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Message, MessagesListProps, VisitorStatsProps } from './types'
 import { RealTimeClock } from './RealTimeClock'
 import { MonthlyTrafficChart } from '@/components/admin/monthly-traffic-chart'
 import { useRouter } from 'next/navigation'
-import { toggleMessageReadAction, deleteMessageAction, getVisitorStatsAction, revalidatePublicPagesAction, resetVisitorAnalyticsAction } from '@/app/admin/actions'
+import { toggleMessageReadAction, deleteMessageAction, getVisitorStatsAction, revalidatePublicPagesAction, resetVisitorAnalyticsAction, scanOrphanUploadsAction, deleteOrphanUploadsAction } from '@/app/admin/actions'
 
 function HeaderActions({ onRefresh }: { onRefresh: () => void }) {
   const [isRefreshing, setIsRefreshing] = React.useState(false)
   const [isResetting, setIsResetting] = React.useState(false)
+  const [isCleaning, setIsCleaning] = React.useState(false)
   const [resetNotice, setResetNotice] = React.useState<{ success: boolean; message: string } | null>(null)
 
   const handleRefresh = () => {
@@ -38,6 +39,38 @@ function HeaderActions({ onRefresh }: { onRefresh: () => void }) {
     }
   }
 
+  const handleCleanStorage = async () => {
+    setIsCleaning(true)
+    setResetNotice(null)
+    try {
+      const scan = await scanOrphanUploadsAction()
+      if (!scan.success) {
+        setResetNotice({ success: false, message: scan.error || 'Failed to scan storage.' })
+        return
+      }
+      if (scan.count === 0) {
+        setResetNotice({ success: true, message: 'No unsaved uploads to clean.' })
+        return
+      }
+      const size = scan.bytes >= 1024 * 1024 ? `${(scan.bytes / 1024 / 1024).toFixed(1)} MB` : `${Math.round(scan.bytes / 1024)} KB`
+      if (!confirm(`Found ${scan.count} unsaved image upload(s) (${size}) older than 24 hours that no record uses. Delete them from storage?`)) {
+        return
+      }
+      const res = await deleteOrphanUploadsAction()
+      setResetNotice(
+        res.success
+          ? { success: true, message: `Removed ${res.deleted} unsaved upload(s).` }
+          : { success: false, message: res.error || 'Failed to clean storage.' }
+      )
+    } catch (err) {
+      console.error(err)
+      setResetNotice({ success: false, message: 'Error cleaning storage.' })
+    } finally {
+      setIsCleaning(false)
+      setTimeout(() => setResetNotice(null), 4000)
+    }
+  }
+
   return (
     <div className="flex items-center gap-3 shrink-0">
       {resetNotice && (
@@ -60,6 +93,15 @@ function HeaderActions({ onRefresh }: { onRefresh: () => void }) {
       >
         <RotateCcw className={cn("w-5 h-5", isResetting && "animate-spin")} />
         <span className="text-xs font-bold hidden sm:inline">Reset Cache</span>
+      </button>
+      <button
+        onClick={handleCleanStorage}
+        disabled={isCleaning}
+        title="Delete images that were uploaded but never saved (older than 24 hours)"
+        className="px-3 py-3 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 text-muted-foreground hover:text-primary cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm flex items-center gap-2 disabled:opacity-50"
+      >
+        <Eraser className={cn("w-5 h-5", isCleaning && "animate-pulse")} />
+        <span className="text-xs font-bold hidden sm:inline">Clean Storage</span>
       </button>
       <button
         onClick={handleRefresh}

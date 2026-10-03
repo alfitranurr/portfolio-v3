@@ -3,7 +3,7 @@ import { AdminHeaderSkeleton, Skeleton, AdminTableSkeleton } from '@/components/
 
 export default function AdminAISettingsLoading() {
   return (
-    <div className="space-y-8 w-full animate-in fade-in duration-200">
+    <div className="space-y-8 w-full">
       <AdminHeaderSkeleton
         titleWidth="w-56 sm:w-80"
         subtitleWidth="w-72 sm:w-[420px]"

@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { Skill } from '@/lib/types'
 import { hasSupabaseConfig, requireAdmin } from './_shared'
+import { readFileUrl, scheduleFileCleanup } from './_storage'
 
 function slugifyForSimpleIcons(name: string): string {
   let slug = name.toLowerCase().trim()
@@ -127,6 +128,7 @@ export async function saveSkillAction(skillData: Partial<Skill>) {
     const { supabase } = admin
 
     const isEdit = !!skillData.id && !skillData.id.startsWith('mock-')
+    const previousFile = isEdit ? await readFileUrl(supabase, 'skills', 'logo_url', skillData.id!) : null
 
     const dbPayload = {
       name,
@@ -156,6 +158,7 @@ export async function saveSkillAction(skillData: Partial<Skill>) {
 
     revalidatePath('/')
     revalidatePath('/admin/skills')
+    scheduleFileCleanup(supabase, previousFile, dbPayload.logo_url)
     return { success: true, message: 'Skill saved successfully.' }
   } catch (err) {
     console.error('saveSkillAction error:', err)
@@ -187,6 +190,7 @@ export async function deleteSkillAction(id: string) {
       return { success: false, error: 'Unauthorized' }
     }
     const { supabase } = admin
+    const previousFile = await readFileUrl(supabase, 'skills', 'logo_url', id)
     const { error } = await supabase
       .from('skills')
       .delete()
@@ -194,6 +198,7 @@ export async function deleteSkillAction(id: string) {
     if (error) throw error
     revalidatePath('/')
     revalidatePath('/admin/skills')
+    scheduleFileCleanup(supabase, previousFile)
     return { success: true }
   } catch (err) {
     console.error('deleteSkillAction error:', err)

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowUp, ArrowDown, Trash2, FileCode, Loader2 } from 'lucide-react'
-import { cn, getDirectImageUrl } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { BlurImage } from '@/components/ui/blur-image'
 import { Project } from './types'
 import { SUBCATEGORY_MAP } from './types'
@@ -36,13 +36,13 @@ export function OrderModal({
   const moveItem = (index: number, direction: 'up' | 'down') => {
     const newList = [...orderList]
     const targetIndex = direction === 'up' ? index - 1 : index + 1
-    
+
     if (targetIndex < 0 || targetIndex >= newList.length) return
-    
+
     const temp = newList[index]
     newList[index] = newList[targetIndex]
     newList[targetIndex] = temp
-    
+
     onReorder(newList)
   }
 
@@ -90,7 +90,7 @@ export function OrderModal({
               <AnimatePresence mode="popLayout">
                 {orderList.map((proj, idx) => {
                   const isCurrent = proj.id === (currentProjectId || 'temp-current-id')
-                  
+
                   return (
                     <motion.div
                       key={proj.id}
@@ -134,7 +134,7 @@ export function OrderModal({
                       <div className="w-12 h-8 rounded-lg overflow-hidden bg-slate-800 shrink-0 relative flex items-center justify-center border border-slate-800/50">
                         {proj.cover_image ? (
                           <BlurImage
-                            src={getDirectImageUrl(proj.cover_image, 100)}
+                            src={proj.cover_image}
                             alt=""
                             className="object-cover w-full h-full"
                           />

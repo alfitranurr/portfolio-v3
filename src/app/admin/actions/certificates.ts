@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { Certificate } from '@/lib/types'
 import { hasSupabaseConfig, requireAdmin } from './_shared'
+import { readFileUrl, scheduleFileCleanup } from './_storage'
 
 export async function saveCertificateAction(certData: Partial<Certificate>) {
   const cookieStore = await cookies()
@@ -42,6 +43,7 @@ export async function saveCertificateAction(certData: Partial<Certificate>) {
     const { supabase } = admin
 
     const isEdit = !!certData.id && !certData.id.startsWith('mock-')
+    const previousFile = isEdit ? await readFileUrl(supabase, 'certificates', 'image_url', certData.id!) : null
 
     const dbPayload = {
       title: certData.title || '',
@@ -72,6 +74,7 @@ export async function saveCertificateAction(certData: Partial<Certificate>) {
 
     revalidatePath('/certificates')
     revalidatePath('/admin/certificates')
+    scheduleFileCleanup(supabase, previousFile, dbPayload.image_url)
     return { success: true, message: 'Certificate saved successfully.' }
   } catch (err) {
     console.error('saveCertificateAction error:', err)
@@ -103,6 +106,7 @@ export async function deleteCertificateAction(id: string) {
       return { success: false, error: 'Unauthorized' }
     }
     const { supabase } = admin
+    const previousFile = await readFileUrl(supabase, 'certificates', 'image_url', id)
     const { error } = await supabase
       .from('certificates')
       .delete()
@@ -110,6 +114,7 @@ export async function deleteCertificateAction(id: string) {
     if (error) throw error
     revalidatePath('/certificates')
     revalidatePath('/admin/certificates')
+    scheduleFileCleanup(supabase, previousFile)
     return { success: true }
   } catch (err) {
     console.error('deleteCertificateAction error:', err)

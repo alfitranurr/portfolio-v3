@@ -2,6 +2,9 @@ import * as React from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+/** Default untuk grid kartu (kelipatan 3/4 kolom); list baris memakai [10, 20, 50]. */
+const DEFAULT_PAGE_SIZE_OPTIONS = [12, 24, 48]
+
 interface PaginationControlsProps {
   currentPage: number
   totalPages: number
@@ -10,6 +13,8 @@ interface PaginationControlsProps {
   startIndex: number
   onPageChange: (page: number) => void
   onPageSizeChange: (size: number) => void
+  /** Pilihan "Per page"; harus memuat nilai default `pageSize` fitur */
+  pageSizeOptions?: number[]
 }
 
 export function PaginationControls({
@@ -19,7 +24,8 @@ export function PaginationControls({
   totalItems,
   startIndex,
   onPageChange,
-  onPageSizeChange
+  onPageSizeChange,
+  pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS
 }: PaginationControlsProps) {
   if (totalPages <= 1) return null
 
@@ -35,9 +41,9 @@ export function PaginationControls({
           }}
           className="px-2.5 py-1 rounded-lg bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground text-xs font-bold focus:outline-none cursor-pointer"
         >
-          <option value={12}>12</option>
-          <option value={24}>24</option>
-          <option value={48}>48</option>
+          {pageSizeOptions.map(size => (
+            <option key={size} value={size}>{size}</option>
+          ))}
         </select>
         <span>
           Showing {startIndex + 1} - {Math.min(startIndex + pageSize, totalItems)} of {totalItems}

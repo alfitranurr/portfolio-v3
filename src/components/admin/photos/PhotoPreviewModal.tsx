@@ -2,7 +2,7 @@ import * as React from 'react'
 import { createPortal } from 'react-dom'
 import { X, Calendar, Edit3 } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
+import { IMAGE_SIZES } from '@/lib/image-variants'
 import { Photo } from '@/lib/types'
 
 interface PhotoPreviewModalProps {
@@ -52,10 +52,10 @@ export function PhotoPreviewModal({ photo, onClose, onEdit }: PhotoPreviewModalP
         {/* Image */}
         <div className="relative aspect-video w-full bg-slate-100 dark:bg-slate-950/40 overflow-hidden flex items-center justify-center">
           <BlurImage
-            src={getDirectImageUrl(photo.image_url, 1000)}
+            src={photo.image_url}
             alt={photo.title || 'Photo'}
-            priority
-            sizes="(max-width: 768px) 100vw, 768px"
+            loading="eager"
+            sizes={IMAGE_SIZES.modal}
             className="w-full h-full object-contain"
           />
         </div>

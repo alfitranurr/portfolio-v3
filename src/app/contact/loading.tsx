@@ -3,7 +3,7 @@ import { HeaderSkeleton, Skeleton } from '@/components/ui/skeleton'
 
 export default function ContactLoading() {
   return (
-    <div className="space-y-8 animate-in fade-in duration-200">
+    <div className="space-y-8">
       {/* Header */}
       <HeaderSkeleton
         titleWidth="w-48 sm:w-64"

@@ -2,7 +2,6 @@ import * as React from 'react'
 import { createPortal } from 'react-dom'
 import { X, GraduationCap, Calendar, MapPin } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
 import { Education } from './types'
 
 interface EducationPreviewModalProps {
@@ -37,7 +36,7 @@ export function EducationPreviewModal({ education, onClose, onEdit }: EducationP
           <div className="flex items-center gap-3 flex-1">
             {education.logo_url ? (
               <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 relative p-1">
-                <BlurImage src={getDirectImageUrl(education.logo_url, 200)} alt={education.institution} sizes="64px" className="w-full h-full object-contain" />
+                <BlurImage src={education.logo_url} alt={education.institution} sizes="64px" className="w-full h-full object-contain" />
               </div>
             ) : (
               <div className="w-16 h-16 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">

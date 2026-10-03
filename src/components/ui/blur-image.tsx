@@ -2,7 +2,8 @@
 
 import * as React from 'react'
 import Image, { ImageProps } from 'next/image'
-import { cn } from '@/lib/utils'
+import { cn, getDirectImageUrl } from '@/lib/utils'
+import { IMAGE_SIZES, isLoaderSupported } from '@/lib/image-variants'
 
 export interface BlurImageProps extends Omit<ImageProps, 'src'> {
   src?: ImageProps['src'] | null
@@ -10,18 +11,17 @@ export interface BlurImageProps extends Omit<ImageProps, 'src'> {
   initialScale?: string
   loadedBlur?: string
   loadedScale?: string
-  transitionDuration?: string
+  /** Durasi fade-in (ms) saat gambar selesai dimuat */
+  fadeDuration?: number
+  /** Untuk background/thumbnail kecil: default `sizes` = varian terkecil */
   lowQuality?: boolean
   showSkeleton?: boolean
 }
 
-// Check if image domain is local, Supabase, or Google Drive (Google User Content)
-const isOptimizable = (src: unknown) => {
-  if (typeof src === 'string') {
-    return src.startsWith('/') || src.includes('supabase.co') || src.includes('googleusercontent.com') || src.includes('unsplash.com')
-  }
-  return true; // Statically imported objects are always optimizable
-}
+// Hover zoom kartu: 800ms + easeOutQuad — akselerasi landai, melambat bertahap sampai berhenti
+// (lebih halus dari default Tailwind 500ms yang sudah ~95% selesai di 300ms)
+const ZOOM_DURATION_MS = 800
+const ZOOM_EASING = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
 
 export const BlurImage = React.forwardRef<HTMLImageElement, BlurImageProps>(
   (
@@ -34,13 +34,13 @@ export const BlurImage = React.forwardRef<HTMLImageElement, BlurImageProps>(
       initialScale = 'scale-102',
       loadedBlur = 'blur-0',
       loadedScale = 'scale-100',
-      transitionDuration = 'duration-500',
+      fadeDuration = 300,
       width,
       height,
       fill,
-      quality = 85,
       lowQuality = false,
       showSkeleton = true,
+      style,
       ...props
     },
     ref
@@ -65,13 +65,17 @@ export const BlurImage = React.forwardRef<HTMLImageElement, BlurImageProps>(
 
     const hasDimensions = width !== undefined && height !== undefined
     const useFill = fill ?? !hasDimensions
-    const optimizable = isOptimizable(src)
-    const effectiveQuality = lowQuality ? 30 : quality
+    // Link Google Drive → lh3.googleusercontent.com (lebar diatur oleh custom loader)
+    const normalizedSrc = typeof src === 'string' ? getDirectImageUrl(src) : src
+    // Varian Supabase / Drive / Unsplash → srcset responsif via custom loader.
+    // Selain itu (data:, blob:, SVG, file lama non-varian) tampil apa adanya.
+    const optimizable = isLoaderSupported(normalizedSrc)
+    const isGoogleHosted = typeof normalizedSrc === 'string' && normalizedSrc.includes('googleusercontent.com')
     const effectiveSizes = lowQuality
-      ? (props.sizes ?? "50px")
-      : (props.sizes ?? (useFill ? "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" : undefined))
+      ? (props.sizes ?? IMAGE_SIZES.ambient)
+      : (props.sizes ?? (useFill ? IMAGE_SIZES.card : undefined))
 
-    const imageSrc = src || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+    const imageSrc = normalizedSrc || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
 
     return (
       <>
@@ -89,11 +93,21 @@ export const BlurImage = React.forwardRef<HTMLImageElement, BlurImageProps>(
           height={!useFill ? Number(height) : undefined}
           fill={useFill}
           sizes={effectiveSizes}
-          quality={effectiveQuality}
           unoptimized={!optimizable}
+          referrerPolicy={isGoogleHosted ? 'no-referrer' : undefined}
+          // Transisi lewat inline style agar tidak tertimpa class `transition-*`/`duration-*`
+          // dari consumer (tailwind-merge membuang class transisi yang bentrok).
+          // Tailwind v4 `scale-*` / `group-hover:scale-*` menulis properti CSS `scale`
+          // (bukan `transform`), jadi `scale` wajib ikut ditransisikan.
+          style={{
+            transitionProperty: 'opacity, filter, scale, transform',
+            transitionDuration: `${fadeDuration}ms, ${fadeDuration}ms, ${ZOOM_DURATION_MS}ms, ${ZOOM_DURATION_MS}ms`,
+            transitionTimingFunction: `ease-out, ease-out, ${ZOOM_EASING}, ${ZOOM_EASING}`,
+            ...style,
+          }}
           className={cn(
-            "transition-all ease-out",
-            transitionDuration,
+            // Layer GPU hanya selama kartu di-hover (hemat memori untuk grid besar)
+            'group-hover:will-change-[scale]',
             !isLoaded ? `${initialBlur} ${initialScale} opacity-0` : `${loadedBlur} ${loadedScale} opacity-100`,
             className
           )}

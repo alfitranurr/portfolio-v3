@@ -1,9 +1,10 @@
 import * as React from 'react'
 import { ArrowLeft, Check, Loader2, UploadCloud, GraduationCap } from 'lucide-react'
-import { cn, getDirectImageUrl } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { BlurImage } from '@/components/ui/blur-image'
 import { Education } from './types'
-import { uploadAssetAction } from '@/app/admin/actions'
+import { uploadImage } from '@/lib/upload-image'
+import { useUploadSession } from '../useUploadSession'
 
 interface EducationFormProps {
   education: Partial<Education> | null
@@ -23,6 +24,7 @@ export function EducationForm({
   setNotification
 }: EducationFormProps) {
   const [isUploading, setIsUploading] = React.useState(false)
+  const trackUpload = useUploadSession()
 
   if (!education) return null
 
@@ -34,11 +36,9 @@ export function EducationForm({
     setNotification(null)
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('prefix', 'edu-logo')
-      const res = await uploadAssetAction(formData)
+      const res = await uploadImage(file, 'edu-logo')
       if (res.success && res.url) {
+        trackUpload(res.url)
         onUpdateEducation(prev => ({ ...prev, logo_url: res.url }))
         setNotification({ success: true, message: 'Logo uploaded successfully.' })
       } else {
@@ -197,7 +197,7 @@ export function EducationForm({
                   {education.logo_url ? (
                     <>
                       <BlurImage
-                        src={getDirectImageUrl(education.logo_url, 200)}
+                        src={education.logo_url}
                         alt="Logo preview"
                         lowQuality
                         sizes="56px"

@@ -1,9 +1,10 @@
 import * as React from 'react'
 import { ArrowLeft, Check, Loader2, Plus, ChevronUp, ChevronDown, X, UploadCloud, Briefcase } from 'lucide-react'
-import { cn, getDirectImageUrl } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { BlurImage } from '@/components/ui/blur-image'
 import { Experience } from './types'
-import { uploadAssetAction } from '@/app/admin/actions'
+import { uploadImage } from '@/lib/upload-image'
+import { useUploadSession } from '../useUploadSession'
 
 interface ExperienceFormProps {
   experience: Partial<Experience> | null
@@ -35,6 +36,7 @@ export function ExperienceForm({
   setNotification
 }: ExperienceFormProps) {
   const [isUploading, setIsUploading] = React.useState(false)
+  const trackUpload = useUploadSession()
 
   if (!experience) return null
 
@@ -46,11 +48,9 @@ export function ExperienceForm({
     setNotification(null)
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('prefix', 'exp-logo')
-      const res = await uploadAssetAction(formData)
+      const res = await uploadImage(file, 'exp-logo')
       if (res.success && res.url) {
+        trackUpload(res.url)
         onUpdateExperience(prev => ({ ...prev, logo_url: res.url }))
         setNotification({ success: true, message: 'Logo uploaded successfully.' })
       } else {
@@ -202,7 +202,7 @@ export function ExperienceForm({
                   {experience.logo_url ? (
                     <>
                       <BlurImage
-                        src={getDirectImageUrl(experience.logo_url, 200)}
+                        src={experience.logo_url}
                         alt="Logo preview"
                         lowQuality
                         sizes="56px"

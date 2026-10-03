@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { Eye, Edit3, Trash2, Award } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
 import { Skill } from './types'
 
 interface SkillTableViewProps {
@@ -41,7 +40,7 @@ export function SkillTableView({ skills, startIndex, onPreview, onEdit, onDelete
                     <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-900 border border-slate-700/60 shrink-0 relative p-1 shadow-xs flex items-center justify-center">
                       {skill.logo_url ? (
                         <BlurImage
-                          src={getDirectImageUrl(skill.logo_url, 150)}
+                          src={skill.logo_url}
                           alt={skill.name}
                           lowQuality
                           sizes="40px"

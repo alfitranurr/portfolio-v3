@@ -202,7 +202,8 @@ export function Sidebar({ profile }: { profile: Profile }) {
                   <BlurImage
                     src={profile.avatar_url}
                     alt={profile.name}
-                    priority
+                    loading="eager"
+                    fetchPriority="high"
                     sizes="112px"
                     className="w-full h-full object-cover"
                   />
@@ -216,7 +217,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
 
             {/* Name with Verified Blue Checkmark */}
             {!isCollapsed && (
-              <div className="animate-in fade-in duration-200">
+              <div>
                 <div className="flex items-center gap-1 justify-center">
                   <h2 className="font-extrabold text-sm text-foreground tracking-tight">{profile.name}</h2>
                   {/* Blue verified checkmark */}

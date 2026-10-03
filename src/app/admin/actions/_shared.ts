@@ -1,6 +1,13 @@
 import type { SupabaseClient, User } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/server'
 
+/**
+ * Cache-Control untuk objek di bucket `portfolio-assets` (detik).
+ * Nama file selalu unik (timestamp), jadi aman di-cache 1 tahun oleh browser & CDN.
+ * Tanpa opsi ini Supabase memakai default 3600 (1 jam).
+ */
+export const STORAGE_CACHE_CONTROL = '31536000'
+
 export function hasSupabaseConfig(): boolean {
   return !!(
     process.env.NEXT_PUBLIC_SUPABASE_URL &&

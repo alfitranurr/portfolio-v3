@@ -4,6 +4,7 @@ import * as React from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
+import { isLoaderSupported } from '@/lib/image-variants'
 import { Skill } from '@/lib/types'
 import { Terminal } from 'lucide-react'
 import {
@@ -29,7 +30,7 @@ import {
 function getSkillIcon(name: string, customPath: string | null, className?: string, logoUrl?: string | null) {
   if (logoUrl) {
     return (
-      <Image src={logoUrl} className={className} alt={name} width={24} height={24} unoptimized />
+      <Image src={logoUrl} className={className} alt={name} width={24} height={24} unoptimized={!isLoaderSupported(logoUrl)} />
     )
   }
   if (customPath) {

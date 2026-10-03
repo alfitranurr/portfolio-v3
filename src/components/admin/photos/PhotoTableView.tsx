@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { Eye, Edit3, Trash2 } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
 import { Photo } from '@/lib/types'
 
 interface PhotoTableViewProps {
@@ -39,7 +38,7 @@ export function PhotoTableView({ photos, startIndex, onPreview, onEdit, onDelete
                 <td className="py-2.5 px-3">
                   <div className="w-16 h-11 rounded-lg overflow-hidden bg-slate-900 border border-slate-700/60 shrink-0 relative shadow-xs">
                     <BlurImage
-                      src={getDirectImageUrl(photo.image_url, 150)}
+                      src={photo.image_url}
                       alt={photo.title || 'Photo'}
                       lowQuality
                       sizes="64px"

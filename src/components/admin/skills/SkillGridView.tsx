@@ -2,7 +2,6 @@ import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, Edit3, Trash2, Award } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
 import { Skill, CATEGORY_MAP } from './types'
 
 interface SkillGridViewProps {
@@ -32,7 +31,7 @@ export function SkillGridView({ skills, onPreview, onEdit, onDelete }: SkillGrid
             <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden shrink-0 relative">
               {skill.logo_url ? (
                 <BlurImage
-                  src={getDirectImageUrl(skill.logo_url, 100)}
+                  src={skill.logo_url}
                   alt={skill.name}
                   lowQuality
                   sizes="64px"

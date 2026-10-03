@@ -2,7 +2,6 @@ import * as React from 'react'
 import { createPortal } from 'react-dom'
 import { X, Briefcase, Calendar, MapPin } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
 import { Experience, CATEGORY_MAP } from './types'
 
 interface ExperiencePreviewModalProps {
@@ -37,7 +36,7 @@ export function ExperiencePreviewModal({ experience, onClose, onEdit }: Experien
           <div className="flex items-center gap-3">
             {experience.logo_url ? (
               <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 relative p-2">
-                <BlurImage src={getDirectImageUrl(experience.logo_url, 200)} alt={experience.company} sizes="64px" className="w-full h-full object-contain" />
+                <BlurImage src={experience.logo_url} alt={experience.company} sizes="64px" className="w-full h-full object-contain" />
               </div>
             ) : (
               <div className="w-16 h-16 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">

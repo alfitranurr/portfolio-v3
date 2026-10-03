@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { Eye, Copy, Edit3, Trash2, ExternalLink, Award } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
 import { Certificate, CATEGORY_MAP } from './types'
 
 interface CertificateTableViewProps {
@@ -47,7 +46,7 @@ export function CertificateTableView({ certificates, startIndex, onPreview, onEd
                     <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-900 border border-slate-700/60 shrink-0 relative shadow-xs">
                       {cert.image_url ? (
                         <BlurImage
-                          src={getDirectImageUrl(cert.image_url, 150)}
+                          src={cert.image_url}
                           alt={cert.title}
                           lowQuality
                           sizes="40px"

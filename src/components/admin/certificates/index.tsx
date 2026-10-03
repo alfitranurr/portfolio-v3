@@ -1,21 +1,23 @@
 'use client'
 
 import * as React from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Award, PlusCircle, CheckCircle2, AlertCircle } from 'lucide-react'
 import { saveCertificateAction, deleteCertificateAction } from '@/app/admin/actions'
 import { cn } from '@/lib/utils'
 import { Certificate, CertificatesCrudProps, DEFAULT_CERTIFICATE, SortField, ViewMode } from './types'
 import { useCertificateFilters } from './useCertificateFilters'
-import { usePagination } from './usePagination'
+import { usePagination } from '../shared/usePagination'
 import { CertificateControls } from './CertificateControls'
 import { CertificateGridView } from './CertificateGridView'
 import { CertificateTableView } from './CertificateTableView'
 import { CertificateForm } from './CertificateForm'
 import { CertificatePreviewModal } from './CertificatePreviewModal'
-import { PaginationControls } from './PaginationControls'
+import { PaginationControls } from '../shared/PaginationControls'
 
 export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps) {
+  const router = useRouter()
   const [certificates, setCertificates] = React.useState<Certificate[]>(initialCertificates)
   const [prevInitialCertificates, setPrevInitialCertificates] = React.useState(initialCertificates)
 
@@ -120,9 +122,8 @@ export function CertificatesCrud({ initialCertificates }: CertificatesCrudProps)
         if (editingItem.id) {
           setCertificates(prev => prev.map(item => item.id === editingItem.id ? ((res.message || '').includes('Mock') ? { ...item, ...editingItem } as Certificate : editingItem as Certificate) : item))
         } else {
-          sessionStorage.setItem('certificate_admin_notification', JSON.stringify({ success: true, message: res.message || 'Saved successfully.' }))
-          window.location.reload()
-          return
+          // Item baru: ambil ulang daftar dari server tanpa reload penuh halaman
+          router.refresh()
         }
         setEditingItem(null)
         setNotification({ success: true, message: res.message || 'Saved successfully.' })

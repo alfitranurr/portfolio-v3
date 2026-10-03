@@ -3,7 +3,7 @@ import { HeaderSkeleton, ExperienceCardSkeleton, Skeleton } from '@/components/u
 
 export default function ExperienceLoading() {
   return (
-    <div className="space-y-8 animate-in fade-in duration-200">
+    <div className="space-y-8">
       {/* Header */}
       <HeaderSkeleton
         titleWidth="w-44 sm:w-60"

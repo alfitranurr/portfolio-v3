@@ -7,6 +7,7 @@ import { ArrowUpRight, BarChart3, Code2, Search, SlidersHorizontal, Check, X } f
 import { cn, getSubCategoryColor } from '@/lib/utils'
 import { Project } from '@/lib/types'
 import { BlurImage } from '@/components/ui/blur-image'
+import { IMAGE_SIZES } from '@/lib/image-variants'
 import { CustomSortDropdown } from '@/components/ui/custom-sort-dropdown'
 
 interface ProjectsFilterListProps {
@@ -368,20 +369,22 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                         src={project.cover_image}
                         alt=""
                         lowQuality
+                        loading="lazy"
+                        fetchPriority="low"
                         initialBlur="blur-xl opacity-0"
                         initialScale="scale-110"
                         loadedBlur="blur-xl opacity-30"
                         loadedScale="scale-110"
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-115 transition-transform duration-500 select-none pointer-events-none"
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-115 select-none pointer-events-none"
                       />
                       {/* Contained foreground image */}
                       <BlurImage
                         src={project.cover_image}
                         alt={project.title}
-                        priority={index < 3}
-                        loading={index >= 3 ? "eager" : undefined}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="w-full h-full object-contain relative z-10 group-hover:scale-103 transition-transform duration-500"
+                        loading={index < 3 ? "eager" : "lazy"}
+                        fetchPriority={index < 3 ? "high" : "auto"}
+                        sizes={IMAGE_SIZES.card}
+                        className="w-full h-full object-contain relative z-10 group-hover:scale-103"
                       />
                         </>
                       ) : (

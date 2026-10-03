@@ -1,9 +1,10 @@
 import * as React from 'react'
 import { ArrowLeft, Check, Loader2, Layers, UploadCloud, Image as ImageIcon, AlertTriangle } from 'lucide-react'
-import { cn, getDirectImageUrl } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { BlurImage } from '@/components/ui/blur-image'
 import { Project, DATA_SUBCATEGORIES, NON_DATA_SUBCATEGORIES, SUBCATEGORY_MAP } from './types'
-import { uploadAssetAction } from '@/app/admin/actions'
+import { uploadImage } from '@/lib/upload-image'
+import { useUploadSession } from '../useUploadSession'
 
 interface ProjectFormProps {
   project: Partial<Project> | null
@@ -29,6 +30,7 @@ export function ProjectForm({
   setNotification
 }: ProjectFormProps) {
   const [isUploading, setIsUploading] = React.useState(false)
+  const trackUpload = useUploadSession()
   const [coverImageWarning, setCoverImageWarning] = React.useState<string | null>(null)
 
   const finalOptions = React.useMemo(() => {
@@ -48,30 +50,16 @@ export function ProjectForm({
     if (!file) return
 
     setCoverImageWarning(null)
-
-    const checkDimensions = new Promise<void>((resolve) => {
-      const img = new Image()
-      img.onload = () => {
-        URL.revokeObjectURL(img.src)
-        if (img.naturalWidth < 1200) {
-          setCoverImageWarning(`Image is only ${img.naturalWidth}x${img.naturalHeight}px. Recommended minimum: 1200px wide for HD display.`)
-        }
-        resolve()
-      }
-      img.onerror = () => resolve()
-      img.src = URL.createObjectURL(file)
-    })
-    await checkDimensions
-
     setIsUploading(true)
     setNotification(null)
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('prefix', 'project-cover')
-      const res = await uploadAssetAction(formData)
+      const res = await uploadImage(file, 'project-cover')
       if (res.success && res.url) {
+        trackUpload(res.url)
+        if (res.sourceWidth && res.sourceHeight && res.sourceWidth < 1200) {
+          setCoverImageWarning(`Image is only ${res.sourceWidth}x${res.sourceHeight}px. Recommended minimum: 1200px wide for HD display.`)
+        }
         onUpdateProject(prev => prev ? ({ ...prev, cover_image: res.url }) : null)
         setNotification({ success: true, message: 'Cover image uploaded successfully.' })
       } else {
@@ -378,7 +366,7 @@ export function ProjectForm({
                   {project.cover_image ? (
                     <>
                       <BlurImage
-                        src={getDirectImageUrl(project.cover_image, 200)}
+                        src={project.cover_image}
                         alt="Cover preview"
                         lowQuality
                         sizes="56px"

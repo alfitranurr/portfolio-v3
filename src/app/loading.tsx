@@ -10,7 +10,7 @@ import {
 
 export default function RootLoading() {
   return (
-    <div className="space-y-16 animate-in fade-in duration-200">
+    <div className="space-y-16">
       {/* 1. HERO / ABOUT ME SECTION */}
       <HeroAboutSkeleton />
 

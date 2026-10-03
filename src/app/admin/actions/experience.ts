@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { Experience } from '@/lib/types'
 import { hasSupabaseConfig, requireAdmin } from './_shared'
+import { readFileUrl, scheduleFileCleanup } from './_storage'
 
 export async function saveExperienceAction(expData: {
   id?: string;
@@ -78,6 +79,7 @@ export async function saveExperienceAction(expData: {
     const { supabase } = admin
 
     const isEdit = !!expData.id && !expData.id.startsWith('mock-')
+    const previousFile = isEdit ? await readFileUrl(supabase, 'experiences', 'logo_url', expData.id!) : null
 
     const dbPayload = {
       role: expData.role || '',
@@ -112,6 +114,7 @@ export async function saveExperienceAction(expData: {
 
     revalidatePath('/experience')
     revalidatePath('/admin/experience')
+    scheduleFileCleanup(supabase, previousFile, dbPayload.logo_url)
     return { success: true, message: 'Experience saved successfully.' }
   } catch (err) {
     console.error('saveExperienceAction error:', err)
@@ -143,6 +146,7 @@ export async function deleteExperienceAction(id: string) {
       return { success: false, error: 'Unauthorized' }
     }
     const { supabase } = admin
+    const previousFile = await readFileUrl(supabase, 'experiences', 'logo_url', id)
     const { error } = await supabase
       .from('experiences')
       .delete()
@@ -150,6 +154,7 @@ export async function deleteExperienceAction(id: string) {
     if (error) throw error
     revalidatePath('/experience')
     revalidatePath('/admin/experience')
+    scheduleFileCleanup(supabase, previousFile)
     return { success: true }
   } catch (err) {
     console.error('deleteExperienceAction error:', err)

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, Copy, Edit3, Trash2, Calendar, ExternalLink, Award } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
+import { IMAGE_SIZES } from '@/lib/image-variants'
 import { Certificate, CATEGORY_MAP } from './types'
 
 interface CertificateGridViewProps {
@@ -38,23 +38,23 @@ export function CertificateGridView({ certificates, onPreview, onEdit, onDuplica
             {cert.image_url ? (
               <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800/60">
                 <BlurImage
-                  src={getDirectImageUrl(cert.image_url, 400)}
+                  src={cert.image_url}
                   alt=""
                   lowQuality
+                  loading="lazy"
+                  fetchPriority="low"
                   initialBlur="blur-xl opacity-0"
                   initialScale="scale-110"
                   loadedBlur="blur-xl opacity-30"
                   loadedScale="scale-110"
-                  referrerPolicy="no-referrer"
                   className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
                 />
                 <BlurImage
-                  src={getDirectImageUrl(cert.image_url, 400)}
+                  src={cert.image_url}
                   alt={cert.title}
-                  priority={index < 3}
-                  loading={index >= 3 ? "eager" : undefined}
-                  referrerPolicy="no-referrer"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  loading={index < 3 ? "eager" : "lazy"}
+                  fetchPriority={index < 3 ? "high" : "auto"}
+                  sizes={IMAGE_SIZES.card}
                   className="w-full h-full object-contain relative z-10"
                 />
               </div>

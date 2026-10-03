@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { useRouter } from 'next/navigation'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Coffee, PlusCircle, CheckCircle2, AlertCircle } from 'lucide-react'
@@ -8,16 +9,17 @@ import { saveProjectAction, deleteProjectAction, updateProjectsOrderAction, upda
 import { cn } from '@/lib/utils'
 import { Project, ProjectsCrudProps, DEFAULT_PROJECT, DATA_SUBCATEGORIES, NON_DATA_SUBCATEGORIES } from './types'
 import { useProjectFilters } from './useProjectFilters'
-import { usePagination } from './usePagination'
+import { usePagination } from '../shared/usePagination'
 import { ProjectControls } from './ProjectControls'
 import { ProjectGridView } from './ProjectGridView'
 import { ProjectTableView } from './ProjectTableView'
 import { ProjectForm } from './ProjectForm'
 import { ProjectPreviewModal } from './ProjectPreviewModal'
 import { OrderModal } from './OrderModal'
-import { PaginationControls } from './PaginationControls'
+import { PaginationControls } from '../shared/PaginationControls'
 
 export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
+  const router = useRouter()
   const [projects, setProjects] = React.useState<Project[]>(initialProjects)
   const [prevInitialProjects, setPrevInitialProjects] = React.useState(initialProjects)
 
@@ -339,9 +341,8 @@ export function ProjectsCrud({ initialProjects }: ProjectsCrudProps) {
         if (editingProject.id) {
           setProjects(prev => prev.map(p => p.id === editingProject.id ? ((res.message || '').includes('Mock') ? { ...p, ...editingProject } as Project : editingProject as Project) : p))
         } else {
-          sessionStorage.setItem('project_admin_notification', JSON.stringify({ success: true, message: res.message || 'Saved successfully.' }))
-          window.location.reload()
-          return
+          // Item baru: ambil ulang daftar dari server tanpa reload penuh halaman
+          router.refresh()
         }
         setEditingProject(null)
         setNotification({ success: true, message: res.message || 'Saved successfully.' })

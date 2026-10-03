@@ -5,6 +5,7 @@ import { ArrowLeft, ExternalLink, Calendar, Sparkles, Presentation } from 'lucid
 import { Github, PythonIcon } from '@/components/icons'
 import { getProjectById, getProjects } from '@/lib/data-service'
 import { BlurImage } from '@/components/ui/blur-image'
+import { IMAGE_SIZES } from '@/lib/image-variants'
 import { getSubCategoryColor, cn } from '@/lib/utils'
 
 export const revalidate = 3600
@@ -190,6 +191,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               src={project.cover_image}
               alt=""
               lowQuality
+              loading="lazy"
+              fetchPriority="low"
               initialBlur="blur-2xl opacity-0"
               initialScale="scale-105"
               loadedBlur="blur-2xl opacity-30"
@@ -200,8 +203,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             <BlurImage
               src={project.cover_image}
               alt={project.title}
-              priority
-              sizes="(max-width: 768px) 100vw, 1200px"
+              preload
+              sizes={IMAGE_SIZES.hero}
               className="w-full h-full object-contain relative z-10"
             />
           </>

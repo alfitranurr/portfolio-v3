@@ -2,7 +2,6 @@ import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, Copy, Edit3, Trash2, Calendar, MapPin, GraduationCap } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
 import { Education } from './types'
 
 interface EducationGridViewProps {
@@ -39,7 +38,7 @@ export function EducationGridView({ educations, onPreview, onEdit, onDuplicate, 
               {edu.logo_url ? (
                 <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800/60 shrink-0 relative p-1 shadow-xs">
                   <BlurImage
-                    src={getDirectImageUrl(edu.logo_url, 150)}
+                    src={edu.logo_url}
                     alt={edu.institution}
                     lowQuality
                     sizes="48px"

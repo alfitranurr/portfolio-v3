@@ -9,12 +9,15 @@ const nextConfig: NextConfig = {
   },
   images: {
     // Vercel image optimization quota exhausted -> /_next/image returns 402
-    // (OPTIMIZED_IMAGE_REQUEST_PAYMENT_REQUIRED), hiding all logos (SafeLogo
-    // onError). Serve raw images from Supabase CDN instead.
-    unoptimized: true,
-    formats: ['image/avif', 'image/webp'],
-    qualities: [75, 85, 90],
-    minimumCacheTTL: 86400,
+    // (OPTIMIZED_IMAGE_REQUEST_PAYMENT_REQUIRED). Instead of the built-in
+    // optimizer, a custom loader maps each srcset width to responsive WebP
+    // variants pre-generated at upload time (src/lib/image-variants.ts), served
+    // directly from the Supabase CDN. /_next/image is never used.
+    loader: 'custom',
+    loaderFile: './src/lib/image-loader.ts',
+    // Must line up with VARIANT_WIDTHS so srcset candidates map 1:1 to variants
+    deviceSizes: [640, 960, 1280, 1920, 2560],
+    imageSizes: [128, 256],
     remotePatterns: [
       {
         protocol: 'https',

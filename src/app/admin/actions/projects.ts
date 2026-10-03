@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { Project } from '@/lib/types'
 import { hasSupabaseConfig, requireAdmin } from './_shared'
+import { readFileUrl, scheduleFileCleanup } from './_storage'
 
 export async function saveProjectAction(projectData: {
   id?: string;
@@ -112,6 +113,7 @@ export async function saveProjectAction(projectData: {
     const { supabase } = admin
 
     const isEdit = !!projectData.id && !projectData.id.startsWith('mock-')
+    const previousFile = isEdit ? await readFileUrl(supabase, 'projects', 'cover_image', projectData.id!) : null
 
     let pinnedOrder = parseInt(String(projectData.pinned_order)) || 0
     if (pinnedOrder <= 0) {
@@ -177,6 +179,7 @@ export async function saveProjectAction(projectData: {
     revalidatePath('/projects')
     if (isEdit) revalidatePath(`/projects/${projectData.id}`)
     revalidatePath('/admin/projects')
+    scheduleFileCleanup(supabase, previousFile, dbPayload.cover_image)
     return { success: true, message: 'Project saved successfully.' }
   } catch (err) {
     console.error('saveProjectAction error:', err)
@@ -209,6 +212,7 @@ export async function deleteProjectAction(id: string) {
       return { success: false, error: 'Unauthorized' }
     }
     const { supabase } = admin
+    const previousFile = await readFileUrl(supabase, 'projects', 'cover_image', id)
     const { error } = await supabase
       .from('projects')
       .delete()
@@ -216,7 +220,9 @@ export async function deleteProjectAction(id: string) {
     if (error) throw error
     revalidatePath('/')
     revalidatePath('/projects')
+    revalidatePath(`/projects/${id}`)
     revalidatePath('/admin/projects')
+    scheduleFileCleanup(supabase, previousFile)
     return { success: true }
   } catch (err) {
     console.error('deleteProjectAction error:', err)

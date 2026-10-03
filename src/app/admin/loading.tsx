@@ -3,7 +3,7 @@ import { AdminHeaderSkeleton, StatCardsSkeleton, AdminTableSkeleton, Skeleton } 
 
 export default function AdminDashboardLoading() {
   return (
-    <div className="space-y-8 w-full animate-in fade-in duration-200">
+    <div className="space-y-8 w-full">
       {/* Admin Title */}
       <AdminHeaderSkeleton
         titleWidth="w-56 sm:w-72"

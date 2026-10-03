@@ -18,6 +18,8 @@ import {
 import { Github, Linkedin, Instagram } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { BlurImage } from '@/components/ui/blur-image'
+import { uploadImage } from '@/lib/upload-image'
+import { useUploadSession } from '@/components/admin/useUploadSession'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface Profile {
@@ -43,6 +45,12 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
   const [showNotification, setShowNotification] = React.useState(false)
   const [avatarPreview, setAvatarPreview] = React.useState<string | null>(initialProfile.avatar_url)
   const [logoPreview, setLogoPreview] = React.useState<string | null>(initialProfile.logo_url || null)
+  // URL tersimpan (dikirim lewat hidden input). Gambar diupload saat dipilih, bukan saat Save.
+  const [avatarUrl, setAvatarUrl] = React.useState(initialProfile.avatar_url || '')
+  const [logoUrl, setLogoUrl] = React.useState(initialProfile.logo_url || '')
+  const [uploading, setUploading] = React.useState<'avatar' | 'logo' | null>(null)
+  const [uploadError, setUploadError] = React.useState<{ field: 'avatar' | 'logo'; message: string } | null>(null)
+  const trackUpload = useUploadSession()
   const [resumeName, setResumeName] = React.useState<string | null>(
     initialProfile.resume_url ? 'Current Resume Document' : null
   )
@@ -70,22 +78,32 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
     }
   }, [state])
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: 'avatar' | 'logo'
+  ) => {
     const file = e.target.files?.[0]
-    if (file) {
-      const url = URL.createObjectURL(file)
-      objectUrlsRef.current.push(url)
-      setAvatarPreview(url)
-    }
-  }
+    if (!file) return
+    const setPreview = field === 'avatar' ? setAvatarPreview : setLogoPreview
+    const setUrl = field === 'avatar' ? setAvatarUrl : setLogoUrl
+    const previousUrl = field === 'avatar' ? avatarUrl : logoUrl
 
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const url = URL.createObjectURL(file)
-      objectUrlsRef.current.push(url)
-      setLogoPreview(url)
+    const objectUrl = URL.createObjectURL(file)
+    objectUrlsRef.current.push(objectUrl)
+    setPreview(objectUrl)
+    setUploadError(null)
+    setUploading(field)
+
+    const res = await uploadImage(file, field)
+    if (res.success && res.url) {
+      trackUpload(res.url)
+      setUrl(res.url)
+    } else {
+      setPreview(previousUrl || null)
+      setUploadError({ field, message: res.error || 'Failed to upload image.' })
     }
+    setUploading(null)
+    e.target.value = ''
   }
 
   const handleResumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,7 +135,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
         <div className="shrink-0 w-full sm:w-auto z-10">
           <button
             type="submit"
-            disabled={isPending}
+            disabled={isPending || uploading !== null}
             className="w-full sm:w-auto py-2.5 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-xs flex items-center justify-center gap-2 hover:bg-primary/90 active:scale-[0.98] transition-all cursor-pointer shadow-md shadow-primary/20"
           >
             {isPending ? (
@@ -158,9 +176,9 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
       </AnimatePresence>
 
       {/* Hidden Fields for current urls to pass them back if not changed */}
-      <input type="hidden" name="avatar_url" value={initialProfile.avatar_url || ''} />
+      <input type="hidden" name="avatar_url" value={avatarUrl} />
       <input type="hidden" name="resume_url" value={initialProfile.resume_url || ''} />
-      <input type="hidden" name="logo_url" value={initialProfile.logo_url || ''} />
+      <input type="hidden" name="logo_url" value={logoUrl} />
       <input type="hidden" name="skills_title" value={initialProfile.skills_title || ''} />
       <input type="hidden" name="skills_subtitle" value={initialProfile.skills_subtitle || ''} />
 
@@ -302,16 +320,23 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
             </div>
 
             <label className="w-full py-2.5 px-4 rounded-xl bg-white/60 dark:bg-white/5 border border-dashed border-slate-300 dark:border-slate-800/30 text-xs font-bold text-center cursor-pointer hover:border-primary/50 hover:bg-white dark:hover:bg-white/10 transition-all flex items-center justify-center gap-2 shadow-2xs">
-              <UploadCloud className="w-4 h-4 text-muted-foreground" />
-              <span>Select Logo Image</span>
+              {uploading === 'logo' ? (
+                <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+              ) : (
+                <UploadCloud className="w-4 h-4 text-muted-foreground" />
+              )}
+              <span>{uploading === 'logo' ? 'Uploading...' : 'Select Logo Image'}</span>
               <input
                 type="file"
-                name="logo_file"
                 accept="image/*,.ico"
-                onChange={handleLogoChange}
+                onChange={e => handleImageChange(e, 'logo')}
+                disabled={uploading !== null}
                 className="hidden"
               />
             </label>
+            {uploadError?.field === 'logo' && (
+              <p className="text-[10px] font-semibold text-red-500 text-center">{uploadError.message}</p>
+            )}
             <p className="text-[10px] text-muted-foreground text-center">
               PNG, ICO, SVG, or JPG. Recommend square resolution.
             </p>
@@ -336,16 +361,23 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
             </div>
 
             <label className="w-full py-2.5 px-4 rounded-xl bg-white/60 dark:bg-white/5 border border-dashed border-slate-300 dark:border-slate-800/30 text-xs font-bold text-center cursor-pointer hover:border-primary/50 hover:bg-white dark:hover:bg-white/10 transition-all flex items-center justify-center gap-2 shadow-2xs">
-              <ImageIcon className="w-4 h-4 text-muted-foreground" />
-              <span>Select Profile Image</span>
+              {uploading === 'avatar' ? (
+                <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+              ) : (
+                <ImageIcon className="w-4 h-4 text-muted-foreground" />
+              )}
+              <span>{uploading === 'avatar' ? 'Uploading...' : 'Select Profile Image'}</span>
               <input
                 type="file"
-                name="avatar_file"
                 accept="image/*"
-                onChange={handleAvatarChange}
+                onChange={e => handleImageChange(e, 'avatar')}
+                disabled={uploading !== null}
                 className="hidden"
               />
             </label>
+            {uploadError?.field === 'avatar' && (
+              <p className="text-[10px] font-semibold text-red-500 text-center">{uploadError.message}</p>
+            )}
             <p className="text-[10px] text-muted-foreground text-center">
               PNG, JPG, or WebP. Recommend square resolution.
             </p>
@@ -392,7 +424,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
               />
             </label>
             <p className="text-[10px] text-muted-foreground text-center">
-              Only PDF format documents are supported. Max 5MB file sizes.
+              Only PDF format documents are supported. Max 4MB file sizes.
             </p>
           </div>
 

@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { Eye, Copy, Edit3, Trash2, Briefcase } from 'lucide-react'
 import { BlurImage } from '@/components/ui/blur-image'
-import { getDirectImageUrl } from '@/lib/utils'
 import { Experience, CATEGORY_MAP } from './types'
 
 interface ExperienceTableViewProps {
@@ -47,7 +46,7 @@ export function ExperienceTableView({ experiences, startIndex, onPreview, onEdit
                     <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-900 border border-slate-700/60 shrink-0 relative p-1 shadow-xs">
                       {exp.logo_url ? (
                         <BlurImage
-                          src={getDirectImageUrl(exp.logo_url, 150)}
+                          src={exp.logo_url}
                           alt={exp.company}
                           lowQuality
                           sizes="40px"

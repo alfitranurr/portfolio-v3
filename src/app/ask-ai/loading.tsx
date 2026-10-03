@@ -3,7 +3,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export default function AskAILoading() {
   return (
-    <div className="flex-1 min-h-0 flex flex-col space-y-3 sm:space-y-4 w-full animate-in fade-in duration-200">
+    <div className="flex-1 min-h-0 flex flex-col space-y-3 sm:space-y-4 w-full">
       {/* Header */}
       <div className="flex items-center justify-between gap-3 shrink-0">
         <div className="space-y-1">

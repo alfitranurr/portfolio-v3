@@ -456,7 +456,18 @@ async function getProjectsImpl(): Promise<Project[]> {
 
 export const getProjects = cache(getProjectsImpl)
 
-export async function getProjectById(id: string): Promise<Project | null> {
+/**
+ * Daftar project untuk halaman list publik (home & /projects). `content` (markdown write-up)
+ * dan `embed_code` tidak dipakai di kartu tapi ikut ter-serialisasi ke payload RSC komponen
+ * client, jadi dikosongkan di sini. Query tetap `select('*')` (via getProjects) supaya tidak
+ * bergantung pada daftar kolom eksplisit; detail project tetap memakai getProjectById.
+ */
+export const getProjectSummaries = cache(async (): Promise<Project[]> => {
+  const projects = await getProjects()
+  return projects.map((p) => ({ ...p, content: null, embed_code: null }))
+})
+
+async function getProjectByIdImpl(id: string): Promise<Project | null> {
   if (!hasSupabaseConfig() || id.startsWith('mock-')) {
     try {
       const cookieStore = await cookies()
@@ -492,6 +503,8 @@ export async function getProjectById(id: string): Promise<Project | null> {
     return MOCK_PROJECTS.find(p => p.id === id) || null
   }
 }
+
+export const getProjectById = cache(getProjectByIdImpl)
 
 // EDUCATION SERVICE
 async function getEducationImpl(): Promise<Education[]> {
@@ -723,7 +736,25 @@ export async function getVisitorStatsImpl(): Promise<VisitorStats> {
 
 export const getVisitorStats = cache(getVisitorStatsImpl)
 
+const COUNT_TABLES = ['projects', 'education', 'experiences', 'certificates'] as const
+
 export async function getCounts() {
+  if (hasSupabaseConfig()) {
+    try {
+      // HEAD + count: hanya jumlah baris, tanpa mengunduh isi tabel
+      const supabase = getPublicClient()
+      const results = await Promise.all(
+        COUNT_TABLES.map((table) => supabase.from(table).select('id', { count: 'exact', head: true }))
+      )
+      if (results.every((r) => !r.error && r.count !== null)) {
+        const [projects, education, experience, certificates] = results.map((r) => r.count ?? 0)
+        return { projects, education, experience, certificates }
+      }
+      console.warn('Count query failed, falling back to full fetch:', results.find((r) => r.error)?.error?.message)
+    } catch (err) {
+      console.warn('Count query connection error, falling back to full fetch:', err)
+    }
+  }
   const [projects, education, experience, certificates] = await Promise.all([
     getProjects(),
     getEducation(),
@@ -881,7 +912,7 @@ export const MOCK_PHOTOS: Photo[] = [
   }
 ]
 
-export async function getPhotos(): Promise<Photo[]> {
+async function getPhotosImpl(): Promise<Photo[]> {
   let photos: Photo[] = []
 
   if (!hasSupabaseConfig()) {
@@ -925,3 +956,5 @@ export async function getPhotos(): Promise<Photo[]> {
 
   return photos
 }
+
+export const getPhotos = cache(getPhotosImpl)

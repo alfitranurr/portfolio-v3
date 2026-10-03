@@ -1,6 +1,6 @@
 import { getEducation } from '@/lib/data-service'
 import { GraduationCap, Calendar, MapPin, Award } from 'lucide-react'
-import { SafeSchoolLogo } from '@/components/safe-school-logo'
+import { SafeLogo } from '@/components/safe-logo'
 import { CollapsibleEducationDescription } from '@/components/collapsible-education-description'
 import { formatDuration } from '@/lib/utils'
 
@@ -35,7 +35,7 @@ export default async function EducationPage() {
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div className="flex gap-4 items-start">
                   {edu.logo_url && (
-                    <SafeSchoolLogo src={edu.logo_url} alt={edu.institution} />
+                    <SafeLogo src={edu.logo_url} alt={edu.institution} detectDark={false} />
                   )}
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-primary font-bold text-lg md:text-xl">
@@ -58,7 +58,7 @@ export default async function EducationPage() {
                     <span>
                       {new Date(edu.start_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
                       {' - '}
-                      {edu.end_date 
+                      {edu.end_date
                         ? new Date(edu.end_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
                         : 'Present'}
                       {` · ${formatDuration(edu.start_date, edu.end_date)}`}
