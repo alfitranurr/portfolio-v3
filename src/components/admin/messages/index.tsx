@@ -9,7 +9,16 @@ import { MonthlyTrafficChart } from '@/components/admin/monthly-traffic-chart'
 import { useRouter } from 'next/navigation'
 import { toggleMessageReadAction, deleteMessageAction, getVisitorStatsAction, revalidatePublicPagesAction, resetVisitorAnalyticsAction, scanOrphanUploadsAction, deleteOrphanUploadsAction } from '@/app/admin/actions'
 
-function HeaderActions({ onRefresh }: { onRefresh: () => void }) {
+function HeaderActions({
+  onRefresh,
+  onResetStats,
+  isResettingStats = false,
+}: {
+  onRefresh: () => void
+  /** Ditampilkan di samping jam bila tabel statistik tersedia */
+  onResetStats?: () => void
+  isResettingStats?: boolean
+}) {
   const [isRefreshing, setIsRefreshing] = React.useState(false)
   const [isResetting, setIsResetting] = React.useState(false)
   const [isCleaning, setIsCleaning] = React.useState(false)
@@ -113,27 +122,29 @@ function HeaderActions({ onRefresh }: { onRefresh: () => void }) {
           </span>
         )}
       </div>
-      <RealTimeClock />
+      <div className="flex flex-wrap items-center gap-3">
+        {onResetStats && (
+          <button
+            onClick={onResetStats}
+            disabled={isResettingStats}
+            title="Reset visitor analytics (set all stats to 0)"
+            className="px-3 py-3 rounded-2xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-600 dark:text-red-400 cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm flex items-center gap-2 disabled:opacity-50"
+          >
+            <Trash className={cn("w-5 h-5", isResettingStats && "animate-pulse")} />
+            <span className="text-xs font-bold">{isResettingStats ? 'Resetting...' : 'Reset Stats'}</span>
+          </button>
+        )}
+        <RealTimeClock />
+      </div>
     </div>
   )
 }
 
-function VisitorStats({ visitorStats, onReset, isResetting }: VisitorStatsProps) {
+function VisitorStats({ visitorStats }: VisitorStatsProps) {
   if (!visitorStats) return null
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-end">
-        <button
-          onClick={onReset}
-          disabled={isResetting}
-          title="Reset visitor analytics (set all stats to 0)"
-          className="px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-600 dark:text-red-400 text-xs font-bold flex items-center gap-2 cursor-pointer transition-all active:scale-95 disabled:opacity-50"
-        >
-          <Trash className={cn("w-3.5 h-3.5", isResetting && "animate-pulse")} />
-          <span>{isResetting ? 'Resetting...' : 'Reset Stats'}</span>
-        </button>
-      </div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       <div className="p-6 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 space-y-2">
         <div className="text-2xl font-black text-primary">{visitorStats.totalViews.toLocaleString()}</div>
@@ -310,7 +321,11 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
       </div>
 
       {/* Toolbar: aksi admin + jam, di bawah header card */}
-      <HeaderActions onRefresh={handleRefreshData} />
+      <HeaderActions
+        onRefresh={handleRefreshData}
+        onResetStats={currentVisitorStats && !currentVisitorStats.isMissingTable ? handleResetStats : undefined}
+        isResettingStats={isResettingStats}
+      />
 
       {/* Missing Database Table Alert */}
       {currentVisitorStats?.isMissingTable && (
@@ -327,7 +342,7 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
 
       {/* Visitor Stats */}
       {currentVisitorStats && !currentVisitorStats.isMissingTable && (
-        <VisitorStats visitorStats={currentVisitorStats} onReset={handleResetStats} isResetting={isResettingStats} />
+        <VisitorStats visitorStats={currentVisitorStats} />
       )}
 
       {/* Monthly Traffic Chart */}
