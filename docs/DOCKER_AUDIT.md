@@ -66,7 +66,7 @@
 
 ### Git History Cleanup (Selesai)
 
-- Password `bookfacepepabri11` dan email `alfitranurr@gmail.com` dihapus dari 154 commits
+- Password `[REDACTED]` dan email `alfitranurr@gmail.com` dihapus dari 154 commits
 - Pakai `git filter-repo` → replace jadi `REDACTED_PASSWORD` / `REDACTED_EMAIL`
 - Email publik di `contact/page.tsx` dipulihkan (commit `179249b`)
 - Force push ke GitHub berhasil
