@@ -257,6 +257,65 @@ Catatan:
 - Preload gambar per halaman turun dari 56 → 4 (certificates), 15 → 4 (projects), 12 → 3 (admin projects).
 - Sisa waktu di halaman admin (±1.5–2.5 s) kini didominasi server, bukan gambar: semua route admin `force-dynamic` + `auth.getUser()` dipanggil di proxy dan lagi di tiap action/page. Kandidat optimasi berikutnya bila diperlukan.
 
+## Lanjutan setelah deploy ✅ 2026-10-04
+
+### Server admin: function dipindah ke region Supabase
+
+Temuan: halaman admin butuh **1.0–1.5 s di server** (stream HTML selesai), halaman publik hanya ±60 ms (ISR). Penyebab: project Supabase ada di **`ap-northeast-2` (Seoul)** — dicek dari IP `db.<ref>.supabase.co` terhadap daftar IP resmi AWS — sedangkan Vercel Functions berjalan di **`iad1` (Washington DC)** (`x-vercel-id: sin1::iad1::…`). Setiap query server menyeberangi Pasifik (±180–250 ms), dan satu render admin merangkai beberapa round-trip (cek login di proxy, profil di root layout, data halaman, handshake TLS).
+
+- [x] `vercel.json` → `"regions": ["icn1"]` (Seoul, satu data center dengan Supabase). Catatan: `preferredRegion` Next.js di Vercel hanya untuk runtime edge, jadi region diatur di level project. Docker/standalone tidak terpengaruh.
+- [x] `requireAdmin()` dibungkus React `cache()` — satu render yang memanggil beberapa admin action (mis. `/admin/ai-settings`) hanya sekali memverifikasi sesi ke Supabase Auth.
+- [x] Diverifikasi: `x-vercel-id: sin1::icn1::…` ±60 s setelah push.
+
+Waktu server (stream selesai, median 3×, production):
+
+| Halaman | Sebelum (iad1) | Sesudah (icn1) |
+|---|---|---|
+| `/admin` | 1309 ms | **516 ms** |
+| `/admin/projects` | 1319 ms | **693 ms** |
+| `/admin/certificates` | 1391 ms | **392 ms** |
+| `/admin/experience` | 1108 ms | **633 ms** |
+| `/admin/education` | 1063 ms | **457 ms** |
+| `/admin/skills` | 1261 ms | **814 ms** |
+| `/admin/photos` | 1048 ms | **444 ms** |
+| `/admin/profile` | 670 ms | **406 ms** |
+| `/admin/ai-settings` | 1503 ms | **444 ms** |
+| `/projects` (ISR) | 59 ms | 75 ms |
+
+LCP admin (`docs/perf/production-icn1-admin.md`): baseline → setelah optimasi gambar → setelah icn1
+
+| Halaman | Desktop | Mobile 4G |
+|---|---|---|
+| `/admin/projects` | 4.17 → 2.59 → **1.56 s** | 5.27 → 2.23 → **2.00 s** |
+| `/admin/certificates` | 2.52 → 1.44 → **1.28 s** | 2.13 → 1.71 → **1.43 s** |
+| `/admin/photos` | 3.05 → 2.28 → **1.86 s** | 4.47 → 2.12 → **1.39 s** |
+| `/admin/experience` | 2.37 → 2.52 → **1.67 s** | 2.17 → 1.79 → **1.07 s** |
+| `/admin/education` | 2.96 → 2.04 → **1.00 s** | 1.88 → 1.56 → **1.10 s** |
+| `/admin/skills` | 1.88 → 2.05 → **1.22 s** | 1.71 → 2.42 → **1.14 s** |
+
+### Dashboard: toolbar di bawah header card
+
+- [x] Tombol Reset Cache, Clean Storage, Refresh dan jam dipindah dari dalam header card ke baris toolbar sendiri di bawahnya (aksi di kiri, jam di kanan, otomatis turun baris di mobile). Notifikasi aksi muncul di samping tombol. File: `src/components/admin/messages/index.tsx`.
+
+### Audit kebocoran kredensial
+
+Diperiksa: seluruh riwayat git (177 commit, semua branch, termasuk yang sudah di-push ke repo **publik** `github.com/alfitranurr/portfolio-v3`), file yang di-track & untracked, bundle JavaScript production, folder sementara, memori Claude, dan history shell. `gitleaks` (full history) tidak menemukan apa pun — tetapi gitleaks memang tidak mengenali password teks biasa, jadi setiap nilai di `.env.local` / `.env` juga dicari manual.
+
+| Item | Hasil |
+|---|---|
+| Password admin | ⚠️ **Bocor** sejak 2026-09-09 di `docs/DOCKER_AUDIT.md` (commit `78ceaf3`, repo publik) — catatan "password dihapus dari 154 commits" justru menuliskan password-nya. **Sudah dihapus dari `master`** (commit `7a66b9a`), tetapi masih ada di riwayat commit `78ceaf3`. |
+| `GEMINI_API_KEY` | ✅ Tidak pernah ada di riwayat git maupun bundle publik |
+| Supabase anon key | ✅ Tidak ada di riwayat git (kunci ini memang publik by design) |
+| Supabase URL / email publik | ℹ️ Memang publik (URL ada di setiap gambar; email di halaman contact) |
+| File baru sesi ini (scripts, docs/perf, laporan migrasi) | ✅ Tidak memuat kredensial; kredensial hanya dipakai sebagai env var sesaat |
+| Salinan `.env.local` di worktree sementara | ✅ Sudah dihapus |
+| Memori Claude / history shell | ✅ Bersih (satu-satunya salinan lokal: transcript percakapan ini) |
+
+Tindakan yang **harus dilakukan pemilik akun**:
+- [ ] **Ganti password admin Supabase sekarang** (Supabase Dashboard → Authentication → Users, atau fitur reset password). Selama password lama belum diganti, siapa pun yang membaca riwayat GitHub bisa login ke `/admin`.
+- [ ] Ganti `ADMIN_MOCK_PASSWORD` di `.env.local` (dan di Vercel bila di-set) — nilainya sama dengan password admin asli.
+- [ ] (Opsional, setelah password diganti) bersihkan commit `78ceaf3` dari riwayat dengan `git filter-repo` + force push. Setelah password diganti, riwayat itu tidak lagi berbahaya, jadi langkah ini opsional.
+
 ## 4. Yang sengaja TIDAK diubah
 - `src/components/initial-loader.tsx` (durasi intro tetap).
 - Animasi `template.tsx` dan efek blur-fade kartu (desain dipertahankan; hanya transisi BlurImage yang diperbaiki).
