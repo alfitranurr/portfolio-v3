@@ -72,45 +72,47 @@ function HeaderActions({ onRefresh }: { onRefresh: () => void }) {
   }
 
   return (
-    <div className="flex items-center gap-3 shrink-0">
-      {resetNotice && (
-        <span
-          className={cn(
-            "text-[10px] font-bold px-2.5 py-1.5 rounded-lg border",
-            resetNotice.success
-              ? "text-green-600 dark:text-green-400 border-green-500/20 bg-green-500/10"
-              : "text-red-600 dark:text-red-400 border-red-500/20 bg-red-500/10"
-          )}
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          onClick={handleResetCache}
+          disabled={isResetting}
+          title="Reset public page cache (force visitor view to refresh)"
+          className="px-3 py-3 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 text-muted-foreground hover:text-primary cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm flex items-center gap-2 disabled:opacity-50"
         >
-          {resetNotice.message}
-        </span>
-      )}
-      <button
-        onClick={handleResetCache}
-        disabled={isResetting}
-        title="Reset public page cache (force visitor view to refresh)"
-        className="px-3 py-3 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 text-muted-foreground hover:text-primary cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm flex items-center gap-2 disabled:opacity-50"
-      >
-        <RotateCcw className={cn("w-5 h-5", isResetting && "animate-spin")} />
-        <span className="text-xs font-bold hidden sm:inline">Reset Cache</span>
-      </button>
-      <button
-        onClick={handleCleanStorage}
-        disabled={isCleaning}
-        title="Delete images that were uploaded but never saved (older than 24 hours)"
-        className="px-3 py-3 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 text-muted-foreground hover:text-primary cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm flex items-center gap-2 disabled:opacity-50"
-      >
-        <Eraser className={cn("w-5 h-5", isCleaning && "animate-pulse")} />
-        <span className="text-xs font-bold hidden sm:inline">Clean Storage</span>
-      </button>
-      <button
-        onClick={handleRefresh}
-        disabled={isRefreshing}
-        title="Refresh data"
-        className="p-3 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 text-muted-foreground hover:text-foreground cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm flex items-center justify-center"
-      >
-        <RefreshCw className={cn("w-5 h-5", isRefreshing && "animate-spin")} />
-      </button>
+          <RotateCcw className={cn("w-5 h-5", isResetting && "animate-spin")} />
+          <span className="text-xs font-bold">Reset Cache</span>
+        </button>
+        <button
+          onClick={handleCleanStorage}
+          disabled={isCleaning}
+          title="Delete images that were uploaded but never saved (older than 24 hours)"
+          className="px-3 py-3 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 text-muted-foreground hover:text-primary cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm flex items-center gap-2 disabled:opacity-50"
+        >
+          <Eraser className={cn("w-5 h-5", isCleaning && "animate-pulse")} />
+          <span className="text-xs font-bold">Clean Storage</span>
+        </button>
+        <button
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+          title="Refresh data"
+          className="p-3 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 text-muted-foreground hover:text-foreground cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm flex items-center justify-center"
+        >
+          <RefreshCw className={cn("w-5 h-5", isRefreshing && "animate-spin")} />
+        </button>
+        {resetNotice && (
+          <span
+            className={cn(
+              "text-[10px] font-bold px-2.5 py-1.5 rounded-lg border",
+              resetNotice.success
+                ? "text-green-600 dark:text-green-400 border-green-500/20 bg-green-500/10"
+                : "text-red-600 dark:text-red-400 border-red-500/20 bg-red-500/10"
+            )}
+          >
+            {resetNotice.message}
+          </span>
+        )}
+      </div>
       <RealTimeClock />
     </div>
   )
@@ -290,7 +292,7 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
-      <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+      <div className="p-6 rounded-3xl glass-panel border border-slate-300 dark:border-slate-800/20 relative overflow-hidden shadow-sm">
         <div className="absolute -top-12 -right-12 w-44 h-44 bg-primary/10 rounded-full filter blur-3xl pointer-events-none" />
         <div className="space-y-1 z-10">
           <div className="flex items-center gap-2.5">
@@ -305,11 +307,10 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
             Monitor incoming contact form inquiries, visitor traffic analytics, and portfolio metrics in real-time.
           </p>
         </div>
-
-        <div className="shrink-0 self-start sm:self-center z-10">
-          <HeaderActions onRefresh={handleRefreshData} />
-        </div>
       </div>
+
+      {/* Toolbar: aksi admin + jam, di bawah header card */}
+      <HeaderActions onRefresh={handleRefreshData} />
 
       {/* Missing Database Table Alert */}
       {currentVisitorStats?.isMissingTable && (
