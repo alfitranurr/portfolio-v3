@@ -1,0 +1,2234 @@
+{
+  "label": "production-after-run2",
+  "base": "https://alfitranurr.vercel.app",
+  "date": "2026-10-03T21:47:13.462Z",
+  "adminMeasured": true,
+  "pages": [
+    {
+      "profile": "desktop",
+      "path": "/",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/",
+      "ttfbMs": 114,
+      "loadEventMs": 557,
+      "lcpMs": 724,
+      "lcpElement": {
+        "startTime": 724,
+        "size": 158773,
+        "url": null,
+        "tag": "p",
+        "text": "Data & AI Specialist with expertise in Data Analytics, Machi"
+      },
+      "aboveFoldImages": 10,
+      "aboveFoldImagesLoadedMs": 838,
+      "initialWallMs": 3592,
+      "initial": {
+        "count": 38,
+        "bytes": 977254,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/journey-photo-1780834384166/w640.webp",
+            "bytes": 192355
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779959848298/w640.webp",
+            "bytes": 116503
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779805610148/w640.webp",
+            "bytes": 90245
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w640.webp",
+            "bytes": 76983
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/journey-photo-1780832657816/w640.webp",
+            "bytes": 61321
+          }
+        ]
+      },
+      "full": {
+        "count": 38,
+        "bytes": 977254,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/journey-photo-1780834384166/w640.webp",
+            "bytes": 192355
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779959848298/w640.webp",
+            "bytes": 116503
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779805610148/w640.webp",
+            "bytes": 90245
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w640.webp",
+            "bytes": 76983
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/journey-photo-1780832657816/w640.webp",
+            "bytes": 61321
+          }
+        ]
+      },
+      "imgElements": 144,
+      "imgNotLazy": 4,
+      "imgWithSrcset": 144,
+      "preloadImageLinks": 4,
+      "oversizedCount": 76,
+      "oversizedWorst": [
+        {
+          "src": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-icon-1788769813570/w128.webp",
+          "naturalWidth": 128,
+          "renderedWidth": 18,
+          "ratio": 7.1
+        },
+        {
+          "src": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-logo-1781324791085/w128.webp",
+          "naturalWidth": 128,
+          "renderedWidth": 18,
+          "ratio": 7.1
+        },
+        {
+          "src": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-icon-1788769813570/w128.webp",
+          "naturalWidth": 128,
+          "renderedWidth": 18,
+          "ratio": 7.1
+        }
+      ]
+    },
+    {
+      "profile": "desktop",
+      "path": "/projects",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/projects",
+      "ttfbMs": 81,
+      "loadEventMs": 955,
+      "lcpMs": 1552,
+      "lcpElement": {
+        "startTime": 1552,
+        "size": 36720,
+        "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1783969421916/w640.webp",
+        "tag": "img",
+        "text": null
+      },
+      "aboveFoldImages": 13,
+      "aboveFoldImagesLoadedMs": 704,
+      "initialWallMs": 4092,
+      "initial": {
+        "count": 29,
+        "bytes": 1073202,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779806078735/w640.webp",
+            "bytes": 121988
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779959848298/w640.webp",
+            "bytes": 116278
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779724908832/w533.webp",
+            "bytes": 114741
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779725949626/w536.webp",
+            "bytes": 95336
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779805610148/w640.webp",
+            "bytes": 90271
+          }
+        ]
+      },
+      "full": {
+        "count": 29,
+        "bytes": 1073202,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779806078735/w640.webp",
+            "bytes": 121988
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779959848298/w640.webp",
+            "bytes": 116278
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779724908832/w533.webp",
+            "bytes": 114741
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779725949626/w536.webp",
+            "bytes": 95336
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779805610148/w640.webp",
+            "bytes": 90271
+          }
+        ]
+      },
+      "imgElements": 30,
+      "imgNotLazy": 4,
+      "imgWithSrcset": 30,
+      "preloadImageLinks": 4,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "desktop",
+      "path": "/certificates",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/certificates",
+      "ttfbMs": 79,
+      "loadEventMs": 1253,
+      "lcpMs": 1332,
+      "lcpElement": {
+        "startTime": 1332,
+        "size": 34680,
+        "url": "https://lh3.googleusercontent.com/d/1UrD8tFeMWqiw-noMnPkDMe4LILSQph7W=w640-rj-l90",
+        "tag": "img",
+        "text": null
+      },
+      "aboveFoldImages": 13,
+      "aboveFoldImagesLoadedMs": 924,
+      "initialWallMs": 3439,
+      "initial": {
+        "count": 49,
+        "bytes": 1646212,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co",
+          "lh3.googleusercontent.com"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000",
+          "private, max-age=86400, no-transform"
+        ],
+        "contentTypes": [
+          "image/webp",
+          "image/jpeg"
+        ],
+        "largest": [
+          {
+            "url": "https://lh3.googleusercontent.com/d/1cW-Ni1jSXFdXsWR1J5V51IxOLCnuRZjR=w640-rj-l90",
+            "bytes": 109368
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1ik_6_ynwm-Ym8UIV8rX-uaQwrOCXU2nb=w640-rj-l90",
+            "bytes": 94644
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1eMT0xpnsftuqjlcj5fHpgnCkBqY4Y-sh=w640-rj-l90",
+            "bytes": 91020
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1Hhe9Tedpxw7uH3b7glPRshG-oKdxJcYF=w640-rj-l90",
+            "bytes": 82741
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1EPePD0fPPPIVPzwVQvT7DHMimiad4mTn=w640-rj-l90",
+            "bytes": 80147
+          }
+        ]
+      },
+      "full": {
+        "count": 111,
+        "bytes": 3678546,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co",
+          "lh3.googleusercontent.com"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000",
+          "private, max-age=86400, no-transform"
+        ],
+        "contentTypes": [
+          "image/webp",
+          "image/jpeg"
+        ],
+        "largest": [
+          {
+            "url": "https://lh3.googleusercontent.com/d/1-oLTarJ7SYHXVrr8HTueDXKd3btQK4wB=w640-rj-l90",
+            "bytes": 189867
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1cW-Ni1jSXFdXsWR1J5V51IxOLCnuRZjR=w640-rj-l90",
+            "bytes": 109368
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1jEF4_E12YhOEJK5nlggSycqmxH2p23bM=w640-rj-l90",
+            "bytes": 108694
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1IhaILHUtunljwD1AGQ_5lCGYIXnq2BcS=w640-rj-l90",
+            "bytes": 97011
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1cBoKgI5k1rJyewbF3xrgOcMakRjrLqJ9=w640-rj-l90",
+            "bytes": 94686
+          }
+        ]
+      },
+      "imgElements": 112,
+      "imgNotLazy": 4,
+      "imgWithSrcset": 112,
+      "preloadImageLinks": 4,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "desktop",
+      "path": "/experience",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/experience",
+      "ttfbMs": 85,
+      "loadEventMs": 263,
+      "lcpMs": 472,
+      "lcpElement": {
+        "startTime": 472,
+        "size": 12804,
+        "url": null,
+        "tag": "h2",
+        "text": "Perusahaan Umum Jasa Tirta 1"
+      },
+      "aboveFoldImages": 4,
+      "aboveFoldImagesLoadedMs": 561,
+      "initialWallMs": 3170,
+      "initial": {
+        "count": 9,
+        "bytes": 49422,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641512127/w128.webp",
+            "bytes": 11927
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1781945470536/w128.webp",
+            "bytes": 9456
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641473732/w128.webp",
+            "bytes": 5278
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641486671/w128.webp",
+            "bytes": 4805
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641500247/w128.webp",
+            "bytes": 4499
+          }
+        ]
+      },
+      "full": {
+        "count": 9,
+        "bytes": 49422,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641512127/w128.webp",
+            "bytes": 11927
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1781945470536/w128.webp",
+            "bytes": 9456
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641473732/w128.webp",
+            "bytes": 5278
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641486671/w128.webp",
+            "bytes": 4805
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641500247/w128.webp",
+            "bytes": 4499
+          }
+        ]
+      },
+      "imgElements": 10,
+      "imgNotLazy": 1,
+      "imgWithSrcset": 10,
+      "preloadImageLinks": 1,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "desktop",
+      "path": "/education",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/education",
+      "ttfbMs": 82,
+      "loadEventMs": 349,
+      "lcpMs": 532,
+      "lcpElement": {
+        "startTime": 532,
+        "size": 17595,
+        "url": null,
+        "tag": "h1",
+        "text": "Academic Journey"
+      },
+      "aboveFoldImages": 5,
+      "aboveFoldImagesLoadedMs": 591,
+      "initialWallMs": 3179,
+      "initial": {
+        "count": 5,
+        "bytes": 50290,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474587248/w128.webp",
+            "bytes": 14676
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474373030/w128.webp",
+            "bytes": 11738
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474575437/w128.webp",
+            "bytes": 9932
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474595374/w128.webp",
+            "bytes": 9614
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/avatar-fff443ef-1b4a-4f81-90e2-651d0cf3e3fd-1779470240031/w128.webp",
+            "bytes": 4330
+          }
+        ]
+      },
+      "full": {
+        "count": 5,
+        "bytes": 50290,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474587248/w128.webp",
+            "bytes": 14676
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474373030/w128.webp",
+            "bytes": 11738
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474575437/w128.webp",
+            "bytes": 9932
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474595374/w128.webp",
+            "bytes": 9614
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/avatar-fff443ef-1b4a-4f81-90e2-651d0cf3e3fd-1779470240031/w128.webp",
+            "bytes": 4330
+          }
+        ]
+      },
+      "imgElements": 6,
+      "imgNotLazy": 1,
+      "imgWithSrcset": 6,
+      "preloadImageLinks": 1,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "desktop",
+      "path": "/projects/d02c1f91-b166-4abb-bb97-c0cab8bd8f68",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/projects/d02c1f91-b166-4abb-bb97-c0cab8bd8f68",
+      "ttfbMs": 79,
+      "loadEventMs": 457,
+      "lcpMs": 1228,
+      "lcpElement": {
+        "startTime": 1228,
+        "size": 376261,
+        "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w940.webp",
+        "tag": "img",
+        "text": null
+      },
+      "aboveFoldImages": 3,
+      "aboveFoldImagesLoadedMs": 452,
+      "initialWallMs": 3296,
+      "initial": {
+        "count": 3,
+        "bytes": 144400,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w940.webp",
+            "bytes": 134322
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w128.webp",
+            "bytes": 5748
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/avatar-fff443ef-1b4a-4f81-90e2-651d0cf3e3fd-1779470240031/w128.webp",
+            "bytes": 4330
+          }
+        ]
+      },
+      "full": {
+        "count": 3,
+        "bytes": 144400,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w940.webp",
+            "bytes": 134322
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w128.webp",
+            "bytes": 5748
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/avatar-fff443ef-1b4a-4f81-90e2-651d0cf3e3fd-1779470240031/w128.webp",
+            "bytes": 4330
+          }
+        ]
+      },
+      "imgElements": 4,
+      "imgNotLazy": 2,
+      "imgWithSrcset": 4,
+      "preloadImageLinks": 2,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "desktop",
+      "path": "/admin/projects",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/admin/projects",
+      "ttfbMs": 95,
+      "loadEventMs": 2235,
+      "lcpMs": 2592,
+      "lcpElement": {
+        "startTime": 2592,
+        "size": 40538,
+        "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1783957201747/w640.webp",
+        "tag": "img",
+        "text": null
+      },
+      "aboveFoldImages": 12,
+      "aboveFoldImagesLoadedMs": 2232,
+      "initialWallMs": 6899,
+      "initial": {
+        "count": 24,
+        "bytes": 960179,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779806078735/w640.webp",
+            "bytes": 122220
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779959848298/w640.webp",
+            "bytes": 116503
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779724908832/w533.webp",
+            "bytes": 114746
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779725949626/w536.webp",
+            "bytes": 95329
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779805610148/w640.webp",
+            "bytes": 90266
+          }
+        ]
+      },
+      "full": {
+        "count": 24,
+        "bytes": 960179,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779806078735/w640.webp",
+            "bytes": 122220
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779959848298/w640.webp",
+            "bytes": 116503
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779724908832/w533.webp",
+            "bytes": 114746
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779725949626/w536.webp",
+            "bytes": 95329
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779805610148/w640.webp",
+            "bytes": 90266
+          }
+        ]
+      },
+      "imgElements": 24,
+      "imgNotLazy": 3,
+      "imgWithSrcset": 24,
+      "preloadImageLinks": 3,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "desktop",
+      "path": "/admin/certificates",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/admin/certificates",
+      "ttfbMs": 84,
+      "loadEventMs": 1225,
+      "lcpMs": 1436,
+      "lcpElement": {
+        "startTime": 1436,
+        "size": 14147,
+        "url": null,
+        "tag": "h1",
+        "text": "Certificates & Awards"
+      },
+      "aboveFoldImages": 9,
+      "aboveFoldImagesLoadedMs": 1612,
+      "initialWallMs": 6342,
+      "initial": {
+        "count": 12,
+        "bytes": 56670,
+        "hosts": [
+          "lh3.googleusercontent.com"
+        ],
+        "cacheControl": [
+          "private, max-age=86400, no-transform"
+        ],
+        "contentTypes": [
+          "image/jpeg"
+        ],
+        "largest": [
+          {
+            "url": "https://lh3.googleusercontent.com/d/1eMT0xpnsftuqjlcj5fHpgnCkBqY4Y-sh=w128-rj-l90",
+            "bytes": 7001
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1Hhe9Tedpxw7uH3b7glPRshG-oKdxJcYF=w128-rj-l90",
+            "bytes": 6251
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1EPePD0fPPPIVPzwVQvT7DHMimiad4mTn=w128-rj-l90",
+            "bytes": 5282
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1pMX745hZLAizcyz662x2WcgZCTZWmcqo=w128-rj-l90",
+            "bytes": 5266
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/16MuYIT6TTifFUIx8ta1j_FvWoymRbhzs=w128-rj-l90",
+            "bytes": 5033
+          }
+        ]
+      },
+      "full": {
+        "count": 12,
+        "bytes": 56670,
+        "hosts": [
+          "lh3.googleusercontent.com"
+        ],
+        "cacheControl": [
+          "private, max-age=86400, no-transform"
+        ],
+        "contentTypes": [
+          "image/jpeg"
+        ],
+        "largest": [
+          {
+            "url": "https://lh3.googleusercontent.com/d/1eMT0xpnsftuqjlcj5fHpgnCkBqY4Y-sh=w128-rj-l90",
+            "bytes": 7001
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1Hhe9Tedpxw7uH3b7glPRshG-oKdxJcYF=w128-rj-l90",
+            "bytes": 6251
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1EPePD0fPPPIVPzwVQvT7DHMimiad4mTn=w128-rj-l90",
+            "bytes": 5282
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1pMX745hZLAizcyz662x2WcgZCTZWmcqo=w128-rj-l90",
+            "bytes": 5266
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/16MuYIT6TTifFUIx8ta1j_FvWoymRbhzs=w128-rj-l90",
+            "bytes": 5033
+          }
+        ]
+      },
+      "imgElements": 12,
+      "imgNotLazy": 0,
+      "imgWithSrcset": 12,
+      "preloadImageLinks": 0,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "desktop",
+      "path": "/admin/photos",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/admin/photos",
+      "ttfbMs": 121,
+      "loadEventMs": 1566,
+      "lcpMs": 2280,
+      "lcpElement": {
+        "startTime": 2280,
+        "size": 30569,
+        "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/journey-photo-1780832424518/w640.webp",
+        "tag": "img",
+        "text": null
+      },
+      "aboveFoldImages": 1,
+      "aboveFoldImagesLoadedMs": 1565,
+      "initialWallMs": 6334,
+      "initial": {
+        "count": 1,
+        "bytes": 54949,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/journey-photo-1780832424518/w640.webp",
+            "bytes": 54949
+          }
+        ]
+      },
+      "full": {
+        "count": 1,
+        "bytes": 54949,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/journey-photo-1780832424518/w640.webp",
+            "bytes": 54949
+          }
+        ]
+      },
+      "imgElements": 1,
+      "imgNotLazy": 1,
+      "imgWithSrcset": 1,
+      "preloadImageLinks": 1,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "desktop",
+      "path": "/admin/experience",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/admin/experience",
+      "ttfbMs": 90,
+      "loadEventMs": 1714,
+      "lcpMs": 2524,
+      "lcpElement": {
+        "startTime": 2524,
+        "size": 11640,
+        "url": null,
+        "tag": "p",
+        "text": "Manage professional experience, committee roles, and organiz"
+      },
+      "aboveFoldImages": 8,
+      "aboveFoldImagesLoadedMs": 1975,
+      "initialWallMs": 7005,
+      "initial": {
+        "count": 10,
+        "bytes": 60759,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641512127/w128.webp",
+            "bytes": 12153
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1781945470536/w128.webp",
+            "bytes": 9459
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641590707/w128.webp",
+            "bytes": 8222
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641454409/w128.webp",
+            "bytes": 5247
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641473732/w128.webp",
+            "bytes": 5243
+          }
+        ]
+      },
+      "full": {
+        "count": 10,
+        "bytes": 60759,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641512127/w128.webp",
+            "bytes": 12153
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1781945470536/w128.webp",
+            "bytes": 9459
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641590707/w128.webp",
+            "bytes": 8222
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641454409/w128.webp",
+            "bytes": 5247
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641473732/w128.webp",
+            "bytes": 5243
+          }
+        ]
+      },
+      "imgElements": 10,
+      "imgNotLazy": 0,
+      "imgWithSrcset": 10,
+      "preloadImageLinks": 0,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "desktop",
+      "path": "/admin/education",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/admin/education",
+      "ttfbMs": 94,
+      "loadEventMs": 1201,
+      "lcpMs": 2040,
+      "lcpElement": {
+        "startTime": 2040,
+        "size": 12280,
+        "url": null,
+        "tag": "p",
+        "text": "Manage academic background, degrees, certifications, and edu"
+      },
+      "aboveFoldImages": 4,
+      "aboveFoldImagesLoadedMs": 1176,
+      "initialWallMs": 6610,
+      "initial": {
+        "count": 4,
+        "bytes": 46218,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474587248/w128.webp",
+            "bytes": 14690
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474373030/w128.webp",
+            "bytes": 11738
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474575437/w128.webp",
+            "bytes": 9933
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474595374/w128.webp",
+            "bytes": 9857
+          }
+        ]
+      },
+      "full": {
+        "count": 4,
+        "bytes": 46218,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474587248/w128.webp",
+            "bytes": 14690
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474373030/w128.webp",
+            "bytes": 11738
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474575437/w128.webp",
+            "bytes": 9933
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474595374/w128.webp",
+            "bytes": 9857
+          }
+        ]
+      },
+      "imgElements": 4,
+      "imgNotLazy": 0,
+      "imgWithSrcset": 4,
+      "preloadImageLinks": 0,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "desktop",
+      "path": "/admin/skills",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/admin/skills",
+      "ttfbMs": 101,
+      "loadEventMs": 1603,
+      "lcpMs": 2048,
+      "lcpElement": {
+        "startTime": 2048,
+        "size": 6140,
+        "url": null,
+        "tag": "p",
+        "text": "Manage technical skills, soft skills, and tools."
+      },
+      "aboveFoldImages": 8,
+      "aboveFoldImagesLoadedMs": 2123,
+      "initialWallMs": 6646,
+      "initial": {
+        "count": 9,
+        "bytes": 30698,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-icon-1788769813570/w128.webp",
+            "bytes": 7667
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-logo-1782227882388/w128.webp",
+            "bytes": 6785
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-logo-1781324791085/w128.webp",
+            "bytes": 4049
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-logo-1781323760886/w100.webp",
+            "bytes": 3018
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-icon-1788773890317/w128.webp",
+            "bytes": 2896
+          }
+        ]
+      },
+      "full": {
+        "count": 9,
+        "bytes": 30698,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-icon-1788769813570/w128.webp",
+            "bytes": 7667
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-logo-1782227882388/w128.webp",
+            "bytes": 6785
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-logo-1781324791085/w128.webp",
+            "bytes": 4049
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-logo-1781323760886/w100.webp",
+            "bytes": 3018
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-icon-1788773890317/w128.webp",
+            "bytes": 2896
+          }
+        ]
+      },
+      "imgElements": 9,
+      "imgNotLazy": 0,
+      "imgWithSrcset": 9,
+      "preloadImageLinks": 0,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "mobile",
+      "path": "/",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/",
+      "ttfbMs": 210,
+      "loadEventMs": 1956,
+      "lcpMs": 896,
+      "lcpElement": {
+        "startTime": 896,
+        "size": 119491,
+        "url": null,
+        "tag": "p",
+        "text": "Data & AI Specialist with expertise in Data Analytics, Machi"
+      },
+      "aboveFoldImages": 4,
+      "aboveFoldImagesLoadedMs": 1519,
+      "initialWallMs": 4036,
+      "initial": {
+        "count": 18,
+        "bytes": 1046932,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779959848298/w960.webp",
+            "bytes": 197819
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779805610148/w960.webp",
+            "bytes": 150020
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w940.webp",
+            "bytes": 134333
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1783969421916/w960.webp",
+            "bytes": 107160
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1783957201747/w960.webp",
+            "bytes": 102483
+          }
+        ]
+      },
+      "full": {
+        "count": 33,
+        "bytes": 1844200,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/journey-photo-1780834384166/w960.webp",
+            "bytes": 370759
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779959848298/w960.webp",
+            "bytes": 197819
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779805610148/w960.webp",
+            "bytes": 150020
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w940.webp",
+            "bytes": 134333
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/journey-photo-1780832657816/w960.webp",
+            "bytes": 122245
+          }
+        ]
+      },
+      "imgElements": 148,
+      "imgNotLazy": 4,
+      "imgWithSrcset": 148,
+      "preloadImageLinks": 4,
+      "oversizedCount": 24,
+      "oversizedWorst": [
+        {
+          "src": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-icon-1788773890317/w128.webp",
+          "naturalWidth": 128,
+          "renderedWidth": 18,
+          "ratio": 2.7
+        },
+        {
+          "src": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-icon-1788769813570/w128.webp",
+          "naturalWidth": 128,
+          "renderedWidth": 18,
+          "ratio": 2.7
+        },
+        {
+          "src": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-icon-1788773890317/w128.webp",
+          "naturalWidth": 128,
+          "renderedWidth": 18,
+          "ratio": 2.7
+        }
+      ]
+    },
+    {
+      "profile": "mobile",
+      "path": "/projects",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/projects",
+      "ttfbMs": 81,
+      "loadEventMs": 1701,
+      "lcpMs": 1860,
+      "lcpElement": {
+        "startTime": 1860,
+        "size": 59616,
+        "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w940.webp",
+        "tag": "img",
+        "text": null
+      },
+      "aboveFoldImages": 6,
+      "aboveFoldImagesLoadedMs": 1395,
+      "initialWallMs": 4090,
+      "initial": {
+        "count": 20,
+        "bytes": 1162961,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779959848298/w960.webp",
+            "bytes": 197820
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779805610148/w960.webp",
+            "bytes": 150237
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w940.webp",
+            "bytes": 134329
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1783969421916/w960.webp",
+            "bytes": 107159
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1783957201747/w960.webp",
+            "bytes": 102482
+          }
+        ]
+      },
+      "full": {
+        "count": 30,
+        "bytes": 1757138,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779959848298/w960.webp",
+            "bytes": 197820
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779805610148/w960.webp",
+            "bytes": 150237
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779806078735/w736.webp",
+            "bytes": 146656
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w940.webp",
+            "bytes": 134329
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779724908832/w533.webp",
+            "bytes": 114920
+          }
+        ]
+      },
+      "imgElements": 30,
+      "imgNotLazy": 4,
+      "imgWithSrcset": 30,
+      "preloadImageLinks": 4,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "mobile",
+      "path": "/certificates",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/certificates",
+      "ttfbMs": 87,
+      "loadEventMs": 1980,
+      "lcpMs": 1648,
+      "lcpElement": {
+        "startTime": 1648,
+        "size": 48208,
+        "url": "https://lh3.googleusercontent.com/d/1ik_6_ynwm-Ym8UIV8rX-uaQwrOCXU2nb=w960-rj-l90",
+        "tag": "img",
+        "text": null
+      },
+      "aboveFoldImages": 6,
+      "aboveFoldImagesLoadedMs": 1249,
+      "initialWallMs": 4072,
+      "initial": {
+        "count": 18,
+        "bytes": 1209644,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co",
+          "lh3.googleusercontent.com"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000",
+          "private, max-age=86400, no-transform"
+        ],
+        "contentTypes": [
+          "image/webp",
+          "image/jpeg"
+        ],
+        "largest": [
+          {
+            "url": "https://lh3.googleusercontent.com/d/1ik_6_ynwm-Ym8UIV8rX-uaQwrOCXU2nb=w960-rj-l90",
+            "bytes": 192725
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1eMT0xpnsftuqjlcj5fHpgnCkBqY4Y-sh=w960-rj-l90",
+            "bytes": 152459
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1Hhe9Tedpxw7uH3b7glPRshG-oKdxJcYF=w960-rj-l90",
+            "bytes": 143410
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1fPTybOa_f8EkqgEkA193rAMtVtpsqYEN=w960-rj-l90",
+            "bytes": 133279
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1iMhbodbh6-UsPunH-Td6id8Zl-hK9Tp1=w960-rj-l90",
+            "bytes": 114671
+          }
+        ]
+      },
+      "full": {
+        "count": 112,
+        "bytes": 6912373,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co",
+          "lh3.googleusercontent.com"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000",
+          "private, max-age=86400, no-transform"
+        ],
+        "contentTypes": [
+          "image/webp",
+          "image/jpeg"
+        ],
+        "largest": [
+          {
+            "url": "https://lh3.googleusercontent.com/d/1-oLTarJ7SYHXVrr8HTueDXKd3btQK4wB=w960-rj-l90",
+            "bytes": 331517
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1IhaILHUtunljwD1AGQ_5lCGYIXnq2BcS=w960-rj-l90",
+            "bytes": 212707
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1cW-Ni1jSXFdXsWR1J5V51IxOLCnuRZjR=w960-rj-l90",
+            "bytes": 203500
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1ik_6_ynwm-Ym8UIV8rX-uaQwrOCXU2nb=w960-rj-l90",
+            "bytes": 192725
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1jEF4_E12YhOEJK5nlggSycqmxH2p23bM=w960-rj-l90",
+            "bytes": 180729
+          }
+        ]
+      },
+      "imgElements": 112,
+      "imgNotLazy": 4,
+      "imgWithSrcset": 112,
+      "preloadImageLinks": 4,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "mobile",
+      "path": "/experience",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/experience",
+      "ttfbMs": 83,
+      "loadEventMs": 646,
+      "lcpMs": 736,
+      "lcpElement": {
+        "startTime": 736,
+        "size": 14504,
+        "url": null,
+        "tag": "h2",
+        "text": "Perusahaan Umum Jasa Tirta 1"
+      },
+      "aboveFoldImages": 5,
+      "aboveFoldImagesLoadedMs": 904,
+      "initialWallMs": 3570,
+      "initial": {
+        "count": 10,
+        "bytes": 172080,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/avatar-fff443ef-1b4a-4f81-90e2-651d0cf3e3fd-1779470240031/w640.webp",
+            "bytes": 68508
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641512127/w256.webp",
+            "bytes": 28539
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1781945470536/w256.webp",
+            "bytes": 22184
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641473732/w256.webp",
+            "bytes": 10539
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641486671/w256.webp",
+            "bytes": 10381
+          }
+        ]
+      },
+      "full": {
+        "count": 10,
+        "bytes": 172080,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/avatar-fff443ef-1b4a-4f81-90e2-651d0cf3e3fd-1779470240031/w640.webp",
+            "bytes": 68508
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641512127/w256.webp",
+            "bytes": 28539
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1781945470536/w256.webp",
+            "bytes": 22184
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641473732/w256.webp",
+            "bytes": 10539
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641486671/w256.webp",
+            "bytes": 10381
+          }
+        ]
+      },
+      "imgElements": 10,
+      "imgNotLazy": 1,
+      "imgWithSrcset": 10,
+      "preloadImageLinks": 1,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "mobile",
+      "path": "/education",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/education",
+      "ttfbMs": 94,
+      "loadEventMs": 678,
+      "lcpMs": 1296,
+      "lcpElement": {
+        "startTime": 1296,
+        "size": 11374,
+        "url": null,
+        "tag": "h3",
+        "text": "University of Muhammadiyah Malang"
+      },
+      "aboveFoldImages": 5,
+      "aboveFoldImagesLoadedMs": 910,
+      "initialWallMs": 3586,
+      "initial": {
+        "count": 6,
+        "bytes": 191416,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/avatar-fff443ef-1b4a-4f81-90e2-651d0cf3e3fd-1779470240031/w640.webp",
+            "bytes": 68506
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474587248/w256.webp",
+            "bytes": 39161
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474373030/w256.webp",
+            "bytes": 32130
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474575437/w256.webp",
+            "bytes": 23966
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474595374/w256.webp",
+            "bytes": 23620
+          }
+        ]
+      },
+      "full": {
+        "count": 6,
+        "bytes": 191416,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/avatar-fff443ef-1b4a-4f81-90e2-651d0cf3e3fd-1779470240031/w640.webp",
+            "bytes": 68506
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474587248/w256.webp",
+            "bytes": 39161
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474373030/w256.webp",
+            "bytes": 32130
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474575437/w256.webp",
+            "bytes": 23966
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474595374/w256.webp",
+            "bytes": 23620
+          }
+        ]
+      },
+      "imgElements": 6,
+      "imgNotLazy": 1,
+      "imgWithSrcset": 6,
+      "preloadImageLinks": 1,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "mobile",
+      "path": "/projects/d02c1f91-b166-4abb-bb97-c0cab8bd8f68",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/projects/d02c1f91-b166-4abb-bb97-c0cab8bd8f68",
+      "ttfbMs": 77,
+      "loadEventMs": 780,
+      "lcpMs": 860,
+      "lcpElement": {
+        "startTime": 860,
+        "size": 128480,
+        "url": null,
+        "tag": "p",
+        "text": "An end-to-end data analytics and business intelligence proje"
+      },
+      "aboveFoldImages": 4,
+      "aboveFoldImagesLoadedMs": 764,
+      "initialWallMs": 3687,
+      "initial": {
+        "count": 4,
+        "bytes": 225057,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w940.webp",
+            "bytes": 134565
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/avatar-fff443ef-1b4a-4f81-90e2-651d0cf3e3fd-1779470240031/w640.webp",
+            "bytes": 68265
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w256.webp",
+            "bytes": 18193
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/logo-fff443ef-1b4a-4f81-90e2-651d0cf3e3fd-1781949887673/w128.webp",
+            "bytes": 4034
+          }
+        ]
+      },
+      "full": {
+        "count": 4,
+        "bytes": 225057,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w940.webp",
+            "bytes": 134565
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/avatar-fff443ef-1b4a-4f81-90e2-651d0cf3e3fd-1779470240031/w640.webp",
+            "bytes": 68265
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w256.webp",
+            "bytes": 18193
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/logo-fff443ef-1b4a-4f81-90e2-651d0cf3e3fd-1781949887673/w128.webp",
+            "bytes": 4034
+          }
+        ]
+      },
+      "imgElements": 4,
+      "imgNotLazy": 2,
+      "imgWithSrcset": 4,
+      "preloadImageLinks": 2,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "mobile",
+      "path": "/admin/projects",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/admin/projects",
+      "ttfbMs": 93,
+      "loadEventMs": 2508,
+      "lcpMs": 2228,
+      "lcpElement": {
+        "startTime": 2228,
+        "size": 60583,
+        "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w940.webp",
+        "tag": "img",
+        "text": null
+      },
+      "aboveFoldImages": 2,
+      "aboveFoldImagesLoadedMs": 1786,
+      "initialWallMs": 6841,
+      "initial": {
+        "count": 16,
+        "bytes": 1002401,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779959848298/w960.webp",
+            "bytes": 198012
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779805610148/w960.webp",
+            "bytes": 150022
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w940.webp",
+            "bytes": 134565
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1783969421916/w960.webp",
+            "bytes": 107159
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1783957201747/w960.webp",
+            "bytes": 102682
+          }
+        ]
+      },
+      "full": {
+        "count": 24,
+        "bytes": 1548559,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779959848298/w960.webp",
+            "bytes": 198012
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779805610148/w960.webp",
+            "bytes": 150022
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779806078735/w736.webp",
+            "bytes": 146678
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1782301729072/w940.webp",
+            "bytes": 134565
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/project-cover-1779724908832/w533.webp",
+            "bytes": 114938
+          }
+        ]
+      },
+      "imgElements": 24,
+      "imgNotLazy": 3,
+      "imgWithSrcset": 24,
+      "preloadImageLinks": 3,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "mobile",
+      "path": "/admin/certificates",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/admin/certificates",
+      "ttfbMs": 99,
+      "loadEventMs": 1562,
+      "lcpMs": 1712,
+      "lcpElement": {
+        "startTime": 1712,
+        "size": 9471,
+        "url": null,
+        "tag": "p",
+        "text": "Manage professional certifications, competition awards, and "
+      },
+      "aboveFoldImages": 5,
+      "aboveFoldImagesLoadedMs": 1711,
+      "initialWallMs": 7376,
+      "initial": {
+        "count": 12,
+        "bytes": 56670,
+        "hosts": [
+          "lh3.googleusercontent.com"
+        ],
+        "cacheControl": [
+          "private, max-age=86400, no-transform"
+        ],
+        "contentTypes": [
+          "image/jpeg"
+        ],
+        "largest": [
+          {
+            "url": "https://lh3.googleusercontent.com/d/1eMT0xpnsftuqjlcj5fHpgnCkBqY4Y-sh=w128-rj-l90",
+            "bytes": 7001
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1Hhe9Tedpxw7uH3b7glPRshG-oKdxJcYF=w128-rj-l90",
+            "bytes": 6251
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1EPePD0fPPPIVPzwVQvT7DHMimiad4mTn=w128-rj-l90",
+            "bytes": 5282
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1pMX745hZLAizcyz662x2WcgZCTZWmcqo=w128-rj-l90",
+            "bytes": 5266
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/16MuYIT6TTifFUIx8ta1j_FvWoymRbhzs=w128-rj-l90",
+            "bytes": 4824
+          }
+        ]
+      },
+      "full": {
+        "count": 12,
+        "bytes": 56670,
+        "hosts": [
+          "lh3.googleusercontent.com"
+        ],
+        "cacheControl": [
+          "private, max-age=86400, no-transform"
+        ],
+        "contentTypes": [
+          "image/jpeg"
+        ],
+        "largest": [
+          {
+            "url": "https://lh3.googleusercontent.com/d/1eMT0xpnsftuqjlcj5fHpgnCkBqY4Y-sh=w128-rj-l90",
+            "bytes": 7001
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1Hhe9Tedpxw7uH3b7glPRshG-oKdxJcYF=w128-rj-l90",
+            "bytes": 6251
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1EPePD0fPPPIVPzwVQvT7DHMimiad4mTn=w128-rj-l90",
+            "bytes": 5282
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/1pMX745hZLAizcyz662x2WcgZCTZWmcqo=w128-rj-l90",
+            "bytes": 5266
+          },
+          {
+            "url": "https://lh3.googleusercontent.com/d/16MuYIT6TTifFUIx8ta1j_FvWoymRbhzs=w128-rj-l90",
+            "bytes": 4824
+          }
+        ]
+      },
+      "imgElements": 12,
+      "imgNotLazy": 0,
+      "imgWithSrcset": 12,
+      "preloadImageLinks": 0,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "mobile",
+      "path": "/admin/photos",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/admin/photos",
+      "ttfbMs": 103,
+      "loadEventMs": 1653,
+      "lcpMs": 2124,
+      "lcpElement": {
+        "startTime": 2124,
+        "size": 76539,
+        "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/journey-photo-1780832424518/w960.webp",
+        "tag": "img",
+        "text": null
+      },
+      "aboveFoldImages": 1,
+      "aboveFoldImagesLoadedMs": 1642,
+      "initialWallMs": 7275,
+      "initial": {
+        "count": 1,
+        "bytes": 107586,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/journey-photo-1780832424518/w960.webp",
+            "bytes": 107586
+          }
+        ]
+      },
+      "full": {
+        "count": 1,
+        "bytes": 107586,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/journey-photo-1780832424518/w960.webp",
+            "bytes": 107586
+          }
+        ]
+      },
+      "imgElements": 1,
+      "imgNotLazy": 1,
+      "imgWithSrcset": 1,
+      "preloadImageLinks": 1,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "mobile",
+      "path": "/admin/experience",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/admin/experience",
+      "ttfbMs": 102,
+      "loadEventMs": 1436,
+      "lcpMs": 1788,
+      "lcpElement": {
+        "startTime": 1788,
+        "size": 10890,
+        "url": null,
+        "tag": "p",
+        "text": "Manage professional experience, committee roles, and organiz"
+      },
+      "aboveFoldImages": 6,
+      "aboveFoldImagesLoadedMs": 2117,
+      "initialWallMs": 6888,
+      "initial": {
+        "count": 10,
+        "bytes": 60760,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641512127/w128.webp",
+            "bytes": 11928
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1781945470536/w128.webp",
+            "bytes": 9680
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641590707/w128.webp",
+            "bytes": 8232
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641454409/w128.webp",
+            "bytes": 5254
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641473732/w128.webp",
+            "bytes": 5225
+          }
+        ]
+      },
+      "full": {
+        "count": 10,
+        "bytes": 60760,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641512127/w128.webp",
+            "bytes": 11928
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1781945470536/w128.webp",
+            "bytes": 9680
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641590707/w128.webp",
+            "bytes": 8232
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641454409/w128.webp",
+            "bytes": 5254
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/exp-logo-1779641473732/w128.webp",
+            "bytes": 5225
+          }
+        ]
+      },
+      "imgElements": 10,
+      "imgNotLazy": 0,
+      "imgWithSrcset": 10,
+      "preloadImageLinks": 0,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "mobile",
+      "path": "/admin/education",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/admin/education",
+      "ttfbMs": 86,
+      "loadEventMs": 1429,
+      "lcpMs": 1560,
+      "lcpElement": {
+        "startTime": 1560,
+        "size": 9075,
+        "url": null,
+        "tag": "p",
+        "text": "Manage academic background, degrees, certifications, and edu"
+      },
+      "aboveFoldImages": 4,
+      "aboveFoldImagesLoadedMs": 1671,
+      "initialWallMs": 6282,
+      "initial": {
+        "count": 4,
+        "bytes": 46208,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474587248/w128.webp",
+            "bytes": 14680
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474373030/w128.webp",
+            "bytes": 11739
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474575437/w128.webp",
+            "bytes": 10175
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474595374/w128.webp",
+            "bytes": 9614
+          }
+        ]
+      },
+      "full": {
+        "count": 4,
+        "bytes": 46208,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474587248/w128.webp",
+            "bytes": 14680
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474373030/w128.webp",
+            "bytes": 11739
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474575437/w128.webp",
+            "bytes": 10175
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/edu-logo-1779474595374/w128.webp",
+            "bytes": 9614
+          }
+        ]
+      },
+      "imgElements": 4,
+      "imgNotLazy": 0,
+      "imgWithSrcset": 4,
+      "preloadImageLinks": 0,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    },
+    {
+      "profile": "mobile",
+      "path": "/admin/skills",
+      "error": null,
+      "finalUrl": "https://alfitranurr.vercel.app/admin/skills",
+      "ttfbMs": 89,
+      "loadEventMs": 2135,
+      "lcpMs": 2424,
+      "lcpElement": {
+        "startTime": 2424,
+        "size": 4471,
+        "url": null,
+        "tag": "p",
+        "text": "Manage technical skills, soft skills, and tools."
+      },
+      "aboveFoldImages": 6,
+      "aboveFoldImagesLoadedMs": 2678,
+      "initialWallMs": 7219,
+      "initial": {
+        "count": 9,
+        "bytes": 30712,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-icon-1788769813570/w128.webp",
+            "bytes": 7668
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-logo-1782227882388/w128.webp",
+            "bytes": 6783
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-logo-1781324791085/w128.webp",
+            "bytes": 4040
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-icon-1788773890317/w128.webp",
+            "bytes": 3118
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-logo-1781323760886/w100.webp",
+            "bytes": 3017
+          }
+        ]
+      },
+      "full": {
+        "count": 9,
+        "bytes": 30712,
+        "hosts": [
+          "jeibbwndxywzmvugtobq.supabase.co"
+        ],
+        "cacheControl": [
+          "public, max-age=31536000"
+        ],
+        "contentTypes": [
+          "image/webp"
+        ],
+        "largest": [
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-icon-1788769813570/w128.webp",
+            "bytes": 7668
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-logo-1782227882388/w128.webp",
+            "bytes": 6783
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-logo-1781324791085/w128.webp",
+            "bytes": 4040
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-icon-1788773890317/w128.webp",
+            "bytes": 3118
+          },
+          {
+            "url": "https://jeibbwndxywzmvugtobq.supabase.co/storage/v1/object/public/portfolio-assets/opt/skill-logo-1781323760886/w100.webp",
+            "bytes": 3017
+          }
+        ]
+      },
+      "imgElements": 9,
+      "imgNotLazy": 0,
+      "imgWithSrcset": 9,
+      "preloadImageLinks": 0,
+      "oversizedCount": 0,
+      "oversizedWorst": []
+    }
+  ]
+}

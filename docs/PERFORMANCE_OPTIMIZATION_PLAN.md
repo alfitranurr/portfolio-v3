@@ -232,6 +232,31 @@ Masalah: gambar langsung diupload saat dipilih di form, jadi bila form dibatalka
 
 Catatan: penyapu tidak otomatis terjadwal. Bila ingin otomatis, butuh Vercel Cron + `SUPABASE_SERVICE_ROLE_KEY` di env server (cron tidak punya sesi admin).
 
+## Hasil di production ✅ 2026-10-04
+
+Deploy: commit `24276b4`…`40c638a` di-push ke `master` → Vercel production aktif ±60 s kemudian. Diukur dengan `scripts/measure-images.mjs` (cold load, cache browser mati) terhadap https://alfitranurr.vercel.app — metode sama dengan baseline awal.
+
+- `docs/perf/production-after.md` — run 1, tepat setelah deploy (CDN masih dingin: varian & ukuran Google Drive baru pertama kali diminta).
+- `docs/perf/production-after-run2.md` — run 2, CDN hangat (mewakili pengunjung biasa). Perbandingan: `docs/perf/compare-baseline-production-vs-production-after-run2.md`.
+
+| Halaman | Total gambar (mobile 4G) | Gambar atas-layar selesai (mobile) | LCP mobile | LCP desktop |
+|---|---|---|---|---|
+| `/` | 21.78 MB → **1.76 MB** | 5.60 s → **1.52 s** | 1.61 → **0.90 s** | 1.78 → **0.72 s** |
+| `/projects` | 9.45 MB → **1.68 MB** | 9.13 s → **1.40 s** | 7.98 → **1.86 s** | 1.75 → **1.55 s** |
+| `/certificates` | 20.00 MB → **6.59 MB** | 17.41 s → **1.25 s** | 17.50 → **1.65 s** | 1.95 → **1.33 s** |
+| `/experience` | 1.89 MB → **168 KB** | 2.43 s → **0.90 s** | 1.16 → **0.74 s** | 0.92 → **0.47 s** |
+| `/education` | 3.81 MB → **187 KB** | 3.93 s → **0.91 s** | 0.76 → 1.30 s* | 1.05 → **0.53 s** |
+| `/projects/[id]` | 1.67 MB → **220 KB** | 2.27 s → **0.76 s** | 0.94 → **0.86 s** | 2.21 → **1.23 s** |
+| `/admin/projects` | 8.11 MB → **1.48 MB** | 4.61 s → **1.79 s** | 5.27 → **2.23 s** | 4.17 → **2.59 s** |
+| `/admin/education` | 2.95 MB → **45 KB** | 4.79 s → **1.67 s** | 1.88 → **1.56 s** | 2.96 → **2.04 s** |
+
+\* LCP berupa teks (heading); variasi ±0.5 s antar run adalah noise jaringan/hydration — run 1 halaman yang sama: 0.74 s.
+
+Catatan:
+- Tidak ada request ke `/_next/image` (kuota Vercel Image Optimization tidak terpakai); varian disajikan dari CDN Supabase dengan `cache-control: public, max-age=31536000`.
+- Preload gambar per halaman turun dari 56 → 4 (certificates), 15 → 4 (projects), 12 → 3 (admin projects).
+- Sisa waktu di halaman admin (±1.5–2.5 s) kini didominasi server, bukan gambar: semua route admin `force-dynamic` + `auth.getUser()` dipanggil di proxy dan lagi di tiap action/page. Kandidat optimasi berikutnya bila diperlukan.
+
 ## 4. Yang sengaja TIDAK diubah
 - `src/components/initial-loader.tsx` (durasi intro tetap).
 - Animasi `template.tsx` dan efek blur-fade kartu (desain dipertahankan; hanya transisi BlurImage yang diperbaiki).
