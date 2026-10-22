@@ -343,9 +343,9 @@ export function AIChatInterface() {
   const isEmptyState = messages.length === 0
 
   return (
-    <div className="flex flex-col h-[75vh] sm:h-[78vh] lg:h-[80vh] w-full border border-slate-200/80 dark:border-white/25 rounded-2xl sm:rounded-3xl bg-card/30 dark:bg-slate-900/40 backdrop-blur-sm p-2.5 sm:p-4 shadow-sm overflow-hidden">
-      {/* Chat Room Header Toolbar */}
-      <div className="flex items-center justify-between pb-2 border-b border-slate-200/60 dark:border-white/20 mb-2 shrink-0">
+    <div className="flex flex-col flex-1 min-h-0 w-full border border-slate-200/80 dark:border-white/25 rounded-2xl sm:rounded-3xl bg-card/30 dark:bg-slate-900/40 backdrop-blur-sm p-2.5 sm:p-4 shadow-sm overflow-hidden">
+      {/* Chat Room Header Toolbar (fixed height so the Clear button doesn't shift the layout) */}
+      <div className="flex items-center justify-between h-8 sm:h-9 pb-2 border-b border-slate-200/60 dark:border-white/20 mb-2 shrink-0">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -385,7 +385,9 @@ export function AIChatInterface() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0, transition: { duration: 0.15 } }}
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute inset-0 flex flex-col items-center justify-center text-center px-1 sm:px-4 transform-gpu"
+                // No justify-center: the inner my-auto centers safely, so when the suggestions are taller
+                // than the area (short phones) the overflow scrolls downward instead of clipping the top
+                className="absolute inset-0 flex flex-col items-center text-center px-1 sm:px-4 transform-gpu"
               >
                 <div className="my-auto flex flex-col items-center w-full max-w-xl">
                   {/* Animated AI Sparkles icon */}
@@ -419,7 +421,7 @@ export function AIChatInterface() {
                         key={i}
                         variants={itemVariants}
                         onClick={() => sendMessage(item.prompt)}
-                        className="w-full p-2.5 rounded-2xl glass-card border border-slate-200/70 dark:border-white/25 hover:border-foreground/30 dark:hover:border-white/40 bg-white/5 dark:bg-slate-800/30 text-left transition-all group cursor-pointer active:scale-[0.98] flex items-center justify-between gap-3 shadow-2xs hover:shadow-md transform-gpu"
+                        className="w-full p-2.5 rounded-2xl glass-card border border-slate-200/40 dark:border-white/10 hover:border-slate-300/60 dark:hover:border-white/20 bg-white/5 dark:bg-slate-800/30 text-left transition-all group cursor-pointer active:scale-[0.98] flex items-center justify-between gap-3 transform-gpu"
                       >
                         <div className="flex items-center gap-2.5 min-w-0 flex-1">
                           <span className="text-sm shrink-0 p-1.5 rounded-xl bg-white/5 dark:bg-slate-700/30 border border-slate-200/10 dark:border-slate-700/20">
@@ -451,7 +453,7 @@ export function AIChatInterface() {
                         key={i}
                         variants={itemVariants}
                         onClick={() => sendMessage(q)}
-                        className="px-4 py-2 text-xs font-medium rounded-xl bg-slate-200/40 dark:bg-slate-800/40 backdrop-blur-md border border-slate-200/60 dark:border-white/25 text-foreground/85 hover:text-foreground hover:border-foreground/30 dark:hover:border-white/40 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 hover:shadow-md active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer transform-gpu"
+                        className="px-4 py-2 text-xs font-medium rounded-xl bg-slate-200/40 dark:bg-slate-800/40 backdrop-blur-md border border-slate-200/40 dark:border-white/10 text-foreground/85 hover:text-foreground hover:border-slate-300/60 dark:hover:border-white/20 hover:bg-slate-200/70 dark:hover:bg-slate-800/70 active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer transform-gpu"
                       >
                         {q}
                       </motion.button>
@@ -460,7 +462,7 @@ export function AIChatInterface() {
                 </div>
               </motion.div>
             ) : (
-              <div key="messages-list" className="space-y-3 sm:space-y-4 min-h-full">
+              <div key="messages-list" className="space-y-3 sm:space-y-4 min-h-full w-full max-w-4xl mx-auto">
                 {messages.map((message) => (
                   <ChatMessageRow key={message.id} message={message} />
                 ))}
@@ -472,8 +474,9 @@ export function AIChatInterface() {
 
       {/* Input Area */}
       <div className="pt-2 sm:pt-3 border-t border-slate-200/60 dark:border-white/20 mt-1 shrink-0">
-        <form onSubmit={handleSubmit} className="relative">
+        <form onSubmit={handleSubmit} className="relative w-full max-w-4xl mx-auto">
           <div className="flex items-end gap-1.5 p-1.5 sm:p-2 rounded-xl sm:rounded-2xl glass-panel border border-slate-200/70 dark:border-white/25 focus-within:border-primary/50 focus-within:shadow-md focus-within:shadow-primary/5 transition-all">
+            {/* text-base on mobile prevents iOS focus-zoom; 36px tall at every size to match the send button */}
             <textarea
               ref={inputRef}
               value={input}
@@ -482,13 +485,13 @@ export function AIChatInterface() {
               placeholder="Tanyakan tentang Al Fitra..."
               disabled={isStreaming}
               rows={1}
-              className="flex-1 bg-transparent text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 outline-none resize-none px-2 py-1.5 sm:px-3 sm:py-2 max-h-[100px] sm:max-h-[120px] disabled:opacity-50 leading-normal"
+              className="flex-1 min-w-0 bg-transparent text-base sm:text-sm text-foreground placeholder:text-muted-foreground/60 outline-none resize-none px-2 py-1.5 sm:px-3 sm:py-2 max-h-[100px] sm:max-h-[120px] disabled:opacity-50 leading-6 sm:leading-5"
             />
             <button
               type="submit"
               disabled={!input.trim() || isStreaming}
               className={cn(
-                'shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl flex items-center justify-center transition-all cursor-pointer',
+                'shrink-0 w-9 h-9 rounded-lg sm:rounded-xl flex items-center justify-center transition-all cursor-pointer',
                 input.trim() && !isStreaming
                   ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20 hover:bg-primary/90 hover:scale-105 active:scale-95'
                   : 'bg-slate-200/30 dark:bg-slate-800/30 text-muted-foreground/50 cursor-not-allowed'
@@ -502,7 +505,7 @@ export function AIChatInterface() {
               )}
             </button>
           </div>
-          <p className="text-[8.5px] sm:text-[10px] text-muted-foreground/60 text-center mt-1 truncate">
+          <p className="text-[10px] leading-snug text-muted-foreground/60 text-center text-balance mt-1.5">
             AI dapat membuat kesalahan. Respon didasarkan pada data portfolio + web search.
           </p>
         </form>
