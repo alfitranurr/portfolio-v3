@@ -2,6 +2,7 @@
 import { GoogleGenAI } from '@google/genai'
 import { buildRAGContext, buildSystemPrompt } from '@/lib/rag-context'
 import { getAISettings, logAIChat, anonymizeIP } from '@/lib/ai-service'
+import { getResumeDocument } from '@/lib/resume-document'
 
 // Force recompile rag-context module
 export const dynamic = 'force-dynamic'
@@ -135,9 +136,12 @@ export async function POST(request: Request) {
     // Fetch user AI config dynamically
     const settings = await getAISettings()
 
-    // Build RAG context from all portfolio data
-    const ragContext = await buildRAGContext()
-    const systemPrompt = buildSystemPrompt(ragContext)
+    // Build RAG context from all portfolio data + load the resume PDF (both cached/parallel)
+    const [ragContext, resume] = await Promise.all([
+      buildRAGContext(),
+      getResumeDocument(request.url),
+    ])
+    const systemPrompt = buildSystemPrompt(ragContext, { hasResume: resume !== null })
 
     // Initialize Gemini client
     const ai = new GoogleGenAI({ apiKey })
@@ -154,12 +158,17 @@ export async function POST(request: Request) {
 
     const lastMessage = messages[messages.length - 1]
 
-    // Combine history and the new message into contents parameter
+    // Combine history and the new message into contents parameter.
+    // The resume PDF rides along on the latest turn (file before text, as Gemini recommends),
+    // so it is always in context without being duplicated across history turns.
     const contents = [
       ...geminiHistory,
       {
         role: 'user' as const,
-        parts: [{ text: lastMessage.content }],
+        parts: [
+          ...(resume ? [{ inlineData: { mimeType: resume.mimeType, data: resume.data } }] : []),
+          { text: lastMessage.content },
+        ],
       },
     ]
 
