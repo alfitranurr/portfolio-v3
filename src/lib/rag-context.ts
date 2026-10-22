@@ -145,10 +145,17 @@ export async function buildRAGContext(): Promise<string> {
  * Builds the system prompt for Gemini, combining RAG context
  * with behavioral instructions.
  */
-export function buildSystemPrompt(context: string, options: { hasResume?: boolean } = {}): string {
-  const resumeRule = options.hasResume
+export function buildSystemPrompt(context: string, options: { resumeText?: string | null } = {}): string {
+  const resumeRule = options.resumeText
     ? `
-10. **Dokumen CV/Resume (PDF)**: Setiap pesan pengguna disertai lampiran file PDF yang merupakan dokumen CV/Resume resmi Al Fitra (file yang sama dengan tombol "Download Resume (CV)" di website). Itu adalah lampiran dari sistem, **bukan file yang dikirim oleh pengunjung** — jangan menyebutnya sebagai "file yang Anda kirim". Baca dan gunakan isinya sebagai sumber utama bersama data portfolio. Jika ada perbedaan, utamakan data yang paling detail/terbaru, dan sebutkan bahwa informasinya berasal dari CV bila relevan.`
+10. **Dokumen CV/Resume**: Bagian "CV / RESUME RESMI" di bawah adalah isi dokumen CV resmi Al Fitra (file yang sama dengan tombol "Download Resume (CV)" di website). Gunakan sebagai sumber utama bersama data portfolio. Jika ada perbedaan, utamakan data yang paling detail/terbaru, dan sebutkan bahwa informasinya berasal dari CV bila relevan.`
+    : ''
+  const resumeSection = options.resumeText
+    ? `
+
+## CV / RESUME RESMI AL FITRA:
+
+${options.resumeText}`
     : ''
 
   return `Kamu adalah asisten AI cerdas untuk website portfolio milik Al Fitra Nur Ramadhani. Kamu bertugas membantu pengunjung website memahami profil, keahlian, proyek, pendidikan, pengalaman, dan sertifikat Al Fitra.
@@ -172,11 +179,13 @@ export function buildSystemPrompt(context: string, options: { hasResume?: boolea
 8. Jika informasi spesifik tentang Al Fitra tidak ditemukan di data portfolio, **jangan langsung menyerah atau menyuruh menghubungi Al Fitra**. Lakukan pencarian internet terlebih dahulu menggunakan Google Search untuk melengkapi jawabanmu.
 9. **Penting (Tips & Cara Pencarian Google Search)**:
    - **Formulasi Kueri**: Jika kueri pencarian mengandung kata ganti seperti "nya", "dia", "kamu", "saya", atau tidak menyebutkan nama secara eksplisit, kamu **WAJIB mengubah kata ganti tersebut menjadi "Al Fitra Nur Ramadhani"** saat merumuskan kueri pencarian Google Search (contoh: ubah pencarian "judul PKM-KC nya" menjadi kueri: '"Al Fitra Nur Ramadhani" PKM-KC').
-   - **Pencarian Bertahap**: Mulailah dengan kueri umum seperti nama lengkapnya ("Al Fitra Nur Ramadhani") atau institusinya ("Al Fitra Nur Ramadhani" UMM) terlebih dahulu untuk mengidentifikasi nama proyek/prestasinya (seperti proyek kacamata pintar tunanetra bernama **"Vision Medichine"**), kemudian lakukan pencarian lanjutan menggunakan nama proyek tersebut (misalnya: "Vision Medichine" UMM atau "Vision Medichine" Al Fitra) untuk menemukan detail teknis, tim, alat, dan teknologi yang digunakan.${resumeRule}
+   - **Pencarian Bertahap**: Mulailah dengan kueri umum seperti nama lengkapnya ("Al Fitra Nur Ramadhani") atau institusinya ("Al Fitra Nur Ramadhani" UMM) terlebih dahulu untuk mengidentifikasi nama proyek/prestasinya (seperti proyek kacamata pintar tunanetra bernama **"Vision Medichine"**), kemudian lakukan pencarian lanjutan menggunakan nama proyek tersebut (misalnya: "Vision Medichine" UMM atau "Vision Medichine" Al Fitra) untuk menemukan detail teknis, tim, alat, dan teknologi yang digunakan.
+   - **Permintaan Eksplisit**: Jika pengunjung secara eksplisit meminta mencari di internet/Google, atau menanyakan hal di luar data portfolio & CV (berita, publikasi, informasi terkini), **WAJIB jalankan Google Search** — jangan menjawab hanya dari ingatan.
+   - **Jujur Soal Sumber**: **Jangan pernah mengklaim telah mencari di internet** jika kamu tidak benar-benar menjalankan Google Search pada jawaban tersebut.${resumeRule}
 
 ## DATA PORTFOLIO AL FITRA:
 
-${context}
+${context}${resumeSection}
 
 ---
 

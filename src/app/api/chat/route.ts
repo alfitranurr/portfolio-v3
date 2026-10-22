@@ -2,7 +2,7 @@
 import { GoogleGenAI } from '@google/genai'
 import { buildRAGContext, buildSystemPrompt } from '@/lib/rag-context'
 import { getAISettings, logAIChat, anonymizeIP } from '@/lib/ai-service'
-import { getResumeDocument } from '@/lib/resume-document'
+import { getResumeText } from '@/lib/resume-document'
 
 // Force recompile rag-context module
 export const dynamic = 'force-dynamic'
@@ -136,12 +136,14 @@ export async function POST(request: Request) {
     // Fetch user AI config dynamically
     const settings = await getAISettings()
 
-    // Build RAG context from all portfolio data + load the resume PDF (both cached/parallel)
-    const [ragContext, resume] = await Promise.all([
+    // Build RAG context from all portfolio data + the resume text (both cached/parallel).
+    // The CV goes into the system prompt as text: attaching the PDF to the turn made
+    // Gemini skip Google Search grounding entirely.
+    const [ragContext, resumeText] = await Promise.all([
       buildRAGContext(),
-      getResumeDocument(request.url),
+      getResumeText(request.url),
     ])
-    const systemPrompt = buildSystemPrompt(ragContext, { hasResume: resume !== null })
+    const systemPrompt = buildSystemPrompt(ragContext, { resumeText })
 
     // Initialize Gemini client
     const ai = new GoogleGenAI({ apiKey })
@@ -158,17 +160,12 @@ export async function POST(request: Request) {
 
     const lastMessage = messages[messages.length - 1]
 
-    // Combine history and the new message into contents parameter.
-    // The resume PDF rides along on the latest turn (file before text, as Gemini recommends),
-    // so it is always in context without being duplicated across history turns.
+    // Combine history and the new message into contents parameter
     const contents = [
       ...geminiHistory,
       {
         role: 'user' as const,
-        parts: [
-          ...(resume ? [{ inlineData: { mimeType: resume.mimeType, data: resume.data } }] : []),
-          { text: lastMessage.content },
-        ],
+        parts: [{ text: lastMessage.content }],
       },
     ]
 
@@ -281,8 +278,14 @@ export async function POST(request: Request) {
     const errorObj = err as Error
     const errMsg = String(errorObj?.message || err || '')
     if (errMsg.includes('429') || errMsg.includes('RESOURCE_EXHAUSTED') || errMsg.includes('quota')) {
+      // Daily quota (e.g. free tier "...PerDay...") won't recover in seconds — say so
+      const isDailyQuota = /PerDay/i.test(errMsg)
       return Response.json(
-        { error: 'AI sedang sibuk (rate limit). Silakan coba lagi dalam beberapa detik.' },
+        {
+          error: isDailyQuota
+            ? 'Kuota harian AI sudah habis. Silakan coba lagi besok.'
+            : 'AI sedang sibuk (rate limit). Silakan coba lagi dalam beberapa detik.',
+        },
         { status: 429 }
       )
     }
