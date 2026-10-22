@@ -21,7 +21,8 @@ import {
   Globe,
   PanelLeftClose,
   PanelLeftOpen,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Bot
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { signOutAction } from '@/app/login/actions'
@@ -95,6 +96,7 @@ export function AdminSidebar() {
         { name: 'Dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
         { name: 'Profile Editor', href: '/admin/profile', icon: UserCog, exact: false },
         { name: 'Moment Recap', href: '/admin/photos', icon: ImageIcon, exact: false },
+        { name: 'AI Assistant', href: '/admin/ai-settings', icon: Bot, exact: false },
       ]
     },
     {

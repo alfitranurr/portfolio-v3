@@ -17,6 +17,8 @@ export interface AIChatLog {
   prompt_tokens: number
   completion_tokens: number
   total_tokens: number
+  /** Prompt tokens served from Gemini's implicit cache (subset of prompt_tokens, billed cheaper) */
+  cached_tokens?: number
   model_name: string
   search_grounding: boolean
   user_ip: string
@@ -232,13 +234,23 @@ export async function logAIChat(logEntry: Omit<AIChatLog, 'id' | 'created_at'>):
 
   try {
     const supabase = await createClient()
-    const { error } = await supabase
+    let { error } = await supabase
       .from('ai_chat_logs')
       .insert([newLog])
 
+    // Database without the cached_tokens column yet (migration not applied):
+    // keep logging the rest instead of dropping the whole row.
+    if (error && error.message?.includes('cached_tokens')) {
+      const withoutCache = { ...newLog }
+      delete withoutCache.cached_tokens
+      ;({ error } = await supabase.from('ai_chat_logs').insert([withoutCache]))
+    }
+
     if (error) throw error
   } catch (err) {
-    console.error('logAIChat error:', err)
+    // Supabase errors are plain objects that the dev logger prints as "{}" — log the message
+    const detail = err instanceof Error ? err.message : (err as { message?: string })?.message
+    console.error('logAIChat error:', detail || err)
   }
 }
 

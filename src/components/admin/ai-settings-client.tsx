@@ -22,7 +22,8 @@ import {
 } from 'lucide-react'
 import { saveAISettingsAction, clearAIChatLogsAction } from '@/app/admin/actions'
 import { cn } from '@/lib/utils'
-import { AISettings, AIChatLog } from '@/lib/ai-service'
+import type { AISettings, AIChatLog } from '@/lib/ai-service'
+import { GEMINI_PRICING, estimateChatCost, formatIDR, formatUSD } from '@/lib/ai-pricing'
 
 interface AISettingsClientProps {
   initialSettings: AISettings
@@ -52,31 +53,23 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
   const logsPerPage = 10
 
   // Calculate statistics
-  const { totalQueries, totalPromptTokens, totalCompletionTokens, totalTokens, groundingCount, groundingPercentage } = React.useMemo(() => {
+  const { totalQueries, totalPromptTokens, totalCompletionTokens, totalCachedTokens, totalTokens, groundingCount, groundingPercentage } = React.useMemo(() => {
     const totalQueries = logs.length
     const totalPromptTokens = logs.reduce((sum, l) => sum + (l.prompt_tokens || 0), 0)
     const totalCompletionTokens = logs.reduce((sum, l) => sum + (l.completion_tokens || 0), 0)
+    const totalCachedTokens = logs.reduce((sum, l) => sum + (l.cached_tokens || 0), 0)
     const totalTokens = totalPromptTokens + totalCompletionTokens
     const groundingCount = logs.filter(l => l.search_grounding).length
     const groundingPercentage = totalQueries > 0 ? Math.round((groundingCount / totalQueries) * 100) : 0
-    return { totalQueries, totalPromptTokens, totalCompletionTokens, totalTokens, groundingCount, groundingPercentage }
+    return { totalQueries, totalPromptTokens, totalCompletionTokens, totalCachedTokens, totalTokens, groundingCount, groundingPercentage }
   }, [logs])
 
-  // Standard pricing calculation based on Gemini's pricing rates
-  const estimatedCost = React.useMemo(() => {
-    return logs.reduce((total, log) => {
-      const isPro = log.model_name.includes('pro')
-      // Gemini 2.5 Flash: Input $0.075 / 1M, Output $0.30 / 1M
-      // Gemini 2.5 Pro: Input $1.25 / 1M, Output $5.00 / 1M
-      const inputRate = isPro ? 1.25 : 0.075
-      const outputRate = isPro ? 5.00 : 0.30
-
-      const inputCost = ((log.prompt_tokens || 0) / 1_000_000) * inputRate
-      const outputCost = ((log.completion_tokens || 0) / 1_000_000) * outputRate
-
-      return total + inputCost + outputCost
-    }, 0)
-  }, [logs])
+  // Estimated cost from Gemini paid-tier token rates (see src/lib/ai-pricing.ts)
+  const estimatedCost = React.useMemo(
+    () => logs.reduce((total, log) => total + estimateChatCost(log), 0),
+    [logs]
+  )
+  const averageCost = logs.length > 0 ? estimatedCost / logs.length : 0
 
   // Filtered logs
   const filteredLogs = React.useMemo(() => {
@@ -212,6 +205,11 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
             <p className="text-[10px] text-muted-foreground mt-0.5">
               {totalPromptTokens.toLocaleString()} input / {totalCompletionTokens.toLocaleString()} output
             </p>
+            {totalCachedTokens > 0 && (
+              <p className="text-[10px] text-muted-foreground/70 mt-0.5">
+                {totalCachedTokens.toLocaleString()} input from cache (billed ~10%)
+              </p>
+            )}
           </div>
         </div>
 
@@ -254,9 +252,14 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
           </div>
           <div className="mt-4">
             <h3 className="text-2xl font-black tracking-tight text-green-500">
-              ${estimatedCost.toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 6 })}
+              {formatUSD(estimatedCost)}
             </h3>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Calculated from API rates</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5">
+              ≈ {formatIDR(estimatedCost)} · avg {formatUSD(averageCost)}/chat
+            </p>
+            <p className="text-[10px] text-muted-foreground/70 mt-0.5" title="Gemini paid-tier token rates (Oct 2026), incl. thinking tokens and the implicit-cache discount. Search grounding is free up to 1,500 requests/day. On the free tier the actual bill is $0.">
+              Paid-tier rates · free tier bills $0
+            </p>
           </div>
         </div>
       </div>
@@ -287,11 +290,16 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                 >
                   <option value="gemini-2.5-flash" className="bg-white dark:bg-slate-950 text-foreground">Gemini 2.5 Flash (Default)</option>
                   <option value="gemini-2.5-pro" className="bg-white dark:bg-slate-950 text-foreground">Gemini 2.5 Pro (Advanced)</option>
-                  <option value="gemini-1.5-flash" className="bg-white dark:bg-slate-950 text-foreground">Gemini 1.5 Flash (Legacy)</option>
+                  <option value="gemini-2.5-flash-lite" className="bg-white dark:bg-slate-950 text-foreground">Gemini 2.5 Flash-Lite (Cheapest)</option>
                 </select>
                 <p className="text-[10px] text-muted-foreground leading-normal">
                   Flash is faster and cheaper, Pro is recommended for deep reasoning over complex projects.
                 </p>
+                {GEMINI_PRICING[modelName] && (
+                  <p className="text-[10px] text-muted-foreground leading-normal">
+                    Rate: ${GEMINI_PRICING[modelName].input} input / ${GEMINI_PRICING[modelName].output} output per 1M tokens
+                  </p>
+                )}
               </div>
 
               {/* Temperature slider */}
@@ -455,6 +463,10 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                           <span className="text-[10px] text-muted-foreground font-mono bg-white/5 px-1.5 py-0.5 rounded">
                             {log.total_tokens} Tkn
                           </span>
+
+                          <span className="text-[10px] text-green-500 font-mono bg-green-500/10 px-1.5 py-0.5 rounded">
+                            {formatUSD(estimateChatCost(log))}
+                          </span>
                         </div>
                         <p className="font-medium text-xs text-foreground/80 truncate mt-1">
                           {log.prompt_preview || 'Empty prompt'}
@@ -488,7 +500,12 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white/5 p-3 rounded-xl border border-slate-200/5">
                           <div>
                             <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider block">Prompt Tokens</span>
-                            <span className="font-extrabold text-foreground mt-0.5 block">{log.prompt_tokens}</span>
+                            <span className="font-extrabold text-foreground mt-0.5 block">
+                              {log.prompt_tokens}
+                              {!!log.cached_tokens && (
+                                <span className="font-medium text-muted-foreground"> ({log.cached_tokens} cached)</span>
+                              )}
+                            </span>
                           </div>
                           <div>
                             <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider block">Response Tokens</span>

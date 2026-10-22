@@ -294,6 +294,7 @@ CREATE TABLE IF NOT EXISTS public.ai_chat_logs (
   prompt_tokens INT DEFAULT 0,
   completion_tokens INT DEFAULT 0,
   total_tokens INT DEFAULT 0,
+  cached_tokens INT DEFAULT 0, -- prompt tokens served from Gemini's implicit cache (billed ~10%)
   model_name VARCHAR(100) NOT NULL DEFAULT 'gemini-2.5-flash',
   search_grounding BOOLEAN NOT NULL DEFAULT TRUE,
   user_ip VARCHAR(100),

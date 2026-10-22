@@ -192,9 +192,13 @@ export async function POST(request: Request) {
       async start(controller) {
         try {
           let completeText = ''
+          let usedSearch = false
           let finalMetadata: {
             promptTokenCount?: number
             candidatesTokenCount?: number
+            thoughtsTokenCount?: number
+            toolUsePromptTokenCount?: number
+            cachedContentTokenCount?: number
             totalTokenCount?: number
           } | null = null
 
@@ -207,6 +211,10 @@ export async function POST(request: Request) {
             const text = chunk.text
             if (text) {
               completeText += text
+            }
+            // Gemini bills Search per grounded prompt, i.e. only when it actually ran a query
+            if (chunk.candidates?.[0]?.groundingMetadata?.webSearchQueries?.length) {
+              usedSearch = true
             }
             if (chunk.usageMetadata) {
               finalMetadata = chunk.usageMetadata
@@ -227,9 +235,14 @@ export async function POST(request: Request) {
           controller.enqueue(encoder.encode(completeText))
           controller.close()
 
-          // Log AI Chat token usage asynchronously
-          const promptTokens = finalMetadata?.promptTokenCount || Math.ceil(lastMessage.content.length / 4)
-          const completionTokens = finalMetadata?.candidatesTokenCount || Math.ceil(completeText.length / 4)
+          // Log AI Chat token usage asynchronously, counted the way Gemini bills it:
+          // input = prompt + Google Search tool-use prompt, output = answer + thinking tokens
+          const promptTokens = finalMetadata?.promptTokenCount
+            ? finalMetadata.promptTokenCount + (finalMetadata.toolUsePromptTokenCount || 0)
+            : Math.ceil(lastMessage.content.length / 4)
+          const completionTokens = finalMetadata?.candidatesTokenCount
+            ? finalMetadata.candidatesTokenCount + (finalMetadata.thoughtsTokenCount || 0)
+            : Math.ceil(completeText.length / 4)
           const totalTokens = finalMetadata?.totalTokenCount || (promptTokens + completionTokens)
 
           logAIChat({
@@ -237,8 +250,10 @@ export async function POST(request: Request) {
             prompt_tokens: promptTokens,
             completion_tokens: completionTokens,
             total_tokens: totalTokens,
+            // Implicit cache hits on the repeated system prompt bill at ~10% of the input rate
+            cached_tokens: finalMetadata?.cachedContentTokenCount || 0,
             model_name: settings.model_name || 'gemini-2.5-flash',
-            search_grounding: settings.search_grounding,
+            search_grounding: usedSearch, // whether a web search actually ran, not just the setting
             user_ip: anonymizeIP(clientIp),
           }).catch((err) => console.error('Failed async logging of chat event:', err))
 
