@@ -300,6 +300,9 @@ CREATE TABLE IF NOT EXISTS public.ai_chat_logs (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
+-- Admin dashboard lists logs newest-first
+CREATE INDEX IF NOT EXISTS ai_chat_logs_created_at_idx ON public.ai_chat_logs (created_at DESC);
+
 ALTER TABLE public.ai_chat_logs ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Allow public insert on ai_chat_logs" ON public.ai_chat_logs;
 DROP POLICY IF EXISTS "Allow admin select on ai_chat_logs" ON public.ai_chat_logs;
@@ -327,6 +330,3 @@ DROP POLICY IF EXISTS "Allow public select on photos" ON public.photos;
 DROP POLICY IF EXISTS "Allow admin write on photos" ON public.photos;
 CREATE POLICY "Allow public select on photos" ON public.photos FOR SELECT USING (true);
 CREATE POLICY "Allow admin write on photos" ON public.photos FOR ALL USING (auth.role() = 'authenticated');
-
-
-
