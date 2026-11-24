@@ -628,3 +628,12 @@ button.glass-card {
   animation: none;
   mix-blend-mode: normal;
 }
+
+/* Theme switch di layar sentuh: crossfade warna sementara (class dipasang ±450ms oleh switchTheme).
+   Lebih spesifik dari style "transition:none" milik next-themes, jadi tetap menang. */
+.theme-fade,
+.theme-fade *,
+.theme-fade *::before,
+.theme-fade *::after {
+  transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, fill 0.35s ease, stroke 0.35s ease, box-shadow 0.35s ease !important;
+}
