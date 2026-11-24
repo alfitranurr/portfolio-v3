@@ -2,7 +2,7 @@
 'use client'
 
 import * as React from 'react'
-import { Send, Bot, User, Sparkles, RefreshCw, Trash2, ArrowUpRight } from 'lucide-react'
+import { Send, Bot, User, Sparkles, RefreshCw, Trash2, ArrowUpRight, Rocket, Zap, Briefcase, GraduationCap, Trophy } from 'lucide-react'
 import { motion, AnimatePresence, Variants } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
 import { cn } from '@/lib/utils'
@@ -16,32 +16,32 @@ interface ChatMessage {
 
 const MOBILE_SUGGESTIONS = [
   {
-    icon: '👤',
+    icon: User,
     title: 'Tentang Al Fitra',
     prompt: 'Siapa Al Fitra Nur Ramadhani dan apa fokus keahliannya?',
   },
   {
-    icon: '🚀',
+    icon: Rocket,
     title: 'Proyek Portofolio',
     prompt: 'Proyek apa saja yang pernah dibuat oleh Al Fitra?',
   },
   {
-    icon: '⚡',
+    icon: Zap,
     title: 'Tech Stack & Skill',
     prompt: 'Skills, bahasa pemrograman, dan tools apa yang dikuasai?',
   },
   {
-    icon: '💼',
+    icon: Briefcase,
     title: 'Pengalaman Kerja',
     prompt: 'Pengalaman kerja dan organisasi apa yang dimiliki?',
   },
   {
-    icon: '🎓',
+    icon: GraduationCap,
     title: 'Pendidikan',
     prompt: 'Bagaimana riwayat dan latar belakang pendidikan Al Fitra?',
   },
   {
-    icon: '🏆',
+    icon: Trophy,
     title: 'Sertifikasi',
     prompt: 'Sertifikat kompetensi dan penghargaan apa saja yang diraih?',
   },
@@ -106,8 +106,8 @@ const ChatMessageRow = React.memo(function ChatMessageRow({ message }: { message
     >
       {/* AI Avatar */}
       {message.role === 'assistant' && (
-        <div className="shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center shadow-xs mt-0.5">
-          <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+        <div className="shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-primary flex items-center justify-center shadow-xs mt-0.5">
+          <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-foreground" />
         </div>
       )}
 
@@ -142,7 +142,7 @@ const ChatMessageRow = React.memo(function ChatMessageRow({ message }: { message
 
       {/* User Avatar */}
       {message.role === 'user' && (
-        <div className="shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-slate-700 dark:bg-slate-600 flex items-center justify-center shadow-xs mt-0.5">
+        <div className="shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-neutral-600 dark:bg-neutral-700 flex items-center justify-center shadow-xs mt-0.5">
           <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
         </div>
       )}
@@ -351,7 +351,7 @@ export function AIChatInterface() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
           </span>
-          <span className="text-[10px] sm:text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+          <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
             AI Chat Session Active
           </span>
         </div>
@@ -397,7 +397,7 @@ export function AIChatInterface() {
                       rotate: [0, 2, -2, 0],
                     }}
                     transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-cyan-500/20 to-violet-600/20 border border-cyan-500/20 flex items-center justify-center mb-2.5 sm:mb-4 shrink-0 shadow-inner transform-gpu"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-foreground/5 border border-foreground/10 flex items-center justify-center mb-2.5 sm:mb-4 shrink-0 shadow-inner transform-gpu"
                   >
                     <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                   </motion.div>
@@ -424,14 +424,14 @@ export function AIChatInterface() {
                         className="w-full p-2.5 rounded-2xl glass-card border border-slate-200/40 dark:border-white/10 hover:border-slate-300/60 dark:hover:border-white/20 bg-white/5 dark:bg-slate-800/30 text-left transition-all group cursor-pointer active:scale-[0.98] flex items-center justify-between gap-3 transform-gpu"
                       >
                         <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                          <span className="text-sm shrink-0 p-1.5 rounded-xl bg-white/5 dark:bg-slate-700/30 border border-slate-200/10 dark:border-slate-700/20">
-                            {item.icon}
+                          <span className="shrink-0 p-1.5 rounded-xl text-foreground/70 bg-white/5 dark:bg-slate-700/30 border border-slate-200/10 dark:border-slate-700/20">
+                            <item.icon className="w-4 h-4" />
                           </span>
                           <div className="space-y-0.5 min-w-0 flex-1">
                             <h4 className="font-bold text-xs text-foreground group-hover:text-foreground transition-colors leading-tight">
                               {item.title}
                             </h4>
-                            <p className="text-[10px] text-muted-foreground/80 truncate leading-snug">
+                            <p className="text-[11px] text-muted-foreground/80 truncate leading-snug">
                               {item.prompt}
                             </p>
                           </div>
@@ -505,7 +505,7 @@ export function AIChatInterface() {
               )}
             </button>
           </div>
-          <p className="text-[10px] leading-snug text-muted-foreground/60 text-center text-balance mt-1.5">
+          <p className="text-[11px] leading-snug text-muted-foreground/60 text-center text-balance mt-1.5">
             AI dapat membuat kesalahan. Respon didasarkan pada data portfolio + web search.
           </p>
         </form>

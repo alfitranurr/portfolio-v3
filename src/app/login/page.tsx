@@ -78,7 +78,7 @@ export default function LoginPage() {
           </div>
         )}
         {error && (
-          <div className="p-4 rounded-xl bg-neutral-600/10 border border-neutral-600/20 text-neutral-700 dark:text-neutral-300 text-xs font-semibold font-mono">
+          <div className="p-4 rounded-xl bg-neutral-600/10 border border-neutral-600/20 text-neutral-700 dark:text-neutral-300 text-xs font-semibold">
             {error}
           </div>
         )}
@@ -88,7 +88,7 @@ export default function LoginPage() {
           <form action={loginFormAction} className="space-y-4">
             {/* Email */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                 Email Address
               </label>
               <div className="relative">
@@ -105,7 +105,7 @@ export default function LoginPage() {
 
             {/* Password */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                 Password
               </label>
               <div className="relative">
@@ -140,7 +140,7 @@ export default function LoginPage() {
           <form action={signupFormAction} className="space-y-4">
             {/* Full Name */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                 Full Name
               </label>
               <div className="relative">
@@ -157,7 +157,7 @@ export default function LoginPage() {
 
             {/* Headline */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                 Headline
               </label>
               <div className="relative">
@@ -173,7 +173,7 @@ export default function LoginPage() {
 
             {/* Email */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                 Email Address
               </label>
               <div className="relative">
@@ -190,7 +190,7 @@ export default function LoginPage() {
 
             {/* Password */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                 Password
               </label>
               <div className="relative">

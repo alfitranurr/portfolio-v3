@@ -128,7 +128,7 @@ export function PhotoForm({
                 placeholder="https://example.com/photo.jpg"
                 className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
               />
-              <p className="text-[10px] text-muted-foreground leading-normal">
+              <p className="text-[11px] text-muted-foreground leading-normal">
                 Or upload below
               </p>
             </div>

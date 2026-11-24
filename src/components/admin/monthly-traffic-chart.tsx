@@ -7,7 +7,7 @@ import { getMonthlyVisitorStatsAction, getAvailableYearsAction } from '@/app/adm
 import { MonthlyVisitorStats } from '@/lib/data-service'
 
 const MONTH_NAMES = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
 ]
 
@@ -156,7 +156,7 @@ export function MonthlyTrafficChart({ refreshTrigger }: MonthlyTrafficChartProps
             <Calendar className="w-3.5 h-3.5" />
             <span>Filter Year:</span>
           </span>
-          <select
+          <select aria-label="Filter year"
             value={selectedYear}
             onChange={(e) => setSelectedYear(Number(e.target.value))}
             className="px-3 py-1.5 rounded-xl bg-white/80 dark:bg-black/20 border border-slate-300 dark:border-slate-800/30 text-foreground text-xs focus:outline-none focus:border-primary/50 transition-all font-semibold cursor-pointer shadow-2xs"
@@ -177,7 +177,7 @@ export function MonthlyTrafficChart({ refreshTrigger }: MonthlyTrafficChartProps
             <Eye className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Total Views ({selectedYear})</span>
+            <span className="text-[11px] uppercase font-bold text-muted-foreground tracking-wider">Total Views ({selectedYear})</span>
             <h4 className="text-lg font-black text-purple-400 mt-0.5">{totalViewsInYear.toLocaleString()}</h4>
           </div>
         </div>
@@ -186,7 +186,7 @@ export function MonthlyTrafficChart({ refreshTrigger }: MonthlyTrafficChartProps
             <Users className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Total Unique Visitors ({selectedYear})</span>
+            <span className="text-[11px] uppercase font-bold text-muted-foreground tracking-wider">Total Unique Visitors ({selectedYear})</span>
             <h4 className="text-lg font-black text-cyan-400 mt-0.5">{totalVisitorsInYear.toLocaleString()}</h4>
           </div>
         </div>
@@ -208,7 +208,7 @@ export function MonthlyTrafficChart({ refreshTrigger }: MonthlyTrafficChartProps
             <p className="text-amber-200/80 leading-relaxed">
               The database aggregation function <code>get_monthly_analytics</code> or <code>get_available_years</code> has not been created in your Supabase database. Please open the SQL Editor in your Supabase dashboard, then copy and run the following command:
             </p>
-            <pre className="p-4 rounded-xl bg-black/40 border border-white/5 text-amber-300 font-mono overflow-x-auto text-[10px] md:text-[11px] whitespace-pre select-all max-h-[200px]">
+            <pre className="p-4 rounded-xl bg-black/40 border border-white/5 text-amber-300 font-mono overflow-x-auto text-[11px] whitespace-pre select-all max-h-[200px]">
 {`-- 1. Create Reset Function
 CREATE OR REPLACE FUNCTION public.reset_visitor_analytics()
 RETURNS void AS $$
@@ -232,22 +232,22 @@ DECLARE
   y_visitors BIGINT;
 BEGIN
   -- Calculate annual total accurately
-  SELECT 
-    COALESCE(COUNT(*), 0), 
+  SELECT
+    COALESCE(COUNT(*), 0),
     COALESCE(COUNT(DISTINCT visitor_id), 0)
   INTO y_views, y_visitors
   FROM public.page_views
   WHERE EXTRACT(YEAR FROM created_at) = target_year;
 
   RETURN QUERY
-  SELECT 
+  SELECT
     m.month::INT AS month_num,
     COALESCE(COUNT(p.id), 0)::BIGINT AS views_count,
     COALESCE(COUNT(DISTINCT p.visitor_id), 0)::BIGINT AS visitors_count,
     y_views AS yearly_views,
     y_visitors AS yearly_visitors
   FROM generate_series(1, 12) m(month)
-  LEFT JOIN public.page_views p ON EXTRACT(MONTH FROM p.created_at) = m.month 
+  LEFT JOIN public.page_views p ON EXTRACT(MONTH FROM p.created_at) = m.month
                                 AND EXTRACT(YEAR FROM p.created_at) = target_year
   GROUP BY m.month, y_views, y_visitors
   ORDER BY month_num;
@@ -280,8 +280,8 @@ GRANT EXECUTE ON FUNCTION public.get_available_years() TO authenticated;`}
           </div>
         ) : (
           <div className="relative w-full h-[220px] sm:h-[300px]">
-            <svg 
-              viewBox={`0 0 ${svgWidth} ${svgHeight}`} 
+            <svg
+              viewBox={`0 0 ${svgWidth} ${svgHeight}`}
               className="w-full h-full overflow-visible select-none"
             >
               <defs>

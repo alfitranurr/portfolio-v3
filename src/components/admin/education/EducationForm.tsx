@@ -136,7 +136,7 @@ export function EducationForm({
                 <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                   Start Date <span className="text-primary">*</span>
                 </label>
-                <input
+                <input aria-label="Start Date"
                   type="date"
                   required
                   value={education.start_date || ''}
@@ -149,7 +149,7 @@ export function EducationForm({
                 <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                   End Date
                 </label>
-                <input
+                <input aria-label="End Date"
                   type="date"
                   value={education.end_date || ''}
                   onChange={e => onUpdateEducation(prev => ({ ...prev, end_date: e.target.value }))}
@@ -206,7 +206,7 @@ export function EducationForm({
                       <button
                         type="button"
                         onClick={handleRemoveLogo}
-                        className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold cursor-pointer"
+                        className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[11px] font-bold cursor-pointer"
                       >
                         Remove
                       </button>

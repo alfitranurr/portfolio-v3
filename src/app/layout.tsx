@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import dynamic from "next/dynamic";
-import { Poppins, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Sidebar } from "@/components/sidebar";
@@ -16,10 +16,10 @@ const InitialLoader = dynamic(() =>
   import("@/components/initial-loader").then((m) => m.InitialLoader)
 );
 
-const poppins = Poppins({
-  variable: "--font-poppins",
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const geistMono = Geist_Mono({
@@ -71,7 +71,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${jakarta.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-screen bg-background text-foreground font-sans relative flex">
@@ -85,7 +85,7 @@ export default async function RootLayout({
           <VisitorTracker />
           <TopLoader />
           {/* Background Ambient Glows */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+          <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
             <div className="absolute top-[10%] left-[5%] ambient-glow bg-neutral-400/20 dark:bg-neutral-400/10" />
             <div className="absolute bottom-[15%] right-[5%] ambient-glow bg-neutral-500/20 dark:bg-neutral-500/10" />
           </div>

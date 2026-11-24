@@ -33,7 +33,7 @@ export function CollapsibleEducationDescription({ description }: CollapsibleEduc
         style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
       >
         <div className="overflow-hidden">
-          <p className="text-sm text-foreground/80 leading-relaxed text-justify">
+          <p className="text-sm text-foreground/80 leading-relaxed md:text-justify">
             {description}
           </p>
         </div>

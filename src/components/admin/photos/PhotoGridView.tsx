@@ -45,7 +45,7 @@ export function PhotoGridView({ photos, onPreview, onEdit, onDelete }: PhotoGrid
                 <button onClick={() => onEdit(photo)} title="Edit Photo" className="p-2.5 rounded-lg bg-white/15 hover:bg-white/25 text-white transition-all cursor-pointer">
                   <Edit3 className="w-4 h-4" />
                 </button>
-                <button onClick={() => onDelete(photo.id)} title="Delete Photo" className="p-2.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 transition-all cursor-pointer">
+                <button onClick={() => onDelete(photo.id)} title="Delete Photo" className="ml-2 p-2.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 transition-all cursor-pointer">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
@@ -56,7 +56,7 @@ export function PhotoGridView({ photos, onPreview, onEdit, onDelete }: PhotoGrid
                 {photo.title || 'Untitled'}
               </h3>
               {photo.year && (
-                <p className="text-[10px] text-muted-foreground font-semibold">{photo.year}</p>
+                <p className="text-[11px] text-muted-foreground font-semibold">{photo.year}</p>
               )}
             </div>
           </motion.div>

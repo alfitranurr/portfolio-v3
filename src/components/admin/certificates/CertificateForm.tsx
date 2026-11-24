@@ -76,7 +76,7 @@ export function CertificateForm({
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 Category
               </label>
-              <select
+              <select aria-label="Category"
                 value={certificate.category || 'license_certification'}
                 onChange={e => onUpdateCertificate(prev => ({ ...prev, category: e.target.value as Certificate['category'] }))}
                 className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/50 text-foreground text-sm focus:outline-none focus:border-primary/50"
@@ -92,7 +92,7 @@ export function CertificateForm({
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 Issue Date <span className="text-primary">*</span>
               </label>
-              <input
+              <input aria-label="Issue Date"
                 type="date"
                 required
                 value={certificate.issue_date || ''}
@@ -161,7 +161,7 @@ export function CertificateForm({
                     placeholder="https://example.com/certificate.jpg"
                     className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-sm focus:outline-none focus:border-primary/50 transition-all"
                   />
-                  <p className="text-[10px] text-muted-foreground leading-normal">
+                  <p className="text-[11px] text-muted-foreground leading-normal">
                     Optional: URL to certificate image or badge
                   </p>
                 </div>

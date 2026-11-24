@@ -5,7 +5,7 @@ import { Skeleton, SkeletonText } from '@/components/ui/skeleton'
 
 const KPI_CARD = 'p-5 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 flex flex-col justify-between shimmer-card'
 
-/** Helper text-[10px] leading-normal: 2 lines in the narrow column (mobile & lg+), 1 line at sm–lg */
+/** Helper text-[11px] leading-normal: 2 lines in the narrow column (mobile & lg+), 1 line at sm–lg */
 function HelpText() {
   return (
     <div>
@@ -128,7 +128,7 @@ export default function AdminAISettingsLoading() {
                       <Skeleton className="w-3.5 h-3.5 rounded" />
                       <SkeletonText size="xs" className="w-28" />
                     </div>
-                    {/* text-[9px] leading-normal: wraps to 2 lines in the narrow lg+ column */}
+                    {/* text-[11px] leading-normal: wraps to 2 lines in the narrow lg+ column */}
                     <div>
                       <SkeletonText size="3xs" className="w-40" />
                       <SkeletonText size="3xs" lineClassName="hidden lg:flex" className="w-10" />

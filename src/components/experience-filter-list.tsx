@@ -127,7 +127,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
             type="button"
             onClick={() => handleCategoryChange('professional')}
             className={cn(
-              "flex-1 py-2 sm:py-2.5 text-[10px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-colors duration-200 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap z-10",
+              "flex-1 py-2 sm:py-2.5 text-[11px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-colors duration-200 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap z-10",
               activeCategory === 'professional'
                 ? "text-primary-foreground"
                 : "text-foreground/75 hover:text-foreground"
@@ -148,7 +148,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
             type="button"
             onClick={() => handleCategoryChange('committee_organization')}
             className={cn(
-              "flex-1 py-2 sm:py-2.5 text-[10px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-colors duration-200 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap z-10",
+              "flex-1 py-2 sm:py-2.5 text-[11px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-colors duration-200 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap z-10",
               activeCategory === 'committee_organization'
                 ? "text-primary-foreground"
                 : "text-foreground/75 hover:text-foreground"
@@ -210,7 +210,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                         {/* Metadata row on the right */}
                         <div className="flex flex-col md:items-end gap-1.5 text-xs text-muted-foreground self-start md:self-auto shrink-0 md:text-right font-medium md:min-w-[210px]">
                           {singleExp.is_current && (
-                            <span className="bg-primary/10 border border-primary/20 text-primary px-2 py-0.5 rounded-md text-[10px] font-extrabold animate-pulse md:mb-0.5 self-start md:self-auto">
+                            <span className="bg-primary/10 border border-primary/20 text-primary px-2 py-0.5 rounded-md text-[11px] font-extrabold animate-pulse md:mb-0.5 self-start md:self-auto">
                               Current
                             </span>
                           )}
@@ -294,7 +294,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
                         {/* Overall info on the right */}
                         <div className="flex flex-col md:items-end gap-1.5 text-xs text-muted-foreground self-start md:self-auto shrink-0 md:text-right font-medium md:min-w-[210px]">
                           {group.is_current && (
-                            <span className="bg-primary/10 border border-primary/20 text-primary px-2 py-0.5 rounded-md text-[10px] font-extrabold animate-pulse md:mb-0.5 self-start md:self-auto">
+                            <span className="bg-primary/10 border border-primary/20 text-primary px-2 py-0.5 rounded-md text-[11px] font-extrabold animate-pulse md:mb-0.5 self-start md:self-auto">
                               Current
                             </span>
                           )}
@@ -335,7 +335,7 @@ export function ExperienceFilterList({ initialExperience }: ExperienceFilterList
 
                                 <div className="flex flex-col md:items-end gap-1 text-xs text-muted-foreground self-start md:self-auto shrink-0 md:text-right font-medium md:min-w-[210px]">
                                   {role.is_current && (
-                                    <span className="bg-primary/10 border border-primary/20 text-primary px-2 py-0.5 rounded-md text-[10px] font-extrabold animate-pulse md:mb-0.5 self-start md:self-auto">
+                                    <span className="bg-primary/10 border border-primary/20 text-primary px-2 py-0.5 rounded-md text-[11px] font-extrabold animate-pulse md:mb-0.5 self-start md:self-auto">
                                       Current Role
                                     </span>
                                   )}

@@ -34,7 +34,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
-  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
@@ -132,6 +132,7 @@ body {
   opacity: 0.25;
 }
 
+/* Jangan tulis -webkit-backdrop-filter manual: Lightning CSS lalu membuang yang unprefixed → blur hilang di Chrome/Android. Prefix ditambah otomatis. */
 .glass-panel,
 div.glass-panel,
 section.glass-panel,
@@ -139,9 +140,8 @@ article.glass-panel,
 aside.glass-panel {
   background: rgba(255, 255, 255, 0.45);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(15, 23, 42, 0.12);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04);
+  box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.04);
   isolation: isolate;
 }
 
@@ -152,7 +152,6 @@ aside.glass-panel {
 .dark aside.glass-panel {
   background: rgba(7, 10, 19, 0.5);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
 }
@@ -171,20 +170,22 @@ a.glass-card,
 button.glass-card {
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.02);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.glass-card:hover,
-div.glass-card:hover,
-a.glass-card:hover,
-button.glass-card:hover {
-  background: rgba(255, 255, 255, 0.55);
-  border-color: rgba(15, 23, 42, 0.15);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.05);
+/* Hanya di perangkat ber-mouse: di layar sentuh :hover "nyangkut" setelah tap (sama seperti hover: Tailwind v4) */
+@media (hover: hover) {
+  .glass-card:hover,
+  div.glass-card:hover,
+  a.glass-card:hover,
+  button.glass-card:hover {
+    background: rgba(255, 255, 255, 0.55);
+    border-color: rgba(15, 23, 42, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.05);
+  }
 }
 
 .dark .glass-card,
@@ -193,19 +194,20 @@ button.glass-card:hover {
 .dark button.glass-card {
   background: rgba(15, 23, 42, 0.35);
   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.15);
 }
 
-.dark .glass-card:hover,
-.dark div.glass-card:hover,
-.dark a.glass-card:hover,
-.dark button.glass-card:hover {
-  background: rgba(15, 23, 42, 0.5);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+@media (hover: hover) {
+  .dark .glass-card:hover,
+  .dark div.glass-card:hover,
+  .dark a.glass-card:hover,
+  .dark button.glass-card:hover {
+    background: rgba(15, 23, 42, 0.5);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+  }
 }
 
 /* Custom Scrollbars */
@@ -618,4 +620,11 @@ button.glass-card:hover {
 
 :root:not(.dark) .admin-container .bg-white\/10 {
   background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Theme switch: matikan crossfade bawaan; lingkaran clip-path dianimasikan di lib/theme-transition.ts */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }

@@ -162,7 +162,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
               <SlidersHorizontal className="w-4 h-4" />
               <span>Filters</span>
               {selectedCategories.length > 0 && (
-                <span className="ml-0.5 bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full text-[9px] font-bold">
+                <span className="ml-0.5 bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full text-[11px] font-bold">
                   {selectedCategories.length}
                 </span>
               )}
@@ -198,14 +198,14 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
               className="p-4 rounded-2xl glass-panel border border-slate-300 dark:border-slate-800/20 space-y-3"
             >
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground/60">
+                <span className="text-[11px] font-black uppercase tracking-wider text-muted-foreground/60">
                   Filter by Category (Multiple Select)
                 </span>
                 {selectedCategories.length > 0 && (
                   <button
                     type="button"
                     onClick={handleClearCategories}
-                    className="text-[10px] font-bold text-primary hover:underline cursor-pointer"
+                    className="text-[11px] font-bold text-primary hover:underline cursor-pointer"
                   >
                     Clear All
                   </button>
@@ -240,13 +240,13 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
         {/* Active Selected Badges */}
         {selectedCategories.length > 0 && (
           <div className="flex flex-wrap gap-1.5 items-center px-1 pt-1">
-            <span className="text-[9px] font-extrabold text-muted-foreground uppercase tracking-widest mr-1">
+            <span className="text-[11px] font-extrabold text-muted-foreground uppercase tracking-widest mr-1">
               Active Filters:
             </span>
             {selectedCategories.map((cat) => (
               <span
                 key={cat}
-                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground shadow-2xs"
+                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/20 text-foreground shadow-2xs"
               >
                 <span>{CATEGORY_MAP[cat as keyof typeof CATEGORY_MAP]}</span>
                 <button
@@ -303,7 +303,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
                       <Icon className="w-3.5 h-3.5" />
                     </div>
                     <span className={cn(
-                      "text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-lg shadow-2xs transition-all duration-300 border",
+                      "text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-lg shadow-2xs transition-all duration-300 border",
                       colors.badge
                     )}>
                       {BADGE_MAP[cert.category as keyof typeof BADGE_MAP] || cert.category.replace('_', ' ')}
@@ -340,20 +340,20 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
 
                   {/* Title & Info */}
                   <div className="space-y-2.5">
-                    <h3 className="font-bold text-xs sm:text-[13px] leading-snug text-foreground group-hover:text-primary transition-colors text-justify">
+                    <h3 className="font-bold text-xs sm:text-[13px] leading-snug text-foreground group-hover:text-primary transition-colors md:text-justify">
                       {cert.title}
                     </h3>
 
                     {/* Divider and Metadata layout aligned with left margin */}
                     <div className="border-t border-slate-200/10 dark:border-slate-800/20 pt-2.5 space-y-2">
                       <div className="flex flex-col">
-                        <span className="text-[8px] uppercase tracking-widest text-muted-foreground/50 font-bold">Organizer</span>
+                        <span className="text-[11px] uppercase tracking-widest text-muted-foreground/50 font-bold">Organizer</span>
                         <span className="text-[11px] font-semibold text-foreground/90 mt-0.5">{cert.issuer}</span>
                       </div>
                       {cert.credential_id && (
                         <div className="flex flex-col border-t border-slate-200/10 dark:border-slate-800/30 pt-2 mt-2">
-                          <span className="text-[8px] uppercase tracking-widest text-muted-foreground/50 font-bold">Credential ID</span>
-                          <span className="text-[9.5px] font-mono text-muted-foreground mt-0.5 break-all">{cert.credential_id}</span>
+                          <span className="text-[11px] uppercase tracking-widest text-muted-foreground/50 font-bold">Credential ID</span>
+                          <span className="text-[11px] text-muted-foreground mt-0.5 break-all">{cert.credential_id}</span>
                         </div>
                       )}
                     </div>
@@ -362,7 +362,7 @@ export function CertificatesFilterList({ initialCertificates }: CertificatesFilt
 
                 {/* Footer details */}
                 <div className="flex items-center gap-3 pt-3 border-t border-slate-200/10 dark:border-slate-800/10 mt-3">
-                  <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                  <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
                     <Calendar className="w-3.5 h-3.5" />
                     <span>
                       {new Date(cert.issue_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}

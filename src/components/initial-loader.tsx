@@ -80,10 +80,10 @@ export function InitialLoader() {
               transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
               className="space-y-4 px-4 max-w-4xl"
             >
-              <h1 className="text-base sm:text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-[0.12em] sm:tracking-[0.18em] text-neutral-900 font-mono whitespace-nowrap">
+              <h1 className="text-base sm:text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-[0.12em] sm:tracking-[0.18em] text-neutral-900 whitespace-nowrap">
                 Al Fitra Nur Ramadhani
               </h1>
-              <p className="text-[10px] sm:text-sm md:text-base text-neutral-400 uppercase tracking-[0.3em] sm:tracking-[0.4em] font-extrabold whitespace-nowrap">
+              <p className="text-[11px] sm:text-sm md:text-base text-neutral-400 uppercase tracking-[0.3em] sm:tracking-[0.4em] font-extrabold whitespace-nowrap">
                 Data Science Portfolio
               </p>
             </motion.div>

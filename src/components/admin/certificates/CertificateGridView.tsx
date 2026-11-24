@@ -76,15 +76,15 @@ export function CertificateGridView({ certificates, onPreview, onEdit, onDuplica
 
             {/* Tags */}
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-muted-foreground text-[10px] font-bold">
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-muted-foreground text-[11px] font-bold">
                 {CATEGORY_MAP[cert.category]}
               </span>
-              <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-[10px] text-muted-foreground">
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-[11px] text-muted-foreground">
                 <Calendar className="w-3 h-3 shrink-0" />
                 <span>{formatDate(cert.issue_date)}</span>
               </div>
               {cert.credential_id && (
-                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-muted-foreground text-[10px] font-mono">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-muted-foreground text-[11px]">
                   {cert.credential_id}
                 </span>
               )}
@@ -110,7 +110,7 @@ export function CertificateGridView({ certificates, onPreview, onEdit, onDuplica
                 <button onClick={() => onEdit(cert)} title="Edit" className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all cursor-pointer">
                   <Edit3 className="w-4 h-4" />
                 </button>
-                <button onClick={() => onDelete(cert.id)} title="Delete" className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-all cursor-pointer">
+                <button onClick={() => onDelete(cert.id)} title="Delete" className="ml-2 p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-all cursor-pointer">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>

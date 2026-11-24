@@ -202,11 +202,11 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
           </div>
           <div className="mt-4">
             <h3 className="text-2xl font-black tracking-tight">{totalTokens.toLocaleString()}</h3>
-            <p className="text-[10px] text-muted-foreground mt-0.5">
+            <p className="text-[11px] text-muted-foreground mt-0.5">
               {totalPromptTokens.toLocaleString()} input / {totalCompletionTokens.toLocaleString()} output
             </p>
             {totalCachedTokens > 0 && (
-              <p className="text-[10px] text-muted-foreground/70 mt-0.5">
+              <p className="text-[11px] text-muted-foreground/70 mt-0.5">
                 {totalCachedTokens.toLocaleString()} input from cache (billed ~10%)
               </p>
             )}
@@ -223,7 +223,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
           </div>
           <div className="mt-4">
             <h3 className="text-2xl font-black tracking-tight">{totalQueries}</h3>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Successful chat generations</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">Successful chat generations</p>
           </div>
         </div>
 
@@ -237,7 +237,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
           </div>
           <div className="mt-4">
             <h3 className="text-2xl font-black tracking-tight">{groundingPercentage}%</h3>
-            <p className="text-[10px] text-muted-foreground mt-0.5">{groundingCount} searches performed</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">{groundingCount} searches performed</p>
           </div>
         </div>
 
@@ -254,10 +254,10 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
             <h3 className="text-2xl font-black tracking-tight text-green-500">
               {formatUSD(estimatedCost)}
             </h3>
-            <p className="text-[10px] text-muted-foreground mt-0.5">
+            <p className="text-[11px] text-muted-foreground mt-0.5">
               ≈ {formatIDR(estimatedCost)} · avg {formatUSD(averageCost)}/chat
             </p>
-            <p className="text-[10px] text-muted-foreground/70 mt-0.5" title="Gemini paid-tier token rates (Oct 2026), incl. thinking tokens and the implicit-cache discount. Search grounding is free up to 1,500 requests/day. On the free tier the actual bill is $0.">
+            <p className="text-[11px] text-muted-foreground/70 mt-0.5" title="Gemini paid-tier token rates (Oct 2026), incl. thinking tokens and the implicit-cache discount. Search grounding is free up to 1,500 requests/day. On the free tier the actual bill is $0.">
               Paid-tier rates · free tier bills $0
             </p>
           </div>
@@ -283,7 +283,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                   <Cpu className="w-3.5 h-3.5" />
                   <span>Gemini Model</span>
                 </label>
-                <select
+                <select aria-label="Gemini Model"
                   value={modelName}
                   onChange={(e) => setModelName(e.target.value)}
                   className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-foreground text-xs focus:outline-none focus:border-primary/50 transition-all cursor-pointer font-medium"
@@ -292,11 +292,11 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                   <option value="gemini-2.5-pro" className="bg-white dark:bg-slate-950 text-foreground">Gemini 2.5 Pro (Advanced)</option>
                   <option value="gemini-2.5-flash-lite" className="bg-white dark:bg-slate-950 text-foreground">Gemini 2.5 Flash-Lite (Cheapest)</option>
                 </select>
-                <p className="text-[10px] text-muted-foreground leading-normal">
+                <p className="text-[11px] text-muted-foreground leading-normal">
                   Flash is faster and cheaper, Pro is recommended for deep reasoning over complex projects.
                 </p>
                 {GEMINI_PRICING[modelName] && (
-                  <p className="text-[10px] text-muted-foreground leading-normal">
+                  <p className="text-[11px] text-muted-foreground leading-normal">
                     Rate: ${GEMINI_PRICING[modelName].input} input / ${GEMINI_PRICING[modelName].output} output per 1M tokens
                   </p>
                 )}
@@ -308,7 +308,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                   <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Temperature ({temperature})
                   </label>
-                  <span className="text-[10px] text-muted-foreground">
+                  <span className="text-[11px] text-muted-foreground">
                     {temperature <= 0.3 ? 'Focused/Precise' : temperature >= 0.9 ? 'Creative/Wild' : 'Balanced'}
                   </span>
                 </div>
@@ -321,7 +321,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                   onChange={(e) => setTemperature(Number(e.target.value))}
                   className="w-full accent-primary bg-white/10 rounded-lg appearance-none h-1.5 cursor-pointer"
                 />
-                <p className="text-[10px] text-muted-foreground leading-normal">
+                <p className="text-[11px] text-muted-foreground leading-normal">
                   Lower values make outputs more precise. Higher values make them more diverse and creative.
                 </p>
               </div>
@@ -332,7 +332,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                   <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Max Message History ({maxHistory})
                   </label>
-                  <span className="text-[10px] text-muted-foreground">{maxHistory / 2} turns</span>
+                  <span className="text-[11px] text-muted-foreground">{maxHistory / 2} turns</span>
                 </div>
                 <input
                   type="range"
@@ -343,7 +343,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                   onChange={(e) => setMaxHistory(Number(e.target.value))}
                   className="w-full accent-primary bg-white/10 rounded-lg appearance-none h-1.5 cursor-pointer"
                 />
-                <p className="text-[10px] text-muted-foreground leading-normal">
+                <p className="text-[11px] text-muted-foreground leading-normal">
                   Limit context size sent to Gemini API to save token usage (TPM limits) in conversational chat.
                 </p>
               </div>
@@ -355,7 +355,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                     <Globe className="w-3.5 h-3.5 text-primary" />
                     <span>Search Grounding</span>
                   </span>
-                  <p className="text-[9px] text-muted-foreground leading-normal">
+                  <p className="text-[11px] text-muted-foreground leading-normal">
                     Allows Gemini to pull live web search queries.
                   </p>
                 </div>
@@ -447,24 +447,24 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                       <div className="min-w-0 flex-1 space-y-1">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className={cn(
-                            "px-2 py-0.5 rounded-md text-[9px] font-bold tracking-wide uppercase",
+                            "px-2 py-0.5 rounded-md text-[11px] font-bold tracking-wide uppercase",
                             isPro ? "bg-purple-500/15 text-purple-400 border border-purple-500/10" : "bg-primary/15 text-primary border border-primary/10"
                           )}>
                             {log.model_name}
                           </span>
 
                           {log.search_grounding && (
-                            <span className="px-2 py-0.5 rounded-md text-[9px] font-bold tracking-wide uppercase bg-sky-500/15 text-sky-400 border border-sky-500/10 flex items-center gap-1">
+                            <span className="px-2 py-0.5 rounded-md text-[11px] font-bold tracking-wide uppercase bg-sky-500/15 text-sky-400 border border-sky-500/10 flex items-center gap-1">
                               <Globe className="w-2.5 h-2.5" />
                               <span>Search</span>
                             </span>
                           )}
 
-                          <span className="text-[10px] text-muted-foreground font-mono bg-white/5 px-1.5 py-0.5 rounded">
+                          <span className="text-[11px] text-muted-foreground bg-white/5 px-1.5 py-0.5 rounded">
                             {log.total_tokens} Tkn
                           </span>
 
-                          <span className="text-[10px] text-green-500 font-mono bg-green-500/10 px-1.5 py-0.5 rounded">
+                          <span className="text-[11px] text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded">
                             {formatUSD(estimateChatCost(log))}
                           </span>
                         </div>
@@ -475,7 +475,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
 
                       <div className="flex items-center gap-3 shrink-0">
                         {/* Time stamp */}
-                        <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
+                        <span className="text-[11px] text-muted-foreground flex items-center gap-1 font-medium">
                           <Clock className="w-3.5 h-3.5 text-muted-foreground/60" />
                           <span>{new Date(log.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                         </span>
@@ -490,8 +490,8 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
 
                         {/* Full Prompt Preview */}
                         <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Prompt Excerpt</span>
-                          <div className="p-3.5 rounded-xl bg-white/5 border border-slate-200/5 text-xs text-foreground/90 whitespace-pre-wrap leading-relaxed font-mono">
+                          <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">Prompt Excerpt</span>
+                          <div className="p-3.5 rounded-xl bg-white/5 border border-slate-200/5 text-xs text-foreground/90 whitespace-pre-wrap leading-relaxed">
                             {log.prompt_preview}
                           </div>
                         </div>
@@ -499,7 +499,7 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                         {/* Breakdown Metrics */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white/5 p-3 rounded-xl border border-slate-200/5">
                           <div>
-                            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider block">Prompt Tokens</span>
+                            <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">Prompt Tokens</span>
                             <span className="font-extrabold text-foreground mt-0.5 block">
                               {log.prompt_tokens}
                               {!!log.cached_tokens && (
@@ -508,21 +508,21 @@ export function AISettingsClient({ initialSettings, initialLogs }: AISettingsCli
                             </span>
                           </div>
                           <div>
-                            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider block">Response Tokens</span>
+                            <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">Response Tokens</span>
                             <span className="font-extrabold text-foreground mt-0.5 block">{log.completion_tokens}</span>
                           </div>
                           <div>
-                            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider block">Grounding Mode</span>
+                            <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">Grounding Mode</span>
                             <span className="font-extrabold text-foreground mt-0.5 block">{log.search_grounding ? 'Google Search' : 'No Grounding'}</span>
                           </div>
                           <div>
-                            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider block">Sender IP / Agent</span>
-                            <span className="font-extrabold text-foreground mt-0.5 block font-mono truncate">{log.user_ip}</span>
+                            <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">Sender IP / Agent</span>
+                            <span className="font-extrabold text-foreground mt-0.5 block truncate">{log.user_ip}</span>
                           </div>
                         </div>
 
                         {/* Log Metadata Timestamp */}
-                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                        <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
                           <Info className="w-3.5 h-3.5" />
                           <span>Logged on {new Date(log.created_at).toLocaleString()}</span>
                         </div>

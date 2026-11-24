@@ -6,7 +6,7 @@ import { Skeleton, SkeletonText } from '@/components/ui/skeleton'
  * Potongan skeleton bersama untuk halaman CRUD admin (projects, certificates, education,
  * experience, photos, skills). Markup & class disalin dari komponen aslinya.
  * Catatan line-height: `text-xs` Tailwind v4 memakai rasio (4/3) yang diwarisi elemen anak,
- * jadi teks text-[10px]/[11px]/[9px] di dalam tabel = 13.333px / 14.667px / 12px.
+ * jadi teks text-[11px]/[11px]/[9px] di dalam tabel = 13.333px / 14.667px / 12px.
  */
 
 const PANEL = 'glass-panel border border-slate-200/10 dark:border-slate-800/10'
@@ -163,7 +163,7 @@ export function ControlsFooterSkeleton({ counterWidth, chipWidths }: ControlsFoo
   return (
     <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200/5 dark:border-slate-800/5">
       <div className="flex flex-wrap gap-1.5">
-        {/* px-3 py-1.5 + text-[10px] + border = 29px */}
+        {/* px-3 py-1.5 + text-[11px] + border = 29px */}
         {chipWidths.map((w, i) => (
           <Skeleton key={i} className={cn('h-[29px] rounded-xl', w)} />
         ))}
@@ -188,7 +188,7 @@ export function AdminTableSkeleton({ columns, children }: { columns: TableColumn
     <div className={cn('rounded-2xl overflow-hidden shadow-sm relative z-10 w-full shimmer-card', PANEL)}>
       <div className="w-full overflow-x-auto">
         <table className="w-full min-w-[750px] text-left text-xs table-auto">
-          <thead className="bg-slate-100/50 dark:bg-slate-900/60 border-b border-slate-200/10 dark:border-slate-800/20 text-[10px]">
+          <thead className="bg-slate-100/50 dark:bg-slate-900/60 border-b border-slate-200/10 dark:border-slate-800/20 text-[11px]">
             <tr>
               {columns.map((col, i) => (
                 <th key={i} className={col.className}>
@@ -219,7 +219,7 @@ export function TableIndexCell({ wide }: { wide?: boolean }) {
   )
 }
 
-/** Kolom thumbnail 40px + judul (text-xs leading-snug) + subjudul opsional (text-[10px]) */
+/** Kolom thumbnail 40px + judul (text-xs leading-snug) + subjudul opsional (text-[11px]) */
 export function TableThumbCell({ titleWidth, subtitleWidth }: { titleWidth: string; subtitleWidth?: string }) {
   return (
     <td className="py-2.5 px-3">
@@ -234,7 +234,7 @@ export function TableThumbCell({ titleWidth, subtitleWidth }: { titleWidth: stri
   )
 }
 
-/** Badge kategori (px-2 py-0.5 text-[10px] border, rounded-md) */
+/** Badge kategori (px-2 py-0.5 text-[11px] border, rounded-md) */
 export function TableBadgeCell({ width }: { width: string }) {
   return (
     <td className="py-2.5 px-3 whitespace-nowrap text-center">

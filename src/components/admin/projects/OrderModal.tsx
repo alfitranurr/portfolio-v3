@@ -68,7 +68,7 @@ export function OrderModal({
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-[10px] font-bold uppercase tracking-wider bg-white/5 px-2.5 py-1 rounded-lg text-muted-foreground">
+              <span className="text-[11px] font-bold uppercase tracking-wider bg-white/5 px-2.5 py-1 rounded-lg text-muted-foreground">
                 Total: {orderList.length} Items
               </span>
               <button
@@ -152,18 +152,18 @@ export function OrderModal({
                             {proj.title}
                           </h4>
                           {isCurrent && (
-                            <span className="px-1.5 py-0.5 bg-primary/20 text-primary text-[8px] font-black uppercase rounded">
+                            <span className="px-1.5 py-0.5 bg-primary/20 text-primary text-[11px] font-black uppercase rounded">
                               Current
                             </span>
                           )}
                         </div>
-                        <p className="text-[10px] text-muted-foreground/60 truncate">
+                        <p className="text-[11px] text-muted-foreground/60 truncate">
                           {SUBCATEGORY_MAP[proj.sub_category] || proj.sub_category.replace(' Projects', '')}
                         </p>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="px-2 py-0.5 bg-slate-800 dark:bg-slate-900 text-muted-foreground text-[10px] font-mono rounded-lg border border-slate-700/30">
+                        <span className="px-2 py-0.5 bg-slate-800 dark:bg-slate-900 text-muted-foreground text-[11px] rounded-lg border border-slate-700/30">
                           Order: {idx + 1}
                         </span>
                         {showUnfeatureButton && onUnfeature && (

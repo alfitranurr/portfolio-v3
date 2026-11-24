@@ -21,7 +21,7 @@ export function EducationTableView({ educations, startIndex, onPreview, onEdit, 
     <div className="rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 overflow-hidden shadow-sm relative z-10 w-full">
       <div className="w-full overflow-x-auto">
         <table className="w-full min-w-[750px] text-left text-xs table-auto">
-          <thead className="bg-slate-100/50 dark:bg-slate-900/60 border-b border-slate-200/10 dark:border-slate-800/20 uppercase tracking-wider font-extrabold text-[10px] text-muted-foreground">
+          <thead className="bg-slate-100/50 dark:bg-slate-900/60 border-b border-slate-200/10 dark:border-slate-800/20 uppercase tracking-wider font-extrabold text-[11px] text-muted-foreground">
             <tr>
               <th className="py-2.5 px-3 w-10 text-center">#</th>
               <th className="py-2.5 px-3 min-w-[200px]">Education</th>
@@ -37,13 +37,13 @@ export function EducationTableView({ educations, startIndex, onPreview, onEdit, 
                 key={edu.id}
                 className="hover:bg-slate-500/5 transition-colors group"
               >
-                <td className="py-2.5 px-3 text-center text-muted-foreground/60 font-mono text-[11px]">
+                <td className="py-2.5 px-3 text-center text-muted-foreground/60 text-[11px]">
                   {startIndex + index + 1}
                 </td>
 
                 <td className="py-2.5 px-3">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-900 border border-slate-700/60 shrink-0 relative p-1 shadow-xs">
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800/60 shrink-0 relative p-1 shadow-xs">
                       {edu.logo_url ? (
                         <BlurImage
                           src={edu.logo_url}
@@ -62,7 +62,7 @@ export function EducationTableView({ educations, startIndex, onPreview, onEdit, 
                       <h4 className="font-bold text-foreground text-xs leading-snug group-hover:text-primary transition-colors line-clamp-1" title={edu.degree}>
                         {edu.degree}
                       </h4>
-                      <p className="text-[10px] text-muted-foreground/70 line-clamp-1">
+                      <p className="text-[11px] text-muted-foreground/70 line-clamp-1">
                         {edu.institution}
                       </p>
                     </div>
@@ -73,10 +73,10 @@ export function EducationTableView({ educations, startIndex, onPreview, onEdit, 
                   {edu.field_of_study || '-'}
                 </td>
 
-                <td className="py-2.5 px-3 whitespace-nowrap text-[11px] text-muted-foreground font-mono text-center">
+                <td className="py-2.5 px-3 whitespace-nowrap text-[11px] text-muted-foreground text-center">
                   <div className="flex flex-col items-center gap-0.5">
                     <span>{formatDate(edu.start_date)}</span>
-                    <span className="text-[9px]">-</span>
+                    <span className="text-[11px]">-</span>
                     <span>{edu.end_date ? formatDate(edu.end_date) : 'Present'}</span>
                   </div>
                 </td>
@@ -111,7 +111,7 @@ export function EducationTableView({ educations, startIndex, onPreview, onEdit, 
                     <button
                       onClick={() => onDelete(edu.id)}
                       title="Delete Education"
-                      className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer border border-red-500/10"
+                      className="ml-2 p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer border border-red-500/10"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

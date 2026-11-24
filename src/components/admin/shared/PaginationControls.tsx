@@ -33,7 +33,7 @@ export function PaginationControls({
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10">
       <div className="flex items-center gap-2 text-xs text-muted-foreground font-semibold">
         <span>Per page:</span>
-        <select
+        <select aria-label="Per page"
           value={pageSize}
           onChange={e => {
             onPageSizeChange(Number(e.target.value))

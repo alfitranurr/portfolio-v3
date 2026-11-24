@@ -64,12 +64,12 @@ export function EducationGridView({ educations, onPreview, onEdit, onDuplicate, 
             {/* Tags */}
             <div className="flex flex-wrap items-center gap-1.5">
               {edu.field_of_study && (
-                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-muted-foreground text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-muted-foreground text-[11px] font-bold">
                   {edu.field_of_study}
                 </span>
               )}
               {edu.gpa && (
-                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-muted-foreground text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-muted-foreground text-[11px] font-bold">
                   GPA: {edu.gpa}
                 </span>
               )}
@@ -102,7 +102,7 @@ export function EducationGridView({ educations, onPreview, onEdit, onDuplicate, 
               <button onClick={() => onEdit(edu)} title="Edit" className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all cursor-pointer">
                 <Edit3 className="w-4 h-4" />
               </button>
-              <button onClick={() => onDelete(edu.id)} title="Delete" className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-all cursor-pointer">
+              <button onClick={() => onDelete(edu.id)} title="Delete" className="ml-2 p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-all cursor-pointer">
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>

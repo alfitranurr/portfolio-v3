@@ -17,8 +17,8 @@ export function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps
   return (
     <motion.div
       key={project.id}
-      initial={{ opacity: 0, filter: "blur(16px)" }}
-      whileInView={{ opacity: 1, filter: "blur(0px)" }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.15 }}
       transition={{ duration: 0.9, delay: index * 0.02, ease: [0.25, 0.1, 0.25, 1] }}
       className="group p-6 rounded-3xl glass-panel hover:border-primary/20 flex flex-col justify-between transition-all duration-300 relative overflow-hidden"
@@ -56,7 +56,7 @@ export function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps
             </>
           ) : (
             <div className="w-full h-full bg-gradient-to-tr from-neutral-300/10 to-neutral-500/10 flex flex-col items-center justify-center p-4">
-              <span className="text-primary/25 group-hover:text-primary/50 group-hover:scale-110 transition-all font-black uppercase tracking-widest text-[9px] text-center leading-normal">
+              <span className="text-primary/25 group-hover:text-primary/50 group-hover:scale-110 transition-all font-black uppercase tracking-widest text-[11px] text-center leading-normal">
                 {project.sub_category}
               </span>
             </div>
@@ -66,11 +66,11 @@ export function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps
         {/* Details */}
         <div className="space-y-1">
           <div className="flex items-center justify-between gap-2">
-            <span className={cn("text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-md", getSubCategoryColor(project.sub_category).badge)}>
+            <span className={cn("text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-md", getSubCategoryColor(project.sub_category).badge)}>
               {project.sub_category}
             </span>
             {project.is_on_progress && (
-              <span className="text-[9px] font-extrabold text-orange-500 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse shrink-0">
+              <span className="text-[11px] font-extrabold text-orange-500 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse shrink-0">
                 On Progress
               </span>
             )}
@@ -88,7 +88,7 @@ export function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps
       <div className="flex items-center gap-3 pt-4 border-t border-slate-200/10 dark:border-slate-800/10 mt-4">
         <Link
           href={`/projects/${project.id}`}
-          className="flex items-center gap-1 text-xs font-bold text-foreground group-hover:text-primary transition-colors cursor-pointer shrink-0 whitespace-nowrap"
+          className="flex items-center gap-1 text-xs font-bold text-foreground group-hover:text-primary transition-colors cursor-pointer shrink-0 whitespace-nowrap after:absolute after:inset-0 after:z-20 after:content-['']"
         >
           <span>Explore Writeup</span>
           <ArrowUpRight className="w-3.5 h-3.5" />

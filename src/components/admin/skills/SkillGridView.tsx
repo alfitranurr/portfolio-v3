@@ -46,7 +46,7 @@ export function SkillGridView({ skills, onPreview, onEdit, onDelete }: SkillGrid
               <h3 className="font-black text-sm text-foreground group-hover:text-primary transition-colors">
                 {skill.name}
               </h3>
-              <p className="text-[10px] font-bold text-muted-foreground">
+              <p className="text-[11px] font-bold text-muted-foreground">
                 {CATEGORY_MAP[skill.category]}
               </p>
               {skill.proficiency !== null && skill.proficiency !== undefined && (
@@ -66,7 +66,7 @@ export function SkillGridView({ skills, onPreview, onEdit, onDelete }: SkillGrid
               <button onClick={() => onEdit(skill)} title="Edit Skill" className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all cursor-pointer">
                 <Edit3 className="w-4 h-4" />
               </button>
-              <button onClick={() => onDelete(skill.id)} title="Delete Skill" className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-all cursor-pointer">
+              <button onClick={() => onDelete(skill.id)} title="Delete Skill" className="ml-2 p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-all cursor-pointer">
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>

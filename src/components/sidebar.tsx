@@ -24,6 +24,7 @@ import { Github, Linkedin, Instagram } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { Profile } from '@/lib/types'
 import { useTheme } from 'next-themes'
+import { switchTheme } from '@/lib/theme-transition'
 import { BlurImage } from '@/components/ui/blur-image'
 
 function subscribeSidebarStorage(callback: () => void) {
@@ -133,7 +134,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
                 src={profile.logo_url}
                 alt="Logo"
                 sizes="24px"
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain invert dark:invert-0"
               />
             </div>
           ) : (
@@ -274,7 +275,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
           {/* Theming Section */}
           <div className={cn("pt-3 border-t border-slate-300 dark:border-white/20 space-y-2", isCollapsed ? "px-1" : "px-3.5")}>
             {!isCollapsed && (
-              <span className="text-[9px] font-extrabold uppercase tracking-wider text-muted-foreground/60 block">Theming</span>
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-muted-foreground/60 block">Theming</span>
             )}
             <div className={cn("flex items-center", isCollapsed ? "justify-center" : "justify-between")}>
               {!isCollapsed ? (
@@ -294,7 +295,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
                     <div className="w-10 h-5.5 rounded-full bg-slate-200/30 dark:bg-slate-800/30 animate-pulse" />
                   ) : (
                     <button
-                      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                      onClick={(e) => switchTheme(theme === 'dark' ? 'light' : 'dark', setTheme, e.currentTarget)}
                       className={cn(
                         "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
                         theme === 'dark' ? "bg-white" : "bg-slate-300 dark:bg-slate-700"
@@ -312,7 +313,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
                 </>
               ) : (
                 <button
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  onClick={(e) => switchTheme(theme === 'dark' ? 'light' : 'dark', setTheme, e.currentTarget)}
                   className="w-9 h-9 flex items-center justify-center rounded-xl glass-card text-muted-foreground hover:text-foreground transition-all cursor-pointer"
                   title={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
                   aria-label="Toggle dark mode"
@@ -332,7 +333,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
           {/* Social Networks Section */}
           <div className={cn("pt-3 border-t border-slate-300 dark:border-white/20 space-y-2", isCollapsed ? "px-1" : "px-3.5")}>
             {!isCollapsed && (
-              <span className="text-[9px] font-extrabold uppercase tracking-wider text-muted-foreground/60 block">Social Networks</span>
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-muted-foreground/60 block">Social Networks</span>
             )}
             <div className={cn("flex items-center gap-2", isCollapsed ? "flex-col justify-center" : "flex-row")}>
               {socials.map((social, index) => {
@@ -358,7 +359,7 @@ export function Sidebar({ profile }: { profile: Profile }) {
           </div>
 
           {/* Footer Metadata */}
-          <div className="border-t border-slate-300 dark:border-white/20 pt-3 text-center text-[10px] text-muted-foreground/80">
+          <div className="border-t border-slate-300 dark:border-white/20 pt-3 text-center text-[11px] text-muted-foreground/80">
             <span>{isCollapsed ? "© '26" : "© 2026 Al Fitra Nur Ramadhani"}</span>
           </div>
         </div>

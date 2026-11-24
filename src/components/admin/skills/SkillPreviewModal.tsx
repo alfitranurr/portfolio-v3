@@ -56,7 +56,7 @@ export function SkillPreviewModal({ skill, onClose, onEdit }: SkillPreviewModalP
 
         {skill.description && (
           <div className="space-y-2 max-h-48 overflow-y-auto pr-2 text-xs text-slate-600">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Description</span>
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Description</span>
             <p className="leading-relaxed">{skill.description}</p>
           </div>
         )}

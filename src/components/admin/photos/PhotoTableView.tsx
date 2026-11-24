@@ -16,7 +16,7 @@ export function PhotoTableView({ photos, startIndex, onPreview, onEdit, onDelete
     <div className="rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 overflow-hidden shadow-sm relative z-10 w-full">
       <div className="w-full overflow-x-auto">
         <table className="w-full min-w-[600px] text-left text-xs table-auto">
-          <thead className="bg-slate-100/50 dark:bg-slate-900/60 border-b border-slate-200/10 dark:border-slate-800/20 uppercase tracking-wider font-extrabold text-[10px] text-muted-foreground">
+          <thead className="bg-slate-100/50 dark:bg-slate-900/60 border-b border-slate-200/10 dark:border-slate-800/20 uppercase tracking-wider font-extrabold text-[11px] text-muted-foreground">
             <tr>
               <th className="py-2.5 px-3 w-10 text-center">#</th>
               <th className="py-2.5 px-3 min-w-[150px]">Preview</th>
@@ -31,12 +31,12 @@ export function PhotoTableView({ photos, startIndex, onPreview, onEdit, onDelete
                 key={photo.id}
                 className="hover:bg-slate-500/5 transition-colors group"
               >
-                <td className="py-2.5 px-3 text-center text-muted-foreground/60 font-mono text-[11px]">
+                <td className="py-2.5 px-3 text-center text-muted-foreground/60 text-[11px]">
                   {startIndex + index + 1}
                 </td>
 
                 <td className="py-2.5 px-3">
-                  <div className="w-16 h-11 rounded-lg overflow-hidden bg-slate-900 border border-slate-700/60 shrink-0 relative shadow-xs">
+                  <div className="w-16 h-11 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800/60 shrink-0 relative shadow-xs">
                     <BlurImage
                       src={photo.image_url}
                       alt={photo.title || 'Photo'}
@@ -52,13 +52,13 @@ export function PhotoTableView({ photos, startIndex, onPreview, onEdit, onDelete
                     {photo.title || 'Untitled'}
                   </h4>
                   {photo.description && (
-                    <p className="text-[10px] text-muted-foreground/70 line-clamp-1 mt-0.5">
+                    <p className="text-[11px] text-muted-foreground/70 line-clamp-1 mt-0.5">
                       {photo.description}
                     </p>
                   )}
                 </td>
 
-                <td className="py-2.5 px-3 whitespace-nowrap text-[11px] text-muted-foreground font-mono text-center">
+                <td className="py-2.5 px-3 whitespace-nowrap text-[11px] text-muted-foreground text-center">
                   {photo.year || '-'}
                 </td>
 
@@ -81,7 +81,7 @@ export function PhotoTableView({ photos, startIndex, onPreview, onEdit, onDelete
                     <button
                       onClick={() => onDelete(photo.id)}
                       title="Delete Photo"
-                      className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer border border-red-500/10"
+                      className="ml-2 p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer border border-red-500/10"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

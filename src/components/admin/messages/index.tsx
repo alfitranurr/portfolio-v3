@@ -112,7 +112,7 @@ function HeaderActions({
         {resetNotice && (
           <span
             className={cn(
-              "text-[10px] font-bold px-2.5 py-1.5 rounded-lg border",
+              "text-[11px] font-bold px-2.5 py-1.5 rounded-lg border",
               resetNotice.success
                 ? "text-green-600 dark:text-green-400 border-green-500/20 bg-green-500/10"
                 : "text-red-600 dark:text-red-400 border-red-500/20 bg-red-500/10"
@@ -384,7 +384,7 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
               Inbox Messages ({filteredMessages.length})
             </h2>
             {unreadCount > 0 && (
-              <span className="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[10px] font-black">
+              <span className="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[11px] font-black">
                 {unreadCount} Unread
               </span>
             )}
@@ -433,7 +433,7 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
                           <span className={cn("font-bold text-xs", !msg.is_read && "text-foreground")}>
                             {msg.name}
                           </span>
-                          <span className="text-[10px] text-muted-foreground font-mono">
+                          <span className="text-[11px] text-muted-foreground font-mono">
                             {msg.email}
                           </span>
                           {msg.is_read === null && (
@@ -449,7 +449,7 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-[10px] text-muted-foreground font-mono">
+                      <span className="text-[11px] text-muted-foreground">
                         {formatDate(msg.created_at)}
                       </span>
                       <button
@@ -478,7 +478,7 @@ export function MessagesList({ initialMessages, stats, visitorStats }: MessagesL
                         <button
                           onClick={(e) => { e.stopPropagation(); handleDelete(msg.id) }}
                           disabled={isUpdating === msg.id}
-                          className="py-1.5 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer border border-red-500/10 transition-all"
+                          className="py-1.5 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-bold text-[11px] uppercase tracking-wide flex items-center gap-1 cursor-pointer border border-red-500/10 transition-all"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                           <span>Delete</span>

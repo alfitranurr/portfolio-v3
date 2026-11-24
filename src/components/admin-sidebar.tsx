@@ -15,6 +15,7 @@ import {
   X,
   ExternalLink,
   Terminal,
+  Wrench,
   ChevronRight,
   Moon,
   Sun,
@@ -27,6 +28,7 @@ import {
 import { cn } from '@/lib/utils'
 import { signOutAction } from '@/app/login/actions'
 import { useTheme } from 'next-themes'
+import { switchTheme } from '@/lib/theme-transition'
 
 function subscribeAdminSidebarStorage(callback: () => void) {
   window.addEventListener('storage', callback)
@@ -106,7 +108,7 @@ export function AdminSidebar() {
         { name: 'Experience', href: '/admin/experience', icon: Briefcase, exact: false },
         { name: 'Projects', href: '/admin/projects', icon: Coffee, exact: false },
         { name: 'Certificates', href: '/admin/certificates', icon: Award, exact: false },
-        { name: 'Tech Stack', href: '/admin/skills', icon: Terminal, exact: false },
+        { name: 'Tech Stack', href: '/admin/skills', icon: Wrench, exact: false },
       ]
     }
   ]
@@ -136,8 +138,8 @@ export function AdminSidebar() {
     const isDark = theme === 'dark'
     return (
       <button
-        onClick={() => setTheme(isDark ? 'light' : 'dark')}
-        title={isCollapsed ? (isDark ? 'Light Theme' : 'Dark Theme') : undefined}
+        onClick={(e) => switchTheme(isDark ? 'light' : 'dark', setTheme, e.currentTarget)}
+        title={isCollapsed ? (isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode') : undefined}
         className={cn(
           "w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-muted-foreground hover:bg-slate-200/50 dark:hover:bg-white/5 hover:text-foreground hover:translate-x-0.5 border border-transparent transition-all cursor-pointer group",
           isCollapsed && "lg:justify-center lg:px-0"
@@ -149,7 +151,7 @@ export function AdminSidebar() {
           ) : (
             <Sun className="w-4 h-4 text-neutral-700 transition-transform duration-200 group-hover:scale-110" />
           )}
-          <span className={cn(isCollapsed && "lg:hidden")}>{isDark ? 'Dark Theme' : 'Light Theme'}</span>
+          <span className={cn(isCollapsed && "lg:hidden")}>Dark Mode</span>
         </div>
 
         {/* Animated Toggle Switch */}
@@ -162,7 +164,7 @@ export function AdminSidebar() {
         >
           <span
             className={cn(
-              "pointer-events-none inline-flex h-4.5 w-4.5 items-center justify-center transform rounded-full bg-white shadow-md transition duration-200 ease-in-out text-[9px]",
+              "pointer-events-none inline-flex h-4.5 w-4.5 items-center justify-center transform rounded-full bg-white shadow-md transition duration-200 ease-in-out text-[11px]",
               isDark ? "translate-x-4" : "translate-x-0"
             )}
           >
@@ -180,10 +182,10 @@ export function AdminSidebar() {
   return (
     <>
       {/* Mobile Admin Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 z-40 px-4 flex items-center justify-between glass-panel border-b border-slate-300 dark:border-slate-800/20">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 z-40 px-4 flex items-center justify-between glass-panel border-b border-slate-300 dark:border-white/20">
         <Link href="/admin" className="flex items-center gap-2 font-bold text-foreground">
           <Terminal className="text-primary w-5 h-5 animate-pulse" />
-          <span className="font-extrabold tracking-tight">Admin Portal</span>
+          <span className="font-extrabold tracking-tight">Admin Console</span>
         </Link>
         <div className="flex items-center gap-2">
           <button
@@ -199,9 +201,9 @@ export function AdminSidebar() {
       {/* Sidebar Container */}
       <aside
         className={cn(
-          "admin-sidebar fixed top-0 bottom-0 left-0 z-50 glass-panel border-r border-slate-300 dark:border-slate-800/20 flex flex-col justify-between transition-all duration-300 ease-in-out overflow-y-auto scrollbar-hide",
+          "admin-sidebar fixed top-0 bottom-0 left-0 z-50 glass-panel border-r border-slate-300 dark:border-white/20 flex flex-col justify-between transition-all duration-300 ease-in-out overflow-y-auto scrollbar-hide",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
-          "lg:sticky lg:top-4 lg:left-auto lg:bottom-auto lg:h-[calc(100vh-2rem)] lg:rounded-3xl lg:z-30 lg:translate-x-0 lg:self-start lg:border lg:border-slate-300 dark:lg:border-slate-800/20",
+          "lg:sticky lg:top-4 lg:left-auto lg:bottom-auto lg:h-[calc(100vh-2rem)] lg:rounded-3xl lg:z-30 lg:translate-x-0 lg:self-start lg:border lg:border-slate-300 dark:lg:border-white/20",
           isCollapsed ? "w-52 lg:w-20 p-2 lg:p-3" : "w-52 p-3.5"
         )}
       >
@@ -218,7 +220,7 @@ export function AdminSidebar() {
                 </div>
                 <div className={cn("flex flex-col", isCollapsed && "lg:hidden")}>
                   <span className="leading-none font-extrabold tracking-wider text-xs text-foreground">Admin Console</span>
-                  <span className="text-[10px] text-muted-foreground mt-0.5 font-normal">Command Center</span>
+                  <span className="text-[11px] text-muted-foreground mt-0.5 font-normal">Command Center</span>
                 </div>
               </Link>
               {/* Desktop Collapse Toggle Button */}
@@ -248,7 +250,7 @@ export function AdminSidebar() {
               {categories.map((category) => (
                 <div key={category.title} className="space-y-1.5">
                   <h3 className={cn(
-                    "text-[10px] font-extrabold text-muted-foreground/50 uppercase tracking-widest px-3.5",
+                    "text-[11px] font-extrabold text-muted-foreground/50 uppercase tracking-widest px-3.5",
                     isCollapsed && "lg:hidden"
                   )}>
                     {category.title}
@@ -291,7 +293,7 @@ export function AdminSidebar() {
           </div>
 
           {/* Sidebar Footer */}
-          <div className="mt-auto pt-4 border-t border-slate-300/80 dark:border-slate-800/20 space-y-3">
+          <div className="mt-auto pt-4 border-t border-slate-300/80 dark:border-white/20 space-y-3">
             <div className="space-y-1">
               {/* Theme Selector */}
               {renderThemeButton()}
@@ -333,7 +335,7 @@ export function AdminSidebar() {
 
             {/* Footer Metadata */}
             <div className={cn(
-              "text-center text-[10px] text-muted-foreground/50 font-normal",
+              "text-center text-[11px] text-muted-foreground/50 font-normal",
               isCollapsed && "lg:hidden"
             )}>
               <span>© 2026 Al Fitra Nur Ramadhani</span>

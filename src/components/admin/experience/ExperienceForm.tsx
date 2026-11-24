@@ -138,7 +138,7 @@ export function ExperienceForm({
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 Category
               </label>
-              <select
+              <select aria-label="Category"
                 value={experience.category || 'professional'}
                 onChange={e => onUpdateExperience(prev => ({ ...prev, category: e.target.value as 'professional' | 'committee_organization' }))}
                 className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/50 text-foreground text-sm focus:outline-none focus:border-primary/50"
@@ -154,7 +154,7 @@ export function ExperienceForm({
                 <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                   Start Date <span className="text-primary">*</span>
                 </label>
-                <input
+                <input aria-label="Start Date"
                   type="date"
                   required
                   value={experience.start_date || ''}
@@ -167,7 +167,7 @@ export function ExperienceForm({
                 <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                   End Date
                 </label>
-                <input
+                <input aria-label="End Date"
                   type="date"
                   value={experience.end_date || ''}
                   onChange={e => onUpdateExperience(prev => ({ ...prev, end_date: e.target.value }))}
@@ -211,7 +211,7 @@ export function ExperienceForm({
                       <button
                         type="button"
                         onClick={handleRemoveLogo}
-                        className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold cursor-pointer"
+                        className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[11px] font-bold cursor-pointer"
                       >
                         Remove
                       </button>
@@ -268,7 +268,7 @@ export function ExperienceForm({
                 <button
                   type="button"
                   onClick={onAddBullet}
-                  className="py-1.5 px-3 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer border border-primary/20 transition-all"
+                  className="py-1.5 px-3 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-bold text-[11px] uppercase tracking-wide flex items-center gap-1 cursor-pointer border border-primary/20 transition-all"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Add Bullet</span>

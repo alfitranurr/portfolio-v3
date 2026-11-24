@@ -63,11 +63,11 @@ export function ExperienceGridView({ experiences, onPreview, onEdit, onDuplicate
 
             {/* Tags */}
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-muted-foreground text-[10px] font-bold">
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-muted-foreground text-[11px] font-bold">
                 {CATEGORY_MAP[exp.category || 'professional']}
               </span>
               {exp.is_current && (
-                <span className="px-2 py-0.5 rounded-md bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded-md bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 text-[11px] font-bold">
                   Current
                 </span>
               )}
@@ -98,7 +98,7 @@ export function ExperienceGridView({ experiences, onPreview, onEdit, onDuplicate
                   ))}
                 </ul>
                 {exp.description.length > 2 && (
-                  <p className="text-[10px] text-muted-foreground/60 mt-1">
+                  <p className="text-[11px] text-muted-foreground/60 mt-1">
                     +{exp.description.length - 2} more...
                   </p>
                 )}
@@ -116,7 +116,7 @@ export function ExperienceGridView({ experiences, onPreview, onEdit, onDuplicate
               <button onClick={() => onEdit(exp)} title="Edit" className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all cursor-pointer">
                 <Edit3 className="w-4 h-4" />
               </button>
-              <button onClick={() => onDelete(exp.id)} title="Delete" className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-all cursor-pointer">
+              <button onClick={() => onDelete(exp.id)} title="Delete" className="ml-2 p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-all cursor-pointer">
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>

@@ -38,7 +38,7 @@ export default async function HomePage() {
               {profile.headline}
             </p>
 
-            <p className="text-sm md:text-base text-foreground leading-relaxed text-justify">
+            <p className="text-sm md:text-base text-foreground leading-relaxed md:text-justify">
               {profile.about_me}
             </p>
 
@@ -66,14 +66,14 @@ export default async function HomePage() {
 
       {/* 2. FEATURED PROJECTS SECTION */}
       <section className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
           <div className="space-y-1">
             <h2 className="text-2xl font-semibold tracking-tight">Featured Projects</h2>
             <p className="text-xs text-muted-foreground">Pinned top data science and ML showcases</p>
           </div>
           <Link
             href="/projects"
-            className="group flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl bg-foreground/5 dark:bg-white/5 border border-foreground/10 dark:border-white/10 text-foreground hover:bg-foreground/10 dark:hover:bg-white/10 hover:border-foreground/20 dark:hover:border-white/20 transition-all cursor-pointer"
+            className="group flex shrink-0 whitespace-nowrap items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl bg-foreground/5 dark:bg-white/5 border border-foreground/10 dark:border-white/10 text-foreground hover:bg-foreground/10 dark:hover:bg-white/10 hover:border-foreground/20 dark:hover:border-white/20 transition-all cursor-pointer"
           >
             <span>View all projects</span>
             <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

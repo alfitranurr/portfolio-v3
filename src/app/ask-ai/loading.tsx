@@ -6,7 +6,7 @@ import { Skeleton, SkeletonText } from '@/components/ui/skeleton'
 // Desktop pills: text widths from the real page (wraps 2 / 1 / 1 / 2 inside max-w-xl)
 const PILLS = ['w-[184px]', 'w-[227px]', 'w-[245px]', 'w-[265px]', 'w-[226px]', 'w-[231px]']
 
-// Mobile cards: title (text-xs) + truncated prompt (text-[10px])
+// Mobile cards: title (text-xs) + truncated prompt (text-[11px])
 const MOBILE_CARDS = [
   { title: 'w-[95px]', prompt: 'w-full' },
   { title: 'w-[105px]', prompt: 'w-[92%]' },
@@ -103,7 +103,7 @@ export default function AskAILoading() {
                 </div>
                 <Skeleton className="shrink-0 w-9 h-9 rounded-lg sm:rounded-xl" />
               </div>
-              {/* Footnote: text-[10px] leading-snug, wraps to 2 lines below sm */}
+              {/* Footnote: text-[11px] leading-snug, wraps to 2 lines below sm */}
               <div className="mt-1.5">
                 <SkeletonText
                   size="2xs"

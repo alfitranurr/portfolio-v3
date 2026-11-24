@@ -21,7 +21,7 @@ export function CertificateTableView({ certificates, startIndex, onPreview, onEd
     <div className="rounded-2xl glass-panel border border-slate-200/10 dark:border-slate-800/10 overflow-hidden shadow-sm relative z-10 w-full">
       <div className="w-full overflow-x-auto">
         <table className="w-full min-w-[750px] text-left text-xs table-auto">
-          <thead className="bg-slate-100/50 dark:bg-slate-900/60 border-b border-slate-200/10 dark:border-slate-800/20 uppercase tracking-wider font-extrabold text-[10px] text-muted-foreground">
+          <thead className="bg-slate-100/50 dark:bg-slate-900/60 border-b border-slate-200/10 dark:border-slate-800/20 uppercase tracking-wider font-extrabold text-[11px] text-muted-foreground">
             <tr>
               <th className="py-2.5 px-3 w-10 text-center">#</th>
               <th className="py-2.5 px-3 min-w-[200px]">Certificate</th>
@@ -37,13 +37,13 @@ export function CertificateTableView({ certificates, startIndex, onPreview, onEd
                 key={cert.id}
                 className="hover:bg-slate-500/5 transition-colors group"
               >
-                <td className="py-2.5 px-3 text-center text-muted-foreground/60 font-mono text-[11px]">
+                <td className="py-2.5 px-3 text-center text-muted-foreground/60 text-[11px]">
                   {startIndex + index + 1}
                 </td>
 
                 <td className="py-2.5 px-3">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-900 border border-slate-700/60 shrink-0 relative shadow-xs">
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800/60 shrink-0 relative shadow-xs">
                       {cert.image_url ? (
                         <BlurImage
                           src={cert.image_url}
@@ -62,7 +62,7 @@ export function CertificateTableView({ certificates, startIndex, onPreview, onEd
                       <h4 className="font-bold text-foreground text-xs leading-snug group-hover:text-primary transition-colors line-clamp-1" title={cert.title}>
                         {cert.title}
                       </h4>
-                      <p className="text-[10px] text-muted-foreground/70 line-clamp-1">
+                      <p className="text-[11px] text-muted-foreground/70 line-clamp-1">
                         {cert.issuer}
                       </p>
                     </div>
@@ -70,12 +70,12 @@ export function CertificateTableView({ certificates, startIndex, onPreview, onEd
                 </td>
 
                 <td className="py-2.5 px-3 whitespace-nowrap text-center">
-                  <span className="px-2 py-0.5 rounded-md bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-[10px] font-bold text-muted-foreground">
+                  <span className="px-2 py-0.5 rounded-md bg-white/5 border border-slate-200/10 dark:border-slate-800/10 text-[11px] font-bold text-muted-foreground">
                     {CATEGORY_MAP[cert.category]}
                   </span>
                 </td>
 
-                <td className="py-2.5 px-3 whitespace-nowrap text-[11px] text-muted-foreground font-mono text-center">
+                <td className="py-2.5 px-3 whitespace-nowrap text-[11px] text-muted-foreground text-center">
                   {formatDate(cert.issue_date)}
                 </td>
 
@@ -89,10 +89,10 @@ export function CertificateTableView({ certificates, startIndex, onPreview, onEd
                       title="View Credential"
                     >
                       <ExternalLink className="w-3 h-3" />
-                      <span className="text-[10px]">View</span>
+                      <span className="text-[11px]">View</span>
                     </a>
                   ) : (
-                    <span className="text-muted-foreground/40 text-[10px]">-</span>
+                    <span className="text-muted-foreground/40 text-[11px]">-</span>
                   )}
                 </td>
 
@@ -122,7 +122,7 @@ export function CertificateTableView({ certificates, startIndex, onPreview, onEd
                     <button
                       onClick={() => onDelete(cert.id)}
                       title="Delete Certificate"
-                      className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer border border-red-500/10"
+                      className="ml-2 p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer border border-red-500/10"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

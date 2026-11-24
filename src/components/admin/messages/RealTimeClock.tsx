@@ -27,7 +27,7 @@ export function RealTimeClock() {
       <Clock className="w-5 h-5 text-primary shrink-0" />
       <div className="flex flex-col items-start leading-tight gap-0.5">
         <span className="text-xs md:text-sm font-black tracking-tight">{time}</span>
-        <span className="text-[9px] text-muted-foreground font-semibold uppercase tracking-wider">{date}</span>
+        <span className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">{date}</span>
       </div>
       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0 ml-1.5" />
     </div>

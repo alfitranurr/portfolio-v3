@@ -150,7 +150,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
             type="button"
             onClick={() => handleCategoryChange('data')}
             className={cn(
-              "flex-1 py-2 sm:py-2.5 text-[10px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-colors duration-200 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap z-10",
+              "flex-1 py-2 sm:py-2.5 text-[11px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-colors duration-200 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap z-10",
               activeCategory === 'data'
                 ? "text-primary-foreground"
                 : "text-foreground/75 hover:text-foreground"
@@ -170,7 +170,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
             type="button"
             onClick={() => handleCategoryChange('non-data')}
             className={cn(
-              "flex-1 py-2 sm:py-2.5 text-[10px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-colors duration-200 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap z-10",
+              "flex-1 py-2 sm:py-2.5 text-[11px] sm:text-xs md:text-sm font-extrabold rounded-xl transition-colors duration-200 relative cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap z-10",
               activeCategory === 'non-data'
                 ? "text-primary-foreground"
                 : "text-foreground/75 hover:text-foreground"
@@ -229,7 +229,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
               <SlidersHorizontal className="w-4 h-4" />
               <span>Filters</span>
               {selectedSubCategories.length > 0 && (
-                <span className="ml-0.5 bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full text-[9px] font-bold">
+                <span className="ml-0.5 bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full text-[11px] font-bold">
                   {selectedSubCategories.length}
                 </span>
               )}
@@ -267,14 +267,14 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
               className="p-4 rounded-2xl glass-panel border border-slate-300 dark:border-slate-800/10 space-y-3"
             >
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground/60">
+                <span className="text-[11px] font-black uppercase tracking-wider text-muted-foreground/60">
                   Filter by Sub Category (Multiple Select)
                 </span>
                 {selectedSubCategories.length > 0 && (
                   <button
                     type="button"
                     onClick={handleClearSubCategories}
-                    className="text-[10px] font-bold text-primary hover:underline cursor-pointer"
+                    className="text-[11px] font-bold text-primary hover:underline cursor-pointer"
                   >
                     Clear All
                   </button>
@@ -309,13 +309,13 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
         {/* Active Selected Badges */}
         {selectedSubCategories.length > 0 && (
           <div className="flex flex-wrap gap-1.5 items-center px-1 pt-1">
-            <span className="text-[9px] font-extrabold text-muted-foreground uppercase tracking-widest mr-1">
+            <span className="text-[11px] font-extrabold text-muted-foreground uppercase tracking-widest mr-1">
               Active Filters:
             </span>
             {selectedSubCategories.map((sub) => (
               <span
                 key={sub}
-                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/10 text-foreground shadow-2xs"
+                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-800/10 text-foreground shadow-2xs"
               >
                 <span>{getSubCategoryLabel(sub)}</span>
                 <button
@@ -389,7 +389,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                         </>
                       ) : (
                         <div className="w-full h-full bg-gradient-to-tr from-neutral-300/10 to-neutral-500/10 flex flex-col items-center justify-center p-4">
-                          <span className="text-primary/25 group-hover:text-primary/50 group-hover:scale-110 transition-all font-black uppercase tracking-widest text-[9px] text-center leading-normal">
+                          <span className="text-primary/25 group-hover:text-primary/50 group-hover:scale-110 transition-all font-black uppercase tracking-widest text-[11px] text-center leading-normal">
                             {getSubCategoryLabel(project.sub_category)}
                           </span>
                         </div>
@@ -399,11 +399,11 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                     {/* Details */}
                     <div className="space-y-1">
                       <div className="flex items-center justify-between gap-2">
-                        <span className={cn("text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-md", getSubCategoryColor(project.sub_category).badge)}>
+                        <span className={cn("text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-md", getSubCategoryColor(project.sub_category).badge)}>
                           {getSubCategoryLabel(project.sub_category)}
                         </span>
                         {project.is_on_progress && (
-                          <span className="text-[9px] font-extrabold text-orange-500 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse shrink-0">
+                          <span className="text-[11px] font-extrabold text-orange-500 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse shrink-0">
                             On Progress
                           </span>
                         )}
@@ -421,7 +421,7 @@ export function ProjectsFilterList({ initialProjects }: ProjectsFilterListProps)
                   <div className="flex items-center gap-3 pt-4 border-t border-slate-200/10 dark:border-slate-800/10 mt-4">
                     <Link
                       href={`/projects/${project.id}`}
-                      className="flex items-center gap-1 text-xs font-bold text-foreground group-hover:text-primary transition-colors cursor-pointer shrink-0 whitespace-nowrap"
+                      className="flex items-center gap-1 text-xs font-bold text-foreground group-hover:text-primary transition-colors cursor-pointer shrink-0 whitespace-nowrap after:absolute after:inset-0 after:z-20 after:content-['']"
                     >
                       <span>Explore Writeup</span>
                       <ArrowUpRight className="w-3.5 h-3.5" />

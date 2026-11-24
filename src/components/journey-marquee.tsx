@@ -42,8 +42,8 @@ export function JourneyMarquee({ initialPhotos }: JourneyMarqueeProps) {
     return (
       <motion.div
         key={`${colPrefix}-${index}`}
-        initial={{ opacity: 0, filter: "blur(16px)" }}
-        whileInView={{ opacity: 1, filter: "blur(0px)" }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={{ once: true, amount: 0.05 }}
         transition={{ duration: 0.9, delay: itemDelay, ease: [0.25, 0.1, 0.25, 1] }}
         className="mb-6 h-[240px] w-full rounded-3xl glass-panel relative overflow-hidden group hover:border-primary/20 hover:scale-[1.03] transition-all duration-300"

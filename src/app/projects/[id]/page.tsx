@@ -109,11 +109,11 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       <div className="space-y-4">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <span className={cn("text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full", getSubCategoryColor(project.sub_category).badge)}>
+            <span className={cn("text-[11px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full", getSubCategoryColor(project.sub_category).badge)}>
               {project.sub_category}
             </span>
             {project.is_on_progress && (
-              <span className="text-[10px] font-extrabold text-orange-500 bg-orange-500/10 border border-orange-500/20 px-3 py-1 rounded-full uppercase tracking-widest animate-pulse shrink-0">
+              <span className="text-[11px] font-extrabold text-orange-500 bg-orange-500/10 border border-orange-500/20 px-3 py-1 rounded-full uppercase tracking-widest animate-pulse shrink-0">
                 On Progress
               </span>
             )}

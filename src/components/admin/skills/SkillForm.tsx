@@ -142,7 +142,7 @@ export function SkillForm({
                       <button
                         type="button"
                         onClick={handleRemoveIcon}
-                        className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold cursor-pointer"
+                        className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[11px] font-bold cursor-pointer"
                       >
                         Remove
                       </button>
@@ -177,7 +177,7 @@ export function SkillForm({
                     />
                   </label>
                   {uploadError && (
-                    <p className="text-[10px] font-semibold text-red-500">{uploadError}</p>
+                    <p className="text-[11px] font-semibold text-red-500">{uploadError}</p>
                   )}
 
                   <input
@@ -190,7 +190,7 @@ export function SkillForm({
                 </div>
               </div>
 
-              <p className="text-[10px] text-muted-foreground leading-normal">
+              <p className="text-[11px] text-muted-foreground leading-normal">
                 Upload icon file or paste URL (SVG/PNG recommended)
               </p>
             </div>

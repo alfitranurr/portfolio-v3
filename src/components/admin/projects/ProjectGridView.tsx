@@ -37,7 +37,7 @@ export function ProjectGridView({ projects, onPreview, onEdit, onDuplicate, onDe
                 {proj.title}
               </h3>
               {proj.is_featured && (
-                <span className="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[9px] font-black uppercase tracking-wider shrink-0">
+                <span className="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[11px] font-black uppercase tracking-wider shrink-0">
                   Featured
                 </span>
               )}
@@ -45,14 +45,14 @@ export function ProjectGridView({ projects, onPreview, onEdit, onDuplicate, onDe
 
             {/* Tags row */}
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-muted-foreground text-[10px] font-bold">
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-muted-foreground text-[11px] font-bold">
                 {proj.category === 'data' ? 'Data Science' : 'General Dev'}
               </span>
-              <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-muted-foreground text-[10px] font-bold">
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/60 text-muted-foreground text-[11px] font-bold">
                 {SUBCATEGORY_MAP[proj.sub_category] || proj.sub_category.replace(' Projects', '')}
               </span>
               {proj.pinned_order !== null && proj.pinned_order !== undefined && proj.pinned_order > 0 && (
-                <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[11px] font-bold">
                   Pin: {proj.pinned_order}
                 </span>
               )}
@@ -84,9 +84,9 @@ export function ProjectGridView({ projects, onPreview, onEdit, onDuplicate, onDe
                   />
                 </>
               ) : (
-                <div className="w-full h-full bg-gradient-to-tr from-cyan-500/10 to-violet-500/10 flex flex-col items-center justify-center p-4">
+                <div className="w-full h-full bg-slate-100 dark:bg-slate-900/50 flex flex-col items-center justify-center p-4">
                   <ImageIcon className="w-6 h-6 text-primary/20 mb-1" />
-                  <span className="text-primary/25 font-black uppercase tracking-widest text-[8px] text-center leading-normal">
+                  <span className="text-primary/25 font-black uppercase tracking-widest text-[11px] text-center leading-normal">
                     No Cover Image
                   </span>
                 </div>
@@ -123,7 +123,7 @@ export function ProjectGridView({ projects, onPreview, onEdit, onDuplicate, onDe
                 <button onClick={() => onEdit(proj)} title="Edit" className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all cursor-pointer">
                   <Edit3 className="w-4 h-4" />
                 </button>
-                <button onClick={() => onDelete(proj.id)} title="Delete" className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-all cursor-pointer">
+                <button onClick={() => onDelete(proj.id)} title="Delete" className="ml-2 p-2 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-all cursor-pointer">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>

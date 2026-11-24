@@ -174,7 +174,7 @@ export function ProjectControls({
                 type="button"
                 onClick={() => onSubCategoryChange(subCategory)}
                 className={cn(
-                  "px-3 py-1.5 rounded-xl text-[10px] font-extrabold uppercase tracking-wider border transition-all duration-200 cursor-pointer",
+                  "px-3 py-1.5 rounded-xl text-[11px] font-extrabold uppercase tracking-wider border transition-all duration-200 cursor-pointer",
                   activeSubCategory === subCategory
                     ? "bg-primary border-primary text-primary-foreground shadow-sm shadow-primary/10"
                     : "bg-white/5 border-slate-200/10 dark:border-slate-800/10 hover:border-slate-200/20 text-muted-foreground hover:text-foreground"

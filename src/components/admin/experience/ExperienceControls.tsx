@@ -41,7 +41,7 @@ export function ExperienceControls({
               type="button"
               onClick={() => onCategoryChange(cat)}
               className={cn(
-                "flex-1 py-2 text-xs font-extrabold rounded-xl transition-colors duration-200 relative cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap z-10",
+                "flex-1 py-2 text-xs font-extrabold rounded-xl transition-colors duration-200 relative cursor-pointer flex items-center justify-center gap-1.5 min-w-0 px-2 text-center leading-tight sm:whitespace-nowrap z-10",
                 activeCategory === cat
                   ? "text-primary-foreground"
                   : "text-foreground/75 hover:text-foreground"

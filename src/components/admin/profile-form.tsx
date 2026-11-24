@@ -154,9 +154,9 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
       <AnimatePresence>
         {showNotification && state && (
           <motion.div
-            initial={{ opacity: 0, y: -10, filter: "blur(4px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
             className={cn(
               "p-4 rounded-xl text-xs font-semibold flex items-center gap-2.5 border",
@@ -335,9 +335,9 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
               />
             </label>
             {uploadError?.field === 'logo' && (
-              <p className="text-[10px] font-semibold text-red-500 text-center">{uploadError.message}</p>
+              <p className="text-[11px] font-semibold text-red-500 text-center">{uploadError.message}</p>
             )}
-            <p className="text-[10px] text-muted-foreground text-center">
+            <p className="text-[11px] text-muted-foreground text-center">
               PNG, ICO, SVG, or JPG. Recommend square resolution.
             </p>
           </div>
@@ -376,9 +376,9 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
               />
             </label>
             {uploadError?.field === 'avatar' && (
-              <p className="text-[10px] font-semibold text-red-500 text-center">{uploadError.message}</p>
+              <p className="text-[11px] font-semibold text-red-500 text-center">{uploadError.message}</p>
             )}
-            <p className="text-[10px] text-muted-foreground text-center">
+            <p className="text-[11px] text-muted-foreground text-center">
               PNG, JPG, or WebP. Recommend square resolution.
             </p>
           </div>
@@ -399,7 +399,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                       href={initialProfile.resume_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[10px] text-primary hover:underline font-semibold block mt-0.5"
+                      className="text-[11px] text-primary hover:underline font-semibold block mt-0.5"
                     >
                       View Live PDF Document
                     </a>
@@ -423,7 +423,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                 className="hidden"
               />
             </label>
-            <p className="text-[10px] text-muted-foreground text-center">
+            <p className="text-[11px] text-muted-foreground text-center">
               Only PDF format documents are supported. Max 4MB file sizes.
             </p>
           </div>

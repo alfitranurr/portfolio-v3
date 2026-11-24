@@ -33,7 +33,7 @@ function ProjectCardSkeleton({ title, tags, links }: (typeof CARDS)[number]) {
         <Skeleton className="h-[17.5px] w-[66px] rounded-full shrink-0" />
       </div>
 
-      {/* Tag kategori / subkategori / pin (text-[10px] + py-0.5 = 19px) */}
+      {/* Tag kategori / subkategori / pin (text-[11px] + py-0.5 = 19px) */}
       <div className="flex flex-wrap items-center gap-1.5">
         {tags.map((w, i) => (
           <Skeleton key={i} className={cn('h-[19px] rounded-md', w)} />

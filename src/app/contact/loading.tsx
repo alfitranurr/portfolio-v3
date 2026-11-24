@@ -3,7 +3,7 @@ import { Skeleton, SkeletonText } from '@/components/ui/skeleton'
 
 // Mirrors src/app/contact/page.tsx (+ ContactForm)
 
-// Social cards: name (text-xs) + @username (text-[10px] mono), widths from the real page
+// Social cards: name (text-xs) + @username (text-[11px] mono), widths from the real page
 const SOCIALS = [
   { name: 'w-[35px]', user: 'w-[132px]' },
   { name: 'w-[52px]', user: 'w-[138px]' },

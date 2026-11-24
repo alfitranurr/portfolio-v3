@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
+import { switchTheme } from '@/lib/theme-transition'
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
@@ -20,7 +21,7 @@ export function ThemeToggle() {
 
   return (
     <button
-      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      onClick={(e) => switchTheme(theme === 'dark' ? 'light' : 'dark', setTheme, e.currentTarget)}
       className="relative flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-300 glass-card text-foreground/80 hover:text-foreground hover:scale-105 active:scale-95 cursor-pointer"
       aria-label="Toggle Theme"
     >

@@ -64,7 +64,7 @@ export function PhotoPreviewModal({ photo, onClose, onEdit }: PhotoPreviewModalP
         <div className="flex-1 overflow-y-auto p-5 space-y-4">
           {photo.description ? (
             <div className="space-y-2">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
                 Description
               </span>
               <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap break-words">

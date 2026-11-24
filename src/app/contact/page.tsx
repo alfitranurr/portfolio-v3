@@ -75,7 +75,7 @@ export default function ContactPage() {
                     </div>
                     <div className="flex flex-col">
                       <span className="text-xs font-bold text-foreground">{social.name}</span>
-                      <span className="text-[10px] text-muted-foreground font-mono">@{social.username}</span>
+                      <span className="text-[11px] text-muted-foreground font-mono">{social.username.includes('@') ? social.username : `@${social.username}`}</span>
                     </div>
                   </a>
                 )

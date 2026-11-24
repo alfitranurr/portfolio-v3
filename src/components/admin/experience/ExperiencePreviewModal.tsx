@@ -81,7 +81,7 @@ export function ExperiencePreviewModal({ experience, onClose, onEdit }: Experien
 
         {experience.description && experience.description.length > 0 && (
           <div className="space-y-2 max-h-48 overflow-y-auto pr-2 text-xs text-slate-600">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Job Responsibilities</span>
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Job Responsibilities</span>
             <ul className="list-disc list-inside space-y-1.5">
               {experience.description.map((desc, idx) => (
                 <li key={idx} className="leading-relaxed">{desc}</li>

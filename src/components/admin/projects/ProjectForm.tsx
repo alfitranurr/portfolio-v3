@@ -134,7 +134,7 @@ export function ProjectForm({
                 <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                   Category Type
                 </label>
-                <select
+                <select aria-label="Category Type"
                   value={project.category || 'data'}
                   onChange={e => {
                     const newCat = e.target.value as 'data' | 'non-data'
@@ -161,7 +161,7 @@ export function ProjectForm({
                 <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                   Sub Category Tag
                 </label>
-                <select
+                <select aria-label="Sub Category Tag"
                   value={project.sub_category || ''}
                   onChange={e => onUpdateProject(prev => ({ ...prev, sub_category: e.target.value }))}
                   className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/50 text-foreground text-sm focus:outline-none focus:border-primary/50"
@@ -318,7 +318,7 @@ export function ProjectForm({
                   >
                     <Layers className="w-4 h-4" />
                   </button>
-                  <input
+                  <input aria-label="Pinned Order Index"
                     type="number"
                     value={project.pinned_order ?? 0}
                     readOnly
@@ -331,7 +331,7 @@ export function ProjectForm({
                   />
                 </div>
                 {project.pinned_order && project.pinned_order > 0 && projects.some(p => p.id !== project.id && p.category === project.category && p.pinned_order === project.pinned_order) && (
-                  <p className="text-[10px] text-red-500 font-semibold leading-normal mt-1">
+                  <p className="text-[11px] text-red-500 font-semibold leading-normal mt-1">
                     This index is already pinned in the current category!
                   </p>
                 )}
@@ -343,13 +343,13 @@ export function ProjectForm({
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 Project Date (Publish Date)
               </label>
-              <input
+              <input aria-label="Project Date (Publish Date)"
                 type="date"
                 value={project.created_at ? project.created_at.split('T')[0] : ''}
                 onChange={e => onUpdateProject(prev => ({ ...prev, created_at: e.target.value }))}
                 className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700/50 text-foreground text-sm focus:outline-none focus:border-primary/50"
               />
-              <p className="text-[10px] text-muted-foreground leading-normal">
+              <p className="text-[11px] text-muted-foreground leading-normal">
                 Controls chronological ordering on the public portfolio pages.
               </p>
             </div>
@@ -375,7 +375,7 @@ export function ProjectForm({
                       <button
                         type="button"
                         onClick={handleRemoveCoverImage}
-                        className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold cursor-pointer"
+                        className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[11px] font-bold cursor-pointer"
                       >
                         Remove
                       </button>
@@ -418,7 +418,7 @@ export function ProjectForm({
                     className="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-white/5 border border-slate-300 dark:border-slate-700/50 text-foreground placeholder:text-muted-foreground/30 text-[11px] focus:outline-none focus:border-primary/50"
                   />
                   {coverImageWarning && (
-                    <div className="flex items-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-semibold leading-tight">
+                    <div className="flex items-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[11px] font-semibold leading-tight">
                       <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                       <span>{coverImageWarning}</span>
                     </div>

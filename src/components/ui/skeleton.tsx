@@ -20,8 +20,8 @@ export function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivEl
 
 /** Ukuran teks Tailwind → tinggi kotak baris (line-height default) dan tinggi bar di dalamnya. */
 const LINE_HEIGHT = {
-  '3xs': 'h-[13.5px]', // text-[9px]
-  '2xs': 'h-[15px]', //   text-[10px]
+  '3xs': 'h-[13.5px]', // text-[11px]
+  '2xs': 'h-[15px]', //   text-[11px]
   xs: 'h-4', //            text-xs   (12/16)
   sm: 'h-5', //            text-sm   (14/20)
   base: 'h-6', //          text-base (16/24)

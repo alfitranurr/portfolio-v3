@@ -67,7 +67,7 @@ function MetaRow({ width }: { width: string }) {
   )
 }
 
-// "Current" pill: px-2 py-0.5 text-[10px] + border → 21px tall
+// "Current" pill: px-2 py-0.5 text-[11px] + border → 21px tall
 function CurrentBadge() {
   return <Skeleton className="h-[21px] w-[58px] rounded-md md:mb-0.5 self-start md:self-auto" />
 }
